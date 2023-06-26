@@ -1,49 +1,43 @@
-import { Injectable } from '@nestjs/common';
-import { error } from 'console';
-import { OAuthDto } from 'src/auth/dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './user.entity';
 
 @Injectable()
 export class UsersService {
-    constructor(private prisma: PrismaService)  {}
-    async getUser(dto: OAuthDto)    {
-        console.log('UserService', dto)
-        let user = await this.prisma.users.findUnique({
-            where:  {
-                email: dto.email
-            },
-        });
-        if (user)   {
-            console.log(user)
-        //TODO what to return
-            return user
-        }   else    {
-            return this.prisma.users.create({
-                data:   {
-                    email: dto.email,
-                    intra: dto.intra,
-                    username: dto.intra
-                }, 
-            })
-            .then(newUser => {
-                console.log('new user');
-                console.log(newUser)
-                //TODO what to return
-                return newUser
+  constructor(@InjectRepository(User) private repo: Repository<User>) {}
 
-            })
-            .catch(error => {
-                console.error('Error creating entry in db', error)
-                return null
-            });
-        }
-        }
-        async findUserByEmail(email: string){
-            const user = await this.prisma.users.findUnique({
-                where:  {
-                    email: email,
-                }
-            })
-            return user;
-        }
+  create(email: string, password: string) {
+    const user = this.repo.create({ email, password });
+
+    return this.repo.save(user);
+  }
+
+  findOne(id: number) {
+    if (!id) {
+      return null;
+    }
+    return this.repo.findOneBy({id});
+  }
+
+  find(email: string) {
+    return this.repo.find({where: { email }});
+  }
+
+  async update(id: number, attrs: Partial<User>) {
+    const user = await this.findOne(id);
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+    Object.assign(user, attrs);
+    return this.repo.save(user);
+  }
+
+  async remove(id: number) {
+    const user = await this.findOne(id);
+    if (!user) {
+      throw new NotFoundException('user not found');
+    }
+    return this.repo.remove(user);
+  }
 }

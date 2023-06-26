@@ -1,23 +1,22 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { ConfigModule } from '@nestjs/config';
-import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './users/users.module';
-import { PassportModule } from '@nestjs/passport';
+import { ReportsModule } from './reports/reports.module';
+import { User } from './users/user.entity';
+import { Report } from './reports/report.entity';
 
 @Module({
   imports: [
-    AuthModule,
-    ConfigModule.forRoot({
-      isGlobal: true
+    TypeOrmModule.forRoot({
+      type: 'sqlite',
+      database: 'db.sqlite',
+      entities: [User, Report],
+      synchronize: true,
     }),
-    PrismaModule,
     UsersModule,
-    PassportModule.register({
-      session: true
-    })
+    ReportsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
