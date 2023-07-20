@@ -3,42 +3,41 @@
 node_modules
 .env
 # data storage
-backend/docker_volumes
+backend/ping_pong_backend/docker_volumes
 
 #env
-.env
+backend/ping_pong_backend/.env
 
 # compiled output
-backend/dist
-backend/node_modules
+backend/ping_pong_backend/dist
+backend/ping_pong_backend/node_modules
 
 # Logs
-backend/logs
-backend/*.log
-backend/npm-debug.log*
-backend/pnpm-debug.log*
-backend/yarn-debug.log*
-backend/yarn-error.log*
-backend/lerna-debug.log*
+backend/ping_pong_backend/logs
+backend/ping_pong_backend/*.log
+backend/ping_pong_backend/npm-debug.log*
+backend/ping_pong_backend/pnpm-debug.log*
+backend/ping_pong_backend/yarn-debug.log*
+backend/ping_pong_backend/yarn-error.log*
+backend/ping_pong_backend/lerna-debug.log*
 
 # OS
-backend/.DS_Store
+backend/ping_pong_backend/.DS_Store
 
 # Tests
-backend/coverage
-backend/.nyc_output
+backend/ping_pong_backend/coverage
+backend/ping_pong_backend/.nyc_output
 
 # IDEs and editors
-backend/.idea
-/backend.project
-backend.classpath
-backend/.c9/
-backend/*.launch
-backend/.settings/
-backend/*.sublime-workspace
+backend/ping_pong_backend/.idea
+backend/ping_pong_backend/.classpath
+backend/ping_pong_backend/.c9/
+backend/ping_pong_backend/*.launch
+backend/ping_pong_backend/.settings/
+backend/ping_pong_backend/*.sublime-workspace
 
 # IDE - VSCode
-backend/.vscode/*
+backend/ping_pong_backend/.vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
