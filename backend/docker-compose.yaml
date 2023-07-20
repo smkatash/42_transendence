@@ -1,0 +1,22 @@
+version: '3'
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command:
+      bash -c "/tmp/script.sh"
+    ports:
+      - '3000:3000'
+    volumes:
+      - backend_vol:/app/data/
+    restart: unless-stopped
+
+
+volumes:
+  backend_vol:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PROJECT_PATH}
