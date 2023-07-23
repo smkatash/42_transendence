@@ -1,6 +1,5 @@
 import { Injectable, ExecutionContext } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import * as request from 'supertest';
 
 @Injectable()
 export class OauthGuard extends AuthGuard('42') {

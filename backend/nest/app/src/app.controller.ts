@@ -4,11 +4,11 @@ import { AppService } from './app.service';
 
 @Controller()
 export class AppController {
-    constructor(private appService: AppService) {}
-
+  constructor(private appService: AppService) {}
 
   @Get()
   getHello() {
+    console.log('hello')
     return this.appService.getHello()
   }
 }
