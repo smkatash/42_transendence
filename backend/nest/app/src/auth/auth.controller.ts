@@ -1,5 +1,6 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { OauthGuard } from './guard/oauth.guard';
+import { Request } from 'express';
 
 @Controller('42auth')
 export class AuthController {
@@ -14,5 +15,14 @@ export class AuthController {
     @UseGuards(OauthGuard)
     handleRedirect() {
         return { msg: 'OK'}
+    }
+
+    @Get('/test')
+    handle(@Req() request: Request) {
+        if (request.user) {
+            return { msg: 'Authenticated'}
+        } else {
+            return { msg: 'Not authenticated'}
+        }
     }
 }

@@ -3,41 +3,41 @@
 node_modules
 .env
 # data storage
-backend/ping_pong_backend/docker_volumes
+backend/db
 
 #env
-backend/ping_pong_backend/.env
+backend/.env
 
 # compiled output
-backend/ping_pong_backend/dist
-backend/ping_pong_backend/node_modules
+backend/nest/app/dist
+backend/nest/app/node_modules
 
 # Logs
-backend/ping_pong_backend/logs
-backend/ping_pong_backend/*.log
-backend/ping_pong_backend/npm-debug.log*
-backend/ping_pong_backend/pnpm-debug.log*
-backend/ping_pong_backend/yarn-debug.log*
-backend/ping_pong_backend/yarn-error.log*
-backend/ping_pong_backend/lerna-debug.log*
+backend/nest/app/logs
+backend/nest/app/*.log
+backend/nest/app/npm-debug.log*
+backend/nest/app/pnpm-debug.log*
+backend/nest/app/yarn-debug.log*
+backend/nest/app/yarn-error.log*
+backend/nest/app/lerna-debug.log*
 
 # OS
-backend/ping_pong_backend/.DS_Store
+backend/nest/app/.DS_Store
 
 # Tests
-backend/ping_pong_backend/coverage
-backend/ping_pong_backend/.nyc_output
+backend/nest/app/coverage
+backend/nest/app/.nyc_output
 
 # IDEs and editors
-backend/ping_pong_backend/.idea
-backend/ping_pong_backend/.classpath
-backend/ping_pong_backend/.c9/
-backend/ping_pong_backend/*.launch
-backend/ping_pong_backend/.settings/
-backend/ping_pong_backend/*.sublime-workspace
+backend/nest/app/.idea
+backend/nest/app/.classpath
+backend/nest/app/.c9/
+backend/nest/app/*.launch
+backend/nest/app/.settings/
+backend/nest/app/*.sublime-workspace
 
 # IDE - VSCode
-backend/ping_pong_backend/.vscode/*
+backend/nest/app/.vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
