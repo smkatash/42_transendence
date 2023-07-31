@@ -3,7 +3,7 @@ version: '3'
 services:
   nestjs:
     container_name: nestjs
-    build: ./nest
+    build: ${NEST_PATH}
     networks:
       - 42_transendence
     depends_on:
@@ -36,14 +36,13 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ./nest/app
+      device: ${NEST_PATH}/app
   db_vol:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: ./db
-
+      device: ${DB_PATH}
 networks:
   42_transendence:
     driver: bridge
