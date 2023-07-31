@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@1,6..96,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quattrocento&display=swap');
+
+html, body {
+  all: 0;
+}
+
+.flex-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  overflow: hidden;
+}
+.title {
+  width: 66%;
+  color: #E8DAB2;
+  background-color: #4F6D7A;
+}
+
+.title h1 {
+  font-family: 'Bodoni Moda', serif;
+  font-size: 20em;
+  margin-left: 10%;
+  margin-bottom: 0%;
+}
+
+.title button {
+  color: #4F6D7A;
+  background-color: #E8DAB2;
+  font-size: 3em;
+  font-family: 'Quattrocento', serif;
+  font-weight: bolder;
+  margin-left: 10%;
+  border: none;
+  padding: 2% 3%;
+  text-align: center;
+}
+
+.title button:hover{
+  background-color: #e9d5a1;
+}
+
+.title button:active {
+  padding: 1.9% 2.9%;
+}
+
+.description {
+  width: 33%;
+  background-color: #E8DAB2;
+}
+
+.description p {
+  padding: 7%;
+  font-family: 'Quattrocento', serif;
+  color: #4F6D7A;
+  font-size: 2.5em;
+  text-align: left;
+}
