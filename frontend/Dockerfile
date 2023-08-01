@@ -1,11 +1,11 @@
 FROM node:latest
 
-COPY ./app/ /app/data/
+COPY ./angular /app/data/
 
-COPY ./tools/script.sh /tmp
+COPY ./scripts/script.sh /tmp
 
 WORKDIR /app/data/
 
 CMD ["bash", "/tmp/script.sh"]
 
-EXPOSE 3000
+EXPOSE 4200

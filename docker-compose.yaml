@@ -1,6 +1,19 @@
 version: '3'
 
 services:
+  angularjs:
+    container_name: angularjs
+    build: ${NG_PATH}
+    networks:
+      - 42_transendence
+    depends_on:
+      - nestjs
+    ports:
+      - '4200:4200'
+    volumes:
+      - server_vol:/app/data
+    restart: unless-stopped
+
   nestjs:
     container_name: nestjs
     build: ${NEST_PATH}
@@ -13,7 +26,7 @@ services:
     volumes:
       - server_vol:/app/data
     restart: unless-stopped
-  
+
   postgres:
     container_name: postgres
     image: postgres:latest
@@ -29,8 +42,13 @@ services:
       - '5432:5432'
     restart: unless-stopped
 
-
 volumes:
+  client_vol:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${NG_PATH}/angular
   server_vol:
     driver: local
     driver_opts:

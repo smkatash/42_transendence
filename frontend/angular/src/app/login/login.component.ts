@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { LoginService } from './login.service';
 
 @Component({
   selector: 'app-login',
@@ -6,7 +7,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  printClick(): void {
-    console.log("Successfully clicked");
+  constructor(private loginService: LoginService) { };
+
+  login() {
+    this.loginService.getLogin()
+      .subscribe();
   }
 }
