@@ -35,6 +35,7 @@ html, body {
   border: none;
   padding: 2% 3%;
   text-align: center;
+  cursor: pointer;
 }
 
 .title button:hover{
