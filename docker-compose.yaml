@@ -6,13 +6,11 @@ services:
     build: ${NG_PATH}
     networks:
       - 42_transendence
-    depends_on:
-      - nestjs
     ports:
       - '4200:4200'
     volumes:
-      - server_vol:/app/data
-    restart: unless-stopped
+      - client_vol:/app/data
+    # restart: unless-stopped
 
   nestjs:
     container_name: nestjs
@@ -25,7 +23,7 @@ services:
       - '3000:3000'
     volumes:
       - server_vol:/app/data
-    restart: unless-stopped
+    # restart: unless-stopped
 
   postgres:
     container_name: postgres
@@ -40,7 +38,7 @@ services:
       - db_vol:/var/lib/postgresql/data
     ports:
       - '5432:5432'
-    restart: unless-stopped
+    # restart: unless-stopped
 
 volumes:
   client_vol:

@@ -1,0 +1,6 @@
+{
+  "/42auth": {
+    "target": "http://localhost:3000/42auth",
+    "secure": false
+  }
+}
