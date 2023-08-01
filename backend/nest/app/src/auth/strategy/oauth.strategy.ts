@@ -1,4 +1,4 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-42"
 import { CALLBACK_URL, CLIENT_ID, CLIENT_SECRET } from "src/Constants";
@@ -33,10 +33,11 @@ export class OauthStrategy extends PassportStrategy(Strategy, '42') {
             email: profile.email,
             avatar: profile.image_url
         }
-
-        console.log(userData)
         const user = await this.authService.validateUser(userData)
-        console.log(user)
-        return user || null
+        if (!user) {
+            throw new UnauthorizedException()
+        }
+        console.log('Returning: ' + JSON.stringify(user))
+        return user
     }
 }

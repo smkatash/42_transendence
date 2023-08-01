@@ -2,10 +2,12 @@ FROM node:latest
 
 COPY ./app/ /app/data/
 
+COPY ./tools/script.sh /tmp
+
 WORKDIR /app/data/
 
-RUN npm install
+# RUN npm install
 
-CMD ["npm", "run", "start:dev"]
+CMD ["bash", "/tmp/script.sh"]
 
 EXPOSE 3000

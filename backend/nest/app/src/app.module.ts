@@ -7,10 +7,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entities/user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_TYPE, DB_USERNAME } from './Constants';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
+    PassportModule.register({ session: true}),
     AuthModule,
+    UserModule,
     TypeOrmModule.forRoot({
       type: DB_TYPE,
       host: DB_HOST,
@@ -21,7 +24,6 @@ import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_TYPE, DB_USERNAME } from './
       entities: [User],
       synchronize: true
     }),
-   PassportModule.register({session: true}) 
   ],
   controllers: [AppController],
   providers: [AppService],

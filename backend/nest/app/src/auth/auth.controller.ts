@@ -5,20 +5,21 @@ import { Request } from 'express';
 @Controller('42auth')
 export class AuthController {
     
-    @Get('/login')
+    @Get('login')
     @UseGuards(OauthGuard)
     handleLogin() {
         return { msg: '42 Auth'}
     }
     
-    @Get('/redirect')
+    @Get('redirect')
     @UseGuards(OauthGuard)
     handleRedirect() {
         return { msg: 'OK'}
     }
 
-    @Get('/test')
+    @Get('test')
     handle(@Req() request: Request) {
+        console.log(request.user)
         if (request.user) {
             return { msg: 'Authenticated'}
         } else {

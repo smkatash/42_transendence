@@ -4,7 +4,6 @@ import { OauthStrategy } from './strategy/oauth.strategy';
 import { AuthService } from './auth.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
-import { OauthGuard } from './guard/oauth.guard';
 import { SessionSerializer } from './utils/serializer';
 
 @Module({
@@ -15,6 +14,6 @@ import { SessionSerializer } from './utils/serializer';
     SessionSerializer, {
     provide: 'AUTH_SERVICE',
     useClass: AuthService,
-  }]
+  }],
 })
 export class AuthModule {}

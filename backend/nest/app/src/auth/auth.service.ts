@@ -12,7 +12,6 @@ export class AuthService {
 
     async validateUser(userData: UserData): Promise<User> {
         console.log('validate User')
-        console.log(userData)
 
         const currentUser = await this.findUser(userData.id)
 
