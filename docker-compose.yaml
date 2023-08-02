@@ -1,29 +1,36 @@
-version: '3'
+version: '3.8'
 
 services:
-  angularjs:
-    container_name: angularjs
-    build: ${NG_PATH}
-    networks:
-      - 42_transendence
-    ports:
-      - '4200:4200'
-    volumes:
-      - client_vol:/app/data
-    # restart: unless-stopped
-
   nestjs:
     container_name: nestjs
-    build: ${NEST_PATH}
-    networks:
-      - 42_transendence
+    build:
+      dockerfile: Dockerfile
+      context: ./backend/nest
+      target: development
+    volumes:
+      - ./backend/nest/app:/app/backend
+    command: bash -c "npm install && npm run start:dev"
     depends_on:
       - postgres
+    environment:
+      NODE_ENV: development
+      PORT: 3000
     ports:
-      - '3000:3000'
+      - 3000:3000
+      - 9229:9229
+  angular:
+    container_name: angular
+    build:
+      dockerfile: Dockerfile
+      context: ./frontend
+      target: development
+    command: bash -c "npm install && npm run start"
     volumes:
-      - server_vol:/app/data
-    # restart: unless-stopped
+      - ./frontend/angular:/app/frontend
+    ports:
+      - 4200:4200
+    links:
+      - nestjs
 
   postgres:
     container_name: postgres
@@ -32,33 +39,5 @@ services:
       POSTGRES_DB: postgresapp
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgresDB
-    networks:
-      - 42_transendence
-    volumes:
-      - db_vol:/var/lib/postgresql/data
     ports:
-      - '5432:5432'
-    # restart: unless-stopped
-
-volumes:
-  client_vol:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${NG_PATH}/angular
-  server_vol:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${NEST_PATH}/app
-  db_vol:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: ${DB_PATH}
-networks:
-  42_transendence:
-    driver: bridge
+      - 5432:5432

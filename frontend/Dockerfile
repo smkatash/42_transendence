@@ -1,11 +1,19 @@
-FROM node:latest
+# Using LTS as it is stable
+FROM node:lts AS development
 
-COPY ./angular /app/data/
+WORKDIR /app/frontend
 
-COPY ./scripts/script.sh /tmp
+# Copy package-lock.json & package.json from host to inside container working directory
+COPY /angular/package*.json ./
 
-WORKDIR /app/data/
+# Install deps inside container
+RUN npm install
+# Install angular cli
+RUN npm install -g @angular/cli
 
-CMD ["bash", "/tmp/script.sh"]
+# Bundle app srcs
+COPY /angular ./
+
+RUN npm run build
 
 EXPOSE 4200
