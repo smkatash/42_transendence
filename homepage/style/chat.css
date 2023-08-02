@@ -1,0 +1,61 @@
+body{
+    background-color: #E8DAB2;
+    margin: 0;
+}
+
+.chat{
+    display: flex;
+    width: 100vw;
+    height: 70vh;
+    background-color: aquamarine;
+    flex-direction: row-reverse;
+    justify-items: center;
+    align-items: center;
+}
+
+.chat_groups{
+    width: 40%;
+    height: 100%;
+}
+
+.messages{
+    display:flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    width: 60%;
+    height: 100%;
+    background-color: #E8DAB2;
+}
+
+.m-new{
+    margin: 8px;
+    width: 300px;
+    height: 30px;
+    content: "";
+    background-color: blue;
+    border-radius: 00px 40px 40px 40px;
+    align-self: start;
+}
+
+.m-old{
+    margin: 8px;
+
+    width: 300px;
+    height: 30px;
+    content: "";
+    background-color: blue;
+    border-radius: 40px 40px 40px 40px;
+    align-self: start;
+}
+
+.m-mynew{
+    margin: 8px;
+
+    width: 300px;
+    height: 30px;
+    content: "";
+    background-color: cadetblue;
+    border-radius: 40px 0px 40px 40px;
+    align-self: end;
+}
