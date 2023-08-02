@@ -9,7 +9,7 @@ import { catchError, retry } from 'rxjs/operators';
 export class LoginService {
   constructor(private http: HttpClient) { };
 
-  loginUrl = '/42auth/login';
+  loginUrl = 'nestjs:/42auth/login';
   getLogin() {
     return this.http.get(this.loginUrl);
   }
