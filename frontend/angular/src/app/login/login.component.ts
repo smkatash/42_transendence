@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { LoginService } from './login.service';
+import { LoginService, test } from './login.service';
+import { Observable } from 'rxjs';
+import { TestBed } from '@angular/core/testing';
 
 @Component({
   selector: 'app-login',
@@ -9,8 +11,9 @@ import { LoginService } from './login.service';
 export class LoginComponent {
   constructor(private loginService: LoginService) { };
 
-  login() {
+  login(): void {
     this.loginService.getLogin()
       .subscribe();
   }
+
 }

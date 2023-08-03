@@ -9,8 +9,8 @@ import { catchError, retry } from 'rxjs/operators';
 export class LoginService {
   constructor(private http: HttpClient) { };
 
-  loginUrl = 'nestjs:/42auth/login';
-  getLogin() {
-    return this.http.get(this.loginUrl);
+  loginUrl = '/api';
+  getLogin(): Observable<Object>{
+    return this.http.get<Object>(this.loginUrl);
   }
 }
