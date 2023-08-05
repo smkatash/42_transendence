@@ -1,0 +1,31 @@
+.m-new{
+  margin: 8px;
+  width: 300px;
+  height: 30px;
+  content: "";
+  background-color: blue;
+  border-radius: 00px 40px 40px 40px;
+  align-self: start;
+}
+
+.m-old{
+  margin: 8px;
+
+  width: 300px;
+  height: 30px;
+  content: "";
+  background-color: blue;
+  border-radius: 40px 40px 40px 40px;
+  align-self: start;
+}
+
+.m-mynew{
+  margin: 8px;
+
+  width: 300px;
+  height: 30px;
+  content: "";
+  background-color: cadetblue;
+  border-radius: 40px 0px 40px 40px;
+  align-self: end;
+}

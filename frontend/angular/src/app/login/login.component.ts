@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { LoginService, test } from './login.service';
+import { LoginService } from './login.service';
 import { Observable } from 'rxjs';
 import { TestBed } from '@angular/core/testing';
 
