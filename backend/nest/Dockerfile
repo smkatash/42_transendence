@@ -1,11 +1,7 @@
 FROM node:latest
 
-COPY ./app/ /app/data/
+WORKDIR /app/data
 
-WORKDIR /app/data/
+COPY ./app/ ./
 
-RUN npm install
-
-CMD ["npm", "run", "start:dev"]
-
-EXPOSE 3000
+RUN npm install && npm run build

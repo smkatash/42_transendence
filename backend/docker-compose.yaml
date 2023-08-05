@@ -1,9 +1,12 @@
-version: '3'
+version: '3.8'
 
 services:
   nestjs:
     container_name: nestjs
-    build: ./nest
+    build:
+      context: ./nest
+      dockerfile: Dockerfile
+    command: npm run start:dev
     networks:
       - 42_transendence
     depends_on:
@@ -11,7 +14,8 @@ services:
     ports:
       - '3000:3000'
     volumes:
-      - server_vol:/app/data
+      - ./nest/app:/app/data
+      - /app/data/node_modules
     restart: unless-stopped
   
   postgres:
@@ -31,18 +35,12 @@ services:
 
 
 volumes:
-  server_vol:
+  db_vol:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./nest/app
-  db_vol:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: ./db
+      device: ${PWD}/db
 
 networks:
   42_transendence:
