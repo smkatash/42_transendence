@@ -1,13 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@1,6..96,700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Quattrocento&display=swap');
 
-html, body {
-  height: 100vh;
-  width: 100vw;
-  margin: 0;
-  all: 0;
-}
-
 .flex-container {
   display: flex;
   justify-content: center;

@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Quattrocento:wght@700&display=swap');
+
+.message {
+  padding-left: 1.5em;
+  padding-right: 1.5em;
+  padding-bottom: 1em;
+  padding-top: .6em;
+  margin-bottom: 1%;
+  background-color: #E8DAB2;
+  border-radius: 00px 20px 20px 20px;
+  align-self: start;
+  max-width: 59%;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.message .message-sender {
+  font-family: 'Quattrocento', serif;
+  font-size: 130%;
+  font-weight: bold;
+  color: #4F6D7A;
+}
+
+.message .message-content {
+  font-family: 'Quattrocento', serif;
+  font-size: 120%;
+  color: #423B0B;
+}

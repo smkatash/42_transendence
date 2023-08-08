@@ -3,11 +3,15 @@ import { CommonModule } from '@angular/common';
 
 import { ChatRoutingModule } from './chat-routing.module';
 import { ChatComponent } from './chat.component';
+import { MessageComponent } from './message/message.component';
+import { SidebarChannelComponent } from './sidebar-channel/sidebar-channel.component';
 
 
 @NgModule({
   declarations: [
-    ChatComponent
+    ChatComponent,
+    MessageComponent,
+    SidebarChannelComponent
   ],
   imports: [
     CommonModule,

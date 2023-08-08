@@ -1,31 +1,43 @@
-.m-new{
-  margin: 8px;
-  width: 300px;
-  height: 30px;
-  content: "";
-  background-color: blue;
-  border-radius: 00px 40px 40px 40px;
-  align-self: start;
+body {
+  background-color: #4F6D7A;
 }
 
-.m-old{
-  margin: 8px;
-
-  width: 300px;
-  height: 30px;
-  content: "";
-  background-color: blue;
-  border-radius: 40px 40px 40px 40px;
-  align-self: start;
+.chat-interface {
+  width: 77%;
+  height: 70%;
+  margin: auto;
+  display: flex;
+  overflow: hidden;
 }
 
-.m-mynew{
-  margin: 8px;
+.channel-container-border {
+  width: 25%;
+  border: 13px solid #E8DAB2;
+}
 
-  width: 300px;
-  height: 30px;
-  content: "";
-  background-color: cadetblue;
-  border-radius: 40px 0px 40px 40px;
-  align-self: end;
+.channel-container {
+  border: 10px solid #4F6D7A;
+  border: .6rem solid #4F6D7A;
+  background-color: #E8DAB2;
+  height: 54.2rem;
+  overflow: auto;
+  scrollbar-color: #E8DAB2 #4F6D7A;
+  scrollbar-width: auto;
+  /* border-right: 1px solid #4F6D7A; */
+}
+
+.message-container-border {
+  border-top: 13px solid #E8DAB2;
+  border-bottom: 13px solid #E8DAB2;
+  border-right: 13px solid #E8DAB2;
+  width: 75%;
+  overflow: auto;
+  scrollbar-color: #E8DAB2 #4F6D7A;
+  scrollbar-width: auto;
+}
+
+.message-container {
+  padding-top: 3%;
+  padding-left: 5%;
+  padding-right: 5%;
 }

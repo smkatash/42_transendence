@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Quattrocento:wght@700&display=swap');
+
+.channel {
+  background-color: #E8DAB2;
+  padding: 7%;
+  border-bottom: 2px solid #4F6D7A;
+  display: flex;
+}
+
+.channel .type {
+  width: 10%;
+}
+
+.channel .type img{
+  width: 2rem;
+  filter: invert(41%) sepia(22%) saturate(537%) hue-rotate(153deg) brightness(90%) contrast(88%);
+}
+
+.channel .name {
+  padding-left: 5%;
+  width: 90%;
+  font-family: 'Quattrocento', serif;
+  font-size: 2em;
+  font-weight: bold;
+  color: #4F6D7A;
+}
