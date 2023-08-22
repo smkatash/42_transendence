@@ -1,4 +1,16 @@
-<div class="message">
-  <div class="message-sender">frmessin</div>
-  <div class="message-content">Lorem ipsum dolor sit amet.</div>
+<div class="message-session-user" *ngIf="sameSender == false && msg?.sessionUser == true">
+  <div class="message-content">{{ msg?.messageContent }}</div>
+</div>
+
+<div class="message-session-user-same-sender" *ngIf="sameSender == true && msg?.sessionUser == true">
+  <div class="message-content">{{ msg?.messageContent }}</div>
+</div>
+
+<div class="message" *ngIf="sameSender == false && msg?.sessionUser == false">
+  <div class="message-sender">{{ msg?.name }}</div>
+  <div class="message-content">{{ msg?.messageContent }}</div>
+</div>
+
+<div class="message-same-sender" *ngIf="sameSender == true && msg?.sessionUser == false">
+  <div class="message-content">{{ msg?.messageContent }}</div>
 </div>
