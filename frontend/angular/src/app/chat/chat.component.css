@@ -13,17 +13,23 @@ body {
 .channel-container-border {
   width: 25%;
   border: .9rem solid #E8DAB2;
+  position: relative;
+}
+
+.channel-container-border app-add-channel-button {
+  display: inline-block;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
 }
 
 .channel-container {
-  border: 10px solid #4F6D7A;
-  border: .6rem solid #4F6D7A;
+  margin: .9rem;
   background-color: #E8DAB2;
-  height: 54.2rem;
+  max-height: 80%;
   overflow: auto;
   scrollbar-color: #E8DAB2 #4F6D7A;
   scrollbar-width: auto;
-  /* border-right: 1px solid #4F6D7A; */
 }
 
 .message-and-messagebox-container {
@@ -81,4 +87,3 @@ body {
 .message-box textarea:focus {
   border: .2em solid #5f5948;
 }
-

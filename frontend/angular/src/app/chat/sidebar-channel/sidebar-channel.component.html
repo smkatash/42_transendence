@@ -1,4 +1,5 @@
 <div class="channel">
-  <div class="type"><img src="https://svgsilh.com/svg/154684.svg"></div>
-  <div class="name">Channel 1</div>
+  <div class="type-protected" *ngIf="channel?.type == 'protected'"><img src="https://svgsilh.com/svg/153962.svg"></div>
+  <div class="type-public" *ngIf="channel?.type == 'public'"><img src="https://svgsilh.com/svg/1085695.svg"></div>
+  <div class="name">{{ channel?.name }}</div>
 </div>

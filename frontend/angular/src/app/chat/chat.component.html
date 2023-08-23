@@ -2,10 +2,11 @@
   <div class="chat-interface">
     <div class="channel-container-border">
       <div class="channel-container">
-        <app-sidebar-channel></app-sidebar-channel>
-        <app-sidebar-channel></app-sidebar-channel>
-        <app-sidebar-channel></app-sidebar-channel>
+        <div *ngFor="let channel of channels">
+          <app-sidebar-channel [channel]="channel"></app-sidebar-channel>
+        </div>
       </div>
+      <app-add-channel-button></app-add-channel-button>
     </div>
     <div class="message-and-messagebox-container">
       <div class="message-container">

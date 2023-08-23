@@ -7,20 +7,32 @@
   display: flex;
 }
 
-.channel .type {
+.channel .type-protected {
+  width: 10%;
+  position: relative;
+}
+
+.channel .type-protected img{
+  width: 2rem;
+  filter: invert(41%) sepia(22%) saturate(537%) hue-rotate(153deg) brightness(90%) contrast(88%);
+  position: absolute;
+  top: 20%;
+}
+
+.channel .type-public {
   width: 10%;
 }
 
-.channel .type img{
+.channel .type-public img{
   width: 2rem;
   filter: invert(41%) sepia(22%) saturate(537%) hue-rotate(153deg) brightness(90%) contrast(88%);
 }
 
 .channel .name {
-  padding-left: 5%;
+  padding-left: 2%;
   width: 90%;
   font-family: 'Quattrocento', serif;
-  font-size: 2em;
+  font-size: 1.5em;
   font-weight: bold;
   color: #4F6D7A;
 }

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
 import { MESSAGES } from './message/mock-messages';
+import { CHANNELS } from './sidebar-channel/mock-channels';
 
 @Component({
   selector: 'app-chat',
@@ -9,4 +10,5 @@ import { MESSAGES } from './message/mock-messages';
 })
 export class ChatComponent {
   messages = MESSAGES;
+  channels = CHANNELS;
 }

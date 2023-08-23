@@ -1,0 +1,69 @@
+.dropdown {
+  display: inline-block;
+  position: relative;
+}
+
+.dd-button {
+  background-color: #E8DAB2;
+  border-radius: 4em;
+  width: 4.3em;
+  height: 4.3em;
+}
+
+.dd-button img {
+  width: 77%;
+  filter: invert(41%) sepia(22%) saturate(537%) hue-rotate(153deg) brightness(90%) contrast(88%);
+  padding: .5em;
+  display: inline;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.dd-button:hover {
+  background-color: #eeeeee;
+}
+
+.dd-input {
+  display: none;
+}
+
+.dd-menu {
+  position: absolute;
+  top: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0;
+  margin: 2px 0 0 0;
+  box-shadow: 0 0 6px 0 rgba(0,0,0,0.1);
+  background-color: #ffffff;
+  list-style-type: none;
+}
+
+.dd-input + .dd-menu {
+  display: none;
+}
+
+.dd-input:checked + .dd-menu {
+  display: block;
+}
+
+.dd-menu li {
+  padding: 10px 20px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.dd-menu li:hover {
+  background-color: #f6f6f6;
+}
+
+.dd-menu li a {
+  display: block;
+  margin: -10px -20px;
+  padding: 10px 20px;
+}
+
+.dd-menu li.divider{
+  padding: 0;
+  border-bottom: 1px solid #cccccc;
+}
