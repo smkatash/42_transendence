@@ -1,60 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Quattrocento:wght@700&display=swap');
+
 .dropdown {
   display: inline-block;
   position: relative;
 }
 
-.dd-button {
-  background-color: #E8DAB2;
-  border-radius: 4em;
-  width: 4.3em;
-  height: 4.3em;
-}
-
-.dd-button img {
+.dd-input {
+  appearance: none;
+  content: url(https://svgsilh.com/svg/1727487-4F6D7A.svg);
   width: 77%;
-  filter: invert(41%) sepia(22%) saturate(537%) hue-rotate(153deg) brightness(90%) contrast(88%);
   padding: .5em;
   display: inline;
   cursor: pointer;
   white-space: nowrap;
+  background-color: #E8DAB2;
+  border-radius: 4em;
+  width: 4.7em;
+  height: 4.7em;
+  transform: rotate(0deg);
+  animation: rotate-backward 1s 1 cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
-.dd-button:hover {
-  background-color: #eeeeee;
-}
-
-.dd-input {
-  display: none;
+.dd-input:hover {
+  background-color: #e9d5a1;
 }
 
 .dd-menu {
   position: absolute;
-  top: 100%;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  top: 80%;
+  border: 0.1em solid #E8DAB2;
+  border-radius: 1em;
   padding: 0;
-  margin: 2px 0 0 0;
-  box-shadow: 0 0 6px 0 rgba(0,0,0,0.1);
-  background-color: #ffffff;
+  background-color: #4F6D7A;
   list-style-type: none;
 }
 
-.dd-input + .dd-menu {
+.dd-menu {
   display: none;
 }
 
-.dd-input:checked + .dd-menu {
+.dd-input:checked + .dd-menu{
   display: block;
 }
 
+.dd-input:checked {
+  background-color: #e9d5a1;
+  transform: rotate(45deg);
+  animation: rotate-forward 1s 1 cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+@keyframes rotate-forward {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(45deg);
+  }
+}
+
+@keyframes rotate-backward {
+  from {
+    transform: rotate(45deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
 .dd-menu li {
-  padding: 10px 20px;
+  font-family: 'Quattrocento', serif;
+  font-size: 1.5em;
+  color: #E8DAB2;
+  padding: 0.5em 1em;
   cursor: pointer;
   white-space: nowrap;
 }
 
+.private-channel {
+  border-radius: 0.5em 0.5em 0em 0em;
+}
+
+.protected-channel {
+  border-radius: 0em 0em 0.5em 0.5em;
+}
+
 .dd-menu li:hover {
-  background-color: #f6f6f6;
+  background-color: #E8DAB2;
+  color: #4F6D7A;
 }
 
 .dd-menu li a {
@@ -65,5 +97,5 @@
 
 .dd-menu li.divider{
   padding: 0;
-  border-bottom: 1px solid #cccccc;
+  border-bottom: 1px solid #E8DAB2;
 }

@@ -7,7 +7,6 @@ body {
   height: 70%;
   margin: auto;
   display: flex;
-  overflow: hidden;
 }
 
 .channel-container-border {
@@ -17,7 +16,6 @@ body {
 }
 
 .channel-container-border app-add-channel-button {
-  display: inline-block;
   position: absolute;
   left: 50%;
   transform: translate(-50%);
@@ -37,6 +35,7 @@ body {
   border-bottom: .9rem solid #E8DAB2;
   border-right: .9rem solid #E8DAB2;
   width: 75%;
+  overflow: hidden;
   /* z-index: -1; */
 }
 
