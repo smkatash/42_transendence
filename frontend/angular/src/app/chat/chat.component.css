@@ -15,7 +15,7 @@ body {
   position: relative;
 }
 
-.channel-container-border app-add-channel-button {
+.channel-container-border app-create-channel-button {
   position: absolute;
   left: 50%;
   transform: translate(-50%);
