@@ -7,5 +7,6 @@ export const GetUser = createParamDecorator(
     if  (!request.user) {
         throw new UnauthorizedException()
     }
+
     return request.user
 })
