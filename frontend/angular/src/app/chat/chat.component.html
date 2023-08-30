@@ -3,21 +3,17 @@
     <div class="channel-container-border">
       <div class="channel-container">
         <div *ngFor="let channel of channels">
-          <app-sidebar-channel [channel]="channel"></app-sidebar-channel>
+          <app-sidebar-channel [isSelected]="channel === selectedChannel"
+                               [channel]="channel"
+                               (click)="onSelect(channel)"></app-sidebar-channel>
         </div>
       </div>
       <app-create-channel-button></app-create-channel-button>
     </div>
-    <div class="message-and-messagebox-container">
-      <div class="message-container">
-        <div *ngFor="let message of messages; let i = index">
-          <app-message [msg]="message"
-                       [sameSender]="true ? i > 0 && messages[i - 1].name === message.name : false"></app-message>
-        </div>
-      </div>
-      <div class="message-box">
-        <textarea type="text" placeholder="Message" autofocus></textarea>
-      </div>
+    <div class="content-container">
+      <app-channel-messages-content *ngIf="selectedChannel"
+                                    [messages]="messages"></app-channel-messages-content>
+      <app-default-content *ngIf="selectedChannel === undefined"></app-default-content>
     </div>
   </div>
 </body>

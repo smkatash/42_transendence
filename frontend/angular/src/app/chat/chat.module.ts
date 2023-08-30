@@ -6,6 +6,8 @@ import { ChatComponent } from './chat.component';
 import { MessageComponent } from './message/message.component';
 import { SidebarChannelComponent } from './sidebar-channel/sidebar-channel.component';
 import { CreateChannelButtonComponent } from './create-channel-button/create-channel-button.component';
+import { DefaultContentComponent } from './default-content/default-content.component';
+import { ChannelMessagesContentComponent } from './channel-messages-content/channel-messages-content.component';
 
 
 @NgModule({
@@ -13,7 +15,9 @@ import { CreateChannelButtonComponent } from './create-channel-button/create-cha
     ChatComponent,
     MessageComponent,
     SidebarChannelComponent,
-    CreateChannelButtonComponent
+    CreateChannelButtonComponent,
+    DefaultContentComponent,
+    ChannelMessagesContentComponent
   ],
   imports: [
     CommonModule,

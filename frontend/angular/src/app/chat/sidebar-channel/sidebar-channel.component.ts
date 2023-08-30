@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { channel } from './channel';
+import { Channel } from './channel';
 
 @Component({
   selector: 'app-sidebar-channel',
@@ -7,5 +7,6 @@ import { channel } from './channel';
   styleUrls: ['./sidebar-channel.component.css']
 })
 export class SidebarChannelComponent {
-  @Input() channel?: channel;
+  @Input() channel?: Channel;
+  @Input() isSelected = false;
 }

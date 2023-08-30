@@ -1,0 +1,9 @@
+<div class="message-container" #messageContainer *ngIf="messages">
+  <div *ngFor="let message of messages; let i = index">
+    <app-message [msg]="message"
+                 [sameSender]="true ? i > 0 && messages[i - 1].name === message.name : false"></app-message>
+  </div>
+</div>
+<div class="message-box">
+  <textarea type="text" placeholder="Message" autofocus></textarea>
+</div>

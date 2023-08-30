@@ -1,6 +1,6 @@
-import { channel } from "./channel";
+import { Channel } from "./channel";
 
-export const CHANNELS: channel[] = [
+export const CHANNELS: Channel[] = [
   { name: 'Trans and Dance', type: 'protected'},
   { name: '42Heilbronn', type: 'public'},
   { name: 'world-random', type: 'public'},
