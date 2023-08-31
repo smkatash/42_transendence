@@ -23,7 +23,6 @@ body {
 
 .channel-container {
   margin: .9rem;
-  background-color: #E8DAB2;
   max-height: 80%;
   overflow: auto;
 }

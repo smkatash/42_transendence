@@ -14,6 +14,7 @@
   padding-right: 5%;
   margin-top: 1.5%;
   bottom: .9rem;
+  position: relative;
 }
 
 .message-box textarea {
@@ -31,7 +32,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   padding-left: 1.5em;
-  padding-right: 2.5em;
+  padding-right: 3.5em;
   padding-top: .6em;
   font-family: 'Quattrocento', serif;
   font-size: 200%;
@@ -39,10 +40,26 @@
   color: #423B0B;
   caret-color: #423B0B;
   scrollbar-width: none;
-  border: 1px solid black;
 }
 
 .message-box textarea:focus {
   border: .2em solid #5f5948;
 }
 
+.send-button img {
+  width: 2em;
+  background-color: #5f5948;
+  border-radius: 30%;
+  padding: .6em .6em;
+  position: absolute;
+  top: 37%;
+  right: 8.5%;
+}
+
+.send-button:hover {
+  cursor: pointer;
+}
+
+.send-button:hover img {
+  background-color: #494437;
+}
