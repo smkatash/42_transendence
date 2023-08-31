@@ -2,41 +2,41 @@
 
 .message-session-user-same-sender {
   display: inline-block;
-  padding-left: 1.5em;
-  padding-right: 1.5em;
-  padding-bottom: 1em;
-  padding-top: 1em;
-  margin-bottom: 1%;
-  margin-left: 50%;
+  padding-left: 1.4dvw;
+  padding-right: 1.4dvw;
+  padding-bottom: 0.9dvw;
+  padding-top: 0.9dvw;
+  margin-bottom: 0.56dvw;
+  margin-left: 10dvw;
   background-color: #CBE8EF;
-  border-radius: 2em 2em 2em 2em;
+  border-radius: 1.5dvw 1.5dvw 1.5dvw 1.5dvw;
   line-height: 1.5;
   word-wrap: break-word;
 }
 
 .message-session-user {
   display: inline-block;
-  padding-left: 1.5em;
-  padding-right: 1.5em;
-  padding-bottom: 1em;
-  padding-top: 1em;
-  margin-bottom: 1%;
-  margin-left: 50%;
+  padding-left: 1.4dvw;
+  padding-right: 1.4dvw;
+  padding-bottom: 0.9dvw;
+  padding-top: 0.9dvw;
+  margin-bottom: 0.56dvw;
+  margin-left: 10dvw;
   background-color: #CBE8EF;
-  border-radius: 2em 0em 2em 2em;
+  border-radius: 1.5dvw 0dvw 1.5dvw 1.5dvw;
   line-height: 1.5;
   word-wrap: break-word;
 }
 
 .message-same-sender {
   display: inline-block;
-  padding-left: 1.5em;
-  padding-right: 1.5em;
-  padding-bottom: 1em;
-  padding-top: 1em;
-  margin-bottom: 1%;
+  padding-left: 1.4dvw;
+  padding-right: 1.4dvw;
+  padding-bottom: 0.9dvw;
+  padding-top: 0.9dvw;
+  margin-bottom: 0.56dvw;
   background-color: #E8DAB2;
-  border-radius: 2em 2em 2em 2em;
+  border-radius: 1.5dvw 1.5dvw 1.5dvw 1.5dvw;
   max-width: 60%;
   line-height: 1.5;
   word-wrap: break-word;
@@ -44,13 +44,13 @@
 
 .message {
   display: inline-block;
-  padding-left: 1.5em;
-  padding-right: 1.5em;
-  padding-bottom: 1em;
+  padding-left: 1.4dvw;
+  padding-right: 1.4dvw;
+  padding-bottom: 1dvw;
   padding-top: .6em;
-  margin-bottom: 1%;
+  margin-bottom: 0.56dvw;
   background-color: #E8DAB2;
-  border-radius: 0em 2em 2em 2em;
+  border-radius: 0dvw 1.5dvw 1.5dvw 1.5dvw;
   max-width: 60%;
   line-height: 1.5;
   word-wrap: break-word;
@@ -58,7 +58,7 @@
 
 .message-sender {
   font-family: 'Quattrocento', serif;
-  font-size: 140%;
+  font-size: 1.2dvw;
   font-weight: bold;
   color: #4F6D7A;
 }
@@ -66,6 +66,6 @@
 .message-content {
   font-family: 'Quattrocento', serif;
   font-weight: bold;
-  font-size: 130%;
+  font-size: 1.1dvw;
   color: #423B0B;
 }

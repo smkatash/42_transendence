@@ -3,15 +3,15 @@ body {
 }
 
 .chat-interface {
-  width: 77%;
-  height: 70%;
+  width: 84%;
+  height: 77%;
   margin: auto;
   display: flex;
 }
 
 .channel-container-border {
   width: 25%;
-  border: .9rem solid #E8DAB2;
+  border: .7dvw solid #E8DAB2;
   position: relative;
 }
 
@@ -22,15 +22,16 @@ body {
 }
 
 .channel-container {
-  margin: .9rem;
+  margin: .7dvw;
   max-height: 80%;
   overflow: auto;
 }
 
 .content-container {
-  border-top: .9rem solid #E8DAB2;
-  border-bottom: .9rem solid #E8DAB2;
-  border-right: .9rem solid #E8DAB2;
+  border-top: .7dvw solid #E8DAB2;
+  border-bottom: .7dvw solid #E8DAB2;
+  border-right: .7dvw solid #E8DAB2;
   width: 75%;
   overflow: hidden;
+  position: relative;
 }

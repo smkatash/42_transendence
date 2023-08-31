@@ -8,46 +8,39 @@
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  margin-left: 0;
+  background-color: #4F6D7A;
 }
 
 .title {
-  display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  width: 100%;
+  width: 63%;
   color: #E8DAB2;
   height: 100vh;
-  background-color: #4F6D7A;
-  justify-content: center;
-  overflow:hidden;
+  margin-top: 60dvh;
+  margin-left: 14dvw;
 }
 
 .title h1 {
   font-family: 'Bodoni Moda', serif;
-  font-size: 1300%;
-  margin-left: 10%;
-  margin-bottom: 0%;
-  overflow:hidden;
-  position: absolute;
-
+  font-size: 10dvw;
+  margin: 0%;
+  padding: 0%;
 }
 
 .title button {
   color: #4F6D7A;
   background-color: #E8DAB2;
-  font-size: 30px;
+  font-size: 2dvw;
   font-family: 'Quattrocento', serif;
   font-weight: bolder;
-  margin-left: 10%;
   border: none;
   cursor: pointer;
   align-self: center;
   justify-self: center;
-  width: 30%;
-  height: 70px;
-  margin-top: min(100%, 400px);
+  height: 7dvh;
+  width: 13dvw;
 }
 
 .title button:hover{
@@ -55,13 +48,12 @@
 }
 
 .title button:active {
-  width: 30%;
-  height: 75px;
+  width: 6.9em;
+  height: 1.9em;
 }
 
 .description {
-  width: 33%;
-  display: flex;
+  width: 37%;
   background-color: #E8DAB2;
 }
 
@@ -69,8 +61,8 @@
   padding: 7%;
   font-family: 'Quattrocento', serif;
   color: #4F6D7A;
-  font-size: 2.5em;
+  font-size: 2dvw;
   text-align: left;
   height: 100vh;
-  margin-top: 115%;
+  margin-top: 40vh;
 }

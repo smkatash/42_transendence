@@ -2,53 +2,53 @@
 
 .channel {
   background-color: #E8DAB2;
-  padding: 7%;
-  border: .1em solid #E8DAB2;
-  margin-bottom: .17em;
+  padding: 1.2dvw;
+  border: .1dvw solid #E8DAB2;
+  margin-bottom: .17dvw;
   display: flex;
 }
 
 .channel:hover {
   cursor: pointer;
   background-color: #e9d5a1;
-  border: .1em solid #e9d5a1;
-
+  border: .1dvw solid #e9d5a1;
 }
 
 .channel .type-protected {
-  width: 10%;
+  width: 13%;
   position: relative;
 }
 
 .channel .type-protected img{
-  width: 2rem;
+  width: 1.5dvw;
   position: absolute;
   top: 20%;
 }
 
 .channel .type-public {
-  width: 10%;
+  width: 13%;
 }
 
 .channel .type-public img{
-  width: 2rem;
+  width: 1.5dvw;
 }
 
 .channel .name {
-  padding-left: 2%;
+  padding-left: 0.3dvw;
   width: 90%;
   font-family: 'Quattrocento', serif;
-  font-size: 1.5em;
+  font-size: 1.2dvw;
   font-weight: bold;
   color: #4F6D7A;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .selected-channel {
   background-color: #4F6D7A;
-  padding: 7%;
-  border-bottom: .17em solid #4F6D7A;
+  padding: 1.2dvw;
   display: flex;
-  border: .1em solid #E8DAB2;
+  border: .1dvw solid #E8DAB2;
 }
 
 .selected-channel:hover {
