@@ -2,7 +2,7 @@
 
 .channel {
   background-color: #E8DAB2;
-  padding: 1.2dvw;
+  padding: 1.1dvw;
   border: .1dvw solid #E8DAB2;
   margin-bottom: .17dvw;
   display: flex;
@@ -37,7 +37,7 @@
   padding-left: 0.3dvw;
   width: 90%;
   font-family: 'Quattrocento', serif;
-  font-size: 1.2dvw;
+  font-size: 1dvw;
   font-weight: bold;
   color: #4F6D7A;
   text-overflow: ellipsis;
@@ -46,7 +46,7 @@
 
 .selected-channel {
   background-color: #4F6D7A;
-  padding: 1.2dvw;
+  padding: 1.1dvw;
   display: flex;
   border: .1dvw solid #E8DAB2;
 }

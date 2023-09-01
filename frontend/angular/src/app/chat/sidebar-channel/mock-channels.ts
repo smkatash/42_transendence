@@ -7,8 +7,8 @@ export const CHANNELS: Channel[] = [
   { name: 'world-pedagogy', type: 'public'},
   { name: '42heilbronn-random', type: 'protected'},
   { name: '42heilbronn-global', type: 'public'},
-  // { name: '42heilbronn-pedagody', type: 'protected'},
-  // { name: '42heilbronn-pedagody', type: 'protected'},
-  // { name: '42heilbronn-pedagody', type: 'protected'},
-  // { name: '42heilbronn-pedagody', type: 'protected'},
+  { name: '42heilbronn-pedagody', type: 'protected'},
+  { name: '42heilbronn-pedagody', type: 'protected'},
+  { name: '42heilbronn-pedagody', type: 'protected'},
+  { name: '42heilbronn-pedagody', type: 'protected'},
 ];

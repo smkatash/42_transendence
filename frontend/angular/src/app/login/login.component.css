@@ -48,8 +48,8 @@
 }
 
 .title button:active {
-  width: 6.9em;
-  height: 1.9em;
+  height: 6.9dvh;
+  width: 12.9dvw;
 }
 
 .description {

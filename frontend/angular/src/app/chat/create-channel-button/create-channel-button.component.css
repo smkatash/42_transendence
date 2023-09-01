@@ -78,11 +78,11 @@
 }
 
 .private-channel {
-  border-radius: 1dvw 1dvw 0dvw 0dvw;
+  border-radius: .8dvw .8dvw 0dvw 0dvw;
 }
 
 .protected-channel {
-  border-radius: 0dvw 0dvw 1dvw 1dvw;
+  border-radius: 0dvw 0dvw .8dvw .8dvw;
 }
 
 .dd-menu li:hover {

@@ -1,9 +1,13 @@
-<div class="message-session-user" *ngIf="sameSender == false && msg?.sessionUser == true">
-  <div class="message-content">{{ msg?.messageContent }}</div>
+<div class="message-session-user-container" *ngIf="sameSender == false && msg?.sessionUser == true">
+  <div class="message-session-user">
+    <div class="message-content">{{ msg?.messageContent }}</div>
+  </div>
 </div>
 
-<div class="message-session-user-same-sender" *ngIf="sameSender == true && msg?.sessionUser == true">
-  <div class="message-content">{{ msg?.messageContent }}</div>
+<div class="message-session-user-same-sender-container" *ngIf="sameSender == true && msg?.sessionUser == true">
+  <div class="message-session-user-same-sender">
+    <div class="message-content">{{ msg?.messageContent }}</div>
+  </div>
 </div>
 
 <div class="message" *ngIf="sameSender == false && msg?.sessionUser == false">
