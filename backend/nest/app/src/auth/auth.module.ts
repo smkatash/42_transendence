@@ -4,11 +4,10 @@ import { OauthStrategy } from './strategy/oauth.strategy';
 import { AuthService } from './auth.service';
 import { SessionSerializer } from './utils/serializer';
 import { UserModule } from 'src/user/user.module';
-import { RedisModule } from 'src/redis/redis.module';
-import { RedisService } from 'src/redis/redis.service';
+import { RedisSessionModule } from 'src/redis/redis-session.module';
 
 @Module({
-  imports: [forwardRef(() => UserModule), RedisModule],
+  imports: [forwardRef(() => UserModule), RedisSessionModule],
   controllers: [AuthController],
   providers: [
     OauthStrategy,

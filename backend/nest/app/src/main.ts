@@ -1,19 +1,26 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as session from 'express-session';
+import {createClient} from "redis"
+import RediStore from 'connect-redis'
 import { SESSION_SECRET } from './Constants';
 import * as passport from 'passport'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
+  let redisClient = createClient()
+  await redisClient.connect().catch(console.error)
+  
   app.use(
     session({
+    store: new RediStore({client: redisClient}),
     name: 'pong.sid',
     secret: SESSION_SECRET,
     saveUninitialized: false,
     resave: false,
     cookie: {
-      httpOnly: false
+      httpOnly: true,
+      maxAge: 900000
     }
   })
   )
