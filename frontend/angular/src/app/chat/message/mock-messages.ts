@@ -1,6 +1,6 @@
-import { message } from "./message";
+import { Message } from "./message";
 
-export const MESSAGES: message[] = [
+export const MESSAGES: Message[] = [
   { name: 'frmessin', messageContent: 'Would you like to try my pasta?', timestamp: 2, sessionUser: false},
   { name: 'frmessin', messageContent: 'Would you like to try my pasta?', timestamp: 2, sessionUser: false},
   { name: 'frmessin', messageContent: 'Would you like to try my pasta?', timestamp: 2, sessionUser: false},

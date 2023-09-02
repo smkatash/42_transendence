@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { message } from './message';
+import { Message } from './message';
 
 @Component({
   selector: 'app-message',
@@ -7,6 +7,6 @@ import { message } from './message';
   styleUrls: ['./message.component.css']
 })
 export class MessageComponent {
-  @Input() msg?: message;
+  @Input() msg?: Message;
   @Input() sameSender: boolean = false;
 }

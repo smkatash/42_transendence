@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
-import { message } from '../message/message';
+import { Message } from '../message/message';
 
 @Component({
   selector: 'app-channel-messages-content',
@@ -9,7 +9,7 @@ import { message } from '../message/message';
 export class ChannelMessagesContentComponent implements AfterViewInit{
   @ViewChild('messageContainer') messageContainer!: ElementRef;
 
-  @Input() messages?: message[];
+  @Input() messages?: Message[];
 
   ngAfterViewInit() {
     this.scrollToBottom();
@@ -18,6 +18,4 @@ export class ChannelMessagesContentComponent implements AfterViewInit{
   scrollToBottom() {
     this.messageContainer.nativeElement.scrollTop = this.messageContainer.nativeElement.scrollHeight;
   }
-
-  
 }
