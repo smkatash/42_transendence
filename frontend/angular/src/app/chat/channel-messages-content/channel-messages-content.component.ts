@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { Message } from '../message/message';
 
 @Component({
@@ -6,16 +6,32 @@ import { Message } from '../message/message';
   templateUrl: './channel-messages-content.component.html',
   styleUrls: ['./channel-messages-content.component.css']
 })
-export class ChannelMessagesContentComponent implements AfterViewInit{
+export class ChannelMessagesContentComponent {
   @ViewChild('messageContainer') messageContainer!: ElementRef;
-
   @Input() messages?: Message[];
 
-  ngAfterViewInit() {
-    this.scrollToBottom();
-  }
+  message?: string;
 
   scrollToBottom() {
     this.messageContainer.nativeElement.scrollTop = this.messageContainer.nativeElement.scrollHeight;
   }
+
+  // TODO: Get username and generate timestamp
+  sendMessage(): void{
+    if (this.message !== undefined && this.messages !== undefined) {
+      this.message = this.message.trim();
+      if (!this.message)
+        return;
+      console.log(this.message);
+      this.messages.push({
+        name: 'username',
+        messageContent: `${this.message}`,
+        timestamp: 0,
+        sessionUser: true
+      });
+      this.scrollToBottom();
+      this.message = '';
+    }
+  }
+
 }

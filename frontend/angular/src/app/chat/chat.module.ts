@@ -8,6 +8,7 @@ import { SidebarChannelComponent } from './sidebar-channel/sidebar-channel.compo
 import { CreateChannelButtonComponent } from './create-channel-button/create-channel-button.component';
 import { DefaultContentComponent } from './default-content/default-content.component';
 import { ChannelMessagesContentComponent } from './channel-messages-content/channel-messages-content.component';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { ChannelMessagesContentComponent } from './channel-messages-content/chan
   ],
   imports: [
     CommonModule,
-    ChatRoutingModule
+    ChatRoutingModule,
+    FormsModule
   ]
 })
 export class ChatModule { }

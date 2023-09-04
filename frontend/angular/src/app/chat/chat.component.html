@@ -5,7 +5,7 @@
         <div *ngFor="let channel of channels">
           <app-sidebar-channel [isSelected]="channel === selectedChannel"
                                [channel]="channel"
-                               (click)="onSelect(channel)"></app-sidebar-channel>
+                               (click)="onChannelSelect(channel)"></app-sidebar-channel>
         </div>
       </div>
       <app-create-channel-button></app-create-channel-button>

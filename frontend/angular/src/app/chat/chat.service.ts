@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, shareReplay } from 'rxjs/operators';
 import { Channel } from './sidebar-channel/channel';
+import { ChannelMessages } from './message/channel-messages';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,14 @@ export class ChatService {
     return this.http.get<Channel[]>(this.channelsUrl)
       .pipe(
         catchError(this.handleError<Channel[]>('getChannels', []))
+      );
+  }
+
+    getChannelMessages(channelId: number): Observable<ChannelMessages> {
+      const url = `api/messages/${channelId}`;
+      return this.http.get<ChannelMessages>(url)
+      .pipe(
+        catchError(this.handleError<ChannelMessages>('getChannelMessages', {id: 0, messages: []})),
       );
   }
 
