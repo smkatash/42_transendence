@@ -9,6 +9,7 @@ import { CreateChannelButtonComponent } from './create-channel-button/create-cha
 import { DefaultContentComponent } from './default-content/default-content.component';
 import { ChannelMessagesContentComponent } from './channel-messages-content/channel-messages-content.component';
 import { FormsModule } from '@angular/forms';
+import { ChannelCreationPageComponent } from './channel-creation-page/channel-creation-page.component';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { FormsModule } from '@angular/forms';
     SidebarChannelComponent,
     CreateChannelButtonComponent,
     DefaultContentComponent,
-    ChannelMessagesContentComponent
+    ChannelMessagesContentComponent,
+    ChannelCreationPageComponent
   ],
   imports: [
     CommonModule,

@@ -37,6 +37,31 @@
   }
 }
 
+.loading-screen {
+  position: absolute;
+  background-color: #4F6D7A;
+  height: 56dvh;
+  width: 100%;
+}
+
+.loader {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: .5dvh solid #4F6D7A;
+  border-top: .5dvh solid #E8DAB2;
+  border-radius: 50%;
+  width: 3dvh;
+  height: 3dvh;
+  animation: spin 2s cubic-bezier(0.075, 0.82, 0.165, 1) infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 .message-container {
   margin-top: 1.4dvh;
   padding-left: 2dvw;

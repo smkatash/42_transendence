@@ -8,12 +8,14 @@
                                (click)="onChannelSelect(channel)"></app-sidebar-channel>
         </div>
       </div>
-      <app-create-channel-button></app-create-channel-button>
+      <app-create-channel-button (createChannelEvent)="createNewChannel($event)"></app-create-channel-button>
     </div>
-    <div class="content-container">
-      <app-channel-messages-content *ngIf="selectedChannel"
-                                    [messages]="messages"></app-channel-messages-content>
-      <app-default-content *ngIf="selectedChannel === undefined"></app-default-content>
+    <div class="content-container" [ngSwitch]="contentToDisplay">
+      <app-channel-messages-content *ngSwitchCase="Content.channelSelected"
+                                    [channelId]="selectedChannel?.id"></app-channel-messages-content>
+      <app-channel-creation-page *ngSwitchCase="Content.channelCreationSelected"
+                                 [channelType]="channelToCreate"></app-channel-creation-page>
+      <app-default-content *ngSwitchDefault></app-default-content>
     </div>
   </div>
 </body>
