@@ -19,11 +19,8 @@ export class ChatComponent {
   messages: Message[] = [];
   channels: Channel[] = [];
   selectedChannel?: Channel;
-  Content: typeof Content = Content;
-  // contentToDisplay: Content = Content.noContent;
-  contentToDisplay: Content = Content.channelCreationSelected; // TODO Delete after styling
-  // channelToCreate?: ChannelCreateType;
-  channelToCreate: ChannelCreateType = ChannelCreateType.privateChannel; // TODO Delete after styling
+  channelToCreate?: ChannelCreateType;
+  // channelToCreate: ChannelCreateType = ChannelCreateType.privateChannel; // TODO Delete after styling
 
   ngOnInit(): void {
     this.getChannels();
@@ -31,16 +28,14 @@ export class ChatComponent {
 
   getChannels(): void {
     this.chatService.getChannels()
-        .subscribe((channels) => this.channels = channels);
+        .subscribe((channels: Channel[]) => this.channels = channels);
   }
 
   onChannelSelect(channel: Channel) {
-    this.contentToDisplay = Content.channelSelected;
     this.selectedChannel = channel;
   }
 
-  createNewChannel(channel: ChannelCreateType) {
-    this.contentToDisplay = Content.channelCreationSelected;
-    this.channelToCreate = channel;
+  createNewChannel(channelType: ChannelCreateType) {
+    this.channelToCreate = channelType;
   }
 }
