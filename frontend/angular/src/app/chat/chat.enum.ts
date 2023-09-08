@@ -1,5 +1,5 @@
 export enum ChannelCreateType {
-  privateChannel = 0,
+  privateChannel = 1,
   protectedChannel,
   publicChannel
 }

@@ -11,10 +11,11 @@
       <app-create-channel-button (createChannelEvent)="createNewChannel($event)"></app-create-channel-button>
     </div>
     <div class="content-container">
-      <app-channel-creation-page [channelType]="channelToCreate"></app-channel-creation-page>
+      <app-channel-creation-menu *ngIf="channelToCreate"
+                                 [channelType]="channelToCreate"></app-channel-creation-menu>
 
-      <app-channel-messages-content" *ngIf="selectedChannel"
-                                     [channelId]="selectedChannel?.id"></app-channel-messages-content>
+      <app-channel-messages-content *ngIf="selectedChannel"
+                                     [channelId]="selectedChannel.id"></app-channel-messages-content>
 
       <app-default-content *ngIf="selectedChannel === undefined"></app-default-content>
     </div>

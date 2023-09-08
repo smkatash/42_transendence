@@ -5,7 +5,7 @@ import { Channel } from './sidebar-channel/channel';
 import { ChatService } from './chat.service';
 import { Message } from './message/message';
 
-import { ChannelCreateType, Content } from './chat.enum';
+import { ChannelCreateType } from './chat.enum';
 
 @Component({
   selector: 'app-chat',
@@ -19,8 +19,8 @@ export class ChatComponent {
   messages: Message[] = [];
   channels: Channel[] = [];
   selectedChannel?: Channel;
-  channelToCreate?: ChannelCreateType;
-  // channelToCreate: ChannelCreateType = ChannelCreateType.privateChannel; // TODO Delete after styling
+  // channelToCreate?: ChannelCreateType;
+  channelToCreate?: ChannelCreateType = ChannelCreateType.privateChannel; // TODO Delete after styling
 
   ngOnInit(): void {
     this.getChannels();

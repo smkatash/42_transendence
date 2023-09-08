@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@1,6..96,700&display=swap');
+
+.channel-creation-menu-border {
+  position: absolute;
+  width: 40%;
+  height: 100%;
+  z-index: 3;
+  border: .1dvw solid #2f424a;
+  box-sizing: border-box;
+}
+
+.channel-creation-menu {
+  box-sizing: border-box;
+  background-color: #4F6D7A;
+  border: .7dvw solid #E8DAB2;
+  height: 100%;
+}
+
+.title {
+  margin: 5%;
+  color: #2f424a;
+  font-family: 'Bodoni Moda', serif;
+  font-size: 1.5dvw;
+  text-align: center;
+  justify-content: center;
+}
+
+p {
+  margin: 10%;
+  margin-top: 0%;
+  padding: 0%;
+  font-family: 'Quattrocento', serif;
+  font-weight: bolder;
+  color: #2f424a;
+  font-size: .7dvw;
+}
+
+button {
+  color: #4F6D7A;
+  background-color: #E8DAB2;
+  font-size: 1.2dvw;
+  font-family: 'Quattrocento', serif;
+  font-weight: bolder;
+  border: none;
+  cursor: pointer;
+  align-self: center;
+  justify-self: center;
+  height: 4.5dvh;
+  width: 5.5dvw;
+  border: .2dvh solid #2f424a;
+}
+
+.close {
+  position: absolute;
+  bottom: 10%;
+  left: 15%;
+}
+
+.apply {
+  position: absolute;
+  bottom: 10%;
+  right: 15%;
+}
+
+button:hover {
+  background-color: #e9d5a1;
+}
