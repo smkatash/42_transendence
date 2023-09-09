@@ -17,6 +17,7 @@ export class ChannelMessagesContentComponent implements OnChanges {
   messages: Message[] = [];
   message?: string;
   loading: boolean = false;
+  isSettingsOpen: boolean = false;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['channelId'] && this.channelId) {
@@ -53,6 +54,10 @@ export class ChannelMessagesContentComponent implements OnChanges {
       this.scrollToBottom();
       this.message = '';
     }
+  }
+
+  openSettings(): void {
+    this.isSettingsOpen = true;
   }
 
 }

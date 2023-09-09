@@ -1,20 +1,19 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ChannelCreateType } from '../chat.enum';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
-  selector: 'app-channel-creation-menu',
-  templateUrl: './channel-creation-menu.component.html',
-  styleUrls: ['./channel-creation-menu.component.css'],
+  selector: 'app-channel-messages-settings',
+  templateUrl: './channel-messages-settings.component.html',
+  styleUrls: ['./channel-messages-settings.component.css'],
   animations: [
     trigger('openClose', [
       state('open', style({
         width: '40%',
-        left: '0%'
+        right: '0%'
       })),
       state('closed', style({
         width: '40%',
-        left: '-42%'
+        right: '-42%'
       })),
       transition('open <=> closed', [
         animate('.7s cubic-bezier(.49,.07,.39,.93)'),
@@ -22,9 +21,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
     ]),
   ],
 })
-export class ChannelCreationMenuComponent {
-  ChannelCreateType: typeof ChannelCreateType = ChannelCreateType;
-  @Input() channelType?: ChannelCreateType;
+export class ChannelMessagesSettingsComponent {
   @Input() isOpen?: boolean;
   @Output() isOpenChange = new EventEmitter<boolean>;
 

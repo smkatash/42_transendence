@@ -11,8 +11,8 @@
       <app-create-channel-button (createChannelEvent)="createNewChannel($event)"></app-create-channel-button>
     </div>
     <div class="content-container">
-      <app-channel-creation-menu *ngIf="channelToCreate"
-                                 [channelType]="channelToCreate"></app-channel-creation-menu>
+      <app-channel-creation-menu [channelType]="channelToCreate"
+                                 [(isOpen)]="isChannelToCreateActive"></app-channel-creation-menu>
 
       <app-channel-messages-content *ngIf="selectedChannel"
                                      [channelId]="selectedChannel.id"></app-channel-messages-content>

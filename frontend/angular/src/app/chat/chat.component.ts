@@ -19,8 +19,8 @@ export class ChatComponent {
   messages: Message[] = [];
   channels: Channel[] = [];
   selectedChannel?: Channel;
-  // channelToCreate?: ChannelCreateType;
-  channelToCreate?: ChannelCreateType = ChannelCreateType.privateChannel; // TODO Delete after styling
+  channelToCreate?: ChannelCreateType;
+  isChannelToCreateActive: boolean = false;
 
   ngOnInit(): void {
     this.getChannels();
@@ -37,5 +37,6 @@ export class ChatComponent {
 
   createNewChannel(channelType: ChannelCreateType) {
     this.channelToCreate = channelType;
+    this.isChannelToCreateActive = true;
   }
 }
