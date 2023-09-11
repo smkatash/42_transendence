@@ -29,7 +29,6 @@
   position: absolute;
   top: 2.7dvw;
   border: 0.1dvw solid #E8DAB2;
-  border-radius: 1dvw;
   padding: 0;
   background-color: #4F6D7A;
   list-style-type: none;
@@ -75,14 +74,6 @@
   padding: 0.5dvw 1dvw;
   cursor: pointer;
   white-space: nowrap;
-}
-
-.private-channel {
-  border-radius: .8dvw .8dvw 0dvw 0dvw;
-}
-
-.public-channel {
-  border-radius: 0dvw 0dvw .8dvw .8dvw;
 }
 
 .dd-menu li:hover {

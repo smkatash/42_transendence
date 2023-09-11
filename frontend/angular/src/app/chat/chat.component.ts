@@ -3,7 +3,6 @@ import { Component } from '@angular/core';
 import { Channel } from './sidebar-channel/channel';
 
 import { ChatService } from './chat.service';
-import { Message } from './message/message';
 
 import { ChannelCreateType } from './chat.enum';
 
@@ -16,7 +15,6 @@ export class ChatComponent {
 
   constructor(private chatService: ChatService){ }
 
-  messages: Message[] = [];
   channels: Channel[] = [];
   selectedChannel?: Channel;
   channelToCreate?: ChannelCreateType;

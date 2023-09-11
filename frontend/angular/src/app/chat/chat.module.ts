@@ -11,6 +11,7 @@ import { ChannelMessagesContentComponent } from './channel-messages-content/chan
 import { FormsModule } from '@angular/forms';
 import { ChannelCreationMenuComponent } from './channel-creation-menu/channel-creation-menu.component';
 import { ChannelMessagesSettingsComponent } from './channel-messages-content/channel-messages-settings/channel-messages-settings.component';
+import { ChannelUserComponent } from './channel-messages-content/channel-messages-settings/channel-user/channel-user.component';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { ChannelMessagesSettingsComponent } from './channel-messages-content/cha
     DefaultContentComponent,
     ChannelMessagesContentComponent,
     ChannelCreationMenuComponent,
-    ChannelMessagesSettingsComponent
+    ChannelMessagesSettingsComponent,
+    ChannelUserComponent
   ],
   imports: [
     CommonModule,

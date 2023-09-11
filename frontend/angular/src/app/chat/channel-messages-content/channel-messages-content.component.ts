@@ -28,10 +28,10 @@ export class ChannelMessagesContentComponent implements OnChanges {
 
   getMessages(id: number): void {
     this.chatService.getChannelMessages(id)
-    .subscribe((messages) => {
-      this.messages = messages,
-      this.loading = false;
-    });
+      .subscribe((messages) => {
+        this.messages = messages,
+        this.loading = false;
+      });
   }
 
   scrollToBottom() {

@@ -1,5 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { ChatService } from '../../chat.service';
+import { User } from 'src/app/user';
 
 @Component({
   selector: 'app-channel-messages-settings',
@@ -21,9 +23,27 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
     ]),
   ],
 })
-export class ChannelMessagesSettingsComponent {
+export class ChannelMessagesSettingsComponent implements OnChanges{
+
+  constructor(private chatService: ChatService){ };
+
   @Input() isOpen?: boolean;
   @Output() isOpenChange = new EventEmitter<boolean>;
+  @Input() channelId?: number;
+  users: User[] = [];
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['channelId'] && this.channelId) {
+      this.getChannelUsers(this.channelId);
+    }
+  }
+
+  getChannelUsers(id: number): void{
+    this.chatService.getChannelUsers(id)
+      .subscribe((users) => {
+        this.users = users;
+      })
+  }
 
   toggle(): void {
     this.isOpen = !this.isOpen;

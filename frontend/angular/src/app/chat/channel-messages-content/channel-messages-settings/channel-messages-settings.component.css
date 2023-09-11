@@ -8,21 +8,89 @@
   box-sizing: border-box;
   filter: drop-shadow(0 .1dvw .2dvw rgba(0, 0, 0, 0.8));
   right: 0%;
+  max-height: 100%;
+  height: 100%;
 }
 
 .channel-messages-settings {
+  position: relative;
   box-sizing: border-box;
   background-color: #4F6D7A;
   border: .7dvw solid #E8DAB2;
+  max-height: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.channel-messages-settings-content {
+  height: 67%;
+  overflow: hidden;
 }
 
 .title {
   margin: 5%;
+  margin-bottom: 3%;
   color: #2f424a;
   font-family: 'Bodoni Moda', serif;
   font-size: 1.5dvw;
   text-align: center;
   justify-content: center;
+}
+
+p {
+  margin: 10%;
+  margin-bottom: 5%;
+  margin-top: 0%;
+  padding: 0%;
+  font-family: 'Quattrocento', serif;
+  font-weight: bolder;
+  color: #2f424a;
+  font-size: .7dvw;
+}
+
+label {
+  display: block;
+  margin-left: 10%;
+  margin-top: 0%;
+  font-size: 1dvw;
+  font-family: 'Quattrocento', serif;
+  font-weight: bolder;
+  color: #E8DAB2;
+}
+
+.password-field-container {
+  margin-left: 10%;
+  margin-right: 10%;
+  margin-top: 3%;
+  margin-bottom: 3%;
+  display: flex;
+}
+
+input {
+  padding: 2%;
+  width: 67.3%;
+  font-size: 0.9dvw;
+  font-family: 'Quattrocento', serif;
+  font-weight: bolder;
+  border: none;
+  border-bottom: .1dvw solid #E8DAB2;
+  border-top: .1dvw solid #425c68;
+  background-color: #425c68;
+  color: #E8DAB2;
+  outline: none;
+}
+
+.change-btn {
+  font-size: 1dvw;
+  height: 2.4dvw;
+  width: 5dvw;
+}
+
+.users-container {
+  margin: 0% 10% 7% 10%;
+  height: 100%;
+  max-height: 100%;
+  overflow: auto;
 }
 
 button {
@@ -35,7 +103,7 @@ button {
   cursor: pointer;
   align-self: center;
   justify-self: center;
-  height: 4.5dvh;
+  height: 2.3dvw;
   width: 5.5dvw;
   border: .2dvh solid #2f424a;
 }
@@ -45,11 +113,17 @@ button:hover {
 }
 
 .close {
-  margin: 0% 10% 7% 10%;
-}
-
-.apply {
-  margin: 0% 10% 7% 10%;
+  position: absolute;
+  bottom: 4%;
+  right: 10%;
   float: right;
 }
 
+.exit {
+  position: absolute;
+  bottom: 4%;
+  left: 10%;
+  color: #b04343;
+  width: 8.6dvw;
+  border: .2dvh solid #4a2f2f;
+}

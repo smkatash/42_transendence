@@ -4,6 +4,7 @@ import { Channel } from './chat/sidebar-channel/channel';
 import { ChannelMessages } from './chat/message/channel-messages';
 import { MESSAGES1, MESSAGES2 } from './chat/message/mock-messages';
 import { User } from './user';
+import { ChannelUsers } from './chat/channel-messages-content/channel-messages-settings/channel-user/channel-users';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class InMemoryDataService implements InMemoryDbService {
       { id: 6, name: '42heilbronn-global', type: 'public'},
     ];
 
+    /* id here is channel id */
     const messages: ChannelMessages[] = [
       { id: 1, messages: MESSAGES1 },
       { id: 2, messages: MESSAGES2 },
@@ -27,11 +29,13 @@ export class InMemoryDataService implements InMemoryDbService {
       { id: 5, messages: MESSAGES1 },
       { id: 6, messages: MESSAGES2 },
     ];
-    const users: User[] = [
-      { id: 1, login: 'jmaalouf'},
-      { id: 2, login: 'ktashbae'},
-      { id: 3, login: 'frmessin'},
-      { id: 4, login: 'lkrabbe'},
+
+    /* id here is channel id, and id inside users is user id */
+    const users: ChannelUsers[] = [
+      { id: 1, users: [{id: 1, login: 'jmaalouf'}, {id: 5, login: 'anotheruser'}, {id: 6, login: 'andanotheruser'}, {id: 5, login: 'anotheruser'}, {id: 6, login: 'andanotheruser'}, {id: 5, login: 'anotheruser'}, {id: 6, login: 'andanotheruser'}, {id: 5, login: 'anotheruser'}, {id: 6, login: 'andanotheruser'}, {id: 5, login: 'anotheruser'}, {id: 6, login: 'andanotheruser'}, {id: 5, login: 'anotheruser'}, {id: 6, login: 'andanotheruser'}, {id: 5, login: 'anotheruser'}, {id: 6, login: 'andanotheruser'}, {id: 5, login: 'anotheruser'}, {id: 6, login: 'andanotheruser'}, {id: 5, login: 'anotheruser'}, {id: 6, login: 'andanotheruser'}, {id: 5, login: 'anotheruser'}, {id: 6, login: 'andanotheruser'}, {id: 5, login: 'anotheruser'}, {id: 6, login: 'andanotheruser'}, {id: 5, login: 'anotheruser'}, {id: 6, login: 'andanotheruser'}, {id: 5, login: 'anotheruser'}, {id: 6, login: 'andanotheruser'}, {id: 5, login: 'anotheruser'}, {id: 6, login: 'andanotheruser'}, {id: 5, login: 'anotheruser'}, {id: 6, login: 'andanotheruser'}, {id: 5, login: 'anotheruser'}, {id: 6, login: 'andanotheruser'}]},
+      { id: 2, users: [{id: 2, login: 'ktashbae'}, {id: 5, login: 'anotheruser'}, {id: 6, login: 'andanotheruser'}]},
+      { id: 3, users: [{id: 3, login: 'frmessin'}, {id: 5, login: 'anotheruser'}, {id: 6, login: 'andanotheruser'}, {id: 6, login: 'andanotheruser'}]},
+      { id: 4, users: [{id: 4, login: 'lkrabbe'}, {id: 5, login: 'anotheruser'}, {id: 6, login: 'andanotheruser'}]},
     ];
     return {channels, messages, users};
   }

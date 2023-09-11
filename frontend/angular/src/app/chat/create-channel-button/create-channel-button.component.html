@@ -3,11 +3,11 @@
   <input type="checkbox" class="dd-input">
 
   <ul class="dd-menu">
-    <li class="private-channel" (click)="createNewChannel(ChannelCreateType.privateChannel)">Create a private channel</li>
+    <li (click)="createNewChannel(ChannelCreateType.privateChannel)">Create a private channel</li>
     <li class="divider"></li>
-    <li class="protected-channel" (click)="createNewChannel(ChannelCreateType.protectedChannel)">Create a password protected channel</li>
+    <li (click)="createNewChannel(ChannelCreateType.protectedChannel)">Create a password protected channel</li>
     <li class="divider"></li>
-    <li class="public-channel" (click)="createNewChannel(ChannelCreateType.publicChannel)">Create a public channel</li>
+    <li (click)="createNewChannel(ChannelCreateType.publicChannel)">Create a public channel</li>
   </ul>
 
 </label>
