@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { ChannelCreationMenuComponent } from './channel-creation-menu/channel-creation-menu.component';
 import { ChannelMessagesSettingsComponent } from './channel-messages-content/channel-messages-settings/channel-messages-settings.component';
 import { ChannelUserComponent } from './channel-messages-content/channel-messages-settings/channel-user/channel-user.component';
-
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -29,7 +29,8 @@ import { ChannelUserComponent } from './channel-messages-content/channel-message
   imports: [
     CommonModule,
     ChatRoutingModule,
-    FormsModule
+    FormsModule,
+    SharedModule,
   ]
 })
 export class ChatModule { }

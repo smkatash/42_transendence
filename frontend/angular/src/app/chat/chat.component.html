@@ -1,4 +1,5 @@
 <body>
+  <app-navbar></app-navbar>
   <div class="chat-interface">
     <div class="channel-container-border">
       <div class="channel-container">
@@ -15,7 +16,7 @@
                                  [(isOpen)]="isChannelToCreateActive"></app-channel-creation-menu>
 
       <app-channel-messages-content *ngIf="selectedChannel"
-                                     [channelId]="selectedChannel.id"></app-channel-messages-content>
+                                    [channelId]="selectedChannel.id"></app-channel-messages-content>
 
       <app-default-content *ngIf="selectedChannel === undefined"></app-default-content>
     </div>
