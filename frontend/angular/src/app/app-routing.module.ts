@@ -6,7 +6,8 @@ const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'chat', loadChildren: () => import('./chat/chat.module').then(m => m.ChatModule) },
-  { path: 'game', loadChildren: () => import('./game/game.module').then(m => m.GameModule) }
+  { path: 'game', loadChildren: () => import('./game/game.module').then(m => m.GameModule) },
+  { path: 'my-profile', loadChildren: () => import('./my-profile/my-profile.module').then(m => m.MyProfileModule) },
 ];
 
 @NgModule({

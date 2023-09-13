@@ -8,10 +8,6 @@ body {
   height: 77%;
   margin: auto;
   display: flex;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 
 .channel-container-border {
