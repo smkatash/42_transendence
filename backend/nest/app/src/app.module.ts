@@ -9,6 +9,7 @@ import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_TYPE, DB_USERNAME, REDIS_HOS
 import { UserModule } from './user/user.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { GameModule } from './game/game.module';
+import { Match } from './game/entities/match.entity';
 
 
 @Module({
@@ -30,7 +31,7 @@ import { GameModule } from './game/game.module';
       username: DB_USERNAME,
       password: DB_PASSWORD,
       database: DB_NAME,
-      entities: [User],
+      entities: [User, Match],
       synchronize: true
     }),
     GameModule,

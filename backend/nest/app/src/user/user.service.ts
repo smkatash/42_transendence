@@ -14,7 +14,6 @@ export class UserService {
       return this.userRepo.findOneBy({id})
     }
     
-
     async saveValidUser(user: User) {
       const validate_error = await validate(user);
       if (validate_error.length > 0) {

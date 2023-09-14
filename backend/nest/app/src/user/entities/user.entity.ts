@@ -1,5 +1,6 @@
-import { BeforeInsert, Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryColumn} from "typeorm";
 import { Status } from "../utils/status.dto";
+import { Socket } from "socket.io";
 
 
 @Entity({name: 'users'})
