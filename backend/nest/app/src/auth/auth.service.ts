@@ -3,6 +3,7 @@ import { User } from 'src/user/entities/user.entity';
 import { AuthUserDto } from 'src/auth/utils/auth.user.dto';
 
 import { UserService } from '../user/user.service';
+import { Status } from 'src/user/utils/status.dto';
 
 
 
@@ -27,7 +28,7 @@ export class AuthService {
         return await this.userService.getUserById(id)
     }
 
-    async updateUserStatus(id: string, status: boolean) {
+    async updateUserStatus(id: string, status: Status) {
         return await this.userService.updateUserStatus(id, status)
     }
 

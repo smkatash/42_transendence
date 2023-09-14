@@ -7,6 +7,7 @@ import { User } from 'src/user/entities/user.entity';
 import { SessionGuard } from './guard/auth.guard';
 import { GetSession, SessionParams } from './utils/get-session';
 import { RedisSessionService } from 'src/redis/redis-session.service';
+import { Status } from 'src/user/utils/status.dto';
 
 @Controller('42auth')
 export class AuthController {
@@ -25,7 +26,7 @@ export class AuthController {
     @UseGuards(OauthGuard)
     async handleRedirect(@GetUser() user: User,  @GetSession() session: SessionParams , @Res({ passthrough: true }) res: Response) {
         if (user) {
-            await this.authService.updateUserStatus(user.id, true)
+            await this.authService.updateUserStatus(user.id, Status.ONLINE)
             await this.redisSessionService.storeSession(session.id, session.session)
             res.status(302).redirect('/42auth/test');
         }
@@ -46,7 +47,7 @@ export class AuthController {
     @Get('logout')
     @UseGuards(SessionGuard)
     async handleLogOut(@GetUser() user: User, @GetSession() session: SessionParams, @Res() res: Response) {
-        await this.authService.updateUserStatus(user.id, false)
+        await this.authService.updateUserStatus(user.id, Status.OFFLINE)
         this.redisSessionService.deleteSession(session.id)
         res.clearCookie('pong.sid')
         res.redirect('/')

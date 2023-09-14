@@ -6,6 +6,7 @@ import { AuthService } from "../auth.service";
 import { AuthUserDto } from "../utils/auth.user.dto";
 import { Profile } from "../utils/profile";
 import { User } from "src/user/entities/user.entity";
+import { Status } from "src/user/utils/status.dto";
 
 @Injectable()
 export class OauthStrategy extends PassportStrategy(Strategy, '42') {
@@ -33,7 +34,7 @@ export class OauthStrategy extends PassportStrategy(Strategy, '42') {
             username: profile.login,
             email: profile.email,
             avatar: profile.image_url,
-            status: true
+            status: Status.ONLINE
         }
         console.log(authUserDto)
         const user = await this.authService.validateUser(authUserDto)

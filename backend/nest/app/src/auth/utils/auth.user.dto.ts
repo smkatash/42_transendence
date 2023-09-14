@@ -1,4 +1,5 @@
-import { IsBoolean, IsString} from "class-validator"
+import { IsBoolean, IsEnum, IsString} from "class-validator"
+import { Status } from "src/user/utils/status.dto"
 
 
 export class AuthUserDto {
@@ -10,6 +11,6 @@ export class AuthUserDto {
     email: string
     @IsString()
     avatar: string
-    @IsBoolean()
-    status: boolean
+    @IsEnum(Status)
+    status: Status
 }

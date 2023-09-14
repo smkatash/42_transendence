@@ -5,9 +5,10 @@ import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entities/user.entity';
 import { PassportModule } from '@nestjs/passport';
-import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_TYPE, DB_USERNAME, REDIS_HOST, REDIS_PASSWORD, REDIS_PORT, SESSION_SECRET } from './Constants';
+import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_TYPE, DB_USERNAME, REDIS_HOST, REDIS_PASSWORD, REDIS_PORT } from './Constants';
 import { UserModule } from './user/user.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { GameModule } from './game/game.module';
 
 
 @Module({
@@ -32,6 +33,7 @@ import { RedisModule } from '@liaoliaots/nestjs-redis';
       entities: [User],
       synchronize: true
     }),
+    GameModule,
   ],
   controllers: [AppController],
   providers: [AppService],

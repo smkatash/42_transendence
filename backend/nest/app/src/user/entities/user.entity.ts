@@ -1,4 +1,5 @@
 import { BeforeInsert, Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Status } from "../utils/status.dto";
 
 
 @Entity({name: 'users'})
@@ -6,7 +7,7 @@ export class User {
     @PrimaryColumn({unique: true})
     id: string
     
-    @Column()
+    @Column({unique: true})
     username: string
     
     @Column()
@@ -15,6 +16,6 @@ export class User {
     @Column()
     avatar: string
 
-    @Column()
-    status: boolean
+    @Column({ default: Status.OFFLINE})
+    status: Status
 }

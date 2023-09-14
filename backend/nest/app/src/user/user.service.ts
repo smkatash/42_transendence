@@ -4,6 +4,7 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { AuthUserDto } from 'src/auth/utils/auth.user.dto';
 import { validate } from 'class-validator';
+import { Status } from './utils/status.dto';
 
 @Injectable()
 export class UserService {
@@ -23,13 +24,11 @@ export class UserService {
     }
 
     async createUser(newUser: AuthUserDto): Promise<User> {
-      console.log('Creating a new user')
-      console.log(newUser)
       const user = this.userRepo.create(newUser)
       return this.userRepo.save(user)
     }
 
-    async updateUserStatus(id: string, status: boolean) {
+    async updateUserStatus(id: string, status: Status) {
         const user = await this.getUserById(id)
         user.status = status;
         return this.saveValidUser(user)
