@@ -14,6 +14,6 @@ import { RedisSessionModule } from 'src/redis/redis-session.module';
     SessionSerializer, {
     provide: 'AUTH_SERVICE',
     useClass: AuthService,
-  }],
+  }]
 })
 export class AuthModule {}

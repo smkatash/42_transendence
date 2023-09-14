@@ -31,6 +31,5 @@ export class AuthService {
     async updateUserStatus(id: string, status: Status) {
         return await this.userService.updateUserStatus(id, status)
     }
-
     
 }
