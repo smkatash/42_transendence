@@ -45,13 +45,19 @@ export class MatchService {
 
         if (players.length === 2) {
             newMatch = await this.createMatch(players)
+           players.forEach(async player => {
+                await this.removerPlayerinQueue(player)
+            })
+            players = await this.getPlayersInQueue()
+            console.log('after delete ' + JSON.stringify(players))
         } else if (players.length > 2) {
             const playersSelected = this.getRandomPlayers(players, 2)
             newMatch =  await this.createMatch(playersSelected)
-            playersSelected.forEach(player => {
-                this.removerPlayerinQueue(player)
+            playersSelected.forEach(async player => {
+                await this.removerPlayerinQueue(player)
             })
         }
+        console.log('Match ' + JSON.stringify(newMatch))
         return newMatch
     }
 
@@ -79,9 +85,11 @@ export class MatchService {
     async setStatusInQueue(player: Player): Promise<Map<GameStatus, Player[]>> {
        let players = await this.getPlayersInQueue()
        if (players.length < 2) {
+           console.log('Adding to queue ' + players.length)
            await this.addPlayerToQueue(player)
            players = await this.getPlayersInQueue()
        }
+       console.log('Length ' + players.length)
        const status = players.length < 2 ? GameStatus.WAITING : GameStatus.START
        return new Map([[status, players]])
     }
@@ -89,12 +97,17 @@ export class MatchService {
 
     async addPlayerToQueue(player: Player) {
         const queue = await this.getQueue()
-        this.playerService.updatePlayerQueue(player, queue)
+        if (!queue.players) {
+            queue.players = [player]
+        } else {
+            queue.players.push(player)
+        }
+        await this.queueRepo.save(queue)
+        await this.playerService.updatePlayerQueue(player, queue)
     }
 
     async removerPlayerinQueue(player: Player) {
-        const queue = await this.getQueue()
-        this.playerService.updatePlayerQueue(player, null )
+        return this.playerService.updatePlayerQueue(player, null)
     }
 
     async getPlayersInQueue(): Promise<Player[]> {
@@ -103,14 +116,27 @@ export class MatchService {
             if (queue) {
                 return this.playerService.getPlayersByQueue(queue)
             }
-            throw new InternalServerErrorException()
         } catch (error) {
             throw new InternalServerErrorException(error)
         }
     }
 
     async getQueue(): Promise<Queue> {
-        return this.queueRepo.findOneBy({id: this.queueId})
+        let queue = await this.queueRepo.findOneBy({id: this.queueId})
+        if (!queue) {
+            console.log('Created new queue')
+            queue = await this.createQueue()
+        }
+        return queue
     }
+
+    createQueue(): Promise<Queue> {
+        const newQueue = this.queueRepo.create({
+            id: this.queueId,
+            players: null
+        })
+        return this.queueRepo.save(newQueue)
+    }
+
 
 }

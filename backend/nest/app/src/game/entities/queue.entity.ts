@@ -7,9 +7,8 @@ export class Queue {
   @PrimaryColumn({default: 'fifo'})
   id: string
 
-  @OneToMany(() => Player, (player) => player.queue)
-  @JoinColumn()
-  player: Player
+  @OneToMany(() => Player, (player) => player.queue, { nullable: true })
+  players: Player[]
 
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   joinTime: Date

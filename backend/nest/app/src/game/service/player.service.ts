@@ -11,11 +11,11 @@ import { Queue } from '../entities/queue.entity';
 export class PlayerService {
     constructor(@InjectRepository(Player) private playerRepo: Repository<Player>) {}
 
-    createPlayer(user: User, client: Socket): Promise<Player> {
+    createPlayer(user: User, clientId: string): Promise<Player> {
         const newPlayer: Player = {
             id: user.id,
             user: user,
-            clientId: client.id,
+            clientId: clientId,
             matches: [],
             queue: null
         }
@@ -36,14 +36,14 @@ export class PlayerService {
         return this.playerRepo.save(player);
       }
 
-    async updatePlayerClient(id: string, client: Socket) {
+    async updatePlayerClient(id: string, clientId: string) {
         const player = await this.getPlayerById(id)
-        player.clientId = client.id
+        player.clientId = clientId
         return this.saveValidPlayer(player)
     }
 
 
-    async updatePlayerQueue(player: Player, queue: Queue) {
+    async updatePlayerQueue(player: Player, queue: Queue | null) {
         player.queue = queue
         return this.saveValidPlayer(player)
     }
@@ -51,13 +51,9 @@ export class PlayerService {
     async getPlayersByQueue(queue: Queue): Promise<Player[]>{
         const players = await this.playerRepo.find({
             where: {
-              queue: queue,
-            },
+                queue: queue
+            }
         })
-
         return players
     }
-
-
-
 }

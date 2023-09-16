@@ -7,7 +7,7 @@ import { Status } from 'src/user/utils/status.dto';
 import { MatchService } from './service/match.service';
 import { Player } from './entities/player.entity';
 import { PlayerService } from './service/player.service';
-import { GameStatus, MessageMatch } from './utls/game';
+import { GameStatus, MessageMatch} from './utls/game';
 
 @WebSocketGateway({ namespace: 'game' })
 export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -26,12 +26,14 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   async handleConnection(@ConnectedSocket() client: Socket, ...args: any[]) {
     this.logger.log(`Client id: ${client.id} connected`);
       //const userId = await this.authService.getUserSession(client)
-      const user: Partial<User> =  {"id":"99637","username":"ktashbae","status":1}
+      let user: User =  {"id":"99637","username":"ktashbae","status": 1, "avatar" : "test", "email": "test@email.com"}
       if (!user) {
         return client.disconnect()
       }
-
-      await this.userService.updateUserStatus(user.id, Status.GAME)
+      user = await this.userService.updateUserStatus(user.id, Status.GAME)
+      //const player = await this.playerService.createPlayer(user, client.id)
+      // TODO to verify new player
+      const player = await this.playerService.updatePlayerClient(user.id, client.id)
 
       client.data.user = user
       client.emit('user', { user })
@@ -51,25 +53,37 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('start')
   async startMatch(@ConnectedSocket() client: Socket) {
+    this.logger.debug(client.data.user.id)
     const currentPlayer = await this.playerService.getPlayerById(client.data.user.id)
-
     if (currentPlayer) {
+      this.logger.debug('getting queue')
       const playersStatus = await this.matchService.setStatusInQueue(currentPlayer)
-      if (playersStatus.has(GameStatus.WAITING)) {
-        const waitingPlayers = playersStatus.get(GameStatus.WAITING) || []
-        this.emitMessageToPlayers(waitingPlayers, 'start' , { message: 'Waiting players to join' })
-      } else {
-        const playersToStart = playersStatus.get(GameStatus.START) || []
-        const match = await this.matchService.makeAmatch(playersToStart)
-        this.emitMessageToPlayers(match.players, 'start', {
-          message: 'Ready to start',
-          matchId: match.id
-        })
+      const playersInQueue = playersStatus.has(GameStatus.WAITING) ? playersStatus.get(GameStatus.WAITING) : []
+      const playersToPlay = playersStatus.has(GameStatus.START) ? playersStatus.get(GameStatus.START) : []
 
-        const playersToWait = playersToStart.filter(player => !match.players.includes(player))
-        this.emitMessageToPlayers(playersToWait, 'start',  { message: 'Waiting players to join' })
+      this.logger.debug(JSON.stringify(playersInQueue))
+      this.logger.debug(JSON.stringify(playersToPlay))
+      this.logger.debug(JSON.stringify(currentPlayer))
+      if (playersInQueue && playersInQueue.some((player) => player.clientId === currentPlayer.clientId)) {
+        this.logger.debug('players waiting')
+        this.emitMessageToPlayers(client, 'start' , { message: 'Waiting players to join' })
+      } else if (playersToPlay && playersToPlay.some((player) => player.clientId === currentPlayer.clientId)) {
+        const match = await this.matchService.makeAmatch(playersToPlay)
+
+        if (match.players.some((player) => player.clientId === currentPlayer.clientId)) {
+          this.emitMessageToPlayers(client, 'start', {
+            message: 'Ready to start',
+            matchId: match.id
+          })
+        } else {
+          this.emitMessageToPlayers(client, 'start',  { message: 'Waiting players to join' })
+        } 
+      } else {
+        this.logger.debug('player not found')
+        throw new InternalServerErrorException()
       }
     } else {
+      this.logger.debug('player not found')
       throw new InternalServerErrorException()
     }
   }
@@ -84,18 +98,9 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
 
 
-  private emitMessageToPlayers(players: Player[], event: string, message: Object | MessageMatch): void {
-    for (const player of players) {
-      const playerSocket: Socket = this.server.sockets[player.clientId];
-    
-      if (playerSocket) {
-        playerSocket.emit(event, message);
-      } else {
-        throw new InternalServerErrorException('Socket not found');
-      }
-    }
+  private emitMessageToPlayers(client: Socket, event: string, message: Object | MessageMatch): void {
+        client.emit(event, message)
   }
 
-  
 
 }

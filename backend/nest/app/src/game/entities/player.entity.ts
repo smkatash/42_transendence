@@ -19,6 +19,7 @@ export class Player {
     @ManyToMany(() => Match, (match) => match.players, { nullable: true})
     matches: Match[] | []
 
-    @ManyToOne(() => Queue, { nullable: true })
+    @ManyToOne(() => Queue, (queue) => queue.players, { nullable: true })
+    @JoinColumn()
     queue: Queue
 }

@@ -1,17 +1,17 @@
-import { User } from "src/user/entities/user.entity";
-import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryColumn } from "typeorm";
 import { GameStatus } from "../utls/game";
 import { Player } from "./player.entity";
 
 @Entity({name: 'match'})
 export class Match {
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn({unique: true})
     id: string
 
     @Column({default: GameStatus.WAITING})
     status: GameStatus
 
     @ManyToMany(() => Player, (player) => player.matches, {nullable: true})
+    @JoinTable()
     players: Player[]
 
     @ManyToMany(() => Player, (player) => player.matches, {nullable: true})
@@ -23,6 +23,6 @@ export class Match {
     @ManyToOne(() => Player, { nullable: true })
     looser: Player
 
-    @Column({ type: 'jsonb', nullable: true })
-    scores: Record<string, number>;
+    @Column({ type: 'jsonb', nullable: true, default: null })
+    scores: Record<string, number>
 }
