@@ -4,8 +4,10 @@ import { Server, Socket } from 'socket.io';
 import { UserService } from '../user/user.service';
 import { User } from 'src/user/entities/user.entity';
 import { Status } from 'src/user/utils/status.dto';
-import { Player } from './utls/game';
 import { MatchService } from './service/match.service';
+import { Player } from './entities/player.entity';
+import { PlayerService } from './service/player.service';
+import { GameStatus, MessageMatch } from './utls/game';
 
 @WebSocketGateway({ namespace: 'game' })
 export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -14,6 +16,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   server: Server
 
   constructor(private readonly userService: UserService,
+              private readonly playerService: PlayerService,
               private readonly matchService: MatchService) {}
 
   afterInit() {
@@ -46,19 +49,53 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
 
+  @SubscribeMessage('start')
+  async startMatch(@ConnectedSocket() client: Socket) {
+    const currentPlayer = await this.playerService.getPlayerById(client.data.user.id)
 
-  @SubscribeMessage('match')
-  async joinMatch(@ConnectedSocket() client: Socket, matchId?: string): Promise<void> {
-    const match = await this.matchService.getCurrentMatch(matchId)
-    const currentUser = await this.userService.getUserById(client.data.user.id)
-    
-    if (match && currentUser) {
-      const player: Player = {
-        user: currentUser,
-        client: client
+    if (currentPlayer) {
+      const playersStatus = await this.matchService.setStatusInQueue(currentPlayer)
+      if (playersStatus.has(GameStatus.WAITING)) {
+        const waitingPlayers = playersStatus.get(GameStatus.WAITING) || []
+        this.emitMessageToPlayers(waitingPlayers, 'start' , { message: 'Waiting players to join' })
+      } else {
+        const playersToStart = playersStatus.get(GameStatus.START) || []
+        const match = await this.matchService.makeAmatch(playersToStart)
+        this.emitMessageToPlayers(match.players, 'start', {
+          message: 'Ready to start',
+          matchId: match.id
+        })
+
+        const playersToWait = playersToStart.filter(player => !match.players.includes(player))
+        this.emitMessageToPlayers(playersToWait, 'start',  { message: 'Waiting players to join' })
       }
-      await this.matchService.joinMatch(player, match)
+    } else {
+      throw new InternalServerErrorException()
     }
-    throw new InternalServerErrorException()
   }
+
+  @SubscribeMessage('join')
+  async joinMatch(@ConnectedSocket() client: Socket, @MessageBody() data: string) {
+    if (data) {
+    }
+
+  }
+
+
+
+
+  private emitMessageToPlayers(players: Player[], event: string, message: Object | MessageMatch): void {
+    for (const player of players) {
+      const playerSocket: Socket = this.server.sockets[player.clientId];
+    
+      if (playerSocket) {
+        playerSocket.emit(event, message);
+      } else {
+        throw new InternalServerErrorException('Socket not found');
+      }
+    }
+  }
+
+  
+
 }

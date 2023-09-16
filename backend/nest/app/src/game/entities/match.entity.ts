@@ -1,8 +1,9 @@
 import { User } from "src/user/entities/user.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { GameStatus, Player } from "../utls/game";
+import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { GameStatus } from "../utls/game";
+import { Player } from "./player.entity";
 
-@Entity({name: 'game'})
+@Entity({name: 'match'})
 export class Match {
     @PrimaryGeneratedColumn()
     id: string
@@ -10,17 +11,17 @@ export class Match {
     @Column({default: GameStatus.WAITING})
     status: GameStatus
 
-    @Column({ type: 'text', array: true, nullable: true })
-    players: string[]
+    @ManyToMany(() => Player, (player) => player.matches, {nullable: true})
+    players: Player[]
 
-    @Column({ type: 'text', array: true, nullable: true })
-    observers: string[]
+    @ManyToMany(() => Player, (player) => player.matches, {nullable: true})
+    observers: Player[]
     
-    @ManyToOne(() => User, { nullable: true })
-    winner: User
+    @ManyToOne(() => Player, { nullable: true })
+    winner: Player
     
-    @ManyToOne(() => User, { nullable: true })
-    looser: User
+    @ManyToOne(() => Player, { nullable: true })
+    looser: Player
 
     @Column({ type: 'jsonb', nullable: true })
     scores: Record<string, number>;

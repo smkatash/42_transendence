@@ -5,10 +5,12 @@ import { Repository } from 'typeorm';
 import { AuthUserDto } from 'src/auth/utils/auth.user.dto';
 import { validate } from 'class-validator';
 import { Status } from './utils/status.dto';
+import { Player } from 'src/game/entities/player.entity';
 
 @Injectable()
 export class UserService {
-    constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
+    constructor(@InjectRepository(User) private userRepo: Repository<User>,
+                @InjectRepository(Player) private playerRepo: Repository<Player>) {}
 
     async getUserById(id: string): Promise<User> {
       return this.userRepo.findOneBy({id})
@@ -38,7 +40,5 @@ export class UserService {
       user.avatar = image
       return this.saveValidUser(user)
     }
-
-
 
 }

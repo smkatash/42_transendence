@@ -19,21 +19,26 @@ export enum GameStatus {
   END
 }
 
-export interface Game {
-  id: string
-  status: GameStatus
-  players: Array<Player>
-  clients?: Array<Socket>
-  ball: Ball
-  speed: number
-}
+// export interface Game {
+//   id: string
+//   status: GameStatus
+//   players: Array<Player>
+//   clients?: Array<Socket>
+//   ball: Ball
+//   speed: number
+// }
 
-export interface Player {
-  user: User
-  client: Socket
-}
+// export interface Player {
+//   user: User
+//   client: Socket
+// }
 
 export enum PlayerType {
   OBSERVER = 0,
   GAMER
+}
+
+export interface MessageMatch {
+  message: string
+  matchId: string | undefined
 }
