@@ -1,5 +1,6 @@
 import { Socket } from 'socket.io';
 import { User } from 'src/user/entities/user.entity';
+import { Player } from '../entities/player.entity';
 
 export interface Position {
     x: number
@@ -11,9 +12,10 @@ interface Ball {
     speed: number
 }
 
-export enum GameStatus {
+export enum GameState {
   PAUSE = 0,
-  WAITING,
+  INQUEUE,
+  READY,
   START,
   INPROGRESS,
   END
@@ -21,7 +23,7 @@ export enum GameStatus {
 
 // export interface Game {
 //   id: string
-//   status: GameStatus
+//   status: GameState
 //   players: Array<Player>
 //   clients?: Array<Socket>
 //   ball: Ball
@@ -41,4 +43,5 @@ export enum PlayerType {
 export interface MessageMatch {
   message: string
   matchId: string | undefined
+  player: Player | undefined
 }

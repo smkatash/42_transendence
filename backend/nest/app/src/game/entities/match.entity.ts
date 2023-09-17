@@ -1,5 +1,5 @@
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryColumn } from "typeorm";
-import { GameStatus } from "../utls/game";
+import { GameState } from "../utls/game";
 import { Player } from "./player.entity";
 
 @Entity({name: 'match'})
@@ -7,8 +7,8 @@ export class Match {
     @PrimaryColumn({unique: true})
     id: string
 
-    @Column({default: GameStatus.WAITING})
-    status: GameStatus
+    @Column({default: GameState.INQUEUE})
+    status: GameState
 
     @ManyToMany(() => Player, (player) => player.matches, {nullable: true})
     @JoinTable()
