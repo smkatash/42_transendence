@@ -12,6 +12,11 @@ import { GameModule } from './game/game.module';
 import { Match } from './game/entities/match.entity';
 import { Player } from './game/entities/player.entity';
 import { Queue } from './game/entities/queue.entity';
+import { ChannelModule } from './channel/channel.module';
+import { ChannelUserModule } from './channel_user/channel_user.module';
+import { ChannelMessageModule } from './channel_message/channel_message.module';
+import { BlockListModule } from './block_list/block_list.module';
+import { FriendListModule } from './friend_list/friend_list.module';
 
 
 @Module({
@@ -37,6 +42,11 @@ import { Queue } from './game/entities/queue.entity';
       synchronize: true
     }),
     GameModule,
+    ChannelModule,
+    ChannelUserModule,
+    ChannelMessageModule,
+    BlockListModule,
+    FriendListModule,
   ],
   controllers: [AppController],
   providers: [AppService],
