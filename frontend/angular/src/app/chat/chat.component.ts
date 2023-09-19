@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 
-import { Channel } from './sidebar-channel/channel';
-
 import { ChatService } from './chat.service';
 
 import { ChannelCreateType } from './chat.enum';
+import { Channel } from '../entities.interface';
 
 @Component({
   selector: 'app-chat',

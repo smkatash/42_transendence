@@ -1,0 +1,215 @@
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@1,6..96,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quattrocento:wght@700&display=swap');
+@import url('https://db.onlinewebfonts.com/c/eaa110aa369eee0cf5c29493c362bbef?family=Bodoni+MT+Poster+Compressed+V2');
+
+body {
+  background-color: #4F6D7A;
+  position: relative;
+}
+
+.profile-interface {
+  width: 80%;
+  height: 77%;
+  margin: auto;
+  display: flex;
+}
+
+/************************* User info *************************/
+
+.info-container {
+  width: 30%;
+  border: .7dvw solid #E8DAB2;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+}
+
+.profile-pic {
+  display: flex;
+  justify-content: center;
+  margin-top: 10%;
+}
+
+.profile-pic img {
+  border: .2dvw solid #2f424a;
+  border-radius: 50%;
+  clip-path: circle();
+  background-size: cover;
+  height: 12dvw;
+  width: 12dvw;
+}
+
+.username {
+  margin: 0%;
+  margin-top: 3%;
+  font-family: 'Bodoni Moda', serif;
+  font-size: 3dvw;
+  color: #E8DAB2;
+}
+
+.title {
+  margin: 0% 0%;
+  font-family: 'Bodoni Moda', serif;
+  font-size: 1.5dvw;
+  color: #2f424a;
+}
+
+.status {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  margin-top: 3%;
+}
+
+.status .dot {
+  height: 1dvw;
+  width: 1dvw;
+  background-color: #618B4A;
+  border-radius: 50%;
+}
+.status h2 {
+  margin: 0%;
+  margin-left: 2%;
+  font-family: 'Quattrocento', serif;
+  font-weight: bolder;
+  font-size: 1.2dvw;
+  color: #E8DAB2;
+}
+
+.add-friend {
+  margin-top: 3%;
+  color: #4F6D7A;
+  background-color: #E8DAB2;
+  font-size: 1dvw;
+  font-family: 'Quattrocento', serif;
+  font-weight: bolder;
+  border: none;
+  cursor: pointer;
+  align-self: center;
+  justify-self: center;
+  height: 4dvh;
+  width: 8dvw;
+}
+
+.add-friend:hover {
+  background-color: #e9d5a1;
+}
+
+/************************* Stats *************************/
+
+.stats-container h1 {
+  margin: 0;
+  padding: 0;
+  height: 10%;
+  margin-top: 5%;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  font-family: 'Bodoni Moda', serif;
+  font-size: 1.5dvw;
+  color: #E8DAB2;
+}
+
+.stats-container h2 {
+  margin: 0;
+  padding: 0;
+  align-self: center;
+  width: 80%;
+  max-width: 80%;
+  display: flex;
+  justify-content: center;
+  font-family: "Bodoni MT Poster Compressed V2";
+  font-size: 13dvw;
+  font-weight: normal;
+  color: #2f424a;
+}
+
+.stats-container {
+  margin-left: 1%;
+  width: 70%;
+  border: .7dvw solid #E8DAB2;
+  display: flex;
+  flex-flow: column;
+}
+
+.upper-row {
+  border-bottom: .35dvw solid #E8DAB2;
+  height: 50%;
+  display: flex;
+  align-items: center;
+}
+
+.bottom-row {
+  border-top: .35dvw solid #E8DAB2;
+  height: 50%;
+  display: flex;
+  align-items: center;
+}
+
+.level {
+  width: 30%;
+  height: 100%;
+  border-right: .7dvw solid #E8DAB2;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.wins-losses {
+  width: 40%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #2f424a;
+}
+
+.wins-losses h1, .wins-losses h2 {
+  color: #E8DAB2;
+}
+
+.matches-played {
+  width: 30%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border-left: .7dvw solid #E8DAB2;
+}
+
+.friends {
+  width: 50%;
+  height: 100%;
+  border-right: .7dvw solid #E8DAB2;
+}
+
+.friends .wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #E8DAB2;
+  border: .7dvw solid #4F6D7A;
+  box-sizing: border-box;
+}
+
+.friends .wrapper h1 {
+  color: #2f424a;
+}
+
+.match-history {
+  width: 50%;
+  height: 100%;
+}
+
+.match-history .wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #2f424a;
+  border: .7dvw solid #4F6D7A;
+  box-sizing: border-box;
+}
+
+.friends-container {
+  margin: 1dvw 2dvw 2dvw 2dvw;
+  overflow: auto;
+}

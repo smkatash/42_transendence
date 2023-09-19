@@ -97,7 +97,7 @@
   border: 0.1dvw solid #E8DAB2;
   border-bottom: none;
   padding: 0;
-  background-color: #4F6D7A;
+  background-color: #2f424a;
   list-style-type: none;
   z-index: 1;
 }
@@ -115,5 +115,5 @@
 
 .dd-menu li:hover {
   background-color: #E8DAB2;
-  color: #4F6D7A;
+  color: #2f424a;
 }

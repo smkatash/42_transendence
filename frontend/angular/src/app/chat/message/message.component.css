@@ -17,6 +17,7 @@
   border-radius: 1.5dvw 0dvw 1.5dvw 1.5dvw;
   line-height: 1.5;
   word-wrap: break-word;
+  max-width: 92.3%;
 }
 
 .message-session-user-same-sender-container {
@@ -36,6 +37,7 @@
   border-radius: 1.5dvw 1.5dvw 1.5dvw 1.5dvw;
   line-height: 1.5;
   word-wrap: break-word;
+  max-width: 92.3%;
 }
 
 .message {

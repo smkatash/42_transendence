@@ -7,6 +7,6 @@ import { Channel } from './channel';
   styleUrls: ['./sidebar-channel.component.css']
 })
 export class SidebarChannelComponent {
-  @Input() channel?: Channel;
-  @Input() isSelected = false;
+  @Input() channel?: Channel
+  @Input() isSelected = false
 }

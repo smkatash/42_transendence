@@ -1,12 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { catchError, map, mergeMap, shareReplay } from 'rxjs/operators';
-import { Channel } from './sidebar-channel/channel';
-import { ChannelMessages } from './message/channel-messages';
-import { Message } from './message/message';
-import { User } from '../user';
-import { ChannelUsers } from './channel-messages-content/channel-messages-settings/channel-user/channel-users';
+import { catchError, map } from 'rxjs/operators';
+import { Channel, ChannelMessages, ChannelUsers, Message, User } from '../entities.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -14,26 +10,26 @@ import { ChannelUsers } from './channel-messages-content/channel-messages-settin
 export class ChatService {
   constructor(private http: HttpClient) { }
 
-  private channelsUrl = 'api/channels';
   getChannels(): Observable<Channel[]> {
-    return this.http.get<Channel[]>(this.channelsUrl)
+    const url = 'api/channels';
+    return this.http.get<Channel[]>(url)
       .pipe(
         catchError(this.handleError<Channel[]>('getChannels', []))
-        );
+        )
       }
 
   getChannelMessages(channelId: number): Observable<Message[]> {
     const url = `api/messages/${channelId}`;
     return this.http.get<ChannelMessages>(url)
-    .pipe(
-      catchError(this.handleError<ChannelMessages>('getChannelMessages', {id: 0, messages: []})),
-      map((channelMessages: ChannelMessages) => channelMessages.messages)
-      );
+      .pipe(
+        catchError(this.handleError<ChannelMessages>('getChannelMessages', {id: 0, messages: []})),
+        map((channelMessages: ChannelMessages) => channelMessages.messages)
+        )
     }
 
-    getChannelUsers(channelId: number): Observable<User[]> {
-      const url = `api/users/${channelId}`;
-      return this.http.get<ChannelUsers>(url)
+  getChannelUsers(channelId: number): Observable<User[]> {
+    const url = `api/channelUsers/${channelId}`;
+    return this.http.get<ChannelUsers>(url)
       .pipe(
         catchError(this.handleError<ChannelUsers>('getChannelUsers', {id: 0, users: []})),
         map((channelUsers: ChannelUsers) => channelUsers.users)

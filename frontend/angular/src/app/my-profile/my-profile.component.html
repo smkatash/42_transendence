@@ -1,0 +1,67 @@
+<body>
+  <app-navbar></app-navbar>
+  <!-- Wrapper for all the profile -->
+  <div class="profile-interface">
+
+    <!-- Wrapper for the left info box containing picture and name etc... -->
+    <div class="info-container">
+      <div class="profile-pic"><img src="http://placekitten.com/1500/1500"></div>
+      <h1 class="username">{{ profile?.login }}</h1>
+      <h2 class="title">{{ profile?.title }}</h2>
+
+      <!-- These should be hidden if the user is the user of the session -->
+      <div class="status">
+        <div class="dot"></div>
+        <h2>{{ profile?.status }}</h2> <!-- TODO: Make style change based on status -->
+      </div>
+      <button class="add-friend">Add friend</button>
+
+    </div>
+
+    <!-- Wrapper for the right container containing all the stats boxes -->
+    <div class="stats-container">
+
+      <div class="upper-row">
+        <div class="level">
+          <h1>Rank:</h1>
+          <h2>{{ profile?.rank }}</h2>
+        </div>
+
+        <div class="wins-losses">
+          <h1>Wins : Losses</h1>
+          <h2>{{ profile?.wins }}:{{ profile?.losses }}</h2>
+        </div>
+        <div class="matches-played">
+          <h1>Matches played:</h1>
+          <h2>{{ profile?.matchesPlayed }}</h2>
+        </div>
+      </div>
+
+      <div class="bottom-row">
+
+        <div class="friends">
+          <div class="wrapper">
+            <h1>Friends:</h1>
+            <div class="friends-container">
+              <div *ngFor="let friend of friends">
+                <app-friend [user]="friend"></app-friend>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="match-history">
+          <div class="wrapper">
+            <h1>Match History:</h1>
+            <div class="matches-container">
+              <div class="match">this is a match</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</body>

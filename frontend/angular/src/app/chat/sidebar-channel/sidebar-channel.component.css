@@ -45,14 +45,14 @@
 }
 
 .selected-channel {
-  background-color: #4F6D7A;
+  background-color: #2f424a;
   padding: 1.1dvw;
   display: flex;
   border: .1dvw solid #E8DAB2;
 }
 
 .selected-channel:hover {
-  background-color: #4F6D7A;
+  background-color: #2f424a;
 }
 
 .selected-channel .type-protected img {
