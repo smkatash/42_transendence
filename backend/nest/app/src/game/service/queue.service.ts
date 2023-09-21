@@ -18,7 +18,7 @@ export class QueueService {
         const params: Queue = {
             id: this.queueName,
             count: 0,
-            players: []
+            players: [],
         }
 
         const queue = this.queueRepo.create(params)
@@ -43,8 +43,6 @@ export class QueueService {
         player = await this.playerService.updatePlayerQueue(player, null)
         return await this.getQueue()
     }
-
-
 
     async saveValidQueue(queue: Queue): Promise<Queue> {
         const validate_error = await validate(queue);

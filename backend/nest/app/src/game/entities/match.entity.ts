@@ -2,12 +2,12 @@ import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryColumn } from 
 import { GameState } from "../utls/game";
 import { Player } from "./player.entity";
 
-@Entity({name: 'match'})
+@Entity({name: 'matches'})
 export class Match {
     @PrimaryColumn({unique: true})
     id: string
 
-    @Column({default: GameState.INQUEUE})
+    @Column({default: GameState.READY})
     status: GameState
 
     @ManyToMany(() => Player, (player) => player.matches, {nullable: true})

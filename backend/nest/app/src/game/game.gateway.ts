@@ -7,7 +7,7 @@ import { Status } from 'src/user/utils/status.dto';
 import { MatchService } from './service/match.service';
 import { Player } from './entities/player.entity';
 import { PlayerService } from './service/player.service';
-import { GameState, MessageMatch} from './utls/game';
+import { Game, GameState, MessageMatch} from './utls/game';
 
 @WebSocketGateway({ namespace: 'game' })
 export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -35,7 +35,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       user = await this.userService.updateUserStatus(user.id, Status.GAME)
       //const player = await this.playerService.createPlayer(user, client.id)
       let player = await this.playerService.getPlayerById(user.id)
-      // TODO to verify new player
       player = await this.playerService.updatePlayerClient(player, client.id)
       client.join(player.id)
       client.data.user = player
@@ -56,25 +55,56 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
 
   @SubscribeMessage('start')
-  async startMatch(@ConnectedSocket() client: Socket) {
+  async handleStartMatch(@ConnectedSocket() client: Socket) {
+    if (!client.data.user.id) return
     this.logger.debug(client.data.user.id)
     const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
 
     if (currentPlayer) {
-      this.logger.debug(JSON.stringify(currentPlayer.queue))
       let playersInQueue: Player[] = await this.matchService.waitInQueue(currentPlayer)
       if (playersInQueue.length >= 2) {
         const match = await this.matchService.makeAmatch(playersInQueue)
         playersInQueue = await this.matchService.updateQueue(match.players)
-        console.log(playersInQueue)
+        for (const player of playersInQueue) {
+          if (player.id === currentPlayer.id) {
+            client.emit('start', 'Waiting players to join.')
+          }
+        }
+
+        for (const player of match.players) {
+          if (player.id === currentPlayer.id) {
+            client.emit('start', match)
+          }
+        }
+      } else {
+        client.emit('start', 'Waiting players to join.')
       }
       
     }
   }
 
+
   @SubscribeMessage('join')
-  async joinMatch(@ConnectedSocket() client: Socket, @MessageBody() data: string) {
-    if (data) {
+  async handleJoinMatch(@ConnectedSocket() client: Socket, @MessageBody() matchId: string) {
+    if (!client.data.user.id) return
+    if (matchId) {
+      this.logger.debug(matchId)
+      const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
+      this.logger.debug(currentPlayer)
+      const game: Game = await this.matchService.joinMatch(currentPlayer, matchId)
+      client.emit('join', game)
+      this.matchService.play(matchId)
+    }
+  }
+
+
+
+  @SubscribeMessage('key')
+  async handleKeyPress(@ConnectedSocket() client: Socket, @MessageBody() step: number) {
+    if (!client.data.user.id) return
+    const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
+    const game: Game = await this.matchService.updatePlayerPosition(currentPlayer, step);
+      
     }
 
   }

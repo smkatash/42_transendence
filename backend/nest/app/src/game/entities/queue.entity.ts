@@ -1,8 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
 import { Player } from "./player.entity";
-import { Expose } from "class-transformer";
 
-@Entity()
+@Entity('queue')
 export class Queue {
   @PrimaryColumn({default: 'fifo'})
   id: string

@@ -3,20 +3,24 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Match } from '../entities/match.entity';
 import { v4 } from 'uuid';
-import { GameState } from '../utls/game';
+import { Game, GameState } from '../utls/game';
 import { validate } from 'class-validator';
 import { Player } from '../entities/player.entity';
 import { PlayerService } from './player.service';
 import { QueueService } from './queue.service';
 import { Queue } from '../entities/queue.entity';
+import { GameService } from './game.service';
+import { Interval } from '@nestjs/schedule';
+import { Player } from 'src/game/entities/player.entity';
 
 @Injectable()
 export class MatchService {
-    
+    matches: Map<string, Game> = new Map()
 
     constructor(@InjectRepository(Match) private matchRepo: Repository<Match>,
                 private readonly playerService: PlayerService,
-                private readonly queueService: QueueService) {}
+                private readonly queueService: QueueService,
+                private readonly gameService: GameService) {}
 
 
      async waitInQueue(player: Player) {
@@ -43,17 +47,36 @@ export class MatchService {
     }
 
 
-    //TODO find a solution for sockets!
-    async joinMatch(player: Player, match: Match): Promise<void> {
-       
+    async joinMatch(player: Player, matchId: string): Promise<Game> {
+       const match = await this.getCurrentMatch(matchId) 
+        if (!match) return
+
+        const newGame = this.gameService.launchGame()
+        newGame.match = match
+        this.matches.set(matchId, newGame)
+        return newGame
     }
+
+    async play(matchId: string) {
+        const currentGame = this.matches.get(matchId)
+        this.gameService.throwBall()
+        
+    }
+
+    updatePlayerPosition(player: Player, step: number) {
+        
+    }
+
 
     async getCurrentMatch(matchId: string): Promise<Match> {
         return this.getMatchById(matchId)
     }
 
     getMatchById(id: string): Promise<Match> {
-        return this.matchRepo.findOneBy({id})
+        return this.matchRepo.findOne({
+            where: {id},
+            relations: ['players']
+        })
     }
 
     async makeAmatch(players: Player[]): Promise<Match> {
@@ -77,10 +100,9 @@ export class MatchService {
             players: players,
             status: GameState.READY
         })
-        return this.matchRepo.save(match)
+        return this.saveValidMatch(match)
     }
 
-   
 
     async saveValidMatch(match: Match) {
         const validate_error = await validate(match)
@@ -93,3 +115,5 @@ export class MatchService {
   
 
 }
+
+

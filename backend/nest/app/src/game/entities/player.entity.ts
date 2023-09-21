@@ -4,7 +4,7 @@ import { Match } from "./match.entity";
 import { GameState } from '../utls/game';
 import { Queue } from "./queue.entity";
 
-@Entity({name: 'player'})
+@Entity({name: 'players'})
 export class Player {
     @PrimaryColumn({unique: true})
     id: string
