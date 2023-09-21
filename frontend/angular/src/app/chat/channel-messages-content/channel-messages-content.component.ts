@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
-import { Message } from '../message/message';
 import { ChatService } from '../chat.service';
+import { Message } from 'src/app/entities.interface';
 
 @Component({
   selector: 'app-channel-messages-content',

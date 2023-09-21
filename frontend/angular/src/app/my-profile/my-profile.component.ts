@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MyProfileService } from './my-profile.service';
-import { User } from '../entities.interface';
+import { Match, User } from '../entities.interface';
 
 @Component({
   selector: 'app-my-profile',
@@ -12,8 +12,8 @@ export class MyProfileComponent implements OnInit {
   constructor(private profileService: MyProfileService){ }
 
   profile?: User
-
   friends: User[] = []
+  matches: Match[] = []
 
   ngOnInit(): void {
     this.getProfile()
@@ -22,7 +22,11 @@ export class MyProfileComponent implements OnInit {
   getProfile(): void {
     this.profileService.getProfile(1)
         .subscribe((user: User) => this.profile = user)
+
     this.profileService.getFriends(1)
         .subscribe((users) => this.friends = users)
+
+    this.profileService.getMatches(1)
+        .subscribe((matches) => this.matches = matches)
   }
 }

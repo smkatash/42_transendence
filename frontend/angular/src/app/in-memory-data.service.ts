@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { InMemoryDbService } from 'angular-in-memory-web-api';
 
 import { MESSAGES1, MESSAGES2 } from './mock-messages';
-import { Channel, ChannelMessages, ChannelUsers, User, UserFriend } from './entities.interface';
+import { Channel, ChannelMessages, ChannelUsers, User, UserFriend, UserMatches } from './entities.interface';
 import { USERS, USERS1 } from './mock-users';
+import { MATCHES, MATCHES1 } from './mock-matches';
 
 @Injectable({
   providedIn: 'root'
@@ -45,6 +46,11 @@ export class InMemoryDataService implements InMemoryDbService {
 
     const users: User[] = USERS
 
-    return {channels, messages, channelUsers, users, friends};
+    const matches: UserMatches[] = [
+      { id: 1, matches: MATCHES},
+      { id: 2, matches: MATCHES1},
+    ]
+
+    return {channels, messages, channelUsers, users, friends, matches};
   }
 }

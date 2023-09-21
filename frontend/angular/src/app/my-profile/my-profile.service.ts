@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { User, UserFriend } from '../entities.interface';
+import { Match, User, UserFriend, UserMatches } from '../entities.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -23,4 +23,11 @@ export class MyProfileService {
       )
   }
 
+  getMatches(userID: number): Observable<Match[]> {
+    const url = `api/matches/${userID}`
+    return this.http.get<UserMatches>(url)
+      .pipe(
+        map((userMatches: UserMatches) => userMatches.matches)
+      )
+  }
 }

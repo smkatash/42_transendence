@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Channel } from './channel';
+import { Channel } from 'src/app/entities.interface';
 
 @Component({
   selector: 'app-sidebar-channel',

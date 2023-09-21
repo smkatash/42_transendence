@@ -54,7 +54,9 @@
           <div class="wrapper">
             <h1>Match History:</h1>
             <div class="matches-container">
-              <div class="match">this is a match</div>
+              <div *ngFor="let match of matches">
+                <app-match [match]="match"></app-match>
+              </div>
             </div>
           </div>
         </div>

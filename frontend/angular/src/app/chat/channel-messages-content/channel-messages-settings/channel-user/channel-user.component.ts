@@ -1,5 +1,5 @@
 import { Component, ElementRef, HostListener, Input } from '@angular/core';
-import { User } from 'src/app/user';
+import { User } from 'src/app/entities.interface';
 
 @Component({
   selector: 'app-channel-user',

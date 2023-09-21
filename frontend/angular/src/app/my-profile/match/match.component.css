@@ -1,0 +1,72 @@
+.match {
+  position: relative;
+  background-color: #E8DAB2;
+  border: 0.17dvw solid #E8DAB2;
+  margin-bottom: .2dvw;
+}
+
+.wrapper {
+  padding: 0.5dvw;
+  padding-left: 1.5dvw;
+  padding-right: 1.5dvw;
+  border: 0.1dvw solid #2f424a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.result-win, .result-loss {
+  font-family: 'Quattrocento', serif;
+  font-size: 1dvw;
+  font-weight: bold;
+  font-style: italic;
+}
+
+.result-win {
+  color: #618B4A;
+}
+
+.result-loss {
+  color: #b04343;
+}
+
+.score, .versus {
+  font-family: 'Quattrocento', serif;
+  font-size: 1dvw;
+  font-weight: bold;
+  color: #2f424a;
+  overflow: hidden;
+}
+
+.opponent {
+  display: flex;
+  align-items: center;
+}
+
+.name {
+  padding-right: .5dvw;
+  font-family: 'Quattrocento', serif;
+  font-size: 1dvw;
+  font-weight: bold;
+  color: #2f424a;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.name:hover {
+  cursor: pointer;
+  color: #223036;
+}
+
+.pic {
+  display: flex;
+  justify-content: center;
+}
+
+img {
+  border: .05dvw solid #2f424a;
+  border-radius: 50%;
+  background-size: cover;
+  height: 2dvw;
+  width: 2dvw;
+}

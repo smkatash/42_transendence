@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ChatService } from '../../chat.service';
-import { User } from 'src/app/user';
+import { User } from 'src/app/entities.interface';
 
 @Component({
   selector: 'app-channel-messages-settings',

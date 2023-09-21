@@ -22,18 +22,30 @@ export interface UserFriend { // this might be deleted
 }
 
 export interface ChannelUsers { // this might be deleted
-  id: number;
-  users: User[];
+  id: number
+  users: User[]
 }
 
 export interface Message {
-  name: string;
-  messageContent: string;
-  timestamp: number;
-  sessionUser: boolean;
+  name: string
+  messageContent: string
+  timestamp: number
+  sessionUser: boolean
 }
 
 export interface ChannelMessages { // this might be deleted
-  id: number;
-  messages: Message[];
+  id: number
+  messages: Message[]
+}
+
+export interface Match {
+  id: number
+  userScore: number
+  opponentScore: number
+  opponentName: string
+}
+
+export interface UserMatches {
+  id: number //Stands for user id
+  matches: Match[]
 }
