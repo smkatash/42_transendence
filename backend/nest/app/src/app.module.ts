@@ -43,7 +43,7 @@ import { FriendListModule } from './friend_list/friend_list.module';
       synchronize: true
     }),
     GameModule,
-    ScheduleModule.forRoot()
+    ScheduleModule.forRoot(),
     ChannelModule,
     ChannelUserModule,
     ChannelMessageModule,
