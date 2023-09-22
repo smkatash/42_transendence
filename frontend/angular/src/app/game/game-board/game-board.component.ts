@@ -84,8 +84,8 @@ export class GameBoardComponent {
     }
   
      getRandomIncrement(): number {
-      const isNegative = Math.floor(Math.random() * 2) === 1;
-      return ((Math.floor(Math.random() * 3) + 3) * (isNegative ? -1 : 1)) / 10;
+      const randomValue = Math.random() * (0.6 + 0.6) - 0.6; // (max - min ) - min
+      return parseFloat(randomValue.toFixed(1));
     }
   
     setBall(): void {
