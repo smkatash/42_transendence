@@ -1,12 +1,12 @@
 .vscode
 .DS_Store
 node_modules
-.env
+# .env
 # data storage
-backend/db
+backend/db/
 
 #env
-backend/.env
+# backend/.env
 
 # compiled output
 backend/nest/app/dist

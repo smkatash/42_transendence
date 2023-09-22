@@ -1,0 +1,40 @@
+body {
+  background-color: #4F6D7A;
+  position: relative;
+}
+
+.chat-interface {
+  width: 80%;
+  height: 77%;
+  margin: auto;
+  display: flex;
+}
+
+.channel-container-border {
+  width: 25%;
+  border: .7dvw solid #E8DAB2;
+  position: relative;
+}
+
+.channel-container-border app-create-channel-button {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+  z-index: 2;
+}
+
+.channel-container {
+  margin: .7dvw;
+  max-height: 80%;
+  overflow: auto;
+}
+
+.content-container {
+  border-top: .7dvw solid #E8DAB2;
+  border-bottom: .7dvw solid #E8DAB2;
+  border-right: .7dvw solid #E8DAB2;
+  width: 75%;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}

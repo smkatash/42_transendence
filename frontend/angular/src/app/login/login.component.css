@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@1,6..96,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quattrocento&display=swap');
+
+.flex-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: #4F6D7A;
+}
+
+.title {
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 63%;
+  color: #E8DAB2;
+  height: 100vh;
+  margin-top: 60dvh;
+  margin-left: 14dvw;
+}
+
+.title h1 {
+  font-family: 'Bodoni Moda', serif;
+  font-size: 10dvw;
+  margin: 0%;
+  padding: 0%;
+}
+
+.title button {
+  color: #4F6D7A;
+  background-color: #E8DAB2;
+  font-size: 2dvw;
+  font-family: 'Quattrocento', serif;
+  font-weight: bolder;
+  border: none;
+  cursor: pointer;
+  align-self: center;
+  justify-self: center;
+  height: 7dvh;
+  width: 13dvw;
+}
+
+.title button:hover{
+  background-color: #e9d5a1;
+}
+
+.title button:active {
+  height: 6.9dvh;
+  width: 12.9dvw;
+}
+
+.description {
+  width: 37%;
+  background-color: #E8DAB2;
+}
+
+.description p {
+  padding: 7%;
+  font-family: 'Quattrocento', serif;
+  color: #4F6D7A;
+  font-size: 2dvw;
+  text-align: left;
+  height: 100vh;
+  margin-top: 40vh;
+}

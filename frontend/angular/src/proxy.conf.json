@@ -1,0 +1,12 @@
+{
+  "/42auth": {
+    "target": "http://nestjs:3000/",
+    "secure": "false",
+    "changeOrigin": true
+  },
+  "/user": {
+    "target": "http://nestjs:3000/",
+    "secure": "false",
+    "changeOrigin": true
+  }
+}

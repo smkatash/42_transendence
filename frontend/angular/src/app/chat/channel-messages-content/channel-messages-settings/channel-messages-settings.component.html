@@ -1,0 +1,20 @@
+<div class="channel-messages-settings-border" [@openClose]="isOpen ? 'open' : 'closed'">
+  <div class="channel-messages-settings">
+    <h1 class="title">Channel Settings.</h1>
+    <p>To access the different options, hover over a user's name and click the dropdown menu.</p>
+    <label for="change-password">Change your channel's password:</label>
+    <div class="password-field-container">
+      <input type="password" id="change-password">
+      <button class="change-btn">Change</button>
+    </div>
+    <div class="users-container" *ngIf="users">
+      <div *ngFor="let user of users">
+        <app-channel-user [user]="user"></app-channel-user>
+      </div>
+    </div>
+    <div class="footer">
+      <button class="exit">Exit channel</button>
+      <button class="close" (click)="toggle()">Close</button>
+    </div>
+  </div>
+</div>

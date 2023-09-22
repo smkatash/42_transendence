@@ -1,0 +1,119 @@
+.dropdown {
+  position: absolute;
+  right: 5%;
+}
+
+.user {
+  position: relative;
+  background-color: #E8DAB2;
+  padding: 0.5dvw;
+  border: .1dvw solid #E8DAB2;
+  margin-bottom: .17dvw;
+  display: flex;
+  align-items: center;
+}
+
+.user:hover {
+  background-color: #e9d5a1;
+  border: .1dvw solid #e9d5a1;
+}
+
+.dd-button {
+  opacity: 0%;
+}
+
+.user:hover .dd-button {
+  opacity: 100%;
+  animation: fade-in 0.7s 1 cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0%;
+  }
+  to {
+    opacity: 100%;
+  }
+}
+
+.dropdown .dd-button {
+  width: 0.9dvw;
+}
+.dd-button-up {
+  width: 0.9dvw;
+  opacity: 100%;
+  rotate: 180deg;
+}
+
+.dd-button:hover, .dd-button-up:hover {
+  cursor: pointer;
+}
+
+.profile-pic {
+  display: flex;
+  justify-content: center;
+  width: 25%;
+}
+
+.profile-pic img {
+  border: .05dvw solid #2f424a;
+  border-radius: 50%;
+  background-size: cover;
+  height: 2dvw;
+  width: 2dvw;
+}
+
+.name {
+  padding-left: 0dvw;
+  width: 75%;
+  font-family: 'Quattrocento', serif;
+  font-size: 1dvw;
+  font-weight: bold;
+  color: #4F6D7A;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.owner {
+  font-family: 'Quattrocento', serif;
+  font-size: 0.7dvw;
+  font-style: italic;
+  font-weight: bold;
+  color: #656e71;
+}
+
+.admin {
+  font-family: 'Quattrocento', serif;
+  font-size: 0.7dvw;
+  font-style: italic;
+  font-weight: bold;
+  color: #656e71;
+}
+
+.dd-menu {
+  position: absolute;
+  top: -0.8dvw;
+  right: 1.5dvw;
+  border: 0.1dvw solid #E8DAB2;
+  border-bottom: none;
+  padding: 0;
+  background-color: #2f424a;
+  list-style-type: none;
+  z-index: 1;
+}
+
+.dd-menu li {
+  font-family: 'Quattrocento', serif;
+  font-weight: bold;
+  font-size: 0.9dvw;
+  color: #E8DAB2;
+  padding: 0.5dvw 1dvw;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 0.1dvw solid #E8DAB2;
+}
+
+.dd-menu li:hover {
+  background-color: #E8DAB2;
+  color: #2f424a;
+}

@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Quattrocento:wght@700&display=swap');
+
+.channel {
+  background-color: #E8DAB2;
+  padding: 1.1dvw;
+  border: .1dvw solid #E8DAB2;
+  margin-bottom: .17dvw;
+  display: flex;
+}
+
+.channel:hover {
+  cursor: pointer;
+  background-color: #e9d5a1;
+  border: .1dvw solid #e9d5a1;
+}
+
+.channel .type-protected {
+  width: 13%;
+  position: relative;
+}
+
+.channel .type-protected img{
+  width: 1.5dvw;
+  position: absolute;
+  top: 20%;
+}
+
+.channel .type-public {
+  width: 13%;
+}
+
+.channel .type-public img{
+  width: 1.5dvw;
+}
+
+.channel .name {
+  padding-left: 0.3dvw;
+  width: 90%;
+  font-family: 'Quattrocento', serif;
+  font-size: 1dvw;
+  font-weight: bold;
+  color: #4F6D7A;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.selected-channel {
+  background-color: #2f424a;
+  padding: 1.1dvw;
+  display: flex;
+  border: .1dvw solid #E8DAB2;
+}
+
+.selected-channel:hover {
+  background-color: #2f424a;
+}
+
+.selected-channel .type-protected img {
+  filter: brightness(0) saturate(100%) invert(83%) sepia(14%) saturate(475%) hue-rotate(7deg) brightness(104%) contrast(92%);
+}
+
+.selected-channel .type-public img {
+  filter: brightness(0) saturate(100%) invert(83%) sepia(14%) saturate(475%) hue-rotate(7deg) brightness(104%) contrast(92%);
+}
+
+.selected-channel .name {
+  color: #E8DAB2;
+}

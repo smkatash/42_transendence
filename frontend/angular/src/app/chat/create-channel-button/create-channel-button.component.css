@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Quattrocento:wght@700&display=swap');
+
+.dropdown {
+  display: inline-block;
+  position: relative;
+}
+
+.dd-button {
+  appearance: none;
+  width: 77%;
+  padding: .3dvw;
+  display: inline;
+  cursor: pointer;
+  white-space: nowrap;
+  background-color: #E8DAB2;
+  border-radius: 4dvw;
+  width: 2.3dvw;
+  height: 2.3dvw;
+  transform: rotate(0deg);
+  animation: rotate-backward 1s 1 cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.dd-button:hover {
+  background-color: #e9d5a1;
+}
+
+.dd-menu {
+  position: absolute;
+  top: 2.7dvw;
+  border: 0.1dvw solid #E8DAB2;
+  border-bottom: none;
+  padding: 0;
+  background-color: #2f424a;
+  list-style-type: none;
+}
+
+.dd-button-clicked {
+  background-color: #e9d5a1;
+  transform: rotate(45deg);
+  animation: rotate-forward 1s 1 cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+@keyframes rotate-forward {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(45deg);
+  }
+}
+
+@keyframes rotate-backward {
+  from {
+    transform: rotate(45deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+.dd-menu li {
+  font-family: 'Quattrocento', serif;
+  font-weight: bold;
+  font-size: 1dvw;
+  color: #E8DAB2;
+  padding: 0.5dvw 1dvw;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 0.1dvw solid #E8DAB2;
+}
+
+.dd-menu li:hover {
+  background-color: #E8DAB2;
+  color: #2f424a;
+}

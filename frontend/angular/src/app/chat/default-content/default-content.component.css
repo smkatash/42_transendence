@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@1,6..96,700&display=swap');
+
+.default-content {
+  text-align:center;
+  width: 80%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50% , -50% );
+}
+
+h1 {
+  font-family: 'Bodoni Moda', serif;
+  font-size: 5dvw;
+  margin: 0%;
+  padding: 0%;
+  color: #2f424a;
+}
+
+h2 {
+  font-family: 'Quattrocento', serif;
+  font-size: 1.5dvw;
+  margin: 0%;
+  padding: 0%;
+  color: #2f424a;
+}
+
+span {
+  content: url("data:image/svg+xml,%3C%3Fxml version='1.0' standalone='no'%3F%3E%3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 20010904//EN' 'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'%3E%3Csvg version='1.0' xmlns='http://www.w3.org/2000/svg' width='1280.000000pt' height='1280.000000pt' viewBox='0 0 1280.000000 1280.000000' preserveAspectRatio='xMidYMid meet'%3E%3Cmetadata%3E%0ACreated by potrace 1.15, written by Peter Selinger 2001-2017%0A%3C/metadata%3E%3Cg transform='translate(0.000000,1280.000000) scale(0.100000,-0.100000)'%0Afill='%234F6D7A' stroke='none'%3E%3Cpath d='M5740 12784 c-199 -42 -369 -198 -438 -399 l-27 -80 -3 -2387 -2%0A-2388 -2356 0 c-2619 0 -2435 5 -2584 -68 -104 -50 -212 -158 -263 -263 -66%0A-134 -67 -146 -67 -799 0 -651 2 -666 66 -795 69 -141 187 -243 344 -299 l85%0A-31 2387 -3 2388 -2 2 -2388 3 -2387 28 -80 c73 -206 239 -357 443 -400 101%0A-21 1207 -21 1308 0 204 43 370 194 443 400 l28 80 3 2387 2 2388 2388 2 2387%0A3 85 31 c157 56 275 158 344 299 64 129 66 144 66 795 0 653 -1 665 -67 799%0A-51 105 -159 213 -263 263 -149 73 35 68 -2584 68 l-2356 0 -2 2388 -3 2387%0A-27 80 c-70 203 -240 357 -443 400 -100 21 -1217 20 -1315 -1z'/%3E%3C/g%3E%3C/svg%3E%0A");
+  width: 5dvw;
+  padding: .1em;
+  display: inline;
+  white-space: nowrap;
+  background-color: #9d9377;
+  border-radius: 4em;
+  width: .7em;
+  height: .7em;
+}

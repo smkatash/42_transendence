@@ -1,0 +1,12 @@
+<div class="match" *ngIf="match">
+  <div class="wrapper">
+    <div class="result-win" *ngIf="match.userScore > match.opponentScore">Won</div>
+    <div class="result-loss" *ngIf="match.userScore < match.opponentScore">Lost</div>
+    <div class="score">{{ match.userScore }} : {{ match.opponentScore }}</div>
+    <div class="versus">vs</div>
+    <div class="opponent">
+      <div class="name">{{ match.opponentName }}</div>
+      <div class="pic"><img src="http://placekitten.com/1800/1800"></div>
+    </div>
+  </div>
+</div>

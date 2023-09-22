@@ -1,33 +1,35 @@
-import {Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable } from '@nestjs/common';
 import { User } from 'src/user/entities/user.entity';
-import { UserData } from 'src/auth/utils/types';
-import { Repository } from 'typeorm';
+import { AuthUserDto } from 'src/auth/utils/auth.user.dto';
+
+import { UserService } from '../user/user.service';
+import { Status } from 'src/user/utils/status.dto';
+
 
 
 @Injectable()
 export class AuthService {
 
-    constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
+    constructor(private userService: UserService) {}
 
-    async validateUser(userData: UserData): Promise<User> {
+    async validateUser(authUserDto: AuthUserDto): Promise<User> {
         console.log('validate User')
-        console.log(userData)
-
-        const currentUser = await this.findUser(userData.id)
+        const currentUser = await this.userService.getUserById(authUserDto.id)
 
         if (currentUser) {
             console.log('User found')
             return currentUser
         }
-        
-        console.log('Creating a new user')
-        const newUser = this.userRepo.create(userData)
-        return await this.userRepo.save(newUser)
+
+        return await this.userService.createUser(authUserDto)
     }
 
     async findUser(id: string): Promise<User> {
-        const user = await this.userRepo.findOneBy({id})
-        return user
+        return await this.userService.getUserById(id)
     }
+
+    async updateUserStatus(id: string, status: Status) {
+        return await this.userService.updateUserStatus(id, status)
+    }
+    
 }
