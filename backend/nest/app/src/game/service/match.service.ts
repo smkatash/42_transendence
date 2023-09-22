@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Match } from '../entities/match.entity';
@@ -11,7 +11,8 @@ import { QueueService } from './queue.service';
 import { Queue } from '../entities/queue.entity';
 import { GameService } from './game.service';
 import { Interval } from '@nestjs/schedule';
-import { Player } from 'src/game/entities/player.entity';
+import { Server } from 'socket.io';
+
 
 @Injectable()
 export class MatchService {
@@ -51,16 +52,20 @@ export class MatchService {
        const match = await this.getCurrentMatch(matchId) 
         if (!match) return
 
-        const newGame = this.gameService.launchGame()
-        newGame.match = match
+        const newGame = this.gameService.launchGame(match)
         this.matches.set(matchId, newGame)
         return newGame
     }
 
-    async play(matchId: string) {
-        const currentGame = this.matches.get(matchId)
-        this.gameService.throwBall()
-        
+    @Interval(1000 / 60)
+    async play(game: Game, server: Server): Promise<void> {
+        const updateGame = await this.gameService.throwBall(game)
+        if (updateGame.match.status === GameState.END) {
+            // end match
+        } else {
+            server.to(updateGame.match.id).emit('play', updateGame)
+        }
+
     }
 
     updatePlayerPosition(player: Player, step: number) {

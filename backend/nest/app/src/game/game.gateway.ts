@@ -73,6 +73,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
         for (const player of match.players) {
           if (player.id === currentPlayer.id) {
+            client.join(match.id)
             client.emit('start', match)
           }
         }
@@ -90,10 +91,10 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     if (matchId) {
       this.logger.debug(matchId)
       const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
-      this.logger.debug(currentPlayer)
       const game: Game = await this.matchService.joinMatch(currentPlayer, matchId)
-      client.emit('join', game)
-      this.matchService.play(matchId)
+      this.logger.debug(JSON.stringify(game))
+      this.server.to(matchId).emit('join', game);
+      await this.matchService.play(game, this.server)
     }
   }
 
@@ -103,12 +104,9 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   async handleKeyPress(@ConnectedSocket() client: Socket, @MessageBody() step: number) {
     if (!client.data.user.id) return
     const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
-    const game: Game = await this.matchService.updatePlayerPosition(currentPlayer, step);
+     this.matchService.updatePlayerPosition(currentPlayer, step);
       
     }
 
   }
 
-
-
-}

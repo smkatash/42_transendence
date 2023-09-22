@@ -21,7 +21,7 @@ export class Match {
     winner: Player
     
     @ManyToOne(() => Player, { nullable: true })
-    looser: Player
+    loser: Player
 
     @Column({ type: 'jsonb', nullable: true, default: null })
     scores: Record<string, number>

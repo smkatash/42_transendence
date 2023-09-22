@@ -18,7 +18,9 @@ export interface Game {
   ball: Ball
   leftPaddle: Paddle
   rightPaddle: Paddle
-  match?: Match
+  match: Match
+  status: GameState
+  scores?: Record<string, number>
 }
 
 export enum GameState {

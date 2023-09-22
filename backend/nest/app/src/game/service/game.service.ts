@@ -1,19 +1,55 @@
 import { Injectable } from '@nestjs/common';
-import { Ball, Game, GameMode, GameOptions, Paddle, Paddletype, Position } from '../utls/game';
+import { Ball, Game, GameMode, GameOptions, GameState, Paddle, Paddletype, Position } from '../utls/game';
 import { DEFAULT_PADDLE_GAP, DEFAULT_PADDLE_LENGTH, DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_PROPORTION } from 'src/Constants';
-
+import { Match } from '../entities/match.entity';
 
 @Injectable()
 export class GameService {
     static options = Object.freeze(new GameOptions(DEFAULT_TABLE_HEIGHT, DEFAULT_PADDLE_GAP, GameMode.EASY))
-    
+    private MAXPOINTS = 10
+
     constructor() {}
 
-    public launchGame(): Game {
+    public launchGame(match: Match): Game {
         const ball: Ball = this.launchBall()
         const leftPaddle: Paddle = this.launchPaddle(Paddletype.LEFT) 
-        const rightPaddle: Paddle = this.launchPaddle(Paddletype.RIGHT) 
-        return {ball, leftPaddle, rightPaddle}
+        const rightPaddle: Paddle = this.launchPaddle(Paddletype.RIGHT)
+        const scores: Record<string, number> = {}
+
+        match.players.forEach((player) => {
+          scores[player.id] = 0
+        })
+
+        return {
+                ball: ball, 
+                leftPaddle: leftPaddle, 
+                rightPaddle: rightPaddle, 
+                match: match, 
+                status: GameState.INPROGRESS,
+                scores: scores
+            }
+    }
+
+    private resetGame(game: Game, winner: Paddletype) {
+        game.scores[game.match.players[winner].id]++
+        if (game.scores[game.match.players[winner].id] >= this.MAXPOINTS) { 
+            game = this.updateScores(game, winner)
+        } else {
+            game.ball = this.launchBall()
+            game.leftPaddle = this.launchPaddle(Paddletype.LEFT) 
+            game.rightPaddle = this.launchPaddle(Paddletype.RIGHT)
+            game.status = GameState.INPROGRESS
+        }
+        return game
+    }
+
+    updateScores(game: Game, winner: Paddletype) {
+        const loser = winner === Paddletype.LEFT ? Paddletype.RIGHT : Paddletype.LEFT
+        game.match.winner = game.match.players[winner]
+        game.match.loser = game.match.players[loser]
+        game.status = GameState.END
+
+        return game
     }
 
     private calculateVector(): Position {
@@ -66,7 +102,6 @@ export class GameService {
         return paddle
     }
 
-    @Interval(1000 / 60)
     async throwBall(game: Game) {
         game.ball.position.x += game.ball.velocity.x
         game.ball.position.y += game.ball.velocity.y
@@ -74,33 +109,33 @@ export class GameService {
         if (game.ball.position.y >=  GameService.options.table.height) {
             game.ball.velocity.y *= -1
             game.ball.position.y = GameService.options.table.height - 0.5
-            // emit
+            return game
         } else if (game.ball.position.y < 0) {
             game.ball.velocity.y *= -1
             game.ball.position.y = 0.5
-            //emit
+            return game
         }
 
         if (game.ball.position.x <= GameService.options.paddleDistance) {
-            if (game.ball.position.y > (game.leftPaddle.position.y - GameService.options.paddleDistance) &&
-                    game.ball.position.y < (game.leftPaddle.position.y + GameService.options.paddleDistance)) {
+            if (game.ball.position.y > (game.leftPaddle.position.y - (game.leftPaddle.length / 2)) &&
+                    game.ball.position.y < (game.leftPaddle.position.y + (game.leftPaddle.length / 2))) {
                     game.ball.velocity.x *= -1
                     game.ball.position.x = GameService.options.paddleDistance + 0.5
-                // emit
+                    return game
              } else {
-                // reset
+                return this.resetGame(game, Paddletype.RIGHT)
              }
 
         } else if (game.ball.position.x > GameService.options.table.width - GameService.options.paddleDistance) {
-            if (game.ball.position.y > (game.rightPaddle.position.y - GameService.options.paddleDistance) &&
-                    game.ball.position.y < (game.rightPaddle.position.y + GameService.options.paddleDistance)) {
+            if (game.ball.position.y > (game.rightPaddle.position.y - (game.rightPaddle.length / 2)) &&
+                    game.ball.position.y < (game.rightPaddle.position.y + (game.rightPaddle.length / 2))) {
                     game.ball.velocity.x *= -1
                     game.ball.position.x = GameService.options.table.width - GameService.options.paddleDistance - 0.5
             } else {
-                // reset
+                return this.resetGame(game, Paddletype.LEFT)
             }
         }
-        //emit
+        return game
     }
     
 
