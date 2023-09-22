@@ -1,16 +1,14 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
 import { Player } from "./player.entity";
 
-
-@Entity({ name: 'queue' })
+@Entity('queue')
 export class Queue {
   @PrimaryColumn({default: 'fifo'})
   id: string
 
-  @OneToMany(() => Player, (player) => player.queue)
-  @JoinColumn()
-  player: Player
+  @Column({default: 0})
+  count: number
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  joinTime: Date
+  @OneToMany(() => Player, (player) => player.queue)
+  players: Player[]
 }

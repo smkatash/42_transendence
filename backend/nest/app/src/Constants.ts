@@ -13,3 +13,9 @@ export const REDIS_HOST='cache'
 export const REDIS_PORT=6379
 export const REDIS_PASSWORD='redisDB'
 
+
+export const DEFAULT_PADDLE_LENGTH = 10
+export const DEFAULT_TABLE_PROPORTION = 2
+export const DEFAULT_TABLE_HEIGHT = 500
+export const DEFAULT_PADDLE_GAP = 10
+

@@ -12,6 +12,7 @@ import { GameModule } from './game/game.module';
 import { Match } from './game/entities/match.entity';
 import { Player } from './game/entities/player.entity';
 import { Queue } from './game/entities/queue.entity';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ChannelModule } from './channel/channel.module';
 import { ChannelUserModule } from './channel_user/channel_user.module';
 import { ChannelMessageModule } from './channel_message/channel_message.module';
@@ -42,6 +43,7 @@ import { FriendListModule } from './friend_list/friend_list.module';
       synchronize: true
     }),
     GameModule,
+    ScheduleModule.forRoot()
     ChannelModule,
     ChannelUserModule,
     ChannelMessageModule,

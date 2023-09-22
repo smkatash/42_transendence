@@ -1,72 +1,128 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Match } from '../entities/match.entity';
 import { v4 } from 'uuid';
-import { GameStatus } from '../utls/game';
+import { Game, GameState } from '../utls/game';
 import { validate } from 'class-validator';
 import { Player } from '../entities/player.entity';
-import { Queue } from '../entities/queue.entity';
 import { PlayerService } from './player.service';
+import { QueueService } from './queue.service';
+import { Queue } from '../entities/queue.entity';
+import { GameService } from './game.service';
+import { Interval } from '@nestjs/schedule';
+import { Server } from 'socket.io';
+
 
 @Injectable()
 export class MatchService {
-    private readonly queueId = 'fifo'
+    matches: Map<string, Game> = new Map()
+    server: Server
 
     constructor(@InjectRepository(Match) private matchRepo: Repository<Match>,
-                @InjectRepository(Queue) private queueRepo: Repository<Queue>,
-                private readonly playerService: PlayerService) {}
+                private readonly playerService: PlayerService,
+                private readonly queueService: QueueService,
+                private readonly gameService: GameService) {}
 
-    //TODO find a solution for sockets!
-    async joinMatch(player: Player, match: Match): Promise<void> {
-        if (match.status === GameStatus.WAITING && 
-            match.players.length < 2)  {
-            //match.players.push(player)
 
-            if ((match.players.length as number) === 2) {
-                match.status = GameStatus.START
-            }
-        } else {
-            //match.observers.push(player)
+     async waitInQueue(player: Player) {
+        let queue: Queue = await this.queueService.getQueue()
+
+        const playerIdsInQueue = queue.players.map((player) => player.id)
+        if (!playerIdsInQueue.includes(player.id)) {
+            console.log('Adding player to Queue')
+            queue = await this.queueService.updatePlayersInQueue(player, queue)
         }
-        await this.saveValidMatch(match)
+        return queue.players
     }
+
+    async updateQueue(players: Player[]) {
+        let queue: Queue = await this.queueService.getQueue()
+        const playerIdsInQueue = queue.players.map((player) => player.id)
+        for (const player of players) {
+            if (playerIdsInQueue.includes(player.id)) {
+                console.log('Removing from the Queue')
+                queue = await this.queueService.removePlayerFromQueue(player)
+            }
+        }
+        return queue.players
+    }
+
+
+    async joinMatch(player: Player, matchId: string): Promise<Game> {
+       const match = await this.getCurrentMatch(matchId) 
+        if (!match) return
+
+        const newGame = this.gameService.launchGame(match)
+        this.matches.set(matchId, newGame)
+        return newGame
+    }
+
+    getServer(server: Server) {
+        this.server = server
+    }
+
+    @Interval(1000 / 60)
+    async play() {
+        for (const match of this.matches.values()) {
+            if (match.status === GameState.INPROGRESS) {
+                const updateGame = this.gameService.throwBall(match)
+                if (updateGame.status === GameState.END) {
+                    await this.saveMatchHistory(updateGame)
+                    this.server.to(match.match.id).emit('play', updateGame)
+                }
+                this.server.to(match.match.id).emit('play', updateGame)
+            }
+        }
+    }
+
+    updatePlayerPosition(player: Player, step: number) {
+        
+    }
+
 
     async getCurrentMatch(matchId: string): Promise<Match> {
         return this.getMatchById(matchId)
     }
 
     getMatchById(id: string): Promise<Match> {
-        return this.matchRepo.findOneBy({id})
+        return this.matchRepo.findOne({
+            where: {id},
+            relations: ['players']
+        })
     }
 
-    async makeAmatch(players: Player[]): Promise<Match | undefined> {
-        let newMatch: Match | undefined
-
-        if (players.length === 2) {
-            newMatch = await this.createMatch(players)
-        } else if (players.length > 2) {
-            const playersSelected = this.getRandomPlayers(players, 2)
-            newMatch =  await this.createMatch(playersSelected)
-            playersSelected.forEach(player => {
-                this.removerPlayerinQueue(player)
-            })
-        }
+    async makeAmatch(players: Player[]): Promise<Match> {
+        const pair = this.getRandomPlayers(players, 2)
+        const newMatch = await this.createMatch(pair)
         return newMatch
     }
 
     private getRandomPlayers(players: Player[], numberOfPlayersToSelect: number): Player[] {
+        if (players.length === 2) {
+            return players
+        }
         const shuffledPlayers = players.slice().sort(() => Math.random() - 0.5)
         return shuffledPlayers.slice(0, numberOfPlayersToSelect)
     }
 
+
     async createMatch(players: Player[]): Promise<Match> {
         const match = this.matchRepo.create({
             id: v4(),
-            players: players
+            players: players,
+            status: GameState.READY
         })
-        return this.matchRepo.save(match)
+        return this.saveValidMatch(match)
     }
+
+    // TODO check if scores and player match
+    async saveMatchHistory(game: Game) {
+        const match = game.match
+        match.scores = game.scores
+        return this.saveValidMatch(match)
+    } 
+
 
     async saveValidMatch(match: Match) {
         const validate_error = await validate(match)
@@ -75,42 +131,9 @@ export class MatchService {
         }
         return this.matchRepo.save(match)
     }
-        
-    async setStatusInQueue(player: Player): Promise<Map<GameStatus, Player[]>> {
-       let players = await this.getPlayersInQueue()
-       if (players.length < 2) {
-           await this.addPlayerToQueue(player)
-           players = await this.getPlayersInQueue()
-       }
-       const status = players.length < 2 ? GameStatus.WAITING : GameStatus.START
-       return new Map([[status, players]])
-    }
 
-
-    async addPlayerToQueue(player: Player) {
-        const queue = await this.getQueue()
-        this.playerService.updatePlayerQueue(player, queue)
-    }
-
-    async removerPlayerinQueue(player: Player) {
-        const queue = await this.getQueue()
-        this.playerService.updatePlayerQueue(player, null )
-    }
-
-    async getPlayersInQueue(): Promise<Player[]> {
-        try {
-            const queue = await this.getQueue()
-            if (queue) {
-                return this.playerService.getPlayersByQueue(queue)
-            }
-            throw new InternalServerErrorException()
-        } catch (error) {
-            throw new InternalServerErrorException(error)
-        }
-    }
-
-    async getQueue(): Promise<Queue> {
-        return this.queueRepo.findOneBy({id: this.queueId})
-    }
+  
 
 }
+
+

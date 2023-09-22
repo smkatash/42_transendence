@@ -1,10 +1,10 @@
 import { User } from "src/user/entities/user.entity";
-import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn } from "typeorm";
-import { Socket } from "socket.io";
+import { Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToOne, PrimaryColumn } from "typeorm";
 import { Match } from "./match.entity";
+import { GameState } from '../utls/game';
 import { Queue } from "./queue.entity";
 
-@Entity({name: 'player'})
+@Entity({name: 'players'})
 export class Player {
     @PrimaryColumn({unique: true})
     id: string
@@ -19,6 +19,9 @@ export class Player {
     @ManyToMany(() => Match, (match) => match.players, { nullable: true})
     matches: Match[] | []
 
-    @ManyToOne(() => Queue, { nullable: true })
+    @ManyToOne(() => Queue, (queue) => queue.players, {onDelete: 'SET NULL'})
     queue: Queue
+
+    @Column({default: GameState.START})
+    gameState: GameState
 }
