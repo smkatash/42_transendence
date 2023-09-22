@@ -17,6 +17,7 @@ import { Server } from 'socket.io';
 @Injectable()
 export class MatchService {
     matches: Map<string, Game> = new Map()
+    server: Server
 
     constructor(@InjectRepository(Match) private matchRepo: Repository<Match>,
                 private readonly playerService: PlayerService,
@@ -57,15 +58,22 @@ export class MatchService {
         return newGame
     }
 
-    @Interval(1000 / 60)
-    async play(game: Game, server: Server): Promise<void> {
-        const updateGame = await this.gameService.throwBall(game)
-        if (updateGame.match.status === GameState.END) {
-            // end match
-        } else {
-            server.to(updateGame.match.id).emit('play', updateGame)
-        }
+    getServer(server: Server) {
+        this.server = server
+    }
 
+    @Interval(1000 / 60)
+    async play() {
+        for (const match of this.matches.values()) {
+            if (match.status === GameState.INPROGRESS) {
+                const updateGame = this.gameService.throwBall(match)
+                if (updateGame.status === GameState.END) {
+                    await this.saveMatchHistory(updateGame)
+                    this.server.to(match.match.id).emit('play', updateGame)
+                }
+                this.server.to(match.match.id).emit('play', updateGame)
+            }
+        }
     }
 
     updatePlayerPosition(player: Player, step: number) {
@@ -107,6 +115,13 @@ export class MatchService {
         })
         return this.saveValidMatch(match)
     }
+
+    // TODO check if scores and player match
+    async saveMatchHistory(game: Game) {
+        const match = game.match
+        match.scores = game.scores
+        return this.saveValidMatch(match)
+    } 
 
 
     async saveValidMatch(match: Match) {

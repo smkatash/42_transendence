@@ -30,10 +30,10 @@ export class GameService {
             }
     }
 
-    private resetGame(game: Game, winner: Paddletype) {
+    private resetGame(game: Game, winner: Paddletype): Game {
         game.scores[game.match.players[winner].id]++
         if (game.scores[game.match.players[winner].id] >= this.MAXPOINTS) { 
-            game = this.updateScores(game, winner)
+            game = this.endOfGame(game, winner)
         } else {
             game.ball = this.launchBall()
             game.leftPaddle = this.launchPaddle(Paddletype.LEFT) 
@@ -43,7 +43,7 @@ export class GameService {
         return game
     }
 
-    updateScores(game: Game, winner: Paddletype) {
+    endOfGame(game: Game, winner: Paddletype) {
         const loser = winner === Paddletype.LEFT ? Paddletype.RIGHT : Paddletype.LEFT
         game.match.winner = game.match.players[winner]
         game.match.loser = game.match.players[loser]
@@ -102,7 +102,7 @@ export class GameService {
         return paddle
     }
 
-    async throwBall(game: Game) {
+    throwBall(game: Game): Game {
         game.ball.position.x += game.ball.velocity.x
         game.ball.position.y += game.ball.velocity.y
 
@@ -115,25 +115,25 @@ export class GameService {
             game.ball.position.y = 0.5
             return game
         }
-
+        console.log('Throw2')
         if (game.ball.position.x <= GameService.options.paddleDistance) {
             if (game.ball.position.y > (game.leftPaddle.position.y - (game.leftPaddle.length / 2)) &&
                     game.ball.position.y < (game.leftPaddle.position.y + (game.leftPaddle.length / 2))) {
                     game.ball.velocity.x *= -1
                     game.ball.position.x = GameService.options.paddleDistance + 0.5
                     return game
-             } else {
-                return this.resetGame(game, Paddletype.RIGHT)
              }
-
+            console.log('Throw3')
+            return this.resetGame(game, Paddletype.RIGHT)
         } else if (game.ball.position.x > GameService.options.table.width - GameService.options.paddleDistance) {
             if (game.ball.position.y > (game.rightPaddle.position.y - (game.rightPaddle.length / 2)) &&
                     game.ball.position.y < (game.rightPaddle.position.y + (game.rightPaddle.length / 2))) {
                     game.ball.velocity.x *= -1
                     game.ball.position.x = GameService.options.table.width - GameService.options.paddleDistance - 0.5
-            } else {
-                return this.resetGame(game, Paddletype.LEFT)
+                    return game
             }
+            console.log('Throw4')
+            return this.resetGame(game, Paddletype.LEFT)
         }
         return game
     }

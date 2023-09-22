@@ -12,6 +12,7 @@ import { GameModule } from './game/game.module';
 import { Match } from './game/entities/match.entity';
 import { Player } from './game/entities/player.entity';
 import { Queue } from './game/entities/queue.entity';
+import { ScheduleModule } from '@nestjs/schedule';
 
 
 @Module({
@@ -37,6 +38,7 @@ import { Queue } from './game/entities/queue.entity';
       synchronize: true
     }),
     GameModule,
+    ScheduleModule.forRoot()
   ],
   controllers: [AppController],
   providers: [AppService],
