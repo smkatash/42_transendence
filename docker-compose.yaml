@@ -51,4 +51,4 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ${PWD}/backend/db
+      device: ${PWD}/backend/
