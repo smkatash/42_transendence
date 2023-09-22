@@ -3,7 +3,7 @@
 node_modules
 # .env
 # data storage
-backend/db/
+backend/db
 
 #env
 # backend/.env
