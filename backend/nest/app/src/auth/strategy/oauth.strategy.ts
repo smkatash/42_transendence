@@ -3,8 +3,10 @@ import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-42"
 import { CALLBACK_URL, CLIENT_ID, CLIENT_SECRET } from "src/Constants";
 import { AuthService } from "../auth.service";
-import { UserData } from "../utils/types";
+import { AuthUserDto } from "../utils/auth.user.dto";
 import { Profile } from "../utils/profile";
+import { User } from "src/user/entities/user.entity";
+import { Status } from "src/user/utils/status.dto";
 
 @Injectable()
 export class OauthStrategy extends PassportStrategy(Strategy, '42') {
@@ -22,18 +24,20 @@ export class OauthStrategy extends PassportStrategy(Strategy, '42') {
         })
     }
 
-    async validate(accessToken: string, refreshToken: string, profile: Profile) {
+    async validate(accessToken: string, refreshToken: string, profile: Profile): Promise<User> {
         console.log('Validation')
         console.log(accessToken)
         console.log(refreshToken)
         console.log('-------')
-        const userData: UserData = {
+        const authUserDto: AuthUserDto = {
             id: profile.id,
-            login: profile.login,
+            username: profile.login,
             email: profile.email,
-            avatar: profile.image_url
+            avatar: profile.image_url,
+            status: Status.ONLINE
         }
-        const user = await this.authService.validateUser(userData)
+        console.log(authUserDto)
+        const user = await this.authService.validateUser(authUserDto)
         if (!user) {
             throw new UnauthorizedException()
         }
