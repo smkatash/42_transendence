@@ -1,0 +1,14 @@
+<div class="game_board">
+    <svg width="1024px" height="700px" fill="#4F6D7A">
+        <rect width="100%" height="100%" />
+        <line id="net" x1="50%" y1="0px" x2="50%" y2="100%" />
+        <text x="18%" y="48">{{score0 | number:"2.0-0"}}</text>
+        <text x="68%" y="48">{{score1 | number:"2.0-0"}}</text>
+        <rect class="racket" [attr.x]="racket0X + '%'" [attr.y]="racket0Y + '%'" />
+        <rect class="racket" [attr.x]="racket1X + '%'" [attr.y]="racket1Y + '%'" />
+        <rect id="ball" [attr.width]="ballWidth + '%'" [attr.height]="ballHeight + '%'" [attr.x]="ballX + '%'" [attr.y]="ballY + '%'" />
+    </svg>
+</div>
+<div class="start_button">
+    <button (click)="newGame()">New Game</button>
+</div>
