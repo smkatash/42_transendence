@@ -14,7 +14,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   private readonly logger = new Logger(GameGateway.name)
   @WebSocketServer()
   server: Server
-  private sockets: Array<Socket> = []
 
   constructor(private readonly userService: UserService,
               private readonly playerService: PlayerService,
@@ -27,7 +26,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   async handleConnection(@ConnectedSocket() client: Socket, ...args: any[]) {
     this.logger.log(`Client id: ${client.id} connected`);
       //const userId = await this.authService.getUserSession(client)
-      this.sockets.push(client)
       let user: User =  {"id":"99637","username":"ktashbae","status": 1, "avatar" : "test", "email": "test@email.com"}
       if (!user) {
         return client.disconnect()
@@ -43,7 +41,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   handleDisconnect(@ConnectedSocket() client: Socket) {
     this.logger.log(`Cliend id:${client.id} disconnected`)
-    this.sockets = this.sockets.filter(socket => socket !== client)
     return client.disconnect()
   }
 
@@ -101,11 +98,10 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @SubscribeMessage('key')
-  async handleKeyPress(@ConnectedSocket() client: Socket, @MessageBody() step: number) {
+  async handleKeyPress(@ConnectedSocket() client: Socket, @MessageBody() step: string) {
     if (!client.data.user.id) return
     const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
-     this.matchService.updatePlayerPosition(currentPlayer, step);
-      
+     this.matchService.updatePlayerPosition(currentPlayer, parseInt(step))
     }
   }
 
