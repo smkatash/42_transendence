@@ -20,9 +20,9 @@ export class MatchService {
     server: Server
 
     constructor(@InjectRepository(Match) private matchRepo: Repository<Match>,
-                private readonly playerService: PlayerService,
                 private readonly queueService: QueueService,
-                private readonly gameService: GameService) {}
+                private readonly gameService: GameService
+                ) {}
 
 
      async waitInQueue(player: Player) {
@@ -49,7 +49,7 @@ export class MatchService {
     }
 
 
-    async joinMatch(player: Player, matchId: string): Promise<Game> {
+    async joinMatch(matchId: string): Promise<Game> {
        const match = await this.getCurrentMatch(matchId) 
         if (!match) return
 
@@ -70,6 +70,7 @@ export class MatchService {
                 if (updateGame.status === GameState.END) {
                     await this.saveMatchHistory(updateGame)
                     this.server.to(match.match.id).emit('play', updateGame)
+                    this.server.socketsLeave(match.match.id)
                 }
                 this.server.to(match.match.id).emit('play', updateGame)
             }
@@ -77,8 +78,20 @@ export class MatchService {
     }
 
     updatePlayerPosition(player: Player, step: number) {
-        
-    }
+       for (const match of this.matches.values()) {
+            if (match.status === GameState.INPROGRESS) {
+                const index = match.match.players.findIndex(matchPlayer => matchPlayer.id === player.id)
+                if (index != -1 ) {
+                    if (index === 0 ) {
+                        match.leftPaddle.position.y += step
+                    } else {
+                        match.rightPaddle.position.y += step
+                    }
+                    return
+                }
+            }
+       }
+    }   
 
 
     async getCurrentMatch(matchId: string): Promise<Match> {
