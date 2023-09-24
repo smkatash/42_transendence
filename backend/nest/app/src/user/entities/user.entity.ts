@@ -1,6 +1,5 @@
-import { Column, Entity, PrimaryColumn} from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, PrimaryColumn} from "typeorm";
 import { Status } from "../utils/status.dto";
-import { Socket } from "socket.io";
 
 
 @Entity({name: 'users'})
@@ -19,4 +18,11 @@ export class User {
 
     @Column({ default: Status.OFFLINE})
     status: Status
+
+    @ManyToMany(() => User, (user) => user.friends)
+    @JoinTable()
+    friendOf: User[]
+
+    @ManyToMany(() => User, (user) => user.friendOf)
+    friends: User[]
 }

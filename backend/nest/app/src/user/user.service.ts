@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -39,6 +39,59 @@ export class UserService {
       const user = await this.getUserById(id)
       user.avatar = image
       return this.saveValidUser(user)
+    }
+
+    async getUserFriends(id: string) {
+      try {
+        const currentUser: User = await this.userRepo.findOne({
+          where: {id}, relations: ['friends']
+        })
+
+        if (!currentUser) {
+          throw new HttpException('User not found', 404)
+        }
+  
+        return currentUser.friends
+      } catch(err) {
+        throw new InternalServerErrorException()
+      }
+    } 
+
+    async addUserFriend(id: string, friendId: string) {
+      try {
+        const currentUser: User = await this.userRepo.findOne({
+          where: {id}, relations: ['friends']
+        })
+        const friend = await this.userRepo.findOne({where: {id: friendId}})
+
+        if (!currentUser || !friend) {
+          throw new HttpException('User not found', 404)
+        }
+
+        currentUser.friends.push(friend)
+        friend.friendOf.push(currentUser)
+
+        return this.userRepo.save([currentUser, friend])
+      } catch (err) {
+        throw new InternalServerErrorException()
+      }
+    }
+
+    async removeUserFriend(id: string, friendId: string) {
+      try {
+        const currentUser = await this.userRepo.findOneOrFail({ where: {id}, relations: ['friends']})
+        const friendToRemove = await this.userRepo.findOneOrFail({where: {id: friendId}, relations: ['friendOf']})
+        if (!currentUser || !friendToRemove) {
+          throw new HttpException('User not found', 404)
+        }
+
+        currentUser.friends = currentUser.friends.filter((u) => u.id !== friendId)
+        friendToRemove.friendOf = friendToRemove.friendOf.filter((u) => u.id !== id)
+
+        return await this.userRepo.save([currentUser, friendToRemove])
+      } catch (err) {
+        throw new InternalServerErrorException()
+      }
     }
 
 }
