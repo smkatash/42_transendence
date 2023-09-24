@@ -26,7 +26,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   async handleConnection(@ConnectedSocket() client: Socket, ...args: any[]) {
     this.logger.log(`Client id: ${client.id} connected`);
       //const userId = await this.authService.getUserSession(client)
-      let user: User =  {"id":"99637","username":"ktashbae","status": 1, "avatar" : "test", "email": "test@email.com"}
+      let user: User =  {"id":"99637","username":"ktashbae","status": 1, "avatar" : "test", "email": "test@email.com", "friends": [], "friendOf": []}
       if (!user) {
         return client.disconnect()
       }
@@ -89,11 +89,13 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       // to fix later
       client.join(matchId)
       const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
-      const game: Game = await this.matchService.joinMatch(currentPlayer, matchId)
-      this.server.to(matchId).emit('join', game)
-      this.logger.debug(matchId)
-      this.matchService.getServer(this.server)
-      this.matchService.play()
+      if (currentPlayer) {
+        const game: Game = await this.matchService.joinMatch(matchId)
+        this.server.to(matchId).emit('join', game)
+        this.logger.debug(matchId)
+        this.matchService.getServer(this.server)
+        this.matchService.play()
+      }
     }
   }
 

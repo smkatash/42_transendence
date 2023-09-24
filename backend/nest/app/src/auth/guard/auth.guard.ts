@@ -1,5 +1,4 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { Request } from 'express';
 import { RedisSessionService } from 'src/redis/redis-session.service';
 
 @Injectable()
