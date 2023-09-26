@@ -6,6 +6,7 @@ services:
     build: ./frontend
     volumes:
       - ./frontend/angular:/app-frontend
+      # - angular-volume:/app-frontend
     ports:
       - 4200:4200
 
@@ -14,17 +15,20 @@ services:
     build: ./backend
     volumes:
       - ./backend/nest/app:/app-backend
+      # - nestjs-volume:/app-backend
     ports:
       - 3000:3000
     depends_on:
       - postgres
-      - redis
+      - cache
 
   postgres:
     container_name: postgres
     image: postgres:16.0-alpine3.18
+    restart: always
     volumes:
-      - ./backend/db:/app/db
+      - db-volume:/var/lib/postgresql/data
+      # - ./backend/db:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: postgresapp
       POSTGRES_USER: postgres
@@ -32,46 +36,44 @@ services:
     ports:
       - 5432:5432
 
-  redis:
+  cache:
     container_name: redis
     image: redis:7.2.1-alpine3.18
-    restart: unless-stopped
-    ports:
-      - '6379:6379'
+    restart: always
     command: redis-server --save 60 1 --loglevel warning
     volumes: 
-      - ./backend/cache:/app/cache
+      - redis-volume:/data
+      # - ./backend/cache:/var/lib/redis/data
     environment:
-      REDIS_HOST: localhost
-      REDIS_PORT: 6379
       REDIS_PASSWORD: redisDB
+    ports:
+      - 6379:6379
 
-# volumes:
+volumes:
+  redis-volume:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /Users/jmaalouf/Desktop/42_transendence/backend/cache
+
+  db-volume:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /Users/jmaalouf/Desktop/42_transendence/backend/db
+
 #   angular-volume:
 #     driver: local
 #     driver_opts:
 #       type: none
 #       o: bind
-#       device: /goinfre/jmaalouf/42_transendence/frontend/angular/
+#       device: /Users/jmaalouf/Desktop/42_transendence/frontend/angular/
  
 #   nestjs-volume:
 #     driver: local
 #     driver_opts:
 #       type: none
 #       o: bind
-#       device: /goinfre/jmaalouf/42_transendence/backend/nest/app/
-
-#   db-volume:
-#     driver: local
-#     driver_opts:
-#       type: none
-#       o: bind
-#       device: /goinfre/jmaalouf/42_transendence/backend/db
- 
-#   redis-volume:
-#     driver: local
-#     driver_opts:
-#       type: none
-#       o: bind
-#       device: /goinfre/jmaalouf/42_transendence/backend/cache
-
+#       device: /Users/jmaalouf/Desktop/42_transendence/backend/nest/app/

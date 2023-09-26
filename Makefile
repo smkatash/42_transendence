@@ -4,7 +4,6 @@ $(NAME): required_folders
 	docker compose up
 
 all: $(NAME)
-	docker compose up
 
 required_folders:
 	mkdir -p ./backend/db
