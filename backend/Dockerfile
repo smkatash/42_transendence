@@ -4,6 +4,4 @@ WORKDIR /app-backend
 
 EXPOSE 4200
 
-# CMD npm install && npm run start:dev
-
-CMD ["sh", "-c", "while true; do sleep 3600; done"]
+CMD npm install --legacy-peer-deps && npm run start:dev
