@@ -8,7 +8,7 @@ import * as passport from 'passport'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
-  let redisClient = createClient()
+  let redisClient = createClient({url: 'redis://redis:6379'})
   await redisClient.connect().catch(console.error)
   
   app.use(

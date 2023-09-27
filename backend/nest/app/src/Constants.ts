@@ -9,7 +9,7 @@ export const DB_PASSWORD='postgresDB'
 export const DB_NAME='postgresapp'
 export const SESSION_SECRET='topsecretahahsjfkgklh'
 
-export const REDIS_HOST='cache'
+export const REDIS_HOST='redis'
 export const REDIS_PORT=6379
 export const REDIS_PASSWORD='redisDB'
 
