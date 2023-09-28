@@ -21,7 +21,8 @@ export class MatchService {
 
     constructor(@InjectRepository(Match) private matchRepo: Repository<Match>,
                 private readonly queueService: QueueService,
-                private readonly gameService: GameService
+                private readonly gameService: GameService,
+                private readonly playerService: PlayerService
                 ) {}
 
 
@@ -133,6 +134,7 @@ export class MatchService {
     async saveMatchHistory(game: Game) {
         const match = game.match
         match.scores = game.scores
+        await this.playerService.updatePlayerScore(game.match.players, game.scores)
         return this.saveValidMatch(match)
     } 
 
@@ -144,9 +146,6 @@ export class MatchService {
         }
         return this.matchRepo.save(match)
     }
-
-  
-
 }
 
 

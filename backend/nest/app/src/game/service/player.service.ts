@@ -16,6 +16,7 @@ export class PlayerService {
             id: user.id,
             user: user,
             clientId: clientId,
+            score: 0,
             matches: [],
             queue: null,
             gameState: GameState.START
@@ -41,6 +42,15 @@ export class PlayerService {
         player.clientId = clientId
         return this.saveValidPlayer(player)
     }
+
+    async updatePlayerScore(players: Player[], score: Record<string, number>) {
+        for (const player of players) {
+            player.score += score[player.id]
+        }
+
+        return this.playerRepo.save(players)
+    }
+
 
     async updatePlayerQueue(player: Player, queue?: Queue) {
         if (!queue) {
