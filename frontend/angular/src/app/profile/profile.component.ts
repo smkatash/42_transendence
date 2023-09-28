@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { MyProfileService } from './my-profile.service';
+import { ProfileService } from './profile.service';
 import { Match, User } from '../entities.interface';
 
 @Component({
-  selector: 'app-my-profile',
-  templateUrl: './my-profile.component.html',
-  styleUrls: ['./my-profile.component.css']
+  selector: 'app-profile',
+  templateUrl: './profile.component.html',
+  styleUrls: ['./profile.component.css']
 })
-export class MyProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit {
 
-  constructor(private profileService: MyProfileService){ }
+  constructor(private profileService: ProfileService){ }
 
   profile?: User
   friends: User[] = []

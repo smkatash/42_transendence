@@ -6,7 +6,7 @@ import { Match, User, UserFriend, UserMatches } from '../entities.interface';
 @Injectable({
   providedIn: 'root'
 })
-export class MyProfileService {
+export class ProfileService {
 
   constructor(private http: HttpClient) { }
 
