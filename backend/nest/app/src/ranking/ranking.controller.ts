@@ -22,15 +22,16 @@ export class RankingController {
            }
            return matchHistory
         }
-        throw new UnauthorizedException('Access denied');
+        throw new UnauthorizedException('Access denied')
     }
 
     @Get('board')
     @UseGuards(SessionGuard)
     async getRankingBoard(@GetUser() user: User) {
         if (user && user.id) {
-            
+            return this.rankingService.getAllUserStats()
         }
+        throw new UnauthorizedException('Access denied')
 
     }
 

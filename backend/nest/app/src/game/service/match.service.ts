@@ -146,6 +146,20 @@ export class MatchService {
         }
         return this.matchRepo.save(match)
     }
+
+    async getMatchesByPlayerId(id: string): Promise<Match[]> {
+        return this.matchRepo
+            .createQueryBuilder('match')
+            .innerJoinAndSelect('match.players', 'players')
+            .innerJoinAndSelect('match.winner', 'winner')
+            .innerJoinAndSelect('match.loser', 'loser')
+            .innerJoinAndSelect('winner.user', 'winnerUser')
+            .innerJoinAndSelect('loser.user', 'loserUser')
+            .where('players.id = :id', { id })
+            .addSelect(['winnerUser.username'])
+            .addSelect(['loserUser.username']) 
+            .getMany()
+    }
 }
 
 

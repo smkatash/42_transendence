@@ -1,26 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Match } from 'src/game/entities/match.entity';
-import { Repository } from 'typeorm';
+import { MatchService } from 'src/game/service/match.service';
+import { PlayerService } from 'src/game/service/player.service';
 
 @Injectable()
 export class RankingService {
 
-    constructor(@InjectRepository(Match) private matchRepo: Repository<Match>) {}
+    constructor(private readonly matchService: MatchService,
+                private readonly playerService: PlayerService) {}
 
 
     async getMatchesByUserId(userId: string): Promise<Match[]> {
-        return this.matchRepo
-            .createQueryBuilder('match')
-            .innerJoinAndSelect('match.players', 'players')
-            .innerJoinAndSelect('match.winner', 'winner')
-            .innerJoinAndSelect('match.loser', 'loser')
-            .innerJoinAndSelect('winner.user', 'winnerUser')
-            .innerJoinAndSelect('loser.user', 'loserUser')
-            .where('players.id = :userId', { userId })
-            .addSelect(['winnerUser.username'])
-            .addSelect(['loserUser.username']) 
-            .getMany()
+        return this.matchService.getMatchesByPlayerId(userId)
+    }
+
+    async getAllUserStats() {
+        const users = await this.playerService.getPlayers()
+        users.sort((a, b) => a.score - b.score)
+        return users
     }
 
     
