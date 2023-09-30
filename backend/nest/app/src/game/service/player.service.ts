@@ -16,6 +16,7 @@ export class PlayerService {
             id: user.id,
             user: user,
             clientId: clientId,
+            score: 0,
             matches: [],
             queue: null,
             gameState: GameState.START
@@ -27,6 +28,16 @@ export class PlayerService {
 
     async getPlayerById(id: string): Promise<Player> {
         return this.playerRepo.findOneBy({id})
+    }
+
+
+    async getPlayerByUser(user: User, clientId: string): Promise<Player> {
+        const currentPlayer = await this.getPlayerById(user.id)
+        if (currentPlayer) {
+            return currentPlayer
+        }
+
+        return this.createPlayer(user, clientId)
     }
 
     async saveValidPlayer(player: Player) {
@@ -42,6 +53,15 @@ export class PlayerService {
         return this.saveValidPlayer(player)
     }
 
+    async updatePlayerScore(players: Player[], score: Record<string, number>) {
+        for (const player of players) {
+            player.score += score[player.id]
+        }
+
+        return this.playerRepo.save(players)
+    }
+
+
     async updatePlayerQueue(player: Player, queue?: Queue) {
         if (!queue) {
             player.queue = null
@@ -54,6 +74,10 @@ export class PlayerService {
     async updatePlayerState(player: Player, state: GameState) {
         player.gameState = state
         return this.saveValidPlayer(player)
+    }
+
+    getPlayers(): Promise<Player[]> {
+        return this.playerRepo.find()
     }
 
 }

@@ -12,6 +12,8 @@ export const SESSION_SECRET='topsecretahahsjfkgklh'
 export const REDIS_HOST='localhost'
 export const REDIS_PORT=6379
 export const REDIS_PASSWORD='redisDB'
+//export const REDIS_CLIENT = 'redis://redis:6379'
+export const FRONT_END_URL = 'angular://angular:4200'
 
 
 export const DEFAULT_PADDLE_LENGTH = 10

@@ -3,11 +3,17 @@ import { AppModule } from './app.module';
 import * as session from 'express-session';
 import {createClient} from "redis"
 import RediStore from 'connect-redis'
-import { SESSION_SECRET } from './Constants';
+import { FRONT_END_URL, SESSION_SECRET } from './Constants';
 import * as passport from 'passport'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
+
+  app.enableCors({
+    origin: FRONT_END_URL,
+    credentials: true,
+  })
+  //let redisClient = createClient({url: REDIS_CLIENT})
   let redisClient = createClient()
   await redisClient.connect().catch(console.error)
   

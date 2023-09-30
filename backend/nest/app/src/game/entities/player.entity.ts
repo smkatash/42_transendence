@@ -16,6 +16,9 @@ export class Player {
     @Column()
     clientId: string
 
+    @Column({default: 0})
+    score: number
+
     @ManyToMany(() => Match, (match) => match.players, { nullable: true})
     matches: Match[] | []
 
