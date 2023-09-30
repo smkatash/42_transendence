@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import * as session from 'express-session';
 import {createClient} from "redis"
 import RediStore from 'connect-redis'
-import { SESSION_SECRET } from './Constants';
+import { FRONT_END_URL, SESSION_SECRET } from './Constants';
 import * as passport from 'passport'
 
 async function bootstrap() {

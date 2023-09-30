@@ -32,8 +32,10 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       }
       user = await this.userService.updateUserStatus(user.id, Status.GAME)
       //const player = await this.playerService.createPlayer(user, client.id)
-      let player = await this.playerService.getPlayerById(user.id)
-      player = await this.playerService.updatePlayerClient(player, client.id)
+      let player = await this.playerService.getPlayerByUser(user, client.id)
+      if (player.clientId !== client.id) {
+        player = await this.playerService.updatePlayerClient(player, client.id)
+      }
       client.join(player.id)
       client.data.user = player
       client.emit('user', { player })

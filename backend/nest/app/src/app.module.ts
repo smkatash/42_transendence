@@ -18,6 +18,7 @@ import { ChannelUserModule } from './chat/channel_user/channel_user.module';
 import { ChannelMessageModule } from './chat/channel_message/channel_message.module';
 import { BlockListModule } from './chat/block_list/block_list.module';
 import { FriendListModule } from './chat/friend_list/friend_list.module';
+import { RankingModule } from './ranking/ranking.module';
 
 
 @Module({
@@ -49,6 +50,7 @@ import { FriendListModule } from './chat/friend_list/friend_list.module';
     ChannelMessageModule,
     BlockListModule,
     FriendListModule,
+    RankingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

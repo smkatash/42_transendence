@@ -14,6 +14,7 @@ import { GameService } from './service/game.service';
 @Module({
     imports: [TypeOrmModule.forFeature([Match, Player, Queue]), UserModule, AuthModule],
     providers: [GameGateway, MatchService, PlayerService, QueueService, GameService],
+    exports: [MatchService, PlayerService]
 })
 
 export class GameModule {}

@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryColumn } from "typeorm";
 import { GameState } from "../utls/game";
 import { Player } from "./player.entity";
 
@@ -18,9 +18,11 @@ export class Match {
     observers: Player[]
     
     @ManyToOne(() => Player, { nullable: true })
+    @JoinColumn({ name: 'winnerId' })
     winner: Player
     
     @ManyToOne(() => Player, { nullable: true })
+    @JoinColumn({ name: 'loserId' })
     loser: Player
 
     @Column({ type: 'jsonb', nullable: true, default: null })
