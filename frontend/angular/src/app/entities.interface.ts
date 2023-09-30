@@ -49,3 +49,14 @@ export interface UserMatches {
   id: number //Stands for user id
   matches: Match[]
 }
+
+// leaderboard interface shit --------------------------------
+
+export interface Player{
+  id: number
+  clientId :string 
+  score: number 
+  gameState: number
+}
+
+// -----------------------------------------------------------
