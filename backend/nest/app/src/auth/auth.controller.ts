@@ -8,6 +8,7 @@ import { SessionGuard } from './guard/auth.guard';
 import { GetSession, SessionParams } from './utils/get-session';
 import { RedisSessionService } from 'src/redis/redis-session.service';
 import { Status } from 'src/user/utils/status.dto';
+import { FRONT_END_CALLBACK_URL } from 'src/Constants';
 
 @Controller('42auth')
 export class AuthController {
@@ -28,7 +29,7 @@ export class AuthController {
         if (user) {
             await this.authService.updateUserStatus(user.id, Status.ONLINE)
             await this.redisSessionService.storeSession(session.id, session.session)
-            res.status(302).redirect('/42auth/test');
+            res.status(302).redirect(FRONT_END_CALLBACK_URL)
         }
     }
     

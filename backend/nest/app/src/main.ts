@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import * as session from 'express-session';
 import {createClient} from "redis"
 import RediStore from 'connect-redis'
-import { FRONT_END_URL, SESSION_SECRET } from './Constants';
+import { FRONT_END_URL, REDIS_CLIENT, SESSION_SECRET } from './Constants';
 import * as passport from 'passport'
 
 async function bootstrap() {
@@ -13,8 +13,7 @@ async function bootstrap() {
     origin: FRONT_END_URL,
     credentials: true,
   })
-  //let redisClient = createClient({url: REDIS_CLIENT})
-  let redisClient = createClient()
+  let redisClient = createClient({url: REDIS_CLIENT})
   await redisClient.connect().catch(console.error)
   
   app.use(

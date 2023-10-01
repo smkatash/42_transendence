@@ -34,5 +34,4 @@ export class RankingController {
         throw new UnauthorizedException('Access denied')
 
     }
-
 }
