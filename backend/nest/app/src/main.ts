@@ -10,7 +10,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule)
   let redisClient = createClient({url: 'redis://redis:6379'})
   await redisClient.connect().catch(console.error)
-  
+  app.enableCors({
+    origin: 'http://10.12.1.4:4200',
+    credentials: true,
+  })
   app.use(
     session({
     store: new RediStore({client: redisClient}),

@@ -8,6 +8,7 @@ import { SessionGuard } from './guard/auth.guard';
 import { GetSession, SessionParams } from './utils/get-session';
 import { RedisSessionService } from 'src/redis/redis-session.service';
 import { Status } from 'src/user/utils/status.dto';
+import { HOST_IP } from 'src/Constants';
 
 @Controller('42auth')
 export class AuthController {
@@ -25,19 +26,21 @@ export class AuthController {
     @Get('redirect')
     @UseGuards(OauthGuard)
     async handleRedirect(@GetUser() user: User,  @GetSession() session: SessionParams , @Res({ passthrough: true }) res: Response) {
+
         if (user) {
             await this.authService.updateUserStatus(user.id, Status.ONLINE)
             await this.redisSessionService.storeSession(session.id, session.session)
-            res.status(302).redirect('/42auth/test');
+            // res.status(302).redirect('/42auth/test');
+            res.status(302).redirect(`http://${HOST_IP}:4200`);
+          }
         }
-    }
-    
-    @Get('test')
-    @UseGuards(SessionGuard)
-    async handle(@GetUser() user: User, @GetSession() session: SessionParams) {
+        
+        @Get('test')
+        @UseGuards(SessionGuard)
+        async handle(@GetUser() user: User, @GetSession() session: SessionParams, @Res({ passthrough: true }) res: Response) {
         if (user) {
-            console.log('Success')
-            const redisSessionData = await this.redisSessionService.getSession(session.id);
+          console.log('Success')
+          const redisSessionData = await this.redisSessionService.getSession(session.id);
             return { message: 'OK', sessionData: redisSessionData }
         } else {
             throw new UnauthorizedException()

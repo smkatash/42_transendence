@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
+import { hostIp } from 'src/config';
 
 @Injectable({
   providedIn: 'root'
@@ -9,8 +10,8 @@ import { catchError, retry } from 'rxjs/operators';
 export class LoginService {
   constructor(private http: HttpClient) { };
 
-  loginUrl = '/api';
+  loginUrl = `${hostIp}:3000/42auth/login`;
   getLogin(): Observable<Object>{
-    return this.http.get<Object>(this.loginUrl);
+    return this.http.get<Object>(this.loginUrl, { withCredentials: true })
   }
 }
