@@ -1,7 +1,9 @@
-FROM node:20-alpine3.17
+FROM node:20-alpine3.18
 
-COPY . /app-frontend
+WORKDIR /app-frontend
+
+RUN npm install -g @angular/cli
 
 EXPOSE 4200
-# CMD while true; do foo; sleep 2; done
-CMD ["bash", "while true; do foo; sleep 2; done"]
+
+CMD npm install && npm run start

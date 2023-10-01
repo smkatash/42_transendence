@@ -1,16 +1,15 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, retry } from 'rxjs/operators';
+import { DOCUMENT } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
-  constructor(private http: HttpClient) { };
+  constructor(private http: HttpClient, @Inject(DOCUMENT) private document: Document) { };
 
   loginUrl = '/api';
-  getLogin(): Observable<Object>{
-    return this.http.get<Object>(this.loginUrl);
+  getLogin(){
+    this.document.location.href = 'http://localhost:3000/42auth/login'
   }
 }

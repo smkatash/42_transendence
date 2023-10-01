@@ -1,44 +1,33 @@
 version: '3.8'
 
 services:
-  # Frontend
   angular:
     container_name: angular
-    image: node:lts
-    command: bash -c "npm install && npm run start"
+    build: ./frontend
     volumes:
-      - type: bind
-        source: ./frontend/angular
-        target: /app/frontend
-    working_dir: /app/frontend
+      - ./frontend/angular:/app-frontend
     ports:
       - 4200:4200
-    links:
+    depends_on:
       - nestjs
 
-  # Backend
   nestjs:
     container_name: nestjs
-    image: node:lts
-    command: bash -c "npm install --legacy-peer-deps && npm run start:dev"
+    build: ./backend
     volumes:
-      - type: bind
-        source: ./backend/nest/app
-        target: /app/backend
-    working_dir: /app/backend
-    depends_on:
-      - postgres
-      - cache
+      - ./backend/nest/app:/app-backend
     ports:
       - 3000:3000
-      - 9229:9229
+    depends_on:
+      - postgres
+      - redis
 
-  # Database
   postgres:
     container_name: postgres
-    image: postgres:latest
+    image: postgres:16.0-alpine3.18
+    restart: unless-stopped
     volumes:
-      - db_vol:/var/lib/postgresql/data
+      - db-volume:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: postgresapp
       POSTGRES_USER: postgres
@@ -46,30 +35,15 @@ services:
     ports:
       - 5432:5432
 
-  cache:
+  redis:
     container_name: redis
-    image: redis:6.2-alpine
-    restart: always
-    ports:
-      - '6379:6379'
-    command: redis-server --save 20 1 --loglevel warning 
+    image: redis:7.2.1-alpine3.18
+    restart: unless-stopped
     volumes: 
-      - cache:/data
-    environment:
-      REDIS_HOST: localhost
-      REDIS_PORT: 6379
-      REDIS_PASSWORD: redisDB
+      - redis-volume:/data
+    ports:
+      - 6379:6379
 
 volumes:
-  db_vol:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${PWD}/backend/db
-  cache:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${PWD}/backend/cache
+  db-volume:
+  redis-volume:
