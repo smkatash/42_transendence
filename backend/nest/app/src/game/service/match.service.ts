@@ -21,7 +21,8 @@ export class MatchService {
 
     constructor(@InjectRepository(Match) private matchRepo: Repository<Match>,
                 private readonly queueService: QueueService,
-                private readonly gameService: GameService
+                private readonly gameService: GameService,
+                private readonly playerService: PlayerService
                 ) {}
 
 
@@ -133,6 +134,7 @@ export class MatchService {
     async saveMatchHistory(game: Game) {
         const match = game.match
         match.scores = game.scores
+        await this.playerService.updatePlayerScore(game.match.players, game.scores)
         return this.saveValidMatch(match)
     } 
 
@@ -145,8 +147,19 @@ export class MatchService {
         return this.matchRepo.save(match)
     }
 
-  
-
+    async getMatchesByPlayerId(id: string): Promise<Match[]> {
+        return this.matchRepo
+            .createQueryBuilder('match')
+            .innerJoinAndSelect('match.players', 'players')
+            .innerJoinAndSelect('match.winner', 'winner')
+            .innerJoinAndSelect('match.loser', 'loser')
+            .innerJoinAndSelect('winner.user', 'winnerUser')
+            .innerJoinAndSelect('loser.user', 'loserUser')
+            .where('players.id = :id', { id })
+            .addSelect(['winnerUser.username'])
+            .addSelect(['loserUser.username']) 
+            .getMany()
+    }
 }
 
 

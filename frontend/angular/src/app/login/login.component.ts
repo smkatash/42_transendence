@@ -14,46 +14,7 @@ export class LoginComponent {
   constructor(private loginService: LoginService, private router: Router/* , @Inject(DOCUMENT) private document: Document */) { };
 
   login(): void {
-    window.location.href = `http://${hostIp}:3000/42auth/login`
-    // this.router.navigate(`http://${hostIp}:3000/42auth/login`, )
-    // this.loginService.getLogin().subscribe({
-    //   next: (response) => {
-    //     // const sessionData = response
-    //     // console.log(sessionData)
-    //   },
-    //   error: (error) => {
-    //     console.error('Authentication failed:', error)
-    //   },
-    //   complete: () =>
-    //   this.router.navigate(['/home'])
-    // })
+    this.loginService.getLogin()
   }
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
