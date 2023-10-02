@@ -7,5 +7,9 @@ import { NavbarComponent } from '../shared/navbar/navbar.component';
   styleUrls: ['./game.component.css']
 })
 export class GameComponent {
+  isGameOn: boolean = false;
 
+  setGame(event: boolean) {
+    this.isGameOn = event
+  }
 }

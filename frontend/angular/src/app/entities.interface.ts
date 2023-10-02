@@ -59,4 +59,10 @@ export interface Player{
   gameState: number
 }
 
+
 // -----------------------------------------------------------
+
+export interface Document {
+  id: string
+  doc: string
+}
