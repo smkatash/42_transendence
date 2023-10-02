@@ -13,7 +13,7 @@ export const REDIS_HOST='redis'
 export const REDIS_PORT=6379
 export const REDIS_PASSWORD='redisDB'
 //export const REDIS_CLIENT = 'redis://redis:6379'
-export const FRONT_END_URL = 'angular://angular:4200'
+export const FRONT_END_URL = 'http://127.0.0.1:4200'
 
 
 export const DEFAULT_PADDLE_LENGTH = 10

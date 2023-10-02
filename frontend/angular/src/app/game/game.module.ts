@@ -8,7 +8,6 @@ import { SharedModule } from '../shared/shared.module';
 import { GameBoardComponent } from './game-board/game-board.component';
 import { GameMenuComponent } from './game-menu/game-menu.component';
 
-const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
 
 @NgModule({
   declarations: [
@@ -18,7 +17,6 @@ const config: SocketIoConfig = { url: 'http://localhost:3000', options: {} };
     CommonModule,
     SharedModule,
     GameRoutingModule,
-    SocketIoModule.forRoot(config)
   ]
 })
 export class GameModule { }

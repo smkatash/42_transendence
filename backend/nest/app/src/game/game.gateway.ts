@@ -9,7 +9,7 @@ import { Player } from './entities/player.entity';
 import { PlayerService } from './service/player.service';
 import { Game, GameState, MessageMatch} from './utls/game';
 
-@WebSocketGateway({ namespace: 'game' })
+@WebSocketGateway({ namespace: 'game', cors: true })
 export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger = new Logger(GameGateway.name)
   @WebSocketServer()
@@ -30,8 +30,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       if (!user) {
         return client.disconnect()
       }
-      user = await this.userService.updateUserStatus(user.id, Status.GAME)
-      //const player = await this.playerService.createPlayer(user, client.id)
+    user = await this.userService.updateUserStatus(user.id, Status.GAME)
+    //let player = await this.playerService.createPlayer(user, client.id)
       let player = await this.playerService.getPlayerByUser(user, client.id)
       if (player.clientId !== client.id) {
         player = await this.playerService.updatePlayerClient(player, client.id)
@@ -55,9 +55,11 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('start')
   async handleStartMatch(@ConnectedSocket() client: Socket) {
+    console.log("bonjour putain")
     if (!client.data.user.id) return
     this.logger.debug(client.data.user.id)
     const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
+
 
     if (currentPlayer) {
       let playersInQueue: Player[] = await this.matchService.waitInQueue(currentPlayer)

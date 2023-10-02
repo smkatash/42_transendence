@@ -11,6 +11,11 @@ async function bootstrap() {
   let redisClient = createClient({url: 'redis://redis:6379'})
   await redisClient.connect().catch(console.error)
   
+  app.enableCors({
+    origin: FRONT_END_URL,
+    credentials: true,
+  })
+  
   app.use(
     session({
     store: new RediStore({client: redisClient}),
