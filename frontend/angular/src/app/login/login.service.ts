@@ -10,6 +10,6 @@ export class LoginService {
 
   loginUrl = '/api';
   getLogin(){
-    this.document.location.href = 'http://localhost:3000/42auth/login'
+    this.document.location.href = 'http://127.0.0.1:3000/42auth/login'
   }
 }

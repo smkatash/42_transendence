@@ -14,11 +14,11 @@ export class RankingController {
     @UseGuards(SessionGuard)
     async getMatchHistory(@GetUser() user: User) {
         if (user && user.id) {
-            const matchSummary: Match[] = await this.rankingService.getMatchesByUserId('9963711')
+            const matchSummary: Match[] = await this.rankingService.getMatchesByUserId(user.id)
             const matchHistory: MatchHistoryDto[] = []
             
            for (const match of matchSummary) {
-                matchHistory.push(new MatchHistoryDto(match, '9963711'))
+                matchHistory.push(new MatchHistoryDto(match, user.id))
            }
            return matchHistory
         }

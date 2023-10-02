@@ -5,14 +5,17 @@
 
     <!-- Wrapper for the left info box containing picture and name etc... -->
     <div class="info-container">
-      <div class="profile-pic"><img src="http://placekitten.com/1500/1500"></div>
-      <h1 class="username">{{ profile?.login }}</h1>
-      <h2 class="title">{{ profile?.title }}</h2>
+      <div class="profile-pic"><img src="{{ profile?.avatar }}"></div>
+      <h1 class="username">{{ profile?.username }}</h1>
+      <h2 class="title">{{ profile?.email }}</h2>
 
       <!-- These should be hidden if the user is the user of the session -->
       <div class="status">
-        <div class="dot"></div>
-        <h2>{{ profile?.status }}</h2> <!-- TODO: Make style change based on status -->
+        <div class="dot-online" *ngIf="profile?.status === 1"></div>
+        <h2 *ngIf="profile?.status === 1" F>Online</h2>
+        <div class="dot-offline" *ngIf="profile?.status === 0"></div>
+        <h2 *ngIf="profile?.status === 0">Offline</h2>
+        <!--TODO make nicer-->
       </div>
       <button class="add-friend">Add friend</button>
 
@@ -24,16 +27,19 @@
       <div class="upper-row">
         <div class="level">
           <h1>Rank:</h1>
-          <h2>{{ profile?.rank }}</h2>
+          <h2>0</h2><!-- TODO: Fetch -->
+          <!-- <h2>{{ profile?.rank }}</h2> -->
         </div>
 
         <div class="wins-losses">
           <h1>Wins : Losses</h1>
-          <h2>{{ profile?.wins }}:{{ profile?.losses }}</h2>
+          <h2>0:0</h2><!-- TODO: Fetch -->
+          <!-- <h2>{{ profile?.wins }}:{{ profile?.losses }}</h2> -->
         </div>
         <div class="matches-played">
           <h1>Matches played:</h1>
-          <h2>{{ profile?.matchesPlayed }}</h2>
+          <h2>0</h2><!-- TODO: Fetch -->
+          <!-- <h2>{{ profile?.matchesPlayed }}</h2> -->
         </div>
       </div>
 

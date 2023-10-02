@@ -20,13 +20,15 @@ export class ProfileComponent implements OnInit {
   }
 
   getProfile(): void {
-    this.profileService.getProfile(101095)
-        .subscribe((user: User) => this.profile = user)
+    this.profileService.getSessionUser().subscribe((user) => {
+      this.profile = user;
+      this.profileService.getFriends(this.profile.id).subscribe(friends => this.friends = friends);
+    })
 
-    this.profileService.getFriends(101095)
-        .subscribe((users) => this.friends = users)
+    // this.profileService.getFriends(101095)
+    //     .subscribe((users) => this.friends = users)
 
-    this.profileService.getMatches(101095)
-        .subscribe((matches) => this.matches = matches)
+    // this.profileService.getMatches(101095)
+    //     .subscribe((matches) => this.matches = matches)
   }
 }

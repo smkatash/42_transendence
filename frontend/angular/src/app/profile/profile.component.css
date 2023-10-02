@@ -62,12 +62,20 @@ body {
   margin-top: 3%;
 }
 
-.status .dot {
+.status .dot-online {
   height: 1dvw;
   width: 1dvw;
   background-color: #618B4A;
   border-radius: 50%;
 }
+
+.status .dot-offline {
+  height: 1dvw;
+  width: 1dvw;
+  background-color: #8b4a4a;
+  border-radius: 50%;
+}
+
 .status h2 {
   margin: 0%;
   margin-left: 2%;

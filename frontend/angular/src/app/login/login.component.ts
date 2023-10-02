@@ -3,7 +3,6 @@ import { LoginService } from './login.service';
 import { Observable } from 'rxjs';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { hostIp } from 'src/config';
 
 @Component({
   selector: 'app-login',
@@ -11,10 +10,9 @@ import { hostIp } from 'src/config';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  constructor(private loginService: LoginService, private router: Router/* , @Inject(DOCUMENT) private document: Document */) { };
+  constructor(private loginService: LoginService, private router: Router) { };
 
   login(): void {
     this.loginService.getLogin()
   }
-
 }
