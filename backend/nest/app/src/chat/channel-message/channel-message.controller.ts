@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ChannelMessageService } from './channel_message.service';
-import { CreateChannelMessageDto } from './dto/create-channel_message.dto';
-import { UpdateChannelMessageDto } from './dto/update-channel_message.dto';
+import { ChannelMessageService } from './channel-message.service';
+import { CreateChannelMessageDto } from './dto/create-channel-message.dto';
+import { UpdateChannelMessageDto } from './dto/update-channel-message.dto';
 
 @Controller('channel-message')
 export class ChannelMessageController {

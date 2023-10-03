@@ -1,9 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { CreateChannelMessageDto } from './dto/create-channel_message.dto';
-import { UpdateChannelMessageDto } from './dto/update-channel_message.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CreateChannelMessageDto } from './dto/create-channel-message.dto';
+import { UpdateChannelMessageDto } from './dto/update-channel-message.dto';
+import { ChannelMessage } from './entities/channel-message.entity';
 
 @Injectable()
 export class ChannelMessageService {
+  constructor(@InjectRepository(ChannelMessage) private channelMessageRepo: Repository<ChannelMessage>) {}
+ 
   create(createChannelMessageDto: CreateChannelMessageDto) {
     return 'This action adds a new channelMessage';
   }
