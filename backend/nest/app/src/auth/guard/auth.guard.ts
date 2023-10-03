@@ -1,21 +1,19 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { RedisSessionService } from 'src/redis/redis-session.service';
+import * as session from 'express-session';
 
 @Injectable()
 export class SessionGuard implements CanActivate {
-  constructor(private readonly redisSessionService: RedisSessionService) {}
+  constructor() {}
   
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
-    if (!request.isAuthenticated()) {
-      return false
+	console.log("Session Guard")
+	console.log(request.session)
+	console.log(request.sessionID)
+    if (!request.session || !request.sessionID) {
+		return false
     }
-
-    const session = await this.redisSessionService.getSession(request.sessionID)
-    if (!session) {
-      return false
-    }
-
+	console.log("Session END")
     return true
   }
 }

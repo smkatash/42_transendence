@@ -27,6 +27,7 @@ export class UserController {
     @UseGuards(SessionGuard)
     async getUserInfo(@GetUser() user: User) {
         // await this.userService.createUser({ id: '1', username: 'shmandar', email: 'shmandar.com', avatar: 'cat.com', status: 0 })
+		console.log(user)
         return await this.userService.getUserById(user.id)
     }
 
