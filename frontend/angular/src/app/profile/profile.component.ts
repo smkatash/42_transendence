@@ -14,6 +14,7 @@ export class ProfileComponent implements OnInit {
   profile?: User
   friends: User[] = []
   matches: Match[] = []
+  selectedImage: File | null = null
 
   ngOnInit(): void {
     this.getProfile()
@@ -25,10 +26,21 @@ export class ProfileComponent implements OnInit {
       this.profileService.getFriends(this.profile.id).subscribe(friends => this.friends = friends);
     })
 
-    // this.profileService.getFriends(101095)
-    //     .subscribe((users) => this.friends = users)
-
     // this.profileService.getMatches(101095)
     //     .subscribe((matches) => this.matches = matches)
+  }
+
+  onImageSelected(event: any) {
+    this.selectedImage = event.target.files[0]
+
+    if (this.selectedImage) {
+
+      const formData = new FormData()
+      formData.append('image', this.selectedImage, this.selectedImage.name)
+
+      if (!this.profile?.id) return
+
+      this.profileService.setAvatar(this.profile.id, formData)
+    }
   }
 }

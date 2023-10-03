@@ -30,6 +30,10 @@ body {
   margin-top: 10%;
 }
 
+.profile-pic input {
+  display: none;
+}
+
 .profile-pic img {
   border: .2dvw solid #2f424a;
   border-radius: 50%;

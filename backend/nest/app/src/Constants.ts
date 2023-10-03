@@ -14,12 +14,9 @@ export const REDIS_HOST='redis'
 export const REDIS_PORT=6379
 export const REDIS_PASSWORD='redisDB'
 export const REDIS_CLIENT = 'redis://redis:6379'
-export const FRONT_END_URL = 'http://10.13.3.6:4200'
-// export const FRONT_END_URL = 'http://0.0.0.0:4200'
+export const FRONT_END_URL = 'http://127.0.0.1:4200'
 
 export const DEFAULT_PADDLE_LENGTH = 10
 export const DEFAULT_TABLE_PROPORTION = 2
 export const DEFAULT_TABLE_HEIGHT = 500
 export const DEFAULT_PADDLE_GAP = 10
-
-export const HOST_IP = '10.12.1.4'

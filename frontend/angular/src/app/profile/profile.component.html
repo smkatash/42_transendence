@@ -5,7 +5,11 @@
 
     <!-- Wrapper for the left info box containing picture and name etc... -->
     <div class="info-container">
-      <div class="profile-pic"><img src="{{ profile?.avatar }}"></div>
+      <div class="profile-pic">
+        <input type="file" accept="image/*" (change)="onImageSelected($event)" #imageUpload>
+        <button (click)="imageUpload.click()">upload</button>
+        <img crossorigin="use-credentials" src="http://127.0.0.1:3000/user/image/{{ profile?.avatar }}">
+      </div>
       <h1 class="username">{{ profile?.username }}</h1>
       <h2 class="title">{{ profile?.email }}</h2>
 
