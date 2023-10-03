@@ -6,7 +6,7 @@ import { v4 as uuid } from 'uuid';
 import { User } from './entities/user.entity';
 import { GetUser } from 'src/auth/utils/get-user.decorator';
 import { SessionGuard } from 'src/auth/guard/auth.guard';
-import path = require('path');
+import * as path from 'path';
 
 
 export const localStorage = {

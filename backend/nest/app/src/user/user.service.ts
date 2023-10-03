@@ -6,6 +6,9 @@ import { AuthUserDto } from 'src/auth/utils/auth.user.dto';
 import { validate } from 'class-validator';
 import { Status } from './utils/status.dto';
 import { Player } from 'src/game/entities/player.entity';
+import * as https from 'https';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class UserService {
@@ -93,5 +96,22 @@ export class UserService {
         throw new InternalServerErrorException()
       }
     }
+
+	async getIntraProfile(imageUrl: string): Promise<string> {
+		const imageSplit = imageUrl.split('/')
+		const imageName = imageSplit[imageSplit.length - 1]
+		const file = fs.createWriteStream(`./uploads/images/${imageName}`)
+
+		https.get(imageUrl, response => {
+		response.pipe(file);
+
+		file.on('finish', () => {
+			file.close()
+		});
+		}).on('error', err => {
+			throw new InternalServerErrorException('Failed to get the user profile')
+		});
+		return imageName ?? ''
+	}
 
 }

@@ -4,6 +4,7 @@ export interface Profile {
     email: string
     image_url: string
     provide: string
+	
     _raw: Object
     _json: Object
 }

@@ -1,4 +1,4 @@
-import {  Logger } from '@nestjs/common';
+import {  Logger, UseGuards } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { UserService } from '../user/user.service';
@@ -8,6 +8,8 @@ import { MatchService } from './service/match.service';
 import { Player } from './entities/player.entity';
 import { PlayerService } from './service/player.service';
 import { Game, GameState, MessageMatch} from './utls/game';
+import { SessionGuard } from 'src/auth/guard/auth.guard';
+import { GetUser } from 'src/auth/utils/get-user.decorator';
 
 @WebSocketGateway({ namespace: 'game', cors: true })
 export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -23,16 +25,19 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     this.logger.log("Initialized")
   }
 
-  async handleConnection(@ConnectedSocket() client: Socket, ...args: any[]) {
+  @UseGuards(SessionGuard)
+  async handleConnection(@ConnectedSocket() client: Socket, @GetUser() user: User) {
     this.logger.log(`Client id: ${client.id} connected`);
       //const userId = await this.authService.getUserSession(client)
-      let user: User =  {"id":"99637","username":"ktashbae","status": 1, "avatar" : "test", "email": "test@email.com", "friends": [], "friendOf": []}
+    //   let user: User =  {"id":"99637","username":"ktashbae","status": 1, "avatar" : "test", "email": "test@email.com", "friends": [], "friendOf": []}
       if (!user) {
         return client.disconnect()
       }
-    user = await this.userService.updateUserStatus(user.id, Status.GAME)
-    //let player = await this.playerService.createPlayer(user, client.id)
+      user = await this.userService.updateUserStatus(user.id, Status.GAME)
       let player = await this.playerService.getPlayerByUser(user, client.id)
+	  if (!player) {
+		player = await this.playerService.createPlayer(user, client.id)
+	  }
       if (player.clientId !== client.id) {
         player = await this.playerService.updatePlayerClient(player, client.id)
       }
