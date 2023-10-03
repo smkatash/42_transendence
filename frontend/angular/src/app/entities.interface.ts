@@ -44,3 +44,37 @@ export interface Match {
 //   scores: Record<string, number>
 // }
 
+
+// leaderboard interface shit --------------------------------
+
+export interface Player{
+  id: number
+  clientId :string
+  score: number
+  gameState: number
+}
+
+
+// -----------------------------------------------------------
+
+export interface Document {
+  id: string
+  doc: string
+}
+
+// leaderboard interface shit --------------------------------
+
+export interface Player{
+  id: number
+  clientId :string
+  score: number
+  gameState: number
+}
+
+
+// -----------------------------------------------------------
+
+export interface Document {
+  id: string
+  doc: string
+}

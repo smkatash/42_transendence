@@ -66,7 +66,7 @@ export class GameBoardComponent {
       this.ballY = -1 * this.ballHeight;
       this.canMoveBall = false;
     }
-  
+
     newGame(): void {
       this.resetAll();
       this.startRound();

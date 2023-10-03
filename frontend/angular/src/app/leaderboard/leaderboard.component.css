@@ -1,0 +1,13 @@
+body {
+    background-color: #4F6D7A;
+    position: relative;
+}
+
+.board-interface {
+  width: 80%;
+  height: 77%;
+  margin: auto;
+  border: .7dvw solid #E8DAB2;
+  box-sizing: border-box;
+}
+

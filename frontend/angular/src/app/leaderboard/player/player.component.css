@@ -1,0 +1,55 @@
+.player {
+    position: relative;
+    background-color: #2f424a;
+    border: 0.17dvw solid #2f424a;
+    margin-bottom: .2dvw;
+  }
+  
+  .wrapper {
+    padding: 0.5dvw;
+    display: flex;
+    align-items: center;
+    border: 0.1dvw solid #E8DAB2;
+  }
+  
+  .profile-pic {
+    display: flex;
+    justify-content: center;
+    width: 25%;
+  }
+  
+  .profile-pic img {
+    border: .05dvw solid #E8DAB2;
+    border-radius: 50%;
+    background-size: cover;
+    height: 2dvw;
+    width: 2dvw;
+  }
+  
+  .name {
+    padding-left: 0dvw;
+    width: 75%;
+    font-family: 'Quattrocento', serif;
+    font-size: 1dvw;
+    font-weight: bold;
+    color: #E8DAB2;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  
+  .status {
+    width: 25%;
+    font-family: 'Quattrocento', serif;
+    font-size: .7dvw;
+    font-weight: bold;
+    color: #E8DAB2;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  
+  .friend:hover {
+    background-color: #223036;
+    border: 0.17dvw solid #223036;
+    cursor: pointer;
+  }
+  
