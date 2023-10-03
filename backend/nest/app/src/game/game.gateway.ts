@@ -1,4 +1,4 @@
-import {  Logger, UseGuards } from '@nestjs/common';
+import {  Logger, Req, UseGuards } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { UserService } from '../user/user.service';
@@ -26,11 +26,14 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   @UseGuards(SessionGuard)
-  async handleConnection(@ConnectedSocket() client: Socket, @GetUser() user: User) {
+  async handleConnection(@ConnectedSocket() client: Socket, @GetUser() user: User, @Req() req: Request) {
     this.logger.log(`Client id: ${client.id} connected`);
       //const userId = await this.authService.getUserSession(client)
     //   let user: User =  {"id":"99637","username":"ktashbae","status": 1, "avatar" : "test", "email": "test@email.com", "friends": [], "friendOf": []}
-      if (!user) {
+    console.log(req)
+    console.log(client.data.user) 
+    if (!user) {
+        console.log('discomming')
         return client.disconnect()
       }
       user = await this.userService.updateUserStatus(user.id, Status.GAME)

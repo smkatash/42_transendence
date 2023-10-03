@@ -7,13 +7,14 @@ import { GameService } from './game.service';
   styleUrls: ['./game.component.css']
 })
 
-export class GameComponent implements OnInit {
+export class GameComponent /* implements OnInit */ {
 
-  constructor(private gameService: GameService) { }
-
-  ngOnInit(): void {
+  constructor(private gameService: GameService) {
     this.gameService.getUser()
-  }
+   }
+
+  // ngOnInit(): void {
+  // }
 
   isGameOn: boolean = false;
 
