@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { NavbarComponent } from '../shared/navbar/navbar.component';
 import { GameService } from './game.service';
 
 @Component({
@@ -8,9 +7,13 @@ import { GameService } from './game.service';
   styleUrls: ['./game.component.css']
 })
 
-export class GameComponent {
+export class GameComponent implements OnInit {
 
   constructor(private gameService: GameService) { }
+
+  ngOnInit(): void {
+    this.gameService.getUser()
+  }
 
   isGameOn: boolean = false;
 

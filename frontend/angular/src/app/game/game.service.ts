@@ -1,31 +1,25 @@
 import { Injectable } from '@angular/core';
-import { Socket } from 'ngx-socket-io';
-import {io} from 'socket.io-client';
+import { User } from '../entities.interface';
+import { GameSocket } from '../app.module';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameService {
 
-  constructor( ) { }
-  
-  socket = io('http://127.0.0.1:3000/game');
-  
-  startGame(): void {
-    // this.socket.on('connect', () => {
-    //   console.log('Connected to WebSocket server');
-    // });
-    
-    // this.socket.on('message', (data: any) => {
-    //   console.log('Received message from server:', data);
-    //   // You can update your component's data or UI here.
-    // });
+  constructor(private socket: GameSocket) {}
 
-    // // Send a message to the server
-    // this.socket.emit('start')
-    this.socket.on('user', (user) => {
+  startGame(): void {
+    this.socket.on('start', (msg: string) => {
+      console.log(msg)
+    })
+
+    this.socket.emit('start')
+  }
+
+  getUser(): void {
+    this.socket.on('user', (user: User) => {
       console.log(user)
     })
-    this.socket.emit('connect')
   }
 }

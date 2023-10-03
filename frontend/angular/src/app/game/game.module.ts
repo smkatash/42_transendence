@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 
 import { GameRoutingModule } from './game-routing.module';
 import { GameComponent } from './game.component';

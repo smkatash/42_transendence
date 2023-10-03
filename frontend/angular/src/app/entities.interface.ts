@@ -5,24 +5,24 @@ export interface Channel {
   // TODO: There should also be an image, but I'm not sure how to do it
 }
 
-export interface User {
-  id: string
-  username: string
-  email: string
-  avatar: string
-  status: number
-}
-
 // export interface User {
-//   id: number
-//   login: string
-//   title: string
-//   status: string
-//   rank: number
-//   wins: number
-//   losses: number
-//   matchesPlayed: number
+//   id: string
+//   username: string
+//   email: string
+//   avatar: string
+//   status: number
 // }
+
+export interface User {
+  id: number
+  login: string
+  title: string
+  status: string
+  rank: number
+  wins: number
+  losses: number
+  matchesPlayed: number
+}
 
 export interface Message {
   name: string
