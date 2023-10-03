@@ -10,24 +10,24 @@ export class MyProfileService {
 
   constructor(private http: HttpClient) { }
 
-  getProfile(userID: number): Observable<User> {
-    const url = `api/users/${userID}`
-    return this.http.get<User>(url)
+  getProfile(): Observable<any> {
+    const url = `http://127.0.0.1:3000/user/info`
+    return this.http.get<any>(url, { withCredentials: true })
   }
 
-  getFriends(userID: number): Observable<User[]> {
-    const url = `api/friends/${userID}`
-    return this.http.get<UserFriend>(url)
-      .pipe(
-        map((userFriend: UserFriend) => userFriend.friends)
-      )
-  }
+//   getFriends(userID: number): Observable<User[]> {
+//     const url = `api/friends/${userID}`
+//     return this.http.get<UserFriend>(url)
+//       .pipe(
+//         map((userFriend: UserFriend) => userFriend.friends)
+//       )
+//   }
 
-  getMatches(userID: number): Observable<Match[]> {
-    const url = `api/matches/${userID}`
-    return this.http.get<UserMatches>(url)
-      .pipe(
-        map((userMatches: UserMatches) => userMatches.matches)
-      )
-  }
+//   getMatches(userID: number): Observable<Match[]> {
+//     const url = `api/matches/${userID}`
+//     return this.http.get<UserMatches>(url)
+//       .pipe(
+//         map((userMatches: UserMatches) => userMatches.matches)
+//       )
+//   }
 }

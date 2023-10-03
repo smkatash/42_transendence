@@ -20,13 +20,13 @@ export class MyProfileComponent implements OnInit {
   }
 
   getProfile(): void {
-    this.profileService.getProfile(1)
-        .subscribe((user: User) => this.profile = user)
+    this.profileService.getProfile()
+        .subscribe((user) => console.log(user))
 
-    this.profileService.getFriends(1)
-        .subscribe((users) => this.friends = users)
+    // this.profileService.getFriends(1)
+    //     .subscribe((users) => this.friends = users)
 
-    this.profileService.getMatches(1)
-        .subscribe((matches) => this.matches = matches)
+    // this.profileService.getMatches(1)
+    //     .subscribe((matches) => this.matches = matches)
   }
 }

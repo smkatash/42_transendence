@@ -24,8 +24,10 @@ async function bootstrap() {
     saveUninitialized: false,
     resave: false,
     cookie: {
-      httpOnly: true,
-      maxAge: 900000
+		secure: false,
+      	httpOnly: true,
+      	maxAge: 3600000,
+		expires: new Date(Date.now() + 3600000) 
     }
   })
   )

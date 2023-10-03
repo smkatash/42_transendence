@@ -26,6 +26,7 @@ export class UserController {
     @Get('info')
     @UseGuards(SessionGuard)
     async getUserInfo(@GetUser() user: User) {
+		console.log(user)
         return await this.userService.getUserById(user.id)
     }
 
