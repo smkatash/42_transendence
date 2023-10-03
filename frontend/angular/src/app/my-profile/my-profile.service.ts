@@ -11,8 +11,8 @@ export class MyProfileService {
   constructor(private http: HttpClient) { }
 
   getProfile(userID: number): Observable<User> {
-    const url = `api/users/${userID}`
-    return this.http.get<User>(url)
+    const url = `http:localhost:3000/user/info`
+    return this.http.get<User>(url, {withCredentials: true})
   }
 
   getFriends(userID: number): Observable<User[]> {

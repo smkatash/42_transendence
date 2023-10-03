@@ -28,7 +28,6 @@ export class AuthController {
     async handleRedirect(@GetUser() user: User,  @GetSession() session: SessionParams , @Res({ passthrough: true }) res: Response) {
         if (user) {
             await this.authService.updateUserStatus(user.id, Status.ONLINE)
-            await this.redisSessionService.storeSession(session.id, session.session)
             res.status(302).redirect(FRONT_END_CALLBACK_URL)
         }
     }
@@ -38,8 +37,7 @@ export class AuthController {
     async handle(@GetUser() user: User, @GetSession() session: SessionParams) {
         if (user) {
             console.log('Success')
-            const redisSessionData = await this.redisSessionService.getSession(session.id);
-            return { message: 'OK', sessionData: redisSessionData }
+            return { message: 'OK', sessionData: session }
         } else {
             throw new UnauthorizedException()
         }

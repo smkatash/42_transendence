@@ -10,11 +10,12 @@ export class SessionGuard implements CanActivate {
     if (!request.isAuthenticated()) {
       return false
     }
-
-    const session = await this.redisSessionService.getSession(request.sessionID)
-    if (!session) {
+    console.log("Session Guard")
+    console.log(request.sessionID)
+    if (!request.sessionID || !request.session) {
       return false
     }
+    console.log("Session verified")
 
     return true
   }
