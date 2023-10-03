@@ -111,7 +111,7 @@ export class UserService {
 		}).on('error', err => {
 			throw new InternalServerErrorException('Failed to get the user profile')
 		});
-		return imageName
+		return imageName ?? ''
 	}
 
 }
