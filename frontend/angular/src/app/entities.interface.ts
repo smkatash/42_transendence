@@ -6,36 +6,29 @@ export interface Channel {
 }
 
 export interface User {
-  id: number
-  login: string
-  title: string
-  status: string
-  rank: number
-  wins: number
-  losses: number
-  matchesPlayed: number
+  id: string
+  username: string
+  email: string
+  avatar: string
+  status: number
 }
 
-export interface UserFriend { // this might be deleted
-  id: number
-  friends: User[]
-}
-
-export interface ChannelUsers { // this might be deleted
-  id: number
-  users: User[]
-}
+// export interface User {
+//   id: number
+//   login: string
+//   title: string
+//   status: string
+//   rank: number
+//   wins: number
+//   losses: number
+//   matchesPlayed: number
+// }
 
 export interface Message {
   name: string
   messageContent: string
   timestamp: number
   sessionUser: boolean
-}
-
-export interface ChannelMessages { // this might be deleted
-  id: number
-  messages: Message[]
 }
 
 export interface Match {
@@ -45,7 +38,9 @@ export interface Match {
   opponentName: string
 }
 
-export interface UserMatches {
-  id: number //Stands for user id
-  matches: Match[]
-}
+// export interface Match {
+//   id: string
+//   loser: User
+//   scores: Record<string, number>
+// }
+

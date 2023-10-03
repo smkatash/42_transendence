@@ -1,0 +1,8 @@
+<div class="friend" [routerLink]="['/profile', user?.username]">
+  <div class="wrapper">
+    <div class="profile-pic"><img src="http://placekitten.com/2000/2000"></div>
+    <div class="name" >{{ user?.username }}</div>
+    <div class="status" *ngIf="user?.status === 1">Online</div>
+    <div class="status" *ngIf="user?.status === 0">Offline</div>
+  </div>
+</div>

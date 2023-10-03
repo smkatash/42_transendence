@@ -1,4 +1,4 @@
-<div class="match" *ngIf="match">
+<div class="match" *ngIf="match" [routerLink]="['/profile', match.opponentName]">
   <div class="wrapper">
     <div class="result-win" *ngIf="match.userScore > match.opponentScore">Won</div>
     <div class="result-loss" *ngIf="match.userScore < match.opponentScore">Lost</div>
