@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { BlockListService } from './block_list.service';
-import { CreateBlockListDto } from './dto/create-block_list.dto';
-import { UpdateBlockListDto } from './dto/update-block_list.dto';
+import { BlockListService } from './block-list.service';
+import { CreateBlockListDto } from './dto/create-block-list.dto';
+import { UpdateBlockListDto } from './dto/update-block-list.dto';
 
 @Controller('block-list')
 export class BlockListController {

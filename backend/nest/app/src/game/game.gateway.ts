@@ -52,13 +52,12 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     this.server.emit('message', data)
   }
 
-
   @SubscribeMessage('start')
   async handleStartMatch(@ConnectedSocket() client: Socket) {
     if (!client.data.user.id) return
     this.logger.debug(client.data.user.id)
     const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
-
+  
     if (currentPlayer) {
       let playersInQueue: Player[] = await this.matchService.waitInQueue(currentPlayer)
       if (playersInQueue.length >= 2) {

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BlockListController } from './block_list.controller';
-import { BlockListService } from './block_list.service';
+import { BlockListController } from './block-list.controller';
+import { BlockListService } from './block-list.service';
 
 describe('BlockListController', () => {
   let controller: BlockListController;

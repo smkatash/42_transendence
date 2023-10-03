@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ChannelMessageController } from './channel_message.controller';
-import { ChannelMessageService } from './channel_message.service';
+import { ChannelMessageController } from './channel-message.controller';
+import { ChannelMessageService } from './channel-message.service';
 
 describe('ChannelMessageController', () => {
   let controller: ChannelMessageController;
