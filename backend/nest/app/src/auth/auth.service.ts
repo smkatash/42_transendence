@@ -20,7 +20,7 @@ export class AuthService {
             console.log('User found')
             return currentUser
         }
-
+		authUserDto.avatar = await this.userService.getIntraProfile(authUserDto.avatar)
         return await this.userService.createUser(authUserDto)
     }
 

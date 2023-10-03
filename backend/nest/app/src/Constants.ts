@@ -1,5 +1,5 @@
 export const CLIENT_ID='u-s4t2ud-605bea7acdf84a679f7e44e4cd143605ab938b9ec189c10022b631459cd7172f'
-export const CLIENT_SECRET='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'
+export const CLIENT_SECRET='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'
 export const CALLBACK_URL='http://127.0.0.1:3000/42auth/redirect'
 export const FRONT_END_CALLBACK_URL= 'http://127.0.0.1:4200/profile'
 export const DB_TYPE='postgres'
