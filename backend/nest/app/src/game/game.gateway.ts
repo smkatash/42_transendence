@@ -30,10 +30,10 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     this.logger.log(`Client id: ${client.id} connected`);
       //const userId = await this.authService.getUserSession(client)
     //   let user: User =  {"id":"99637","username":"ktashbae","status": 1, "avatar" : "test", "email": "test@email.com", "friends": [], "friendOf": []}
-    console.log(req)
+    console.log(client)
     console.log(client.data.user) 
     if (!user) {
-        console.log('discomming')
+        console.log('disconnecting')
         return client.disconnect()
       }
       user = await this.userService.updateUserStatus(user.id, Status.GAME)
