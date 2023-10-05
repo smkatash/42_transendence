@@ -26,14 +26,18 @@ export class UserController {
     @Get('profile')
     @UseGuards(SessionGuard)
     async getUserInfo(@GetUser() currentUser: User) {
-        return await this.userService.getUserById(currentUser.id)
+        if (currentUser && currentUser.id) {
+            return await this.userService.getUserById(currentUser.id)
+        } else {
+            throw new UnauthorizedException('Access denied');
+        }
     }
 
     @Post('image/upload')
     @UseGuards(SessionGuard)
     @UseInterceptors(FileInterceptor('image', localStorage))
     async uploadAvatar(@GetUser() currentUser: User, @UploadedFile() file: Express.Multer.File) {
-        if (currentUser.id) {
+        if (currentUser && currentUser.id) {
             return await this.userService.updateUserAvatar(currentUser.id, file.filename)
         } else {
             throw new UnauthorizedException('Access denied');
@@ -52,9 +56,20 @@ export class UserController {
 
     @Get('friends')
     @UseGuards(SessionGuard)
-    async getUserFriends(@GetUser() currentUser: User) {
-        if (currentUser.id) {
+    async getCurrentUserFriends(@GetUser() currentUser: User) {
+        if (currentUser && currentUser.id) {
             const friends: User[] = await this.userService.getUserFriends(currentUser.id)
+            return friends
+        } else {
+            throw new UnauthorizedException('Access denied');
+        }
+    }
+
+    @Get(':id/friends')
+    @UseGuards(SessionGuard)
+    async getUserFriends(@Param('id') userId: string, @GetUser() currentUser: User) {
+        if (currentUser && currentUser.id && userId) {
+            const friends: User[] = await this.userService.getUserFriends(userId)
             return friends
         } else {
             throw new UnauthorizedException('Access denied');
@@ -64,7 +79,7 @@ export class UserController {
     @Post('friend')
     @UseGuards(SessionGuard)
     async addNewFriend(@Body() friendId: string, @GetUser() currentUser: User) {
-        if (currentUser.id && friendId) {
+        if (currentUser && currentUser.id && friendId) {
            return await this.userService.addUserFriend(currentUser.id, friendId)
         } else {
             throw new UnauthorizedException('Access denied');
@@ -75,7 +90,7 @@ export class UserController {
     @UseGuards(SessionGuard)
     async deleteUserFriend(@Param('id') friendId: string, 
                             @GetUser() currentUser: User) {
-        if (currentUser.id && friendId) {
+        if (currentUser && currentUser.id && friendId) {
             return await this.userService.removeUserFriend(currentUser.id, friendId);
         } else {
             throw new UnauthorizedException('Access denied');
@@ -85,7 +100,7 @@ export class UserController {
 	@Get('profile/:id')
     @UseGuards(SessionGuard)
     async getUsersInfo(@Param('id') userId: string, @GetUser() currentUser: User) {
-		if (currentUser.id && userId) {
+		if (currentUser && currentUser.id && userId) {
 			return await this.userService.getUserById(userId)
 		} else {
 		throw new UnauthorizedException('Access denied');

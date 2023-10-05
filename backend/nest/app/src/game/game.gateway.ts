@@ -62,6 +62,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('start')
   async handleStartMatch(@ConnectedSocket() client: Socket) {
+    client.handshake.headers.cookie
     console.log("bonjour putain")
     if (!client.data.user.id) return
     this.logger.debug(client.data.user.id)

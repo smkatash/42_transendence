@@ -33,11 +33,7 @@ export class AuthController {
     async handle(@GetUser() user: User) {
         if (user) {
             console.log('Success')
-<<<<<<< HEAD
-            return { message: 'OK', sessionData: session }
-=======
             return { message: 'OK' }
->>>>>>> 883eb4a452a20eae31e4275dd067eb5eb974b709
         } else {
             throw new UnauthorizedException()
         }
