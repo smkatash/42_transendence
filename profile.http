@@ -1,0 +1,22 @@
+
+
+### get current user info
+GET user/profile
+
+### Param(avatar) get any image
+GET user/image/:avatar
+
+### get friends of the current user
+GET user/friends
+
+### Param(id) get a user profile to see, not current user!
+GET user/profile/:id
+
+### upload a picture for current user
+POST user/image/upload
+
+### Body(id), id of a user to be added as a friend 
+POST user/friend
+
+### Param(id) of a user to delete from friend list
+DELETE user/friend/:id

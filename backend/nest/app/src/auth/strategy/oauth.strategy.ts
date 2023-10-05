@@ -18,8 +18,7 @@ export class OauthStrategy extends PassportStrategy(Strategy, '42') {
             profileFields: {
 				'id': function (obj) { return String(obj.id); },
                 'login': 'login',
-                'kind': function (obj) { return String(obj.kind); },
-				'image_url': function (obj) { return obj.image.link},
+				'image_url': function (obj) { return obj.image.link}
 			}
         })
     }
@@ -29,14 +28,15 @@ export class OauthStrategy extends PassportStrategy(Strategy, '42') {
         console.log(accessToken)
         console.log(refreshToken)
         console.log('-------')
-		console.log(profile)
+
         const authUserDto: AuthUserDto = {
             id: profile.id,
             username: profile.login,
-            title: profile.kind,
+            title: profile._json.titles[0].name.replace('%login', profile.login),
             avatar: profile.image_url,
             status: Status.ONLINE
         }
+
         const user = await this.authService.validateUser(authUserDto)
         if (!user) {
             throw new UnauthorizedException()
