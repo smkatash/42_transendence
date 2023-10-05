@@ -7,20 +7,22 @@
     <div class="info-container">
       <div class="profile-pic">
         <input type="file" accept="image/*" (change)="onImageSelected($event)" #imageUpload>
-        <button (click)="imageUpload.click()">upload</button>
         <img crossorigin="use-credentials" src="http://127.0.0.1:3000/user/image/{{ profile?.avatar }}">
+        <div class="edit-image" (click)="imageUpload.click()"></div>
       </div>
       <h1 class="username">{{ profile?.username }}</h1>
       <h2 class="title">{{ profile?.title }}</h2>
 
       <!-- These should be hidden if the user is the user of the session -->
       <div class="status">
-        <div class="dot-online" *ngIf="profile?.status === 1"></div>
-        <h2 *ngIf="profile?.status === 1" F>Online</h2>
         <div class="dot-offline" *ngIf="profile?.status === 0"></div>
         <h2 *ngIf="profile?.status === 0">Offline</h2>
-        <!--TODO make nicer-->
+        <div class="dot-online" *ngIf="profile?.status === 1"></div>
+        <h2 *ngIf="profile?.status === 1">Online</h2>
+        <div class="dot-ingame" *ngIf="profile?.status === 2"></div>
+        <h2 *ngIf="profile?.status === 2">Playing</h2>
       </div>
+
       <button class="add-friend">Add friend</button>
 
     </div>
@@ -50,17 +52,15 @@
         <div class="friends">
           <div class="wrapper">
             <h1>Friends:</h1>
-            <div class="friends-container" *ngIf="friends !== []; else no_friends">
+            <div class="friends-container" *ngIf="friends.length">
               <div *ngFor="let friend of friends">
                 <app-friend [user]="friend"></app-friend>
               </div>
             </div>
-            <ng-template #no_friends>
-              <div class="no-friends">
-                <h1>No friends</h1>
-                <h2>play sad violin music</h2>
-              </div>
-            </ng-template>
+            <div class="no-friends" *ngIf="!friends.length">
+              <h1>No friends</h1>
+              <h2>play sad violin music</h2>
+            </div>
           </div>
         </div>
 

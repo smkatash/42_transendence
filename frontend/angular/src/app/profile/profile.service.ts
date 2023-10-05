@@ -10,7 +10,7 @@ export class ProfileService {
 
   constructor(private http: HttpClient) { }
 
-  getSessionUser(): Observable<User> {
+  getCurrentUser(): Observable<User> {
     const url = 'http://127.0.0.1:3000/user/profile'
     return this.http.get<User>(url, { withCredentials: true })
   }
@@ -20,7 +20,7 @@ export class ProfileService {
     return this.http.get<User>(url, { withCredentials: true })
   }
 
-  getSessionFriends(): Observable<User[]> {
+  getCurrentUserFriends(): Observable<User[]> {
     const url = `http://127.0.0.1:3000/user/friends`
     return this.http.get<User[]>(url, { withCredentials: true })
   }
@@ -35,7 +35,7 @@ export class ProfileService {
     return this.http.get<number>(url, { withCredentials: true })
   }
 
-  getStats(): Observable<Stats> {
+  getCurrentUserStats(): Observable<Stats> {
     const url = `http://127.0.0.1:3000/ranking/stats`
     return this.http.get<Stats>(url, { withCredentials: true })
   }
@@ -52,11 +52,11 @@ export class ProfileService {
 
   sendRequest(friendID: string): void {
     const url =`http://127.0.0.1:3000/user/friend`
-    const request$ = this.http.post<User>(url, { withCredentials: true }) // Post with ID in the body
+    const request$ = this.http.post<User>(url, friendID, { withCredentials: true }) // Post with ID in the body
     request$.subscribe()
   }
 
-  removeFriend(userID: string, friendID: string): void {
+  removeFriend(friendID: string): void {
     const url =`http://127.0.0.1:3000/user/friend/${friendID}`
     const request$ = this.http.delete<User>(url, { withCredentials: true })
     request$.subscribe()

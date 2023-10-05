@@ -29,10 +29,16 @@ export class OauthStrategy extends PassportStrategy(Strategy, '42') {
         console.log(refreshToken)
         console.log('-------')
 
+        let title = 'Beginner'
+        if (profile._json.titles[0]) {
+            title = profile._json.titles[0].name
+            title = title.replace('%login, ', '')
+        }
+
         const authUserDto: AuthUserDto = {
             id: profile.id,
             username: profile.login,
-            title: profile._json.titles[0].name.replace('%login', profile.login),
+            title: title,
             avatar: profile.image_url,
             status: Status.ONLINE
         }

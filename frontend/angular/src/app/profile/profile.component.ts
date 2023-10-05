@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ProfileService } from './profile.service';
 import { Match, Stats, User } from '../entities.interface';
-import { catchError, switchMap } from 'rxjs';
+import { catchError, fromEvent, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-profile',
@@ -24,20 +24,22 @@ export class ProfileComponent implements OnInit {
   }
 
   getProfile(): void {
-    this.profileService.getSessionUser()
-      .subscribe(user => {
-        this.profile = user;
+    this.profileService.getCurrentUser()
+      .subscribe({
+        next: user => this.profile = user,
+        error: err => alert(err.message) // TODO: Route to Unauthorized or Not found page depending on error
+      })
 
-        this.profileService.getFriends(user.id)
-          .subscribe(friends => {console.log(friends); this.friends = friends})
+    this.profileService.getCurrentUserFriends()
+      .subscribe({
+        next: friends => {console.log(friends); this.friends = friends},
+        error: err => alert(err.message) // TODO: Route to Unauthorized or Not found page depending on error
+      })
 
-        this.profileService.getRank(user.id)
-          .subscribe(rank => this.rank = rank)
-
-        this.profileService.getStats()
-          .subscribe(stats => this.stats = stats)
-/*           this.profileService.getMatches(user.id)
-          .subscribe(matches => this.matches = matches) */
+    this.profileService.getCurrentUserStats()
+      .subscribe({
+        next: stats => this.stats = stats,
+        error: err => alert(err.message) // TODO: Route to Unauthorized or Not found page depending on error
       })
   }
 
@@ -49,13 +51,10 @@ export class ProfileComponent implements OnInit {
       const formData = new FormData()
       formData.append('image', this.selectedImage, this.selectedImage.name)
 
-      // If there's no profile, return early; else set avatar
-      if (!this.profile) return
-
-      this.profileService.setAvatar(this.profile.id, formData)
+      this.profileService.setAvatar(formData)
         .subscribe({
           next: (user: User) => this.profile = user,
-          error: (error) => alert(error)
+          error: (error) => alert(error.message)
       })
     } else {
       alert("File too big!")

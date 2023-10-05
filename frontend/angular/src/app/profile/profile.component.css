@@ -43,6 +43,25 @@ body {
   width: 12dvw;
 }
 
+.profile-pic img:hover {
+  cursor: pointer;
+}
+
+.edit-image {
+  position: fixed;
+  opacity: 0%;
+  background-color: #2f424a;
+  border-radius: 50%;
+  clip-path: circle();
+  height: 12.2dvw;
+  width: 12.5dvw;
+}
+
+.edit-image:hover {
+  cursor: pointer;
+  opacity: 50%;
+}
+
 .username {
   margin: 0%;
   margin-top: 3%;
@@ -207,6 +226,33 @@ body {
   color: #2f424a;
 }
 
+.friends-container {
+  margin: 1dvw 2dvw 2dvw 2dvw;
+  overflow: auto;
+}
+
+.no-friends {
+  display: flex;
+  flex-direction: column;
+}
+
+.no-friends h1 {
+  font-family: 'Bodoni Moda', serif;
+  font-size: 2dvw;
+  margin: 0%;
+  padding: 0%;
+  margin-top: 5.5dvw;
+}
+
+.no-friends h2 {
+  font-family: 'Bodoni Moda', serif;
+  font-size: 1dvw;
+  margin: 0%;
+  padding: 0%;
+  margin-top: 1dvw;
+  color: #2f424a;
+}
+
 .match-history {
   width: 50%;
   height: 100%;
@@ -219,11 +265,6 @@ body {
   background-color: #2f424a;
   border: .7dvw solid #4F6D7A;
   box-sizing: border-box;
-}
-
-.friends-container {
-  margin: 1dvw 2dvw 2dvw 2dvw;
-  overflow: auto;
 }
 
 .matches-container {
