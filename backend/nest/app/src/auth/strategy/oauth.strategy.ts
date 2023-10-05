@@ -18,7 +18,7 @@ export class OauthStrategy extends PassportStrategy(Strategy, '42') {
             profileFields: {
 				'id': function (obj) { return String(obj.id); },
                 'login': 'login',
-                'email': function (obj) { return String(obj.email); },
+                'kind': function (obj) { return String(obj.kind); },
 				'image_url': function (obj) { return obj.image.link},
 			}
         })
@@ -33,7 +33,7 @@ export class OauthStrategy extends PassportStrategy(Strategy, '42') {
         const authUserDto: AuthUserDto = {
             id: profile.id,
             username: profile.login,
-            email: profile.email,
+            title: profile.kind,
             avatar: profile.image_url,
             status: Status.ONLINE
         }

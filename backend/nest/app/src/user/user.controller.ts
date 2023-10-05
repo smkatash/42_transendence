@@ -23,7 +23,7 @@ export const localStorage = {
 export class UserController {
     constructor(@Inject(UserService) private userService: UserService) {}
 
-    @Get('info')
+    @Get('profile')
     @UseGuards(SessionGuard)
     async getUserInfo(@GetUser() currentUser: User) {
         return await this.userService.getUserById(currentUser.id)
@@ -49,7 +49,6 @@ export class UserController {
 			throw new BadRequestException('Avatar not provided')
 		}
     }
-
 
     @Get('friends')
     @UseGuards(SessionGuard)
@@ -83,7 +82,7 @@ export class UserController {
         }
     }
 
-	@Get('users/info/:id')
+	@Get(':id')
     @UseGuards(SessionGuard)
     async getUsersInfo(@Param('id') userId: string, @GetUser() currentUser: User) {
 		if (currentUser.id && userId) {

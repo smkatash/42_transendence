@@ -1,7 +1,7 @@
 export interface Profile {
     id: string
     login: string
-    email: string
+    kind: string
     image_url: string
     provide: string
 	

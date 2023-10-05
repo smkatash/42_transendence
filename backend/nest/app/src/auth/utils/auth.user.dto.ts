@@ -8,7 +8,7 @@ export class AuthUserDto {
     @IsString()
     username: string
     @IsString()
-    email: string
+    title: string
     @IsString()
     avatar: string
     @IsEnum(Status)
