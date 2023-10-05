@@ -7,6 +7,7 @@ import { AuthUserDto } from "../utils/auth.user.dto";
 import { Profile } from "../utils/profile";
 import { User } from "src/user/entities/user.entity";
 import { Status } from "src/user/utils/status.dto";
+import * as fs from 'fs';
 
 @Injectable()
 export class OauthStrategy extends PassportStrategy(Strategy, '42') {
@@ -18,7 +19,8 @@ export class OauthStrategy extends PassportStrategy(Strategy, '42') {
             profileFields: {
 				'id': function (obj) { return String(obj.id); },
                 'login': 'login',
-				'image_url': function (obj) { return obj.image.link}
+				'image_url': function (obj) { return obj.image.link},
+				'titles': 'titles'
 			}
         })
     }
@@ -29,11 +31,16 @@ export class OauthStrategy extends PassportStrategy(Strategy, '42') {
         console.log(refreshToken)
         console.log('-------')
 
+		let title = '%login, Pong Master'
+		if (profile.titles && profile.titles[0]) {
+			title = profile.titles[0].name
+		}
+
         const authUserDto: AuthUserDto = {
             id: profile.id,
             username: profile.login,
-            title: profile._json.titles[0].name.replace('%login', profile.login),
-            avatar: profile.image_url,
+            title: title.replace('%login', profile.login),
+			avatar: profile.image_url,
             status: Status.ONLINE
         }
 
