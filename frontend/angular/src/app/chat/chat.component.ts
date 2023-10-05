@@ -10,6 +10,7 @@ import { Channel } from '../entities.interface';
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.css'],
 })
+
 export class ChatComponent {
 
   constructor(private chatService: ChatService){ }

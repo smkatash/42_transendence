@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { Match, User } from '../entities.interface';
+import { Match, Stats, User } from '../entities.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -20,22 +20,35 @@ export class ProfileService {
     return this.http.get<User[]>(url, { withCredentials: true })
   }
 
-  setAvatar(userID: string, formData: FormData): void {
-    const url =`http://127.0.0.1:3000/user/${userID}/upload`
-    const upload$ = this.http.post(url, formData, { withCredentials: true })
-    upload$.subscribe()
+  getRank(userID: string): Observable<number> {
+    const url = `http://127.0.0.1:3000/ranking/${userID}`
+    return this.http.get<number>(url, { withCredentials: true })
   }
 
-  // getAvatar(avatar: string): Observable<File> {
-  //   const url = `http://127.0.0.1:3000/user/image/${avatar}`
-  //   return this.http.get<File>(url, { withCredentials: true })
-  // }
+  getStats(): Observable<Stats> {
+    const url = `http://127.0.0.1:3000/ranking/stats`
+    return this.http.get<Stats>(url, { withCredentials: true })
+  }
 
-  // getMatches(userID: number): Observable<Match[]> {
-  //   const url = `http://172.18.0.4:3000/matches/${userID}`
-  //   return this.http.get<UserMatches>(url)
-  //     .pipe(
-  //       map((userMatches: UserMatches) => userMatches.matches)
-  //     )
-  // }
+/*   getMatches(userID: string): Observable<Match[]> {
+    const url = `http://127.0.0.1:3000/user/${userID}/matches`
+    return this.http.get<Match[]>(url, { withCredentials: true })
+  } */
+
+  setAvatar(userID: string, formData: FormData): Observable<User> {
+    const url =`http://127.0.0.1:3000/user/${userID}/upload`
+    return this.http.post<User>(url, formData, { withCredentials: true })
+  }
+
+/*   sendRequest(friendID: string): void {
+    const url =`http://127.0.0.1:3000/user/${friendID}/friend`
+    const request$ = this.http.post<User>(url, { withCredentials: true })
+    request$.subscribe()
+  }
+
+  removeFriend(userID: string, friendID: string): void {
+    const url =`http://127.0.0.1:3000/user/${userID}/friend/${friendID}`
+    const request$ = this.http.post<User>(url, { withCredentials: true })
+    request$.subscribe()
+  } */
 }

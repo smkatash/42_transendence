@@ -29,9 +29,14 @@ export class MatchService {
      async waitInQueue(player: Player) {
         let queue: Queue = await this.queueService.getQueue()
 
-        const playerIdsInQueue = queue.players.map((player) => player.id)
-        if (!playerIdsInQueue.includes(player.id)) {
-            console.log('Adding player to Queue')
+        let playerIdsInQueue = []
+        if (queue && queue.players) {
+            playerIdsInQueue = queue.players.map((player) => player.id)
+            if (!playerIdsInQueue.includes(player.id)) {
+                console.log('Adding player to Queue')
+                queue = await this.queueService.updatePlayersInQueue(player, queue)
+            }
+        } else {
             queue = await this.queueService.updatePlayersInQueue(player, queue)
         }
         return queue.players

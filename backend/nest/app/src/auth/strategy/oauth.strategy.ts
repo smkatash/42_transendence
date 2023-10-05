@@ -29,6 +29,7 @@ export class OauthStrategy extends PassportStrategy(Strategy, '42') {
         console.log(accessToken)
         console.log(refreshToken)
         console.log('-------')
+		console.log(profile)
         const authUserDto: AuthUserDto = {
             id: profile.id,
             username: profile.login,
@@ -36,7 +37,6 @@ export class OauthStrategy extends PassportStrategy(Strategy, '42') {
             avatar: profile.image_url,
             status: Status.ONLINE
         }
-        console.log(authUserDto)
         const user = await this.authService.validateUser(authUserDto)
         if (!user) {
             throw new UnauthorizedException()

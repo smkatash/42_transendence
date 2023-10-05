@@ -27,11 +27,15 @@ export class QueueService {
 
 
     async getQueue(): Promise<Queue> {
-        return this.queueRepo.findOne({
+        let queue = await this.queueRepo.findOne({
             where: {
                 id: this.queueName,
             }, relations: ['players']
         })
+        if (!queue) {
+            return this.createQueue()
+        }
+        return queue
     }
 
     async updatePlayersInQueue(player: Player, queue: Queue) {

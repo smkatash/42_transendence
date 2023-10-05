@@ -14,11 +14,16 @@ import { Player } from './game/entities/player.entity';
 import { Queue } from './game/entities/queue.entity';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ChannelModule } from './chat/channel/channel.module';
-import { ChannelUserModule } from './chat/channel_user/channel_user.module';
-import { ChannelMessageModule } from './chat/channel_message/channel_message.module';
-import { BlockListModule } from './chat/block_list/block_list.module';
-import { FriendListModule } from './chat/friend_list/friend_list.module';
+import { BlockListModule } from './chat/block-list/block-list.module';
+import { ChannelMessageModule } from './chat/channel-message/channel-message.module';
+// import { ChannelUserModule } from './chat/channel_user/channel_user.module';
+// import { ChannelMessageModule } from './chat/channel_message/channel_message.module';
+// import { BlockListModule } from './chat/block_list/block_list.module';
+// import { FriendListModule } from './chat/friend_list/friend_list.module';
 import { RankingModule } from './ranking/ranking.module';
+// import { ChannelModule } from './chat/channel/channel.module';
+// import { ChatGatewayGateway } from './chat/chat-gateway/chat-gateway.gateway';
+import { ChatGateway } from './chat/chat/chat.gateway';
 
 
 @Module({
@@ -46,14 +51,14 @@ import { RankingModule } from './ranking/ranking.module';
     GameModule,
     ScheduleModule.forRoot(),
     ChannelModule,
-    ChannelUserModule,
+    // ChannelUserModule,
     ChannelMessageModule,
     BlockListModule,
-    FriendListModule,
+    // FriendListModule,
     RankingModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ChatGateway],
 })
 
 export class AppModule {}

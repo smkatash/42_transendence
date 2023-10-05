@@ -39,10 +39,10 @@ export class ChannelMessagesSettingsComponent implements OnChanges{
   }
 
   getChannelUsers(id: number): void{
-    this.chatService.getChannelUsers(id)
-      .subscribe((users) => {
-        this.users = users;
-      })
+    // this.chatService.getChannelUsers(id)
+    //   .subscribe((users) => {
+    //     this.users = users;
+    //   })
   }
 
   toggle(): void {

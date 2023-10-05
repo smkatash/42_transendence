@@ -31,19 +31,16 @@
       <div class="upper-row">
         <div class="level">
           <h1>Rank:</h1>
-          <h2>0</h2><!-- TODO: Fetch -->
-          <!-- <h2>{{ profile?.rank }}</h2> -->
+          <h2>{{ rank }}</h2>
         </div>
 
         <div class="wins-losses">
           <h1>Wins : Losses</h1>
-          <h2>0:0</h2><!-- TODO: Fetch -->
-          <!-- <h2>{{ profile?.wins }}:{{ profile?.losses }}</h2> -->
+          <h2>{{ stats.wins }}:{{ stats.losses }}</h2>
         </div>
         <div class="matches-played">
           <h1>Matches played:</h1>
-          <h2>0</h2><!-- TODO: Fetch -->
-          <!-- <h2>{{ profile?.matchesPlayed }}</h2> -->
+          <h2>{{ stats.wins + stats.losses }}</h2>
         </div>
       </div>
 
@@ -52,11 +49,12 @@
         <div class="friends">
           <div class="wrapper">
             <h1>Friends:</h1>
-            <div class="friends-container">
+            <div class="friends-container" *ngIf="friends">
               <div *ngFor="let friend of friends">
                 <app-friend [user]="friend"></app-friend>
               </div>
             </div>
+            <h1 class="no-friends">No friends</h1>
           </div>
         </div>
 

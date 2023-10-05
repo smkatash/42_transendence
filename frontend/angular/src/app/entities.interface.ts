@@ -2,7 +2,7 @@ export interface Channel {
   id: number
   name: string
   type: string
-  // TODO: There should also be an image, but I'm not sure how to do it
+  avatar: string
 }
 
 export interface User {
@@ -11,6 +11,11 @@ export interface User {
   email: string
   avatar: string
   status: number
+}
+
+export interface Stats {
+  wins: number
+  losses: number
 }
 
 // export interface User {
@@ -32,10 +37,10 @@ export interface Message {
 }
 
 export interface Match {
-  id: number
-  userScore: number
-  opponentScore: number
-  opponentName: string
+  matchResult: string
+  currentUserScore: number
+  opponentUser: User
+  opponentUserScore: number
 }
 
 // export interface Match {
@@ -44,3 +49,37 @@ export interface Match {
 //   scores: Record<string, number>
 // }
 
+
+// leaderboard interface shit --------------------------------
+
+export interface Player{
+  id: number
+  clientId :string
+  score: number
+  gameState: number
+}
+
+
+// -----------------------------------------------------------
+
+export interface Document {
+  id: string
+  doc: string
+}
+
+// leaderboard interface shit --------------------------------
+
+export interface Player{
+  id: number
+  clientId :string
+  score: number
+  gameState: number
+}
+
+
+// -----------------------------------------------------------
+
+export interface Document {
+  id: string
+  doc: string
+}
