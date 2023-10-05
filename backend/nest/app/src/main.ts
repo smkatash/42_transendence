@@ -9,6 +9,11 @@ import * as passport from 'passport'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
+  app.enableCors({
+	origin: FRONT_END_URL,
+	credentials: true
+  })
+
   let redisClient = createClient({url: REDIS_CLIENT})
   await redisClient.connect().catch(console.error)
   app.use(
