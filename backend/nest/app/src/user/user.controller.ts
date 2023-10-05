@@ -23,17 +23,17 @@ export const localStorage = {
 export class UserController {
     constructor(@Inject(UserService) private userService: UserService) {}
 
-    @Get('info')
+    @Get('profile')
     @UseGuards(SessionGuard)
     async getUserInfo(@GetUser() currentUser: User) {
         return await this.userService.getUserById(currentUser.id)
     }
 
-    @Post(':id/upload')
+    @Post('image/upload')
     @UseGuards(SessionGuard)
     @UseInterceptors(FileInterceptor('image', localStorage))
-    async uploadAvatar(@Param('id') id: string, @GetUser() currentUser: User, @UploadedFile() file: Express.Multer.File) {
-        if (currentUser.id === id) {
+    async uploadAvatar(@GetUser() currentUser: User, @UploadedFile() file: Express.Multer.File) {
+        if (currentUser.id) {
             return await this.userService.updateUserAvatar(currentUser.id, file.filename)
         } else {
             throw new UnauthorizedException('Access denied');
@@ -49,7 +49,6 @@ export class UserController {
 			throw new BadRequestException('Avatar not provided')
 		}
     }
-
 
     @Get('friends')
     @UseGuards(SessionGuard)
@@ -83,7 +82,7 @@ export class UserController {
         }
     }
 
-	@Get('users/info/:id')
+	@Get('profile/:id')
     @UseGuards(SessionGuard)
     async getUsersInfo(@Param('id') userId: string, @GetUser() currentUser: User) {
 		if (currentUser.id && userId) {
