@@ -10,12 +10,12 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
   app.enableCors({
-    origin: FRONT_END_URL,
-    credentials: true,
+	origin: FRONT_END_URL,
+	credentials: true
   })
+
   let redisClient = createClient({url: REDIS_CLIENT})
   await redisClient.connect().catch(console.error)
-  
   app.use(
     session({
     store: new RediStore({client: redisClient}),
@@ -24,8 +24,10 @@ async function bootstrap() {
     saveUninitialized: true,
     resave: false,
     cookie: {
-      httpOnly: true,
-      maxAge: 900000
+		secure: false,
+      	httpOnly: true,
+      	maxAge: 3600000,
+		expires: new Date(Date.now() + 3600000) 
     }
   })
   )

@@ -2,29 +2,32 @@ export interface Channel {
   id: number
   name: string
   type: string
-  // TODO: There should also be an image, but I'm not sure how to do it
+  avatar: string
 }
 
 export interface User {
-  id: number
-  login: string
+  id: string
+  username: string
   title: string
-  status: string
-  rank: number
+  avatar: string
+  status: number
+}
+
+export interface Stats {
   wins: number
   losses: number
-  matchesPlayed: number
 }
 
-export interface UserFriend { // this might be deleted
-  id: number
-  friends: User[]
-}
-
-export interface ChannelUsers { // this might be deleted
-  id: number
-  users: User[]
-}
+// export interface User {
+//   id: number
+//   login: string
+//   title: string
+//   status: string
+//   rank: number
+//   wins: number
+//   losses: number
+//   matchesPlayed: number
+// }
 
 export interface Message {
   name: string
@@ -33,19 +36,50 @@ export interface Message {
   sessionUser: boolean
 }
 
-export interface ChannelMessages { // this might be deleted
-  id: number
-  messages: Message[]
-}
-
 export interface Match {
-  id: number
-  userScore: number
-  opponentScore: number
-  opponentName: string
+  matchResult: string
+  currentUserScore: number
+  opponentUser: User
+  opponentUserScore: number
 }
 
-export interface UserMatches {
-  id: number //Stands for user id
-  matches: Match[]
+// export interface Match {
+//   id: string
+//   loser: User
+//   scores: Record<string, number>
+// }
+
+
+// leaderboard interface shit --------------------------------
+
+export interface Player{
+  id: number
+  clientId :string
+  score: number
+  gameState: number
+}
+
+
+// -----------------------------------------------------------
+
+export interface Document {
+  id: string
+  doc: string
+}
+
+// leaderboard interface shit --------------------------------
+
+export interface Player{
+  id: number
+  clientId :string
+  score: number
+  gameState: number
+}
+
+
+// -----------------------------------------------------------
+
+export interface Document {
+  id: string
+  doc: string
 }

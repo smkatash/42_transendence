@@ -1,5 +1,6 @@
 <body>
     <app-navbar></app-navbar>
-    <app-game-board><p>board should be here</p></app-game-board>
+    <app-game-menu (newGameEvent)="setGame($event)" *ngIf="!isGameOn">
+    </app-game-menu>
+    <app-game-board *ngIf="isGameOn"></app-game-board>
 </body>
-  

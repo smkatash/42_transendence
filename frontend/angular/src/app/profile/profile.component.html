@@ -1,0 +1,77 @@
+<body>
+  <app-navbar></app-navbar>
+  <!-- Wrapper for all the profile -->
+  <div class="profile-interface">
+
+    <!-- Wrapper for the left info box containing picture and name etc... -->
+    <div class="info-container">
+      <div class="profile-pic">
+        <input type="file" accept="image/*" (change)="onImageSelected($event)" #imageUpload>
+        <button (click)="imageUpload.click()">upload</button>
+        <img crossorigin="use-credentials" src="http://127.0.0.1:3000/user/image/{{ profile?.avatar }}">
+      </div>
+      <h1 class="username">{{ profile?.username }}</h1>
+      <h2 class="title">{{ profile?.title }}</h2>
+
+      <!-- These should be hidden if the user is the user of the session -->
+      <div class="status">
+        <div class="dot-online" *ngIf="profile?.status === 1"></div>
+        <h2 *ngIf="profile?.status === 1" F>Online</h2>
+        <div class="dot-offline" *ngIf="profile?.status === 0"></div>
+        <h2 *ngIf="profile?.status === 0">Offline</h2>
+        <!--TODO make nicer-->
+      </div>
+      <button class="add-friend">Add friend</button>
+
+    </div>
+
+    <!-- Wrapper for the right container containing all the stats boxes -->
+    <div class="stats-container">
+
+      <div class="upper-row">
+        <div class="level">
+          <h1>Rank:</h1>
+          <h2>{{ rank }}</h2>
+        </div>
+
+        <div class="wins-losses">
+          <h1>Wins : Losses</h1>
+          <h2>{{ stats.wins }}:{{ stats.losses }}</h2>
+        </div>
+        <div class="matches-played">
+          <h1>Matches played:</h1>
+          <h2>{{ stats.wins + stats.losses }}</h2>
+        </div>
+      </div>
+
+      <div class="bottom-row">
+
+        <div class="friends">
+          <div class="wrapper">
+            <h1>Friends:</h1>
+            <div class="friends-container" *ngIf="friends">
+              <div *ngFor="let friend of friends">
+                <app-friend [user]="friend"></app-friend>
+              </div>
+            </div>
+            <h1 class="no-friends">No friends</h1>
+          </div>
+        </div>
+
+        <div class="match-history">
+          <div class="wrapper">
+            <h1>Match History:</h1>
+            <div class="matches-container">
+              <div *ngFor="let match of matches">
+                <app-match [match]="match"></app-match>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</body>

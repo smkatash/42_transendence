@@ -1,0 +1,8 @@
+<body>
+    <app-navbar></app-navbar>
+    <div class="board-interface">
+        <div *ngFor="let player of players">
+            <app-player [player]="player"></app-player>
+        </div>
+    </div>
+</body>

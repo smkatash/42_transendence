@@ -1,4 +1,5 @@
 import { createParamDecorator, ExecutionContext, UnauthorizedException,} from '@nestjs/common';
+import * as session from 'express-session';
 
 export interface SessionParams {
     id: string,
@@ -13,7 +14,7 @@ export const GetSession = createParamDecorator(
     console.log(request.sessionID)
     
     if  (!request.session || !request.sessionID) {
-        throw new UnauthorizedException()
+		throw new UnauthorizedException()
     }
     return {
         id: request.sessionID,

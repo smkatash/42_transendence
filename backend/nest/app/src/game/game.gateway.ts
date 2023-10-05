@@ -1,4 +1,4 @@
-import {  Logger } from '@nestjs/common';
+import {  Logger, Req, UseGuards } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { UserService } from '../user/user.service';
@@ -8,8 +8,10 @@ import { MatchService } from './service/match.service';
 import { Player } from './entities/player.entity';
 import { PlayerService } from './service/player.service';
 import { Game, GameState, MessageMatch} from './utls/game';
+import { SessionGuard } from 'src/auth/guard/auth.guard';
+import { GetUser } from 'src/auth/utils/get-user.decorator';
 
-@WebSocketGateway({ namespace: 'game' })
+@WebSocketGateway({ namespace: 'game', cors: true })
 export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger = new Logger(GameGateway.name)
   @WebSocketServer()
@@ -23,16 +25,22 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     this.logger.log("Initialized")
   }
 
-  async handleConnection(@ConnectedSocket() client: Socket, ...args: any[]) {
+  @UseGuards(SessionGuard)
+  async handleConnection(@ConnectedSocket() client: Socket, @GetUser() user: User, @Req() req: Request) {
     this.logger.log(`Client id: ${client.id} connected`);
       //const userId = await this.authService.getUserSession(client)
-      let user: User =  {"id":"99637","username":"ktashbae","status": 1, "avatar" : "test", "email": "test@email.com", "friends": [], "friendOf": []}
-      if (!user) {
+    //   let user: User =  {"id":"99637","username":"ktashbae","status": 1, "avatar" : "test", "email": "test@email.com", "friends": [], "friendOf": []}
+    console.log(client)
+    console.log(client.data.user) 
+    if (!user) {
+        console.log('disconnecting')
         return client.disconnect()
       }
       user = await this.userService.updateUserStatus(user.id, Status.GAME)
-      //const player = await this.playerService.createPlayer(user, client.id)
       let player = await this.playerService.getPlayerByUser(user, client.id)
+	  if (!player) {
+		player = await this.playerService.createPlayer(user, client.id)
+	  }
       if (player.clientId !== client.id) {
         player = await this.playerService.updatePlayerClient(player, client.id)
       }
@@ -52,12 +60,13 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     this.server.emit('message', data)
   }
 
-
   @SubscribeMessage('start')
   async handleStartMatch(@ConnectedSocket() client: Socket) {
+    console.log("bonjour putain")
     if (!client.data.user.id) return
     this.logger.debug(client.data.user.id)
     const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
+
 
     if (currentPlayer) {
       let playersInQueue: Player[] = await this.matchService.waitInQueue(currentPlayer)

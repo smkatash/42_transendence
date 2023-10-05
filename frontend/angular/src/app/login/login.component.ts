@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, INJECTOR, inject, runInInjectionContext } from '@angular/core';
 import { LoginService } from './login.service';
 import { Observable } from 'rxjs';
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -9,10 +10,9 @@ import { TestBed } from '@angular/core/testing';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  constructor(private loginService: LoginService) { };
+  constructor(private loginService: LoginService, private router: Router) { };
 
   login(): void {
     this.loginService.getLogin()
   }
-
 }
