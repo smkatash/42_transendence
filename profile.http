@@ -1,5 +1,3 @@
-
-
 ### get current user info
 GET user/profile
 
@@ -8,6 +6,9 @@ GET user/image/:avatar
 
 ### get friends of the current user
 GET user/friends
+
+### Param(id) get friends of another user
+GET user/:id/friends
 
 ### Param(id) get a user profile to see, not current user!
 GET user/profile/:id

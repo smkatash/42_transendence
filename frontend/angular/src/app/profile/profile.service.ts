@@ -11,8 +11,18 @@ export class ProfileService {
   constructor(private http: HttpClient) { }
 
   getSessionUser(): Observable<User> {
-    const url = 'http://127.0.0.1:3000/user/info'
+    const url = 'http://127.0.0.1:3000/user/profile'
     return this.http.get<User>(url, { withCredentials: true })
+  }
+
+  getUser(userID: string): Observable<User> {
+    const url = `http://127.0.0.1:3000/user/profile/${userID}`
+    return this.http.get<User>(url, { withCredentials: true })
+  }
+
+  getSessionFriends(): Observable<User[]> {
+    const url = `http://127.0.0.1:3000/user/friends`
+    return this.http.get<User[]>(url, { withCredentials: true })
   }
 
   getFriends(userID: string): Observable<User[]> {
@@ -35,20 +45,20 @@ export class ProfileService {
     return this.http.get<Match[]>(url, { withCredentials: true })
   } */
 
-  setAvatar(userID: string, formData: FormData): Observable<User> {
-    const url =`http://127.0.0.1:3000/user/${userID}/upload`
+  setAvatar(formData: FormData): Observable<User> {
+    const url =`http://127.0.0.1:3000/user/image/upload`
     return this.http.post<User>(url, formData, { withCredentials: true })
   }
 
-/*   sendRequest(friendID: string): void {
-    const url =`http://127.0.0.1:3000/user/${friendID}/friend`
-    const request$ = this.http.post<User>(url, { withCredentials: true })
+  sendRequest(friendID: string): void {
+    const url =`http://127.0.0.1:3000/user/friend`
+    const request$ = this.http.post<User>(url, { withCredentials: true }) // Post with ID in the body
     request$.subscribe()
   }
 
   removeFriend(userID: string, friendID: string): void {
-    const url =`http://127.0.0.1:3000/user/${userID}/friend/${friendID}`
-    const request$ = this.http.post<User>(url, { withCredentials: true })
+    const url =`http://127.0.0.1:3000/user/friend/${friendID}`
+    const request$ = this.http.delete<User>(url, { withCredentials: true })
     request$.subscribe()
-  } */
+  }
 }

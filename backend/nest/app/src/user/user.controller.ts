@@ -52,7 +52,7 @@ export class UserController {
 
     @Get('friends')
     @UseGuards(SessionGuard)
-    async getUserFriends(@GetUser() currentUser: User) {
+    async getCurrentUserFriends(@GetUser() currentUser: User) {
         if (currentUser.id) {
             const friends: User[] = await this.userService.getUserFriends(currentUser.id)
             return friends
@@ -60,6 +60,18 @@ export class UserController {
             throw new UnauthorizedException('Access denied');
         }
     }
+
+    @Get(':id/friends')
+    @UseGuards(SessionGuard)
+    async getUserFriends(@Param('id') userId: string, @GetUser() currentUser: User) {
+        if (currentUser.id && userId) {
+            const friends: User[] = await this.userService.getUserFriends(userId)
+            return friends
+        } else {
+            throw new UnauthorizedException('Access denied');
+        }
+    }
+
 
     @Post('friend')
     @UseGuards(SessionGuard)
