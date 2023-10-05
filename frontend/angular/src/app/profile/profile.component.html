@@ -31,7 +31,8 @@
       <div class="upper-row">
         <div class="level">
           <h1>Rank:</h1>
-          <h2>{{ rank }}</h2>
+          <h2 *ngIf="rank > 0; else no_rank">{{ rank }}</h2>
+          <ng-template #no_rank><h2>None</h2></ng-template>
         </div>
 
         <div class="wins-losses">
@@ -49,12 +50,17 @@
         <div class="friends">
           <div class="wrapper">
             <h1>Friends:</h1>
-            <div class="friends-container" *ngIf="friends">
+            <div class="friends-container" *ngIf="friends !== []; else no_friends">
               <div *ngFor="let friend of friends">
                 <app-friend [user]="friend"></app-friend>
               </div>
             </div>
-            <h1 class="no-friends">No friends</h1>
+            <ng-template #no_friends>
+              <div class="no-friends">
+                <h1>No friends</h1>
+                <h2>play sad violin music</h2>
+              </div>
+            </ng-template>
           </div>
         </div>
 

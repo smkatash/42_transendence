@@ -15,13 +15,12 @@ export class ProfileComponent implements OnInit {
   profile?: User
   friends: User[] = []
   matches: Match[] = []
-  rank: number = 1
-  stats: Stats = { wins: 0, losses: 0}
+  rank: number = 0
+  stats: Stats = {wins: 0, losses: 0}
   selectedImage: File | null = null
 
   ngOnInit(): void {
     this.getProfile()
-    this.getStats()
   }
 
   getProfile(): void {
@@ -30,25 +29,15 @@ export class ProfileComponent implements OnInit {
         this.profile = user;
 
         this.profileService.getFriends(user.id)
-          .subscribe(friends => this.friends = friends)
+          .subscribe(friends => {console.log(friends); this.friends = friends})
 
         this.profileService.getRank(user.id)
-          .subscribe(rank => {
-            if (rank !== -1) {
-              this.rank = rank
-            }
-          })
+          .subscribe(rank => this.rank = rank)
+
+        this.profileService.getStats()
+          .subscribe(stats => this.stats = stats)
 /*           this.profileService.getMatches(user.id)
           .subscribe(matches => this.matches = matches) */
-      })
-  }
-
-  getStats(): void {
-    this.profileService.getStats()
-      .subscribe(stats => {
-        if (stats.wins !== undefined && stats.losses !== undefined) {
-          this.stats = stats
-        }
       })
   }
 
