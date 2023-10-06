@@ -3,6 +3,12 @@
 ### get current user info
 GET user/profile
 
+### Body(newName) update username of current user
+PATCH user/username
+
+### Body(newTitle) update title of current user
+PATCH user/title
+
 ### Param(avatar) get any image
 GET user/image/:avatar
 

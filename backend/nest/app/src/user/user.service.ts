@@ -8,12 +8,10 @@ import { Status } from './utils/status.dto';
 import { Player } from 'src/game/entities/player.entity';
 import * as https from 'https';
 import * as fs from 'fs';
-import * as path from 'path';
 
 @Injectable()
 export class UserService {
-    constructor(@InjectRepository(User) private userRepo: Repository<User>,
-                @InjectRepository(Player) private playerRepo: Repository<Player>) {}
+    constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
 
     async getUserById(id: string): Promise<User> {
       return this.userRepo.findOneBy({id})
@@ -43,6 +41,18 @@ export class UserService {
       user.avatar = image
       return this.saveValidUser(user)
     }
+
+	async updateUsername(id: string, newName: string): Promise<User> {
+		const user = await this.getUserById(id)
+		user.username = newName
+		return this.saveValidUser(user)
+	}
+
+	async updateTitle(id: string, newTitle: string): Promise<User> {
+		const user = await this.getUserById(id)
+		user.title = newTitle
+		return this.saveValidUser(user)
+	}
 
     async getUserFriends(id: string) {
       try {

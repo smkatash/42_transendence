@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Inject, Param, Post, Res, UnauthorizedException, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, HttpException, HttpStatus, Inject, Param, Patch, Post, Res, UnauthorizedException, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UserService } from './user.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -32,6 +32,30 @@ export class UserController {
             throw new UnauthorizedException('Access denied');
         }
     }
+
+	@Patch('username')
+	@UseGuards(SessionGuard)
+	async updateUsername(@Body() newName: string, @GetUser() currentUser: User) {
+		if (currentUser && currentUser.id) {
+			try {
+				return await this.userService.updateUsername(currentUser.id, newName)	
+			} catch (error) {
+				throw new HttpException(`${newName} username already exists`, HttpStatus.CONFLICT)
+			}
+		} else {
+			throw new UnauthorizedException('Access denied');
+		}
+	}
+
+	@Patch('title')
+	@UseGuards(SessionGuard)
+	async updateTitle(@Body() newTitle: string, @GetUser() currentUser: User) {
+		if (currentUser && currentUser.id) {
+			return await this.userService.updateTitle(currentUser.id, newTitle)	
+		} else {
+			throw new UnauthorizedException('Access denied');
+		}
+	}
 
     @Post('image/upload')
     @UseGuards(SessionGuard)
