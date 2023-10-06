@@ -1,0 +1,21 @@
+
+### gets all match history of current user
+GET ranking/history
+
+### Param(id) gets all match history of another user
+GET ranking/:id/history
+
+### gets all players their stats
+GET ranking/board
+
+### gets position of current user
+GET ranking/level
+
+### Param(id) gets position of another user
+GET ranking/:id/level
+
+### gets wins and losses of current user
+GET ranking/stats 
+
+### Param(id) gets wins and losses of another user
+GET ranking/:id/stats 

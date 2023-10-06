@@ -1,0 +1,1947 @@
+{
+	"id": "99637",
+	"login": "ktashbae",
+	"image_url": "https://cdn.intra.42.fr/users/c33564370773ca145294c2296c25cd91/ktashbae.jpg",
+	"provider": "42",
+	"_raw": "{\"id\":99637,\"email\":\"ktashbae@student.42heilbronn.de\",\"login\":\"ktashbae\",\"first_name\":\"Kanykei\",\"last_name\":\"Tashbaeva\",\"usual_full_name\":\"Kanykei Tashbaeva\",\"usual_first_name\":null,\"url\":\"https://api.intra.42.fr/v2/users/ktashbae\",\"phone\":\"hidden\",\"displayname\":\"Kanykei Tashbaeva\",\"kind\":\"student\",\"image\":{\"link\":\"https://cdn.intra.42.fr/users/c33564370773ca145294c2296c25cd91/ktashbae.jpg\",\"versions\":{\"large\":\"https://cdn.intra.42.fr/users/cb4b125f95ebc90b4ca9853ecb8b634b/large_ktashbae.jpg\",\"medium\":\"https://cdn.intra.42.fr/users/e89471cf275432edb5afa7b4ae9d9e90/medium_ktashbae.jpg\",\"small\":\"https://cdn.intra.42.fr/users/5a2a74f2aa53fc75e2ea4706de8797fc/small_ktashbae.jpg\",\"micro\":\"https://cdn.intra.42.fr/users/3a7f16b442f065219f270b41730750b5/micro_ktashbae.jpg\"}},\"staff?\":false,\"correction_point\":2,\"pool_month\":\"october\",\"pool_year\":\"2021\",\"location\":\"2-a-2\",\"wallet\":785,\"anonymize_date\":\"2026-10-05T00:00:00.000+02:00\",\"data_erasure_date\":\"2026-10-05T00:00:00.000+02:00\",\"created_at\":\"2021-09-26T19:14:22.076Z\",\"updated_at\":\"2023-10-05T17:38:23.514Z\",\"alumnized_at\":null,\"alumni?\":false,\"active?\":true,\"groups\":[],\"cursus_users\":[{\"grade\":null,\"level\":0.0,\"skills\":[],\"blackholed_at\":null,\"id\":139302,\"begin_at\":\"2021-10-14T20:45:42.000Z\",\"end_at\":\"2021-10-14T20:45:43.000Z\",\"cursus_id\":9,\"has_coalition\":true,\"created_at\":\"2021-09-26T19:14:23.322Z\",\"updated_at\":\"2021-10-05T15:10:05.567Z\",\"user\":{\"id\":99637,\"email\":\"ktashbae@student.42heilbronn.de\",\"login\":\"ktashbae\",\"first_name\":\"Kanykei\",\"last_name\":\"Tashbaeva\",\"usual_full_name\":\"Kanykei Tashbaeva\",\"usual_first_name\":null,\"url\":\"https://api.intra.42.fr/v2/users/ktashbae\",\"phone\":\"hidden\",\"displayname\":\"Kanykei Tashbaeva\",\"kind\":\"student\",\"image\":{\"link\":\"https://cdn.intra.42.fr/users/c33564370773ca145294c2296c25cd91/ktashbae.jpg\",\"versions\":{\"large\":\"https://cdn.intra.42.fr/users/cb4b125f95ebc90b4ca9853ecb8b634b/large_ktashbae.jpg\",\"medium\":\"https://cdn.intra.42.fr/users/e89471cf275432edb5afa7b4ae9d9e90/medium_ktashbae.jpg\",\"small\":\"https://cdn.intra.42.fr/users/5a2a74f2aa53fc75e2ea4706de8797fc/small_ktashbae.jpg\",\"micro\":\"https://cdn.intra.42.fr/users/3a7f16b442f065219f270b41730750b5/micro_ktashbae.jpg\"}},\"staff?\":false,\"correction_point\":2,\"pool_month\":\"october\",\"pool_year\":\"2021\",\"location\":\"2-a-2\",\"wallet\":785,\"anonymize_date\":\"2026-10-05T00:00:00.000+02:00\",\"data_erasure_date\":\"2026-10-05T00:00:00.000+02:00\",\"created_at\":\"2021-09-26T19:14:22.076Z\",\"updated_at\":\"2023-10-05T17:38:23.514Z\",\"alumnized_at\":null,\"alumni?\":false,\"active?\":true},\"cursus\":{\"id\":9,\"created_at\":\"2015-11-04T10:58:13.979Z\",\"name\":\"C Piscine\",\"slug\":\"c-piscine\",\"kind\":\"piscine\"}},{\"grade\":\"Learner\",\"level\":12.91,\"skills\":[{\"id\":16,\"name\":\"Company experience\",\"level\":11.79},{\"id\":10,\"name\":\"Network \\u0026 system administration\",\"level\":7.76},{\"id\":3,\"name\":\"Rigor\",\"level\":7.08},{\"id\":7,\"name\":\"Group \\u0026 interpersonal\",\"level\":6.75},{\"id\":17,\"name\":\"Object-oriented programming\",\"level\":6.08},{\"id\":2,\"name\":\"Imperative programming\",\"level\":4.85},{\"id\":4,\"name\":\"Unix\",\"level\":4.48},{\"id\":1,\"name\":\"Algorithms \\u0026 AI\",\"level\":4.17},{\"id\":5,\"name\":\"Graphics\",\"level\":3.05}],\"blackholed_at\":\"2024-01-20T08:42:00.000Z\",\"id\":146635,\"begin_at\":\"2022-03-21T08:42:00.000Z\",\"end_at\":null,\"cursus_id\":21,\"has_coalition\":true,\"created_at\":\"2021-11-10T15:33:30.547Z\",\"updated_at\":\"2021-11-10T15:33:30.547Z\",\"user\":{\"id\":99637,\"email\":\"ktashbae@student.42heilbronn.de\",\"login\":\"ktashbae\",\"first_name\":\"Kanykei\",\"last_name\":\"Tashbaeva\",\"usual_full_name\":\"Kanykei Tashbaeva\",\"usual_first_name\":null,\"url\":\"https://api.intra.42.fr/v2/users/ktashbae\",\"phone\":\"hidden\",\"displayname\":\"Kanykei Tashbaeva\",\"kind\":\"student\",\"image\":{\"link\":\"https://cdn.intra.42.fr/users/c33564370773ca145294c2296c25cd91/ktashbae.jpg\",\"versions\":{\"large\":\"https://cdn.intra.42.fr/users/cb4b125f95ebc90b4ca9853ecb8b634b/large_ktashbae.jpg\",\"medium\":\"https://cdn.intra.42.fr/users/e89471cf275432edb5afa7b4ae9d9e90/medium_ktashbae.jpg\",\"small\":\"https://cdn.intra.42.fr/users/5a2a74f2aa53fc75e2ea4706de8797fc/small_ktashbae.jpg\",\"micro\":\"https://cdn.intra.42.fr/users/3a7f16b442f065219f270b41730750b5/micro_ktashbae.jpg\"}},\"staff?\":false,\"correction_point\":2,\"pool_month\":\"october\",\"pool_year\":\"2021\",\"location\":\"2-a-2\",\"wallet\":785,\"anonymize_date\":\"2026-10-05T00:00:00.000+02:00\",\"data_erasure_date\":\"2026-10-05T00:00:00.000+02:00\",\"created_at\":\"2021-09-26T19:14:22.076Z\",\"updated_at\":\"2023-10-05T17:38:23.514Z\",\"alumnized_at\":null,\"alumni?\":false,\"active?\":true},\"cursus\":{\"id\":21,\"created_at\":\"2019-07-29T08:45:17.896Z\",\"name\":\"42cursus\",\"slug\":\"42cursus\",\"kind\":\"main\"}},{\"grade\":null,\"level\":0.0,\"skills\":[],\"blackholed_at\":null,\"id\":141426,\"begin_at\":\"2021-10-06T09:42:00.000Z\",\"end_at\":\"2021-10-12T10:00:00.000Z\",\"cursus_id\":41,\"has_coalition\":false,\"created_at\":\"2021-10-05T15:10:06.816Z\",\"updated_at\":\"2021-10-11T12:59:09.072Z\",\"user\":{\"id\":99637,\"email\":\"ktashbae@student.42heilbronn.de\",\"login\":\"ktashbae\",\"first_name\":\"Kanykei\",\"last_name\":\"Tashbaeva\",\"usual_full_name\":\"Kanykei Tashbaeva\",\"usual_first_name\":null,\"url\":\"https://api.intra.42.fr/v2/users/ktashbae\",\"phone\":\"hidden\",\"displayname\":\"Kanykei Tashbaeva\",\"kind\":\"student\",\"image\":{\"link\":\"https://cdn.intra.42.fr/users/c33564370773ca145294c2296c25cd91/ktashbae.jpg\",\"versions\":{\"large\":\"https://cdn.intra.42.fr/users/cb4b125f95ebc90b4ca9853ecb8b634b/large_ktashbae.jpg\",\"medium\":\"https://cdn.intra.42.fr/users/e89471cf275432edb5afa7b4ae9d9e90/medium_ktashbae.jpg\",\"small\":\"https://cdn.intra.42.fr/users/5a2a74f2aa53fc75e2ea4706de8797fc/small_ktashbae.jpg\",\"micro\":\"https://cdn.intra.42.fr/users/3a7f16b442f065219f270b41730750b5/micro_ktashbae.jpg\"}},\"staff?\":false,\"correction_point\":2,\"pool_month\":\"october\",\"pool_year\":\"2021\",\"location\":\"2-a-2\",\"wallet\":785,\"anonymize_date\":\"2026-10-05T00:00:00.000+02:00\",\"data_erasure_date\":\"2026-10-05T00:00:00.000+02:00\",\"created_at\":\"2021-09-26T19:14:22.076Z\",\"updated_at\":\"2023-10-05T17:38:23.514Z\",\"alumnized_at\":null,\"alumni?\":false,\"active?\":true},\"cursus\":{\"id\":41,\"created_at\":\"2021-01-04T20:55:03.543Z\",\"name\":\"Basecamp Warm Up Germany\",\"slug\":\"basecamp-warm-up-germany\",\"kind\":\"piscine_community\"}},{\"grade\":null,\"level\":6.16,\"skills\":[],\"blackholed_at\":null,\"id\":142208,\"begin_at\":\"2021-10-12T08:30:00.000Z\",\"end_at\":\"2021-11-09T22:35:00.000Z\",\"cursus_id\":42,\"has_coalition\":false,\"created_at\":\"2021-10-12T08:16:04.315Z\",\"updated_at\":\"2021-11-09T22:34:45.140Z\",\"user\":{\"id\":99637,\"email\":\"ktashbae@student.42heilbronn.de\",\"login\":\"ktashbae\",\"first_name\":\"Kanykei\",\"last_name\":\"Tashbaeva\",\"usual_full_name\":\"Kanykei Tashbaeva\",\"usual_first_name\":null,\"url\":\"https://api.intra.42.fr/v2/users/ktashbae\",\"phone\":\"hidden\",\"displayname\":\"Kanykei Tashbaeva\",\"kind\":\"student\",\"image\":{\"link\":\"https://cdn.intra.42.fr/users/c33564370773ca145294c2296c25cd91/ktashbae.jpg\",\"versions\":{\"large\":\"https://cdn.intra.42.fr/users/cb4b125f95ebc90b4ca9853ecb8b634b/large_ktashbae.jpg\",\"medium\":\"https://cdn.intra.42.fr/users/e89471cf275432edb5afa7b4ae9d9e90/medium_ktashbae.jpg\",\"small\":\"https://cdn.intra.42.fr/users/5a2a74f2aa53fc75e2ea4706de8797fc/small_ktashbae.jpg\",\"micro\":\"https://cdn.intra.42.fr/users/3a7f16b442f065219f270b41730750b5/micro_ktashbae.jpg\"}},\"staff?\":false,\"correction_point\":2,\"pool_month\":\"october\",\"pool_year\":\"2021\",\"location\":\"2-a-2\",\"wallet\":785,\"anonymize_date\":\"2026-10-05T00:00:00.000+02:00\",\"data_erasure_date\":\"2026-10-05T00:00:00.000+02:00\",\"created_at\":\"2021-09-26T19:14:22.076Z\",\"updated_at\":\"2023-10-05T17:38:23.514Z\",\"alumnized_at\":null,\"alumni?\":false,\"active?\":true},\"cursus\":{\"id\":42,\"created_at\":\"2021-01-06T16:09:07.027Z\",\"name\":\"Germany Basecamp\",\"slug\":\"germany-basecamp\",\"kind\":\"piscine_community\"}}],\"projects_users\":[{\"id\":3330794,\"occurrence\":0,\"final_mark\":0,\"status\":\"finished\",\"validated?\":false,\"current_team_id\":5200453,\"project\":{\"id\":2268,\"name\":\"Python - 0 - Starting\",\"slug\":\"python-0-starting\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2023-09-26T11:02:52.263Z\",\"marked\":true,\"retriable_at\":\"2023-09-26T11:02:52.310Z\",\"created_at\":\"2023-09-23T11:01:58.115Z\",\"updated_at\":\"2023-09-26T11:02:52.339Z\"},{\"id\":3269045,\"occurrence\":0,\"final_mark\":null,\"status\":\"in_progress\",\"validated?\":null,\"current_team_id\":5103849,\"project\":{\"id\":2267,\"name\":\"Python for Data Science\",\"slug\":\"python-for-data-science\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":null,\"marked\":false,\"retriable_at\":null,\"created_at\":\"2023-08-27T09:36:56.562Z\",\"updated_at\":\"2023-08-27T09:36:56.682Z\"},{\"id\":3267164,\"occurrence\":0,\"final_mark\":100,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":5100055,\"project\":{\"id\":1643,\"name\":\"Internship I - Peer Video\",\"slug\":\"internship-i-internship-i-peer-video\",\"parent_id\":1638},\"cursus_ids\":[21],\"marked_at\":\"2023-08-26T18:11:17.696Z\",\"marked\":true,\"retriable_at\":\"2023-08-26T18:11:18.579Z\",\"created_at\":\"2023-08-25T14:49:00.117Z\",\"updated_at\":\"2023-08-26T18:11:18.598Z\"},{\"id\":2986111,\"occurrence\":0,\"final_mark\":125,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4693655,\"project\":{\"id\":1638,\"name\":\"Internship I\",\"slug\":\"internship-i\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2023-08-26T18:11:18.104Z\",\"marked\":true,\"retriable_at\":\"2023-08-29T18:11:18.525Z\",\"created_at\":\"2023-02-15T15:29:16.045Z\",\"updated_at\":\"2023-08-26T18:11:18.549Z\"},{\"id\":2987713,\"occurrence\":0,\"final_mark\":125,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4695998,\"project\":{\"id\":1642,\"name\":\"internship I - Company Final Evaluation\",\"slug\":\"internship-i-internship-i-company-final-evaluation\",\"parent_id\":1638},\"cursus_ids\":[21],\"marked_at\":\"2023-08-25T14:47:36.985Z\",\"marked\":true,\"retriable_at\":null,\"created_at\":\"2023-02-16T10:15:10.859Z\",\"updated_at\":\"2023-08-25T14:47:37.030Z\"},{\"id\":3128004,\"occurrence\":0,\"final_mark\":null,\"status\":\"in_progress\",\"validated?\":null,\"current_team_id\":4892481,\"project\":{\"id\":1324,\"name\":\"Exam Rank 06\",\"slug\":\"exam-rank-06\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":null,\"marked\":false,\"retriable_at\":null,\"created_at\":\"2023-06-20T15:03:58.613Z\",\"updated_at\":\"2023-06-20T15:03:58.761Z\"},{\"id\":3128002,\"occurrence\":0,\"final_mark\":null,\"status\":\"creating_group\",\"validated?\":null,\"current_team_id\":4962134,\"project\":{\"id\":1337,\"name\":\"ft_transcendence\",\"slug\":\"ft_transcendence\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":null,\"marked\":false,\"retriable_at\":null,\"created_at\":\"2023-06-20T15:03:06.653Z\",\"updated_at\":\"2023-06-20T15:03:06.653Z\"},{\"id\":2909685,\"occurrence\":0,\"final_mark\":125,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4793580,\"project\":{\"id\":1332,\"name\":\"webserv\",\"slug\":\"webserv\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2023-06-19T14:59:45.349Z\",\"marked\":true,\"retriable_at\":\"2023-06-22T14:59:45.623Z\",\"created_at\":\"2022-12-08T17:57:09.190Z\",\"updated_at\":\"2023-06-19T14:59:48.066Z\"},{\"id\":2987712,\"occurrence\":0,\"final_mark\":118,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4695997,\"project\":{\"id\":1641,\"name\":\"internship I - Company Mid Evaluation\",\"slug\":\"internship-i-internship-i-company-mid-evaluation\",\"parent_id\":1638},\"cursus_ids\":[21],\"marked_at\":\"2023-06-02T14:37:27.542Z\",\"marked\":true,\"retriable_at\":null,\"created_at\":\"2023-02-16T10:15:10.451Z\",\"updated_at\":\"2023-06-02T14:37:27.583Z\"},{\"id\":2987711,\"occurrence\":0,\"final_mark\":110,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4695996,\"project\":{\"id\":1639,\"name\":\"Internship I - Duration\",\"slug\":\"internship-i-internship-i-duration\",\"parent_id\":1638},\"cursus_ids\":[21],\"marked_at\":\"2023-04-17T10:58:11.751Z\",\"marked\":true,\"retriable_at\":null,\"created_at\":\"2023-02-16T10:15:10.013Z\",\"updated_at\":\"2023-04-17T10:58:11.806Z\"},{\"id\":2987709,\"occurrence\":0,\"final_mark\":100,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4695994,\"project\":{\"id\":1640,\"name\":\"internship I - Contract Upload\",\"slug\":\"internship-i-internship-i-contract-upload\",\"parent_id\":1638},\"cursus_ids\":[21],\"marked_at\":\"2023-02-16T10:15:09.890Z\",\"marked\":true,\"retriable_at\":\"2023-02-16T10:15:09.955Z\",\"created_at\":\"2023-02-16T10:15:09.406Z\",\"updated_at\":\"2023-02-16T10:15:09.979Z\"},{\"id\":2903112,\"occurrence\":0,\"final_mark\":100,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4579251,\"project\":{\"id\":1335,\"name\":\"ft_containers\",\"slug\":\"ft_containers\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2023-01-21T14:37:04.735Z\",\"marked\":true,\"retriable_at\":\"2023-01-24T14:37:04.925Z\",\"created_at\":\"2022-12-01T13:35:32.593Z\",\"updated_at\":\"2023-01-21T14:37:04.941Z\"},{\"id\":2903116,\"occurrence\":0,\"final_mark\":110,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4579256,\"project\":{\"id\":1983,\"name\":\"Inception\",\"slug\":\"inception\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-12-17T19:38:00.925Z\",\"marked\":true,\"retriable_at\":\"2022-12-20T19:38:01.141Z\",\"created_at\":\"2022-12-01T13:36:01.554Z\",\"updated_at\":\"2022-12-17T19:38:01.157Z\"},{\"id\":2903118,\"occurrence\":0,\"final_mark\":100,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4579257,\"project\":{\"id\":1323,\"name\":\"Exam Rank 05\",\"slug\":\"exam-rank-05\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-12-08T13:16:37.290Z\",\"marked\":true,\"retriable_at\":\"2022-12-08T13:16:37.320Z\",\"created_at\":\"2022-12-01T13:36:22.566Z\",\"updated_at\":\"2022-12-08T13:16:45.543Z\"},{\"id\":2858296,\"occurrence\":1,\"final_mark\":100,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4570425,\"project\":{\"id\":1322,\"name\":\"Exam Rank 04\",\"slug\":\"exam-rank-04\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-12-01T12:45:38.664Z\",\"marked\":true,\"retriable_at\":\"2022-12-01T12:45:38.689Z\",\"created_at\":\"2022-10-29T23:25:09.495Z\",\"updated_at\":\"2022-12-01T12:45:44.990Z\"},{\"id\":2858291,\"occurrence\":0,\"final_mark\":100,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4518696,\"project\":{\"id\":2007,\"name\":\"NetPractice\",\"slug\":\"netpractice\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-11-20T23:12:02.627Z\",\"marked\":true,\"retriable_at\":\"2022-11-23T23:12:02.806Z\",\"created_at\":\"2022-10-29T23:15:11.061Z\",\"updated_at\":\"2022-11-20T23:12:02.825Z\"},{\"id\":2881523,\"occurrence\":0,\"final_mark\":100,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4550321,\"project\":{\"id\":1346,\"name\":\"CPP Module 08\",\"slug\":\"cpp-module-08\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-11-17T20:36:28.520Z\",\"marked\":true,\"retriable_at\":\"2022-11-18T20:36:28.717Z\",\"created_at\":\"2022-11-16T15:44:22.923Z\",\"updated_at\":\"2022-11-17T20:36:28.732Z\"},{\"id\":2877664,\"occurrence\":0,\"final_mark\":100,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4544876,\"project\":{\"id\":1345,\"name\":\"CPP Module 07\",\"slug\":\"cpp-module-07\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-11-16T15:43:56.149Z\",\"marked\":true,\"retriable_at\":\"2022-11-17T15:43:56.178Z\",\"created_at\":\"2022-11-13T20:40:44.109Z\",\"updated_at\":\"2022-11-16T15:43:56.195Z\"},{\"id\":2858292,\"occurrence\":0,\"final_mark\":125,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4518697,\"project\":{\"id\":1315,\"name\":\"miniRT\",\"slug\":\"minirt\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-11-14T18:30:01.538Z\",\"marked\":true,\"retriable_at\":\"2022-11-17T18:30:01.786Z\",\"created_at\":\"2022-10-29T23:16:05.247Z\",\"updated_at\":\"2022-11-14T18:30:02.085Z\"},{\"id\":2877106,\"occurrence\":0,\"final_mark\":100,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4544045,\"project\":{\"id\":1344,\"name\":\"CPP Module 06\",\"slug\":\"cpp-module-06\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-11-13T20:40:05.207Z\",\"marked\":true,\"retriable_at\":\"2022-11-14T20:40:05.237Z\",\"created_at\":\"2022-11-13T00:29:22.779Z\",\"updated_at\":\"2022-11-13T20:40:05.251Z\"},{\"id\":2874611,\"occurrence\":1,\"final_mark\":100,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4543832,\"project\":{\"id\":1343,\"name\":\"CPP Module 05\",\"slug\":\"cpp-module-05\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-11-13T00:28:52.611Z\",\"marked\":true,\"retriable_at\":\"2022-11-14T00:28:52.641Z\",\"created_at\":\"2022-11-10T12:41:34.465Z\",\"updated_at\":\"2022-11-13T00:28:52.657Z\"},{\"id\":2872796,\"occurrence\":0,\"final_mark\":100,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4538365,\"project\":{\"id\":1342,\"name\":\"CPP Module 04\",\"slug\":\"cpp-module-04\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-11-10T12:37:23.506Z\",\"marked\":true,\"retriable_at\":\"2022-11-11T12:37:23.536Z\",\"created_at\":\"2022-11-09T13:24:55.178Z\",\"updated_at\":\"2022-11-10T12:37:23.550Z\"},{\"id\":2871245,\"occurrence\":0,\"final_mark\":100,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4536226,\"project\":{\"id\":1341,\"name\":\"CPP Module 03\",\"slug\":\"cpp-module-03\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-11-09T13:23:50.500Z\",\"marked\":true,\"retriable_at\":\"2022-11-10T13:23:50.528Z\",\"created_at\":\"2022-11-08T12:58:22.087Z\",\"updated_at\":\"2022-11-09T13:23:50.544Z\"},{\"id\":2865382,\"occurrence\":0,\"final_mark\":100,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4528313,\"project\":{\"id\":1340,\"name\":\"CPP Module 02\",\"slug\":\"cpp-module-02\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-11-08T12:57:38.867Z\",\"marked\":true,\"retriable_at\":\"2022-11-09T12:57:38.897Z\",\"created_at\":\"2022-11-03T15:02:30.334Z\",\"updated_at\":\"2022-11-08T12:57:38.911Z\"},{\"id\":2862356,\"occurrence\":0,\"final_mark\":100,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4524299,\"project\":{\"id\":1339,\"name\":\"CPP Module 01\",\"slug\":\"cpp-module-01\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-11-03T14:57:44.842Z\",\"marked\":true,\"retriable_at\":\"2022-11-04T14:57:44.876Z\",\"created_at\":\"2022-11-01T22:22:22.072Z\",\"updated_at\":\"2022-11-03T14:57:44.890Z\"},{\"id\":2858293,\"occurrence\":0,\"final_mark\":100,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4518698,\"project\":{\"id\":1338,\"name\":\"CPP Module 00\",\"slug\":\"cpp-module-00\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-11-01T21:46:09.018Z\",\"marked\":true,\"retriable_at\":\"2022-11-02T21:46:09.114Z\",\"created_at\":\"2022-10-29T23:18:27.968Z\",\"updated_at\":\"2022-11-01T21:46:09.127Z\"},{\"id\":2761406,\"occurrence\":0,\"final_mark\":125,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4379271,\"project\":{\"id\":1331,\"name\":\"minishell\",\"slug\":\"42cursus-minishell\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-10-29T23:01:16.974Z\",\"marked\":true,\"retriable_at\":\"2022-11-01T00:01:17.187Z\",\"created_at\":\"2022-09-01T12:23:37.672Z\",\"updated_at\":\"2022-10-29T23:01:17.410Z\"},{\"id\":2761404,\"occurrence\":0,\"final_mark\":125,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4378965,\"project\":{\"id\":1334,\"name\":\"Philosophers\",\"slug\":\"42cursus-philosophers\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-09-29T20:10:32.573Z\",\"marked\":true,\"retriable_at\":\"2022-10-01T20:10:32.824Z\",\"created_at\":\"2022-09-01T12:23:26.918Z\",\"updated_at\":\"2022-09-29T20:10:32.841Z\"},{\"id\":2761408,\"occurrence\":0,\"final_mark\":100,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4378967,\"project\":{\"id\":1321,\"name\":\"Exam Rank 03\",\"slug\":\"exam-rank-03\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-09-08T11:32:51.501Z\",\"marked\":true,\"retriable_at\":\"2022-09-08T11:32:51.520Z\",\"created_at\":\"2022-09-01T12:23:44.981Z\",\"updated_at\":\"2022-09-08T11:33:01.023Z\"},{\"id\":2591164,\"occurrence\":4,\"final_mark\":100,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4356086,\"project\":{\"id\":1320,\"name\":\"Exam Rank 02\",\"slug\":\"exam-rank-02\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-09-01T11:57:31.651Z\",\"marked\":true,\"retriable_at\":\"2022-09-01T11:57:31.671Z\",\"created_at\":\"2022-05-16T20:25:24.787Z\",\"updated_at\":\"2022-09-01T11:57:41.827Z\"},{\"id\":2581782,\"occurrence\":0,\"final_mark\":97,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4122232,\"project\":{\"id\":1471,\"name\":\"push_swap\",\"slug\":\"42cursus-push_swap\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-06-05T18:30:42.077Z\",\"marked\":true,\"retriable_at\":\"2022-06-07T18:30:42.329Z\",\"created_at\":\"2022-05-04T09:33:01.367Z\",\"updated_at\":\"2022-06-05T18:30:42.352Z\"},{\"id\":2579290,\"occurrence\":0,\"final_mark\":125,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4118648,\"project\":{\"id\":2004,\"name\":\"pipex\",\"slug\":\"pipex\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-05-17T14:12:02.089Z\",\"marked\":true,\"retriable_at\":\"2022-05-19T14:12:02.331Z\",\"created_at\":\"2022-05-01T21:12:59.569Z\",\"updated_at\":\"2022-05-17T14:12:02.362Z\"},{\"id\":2579291,\"occurrence\":0,\"final_mark\":125,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4118649,\"project\":{\"id\":2009,\"name\":\"so_long\",\"slug\":\"so_long\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-05-16T18:34:13.617Z\",\"marked\":true,\"retriable_at\":\"2022-05-19T18:34:13.819Z\",\"created_at\":\"2022-05-01T21:13:23.254Z\",\"updated_at\":\"2022-05-16T18:34:13.839Z\"},{\"id\":2556254,\"occurrence\":0,\"final_mark\":116,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4088147,\"project\":{\"id\":1994,\"name\":\"Born2beroot\",\"slug\":\"born2beroot\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-05-01T19:52:06.349Z\",\"marked\":true,\"retriable_at\":\"2022-05-02T19:52:06.571Z\",\"created_at\":\"2022-04-09T08:45:51.145Z\",\"updated_at\":\"2022-05-01T19:52:06.587Z\"},{\"id\":2563236,\"occurrence\":0,\"final_mark\":125,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4097378,\"project\":{\"id\":1327,\"name\":\"get_next_line\",\"slug\":\"42cursus-get_next_line\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-04-20T15:47:06.248Z\",\"marked\":true,\"retriable_at\":\"2022-04-21T15:47:06.350Z\",\"created_at\":\"2022-04-15T18:56:03.584Z\",\"updated_at\":\"2022-04-20T15:47:06.388Z\"},{\"id\":2556334,\"occurrence\":0,\"final_mark\":125,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4088288,\"project\":{\"id\":1316,\"name\":\"ft_printf\",\"slug\":\"42cursus-ft_printf\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-04-14T00:29:32.659Z\",\"marked\":true,\"retriable_at\":\"2022-04-15T00:29:32.768Z\",\"created_at\":\"2022-04-09T12:54:19.776Z\",\"updated_at\":\"2022-04-14T00:29:32.787Z\"},{\"id\":2537503,\"occurrence\":0,\"final_mark\":125,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":4061017,\"project\":{\"id\":1314,\"name\":\"Libft\",\"slug\":\"42cursus-libft\",\"parent_id\":null},\"cursus_ids\":[21],\"marked_at\":\"2022-04-09T08:44:54.675Z\",\"marked\":true,\"retriable_at\":\"2022-04-10T08:44:54.808Z\",\"created_at\":\"2022-03-22T06:53:12.849Z\",\"updated_at\":\"2022-04-09T08:44:54.829Z\"},{\"id\":2393333,\"occurrence\":0,\"final_mark\":100,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":3861774,\"project\":{\"id\":1898,\"name\":\"Germany Basecamp C 06\",\"slug\":\"germany-basecamp-c-06\",\"parent_id\":null},\"cursus_ids\":[42],\"marked_at\":\"2021-10-29T07:25:48.513Z\",\"marked\":true,\"retriable_at\":\"2021-10-29T07:45:48.597Z\",\"created_at\":\"2021-10-29T00:49:29.682Z\",\"updated_at\":\"2021-10-29T07:25:48.617Z\"},{\"id\":2392137,\"occurrence\":0,\"final_mark\":70,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":3860221,\"project\":{\"id\":1896,\"name\":\"Germany Basecamp C 04\",\"slug\":\"germany-basecamp-c-04\",\"parent_id\":null},\"cursus_ids\":[42],\"marked_at\":\"2021-10-28T21:48:34.085Z\",\"marked\":true,\"retriable_at\":\"2021-10-28T22:08:34.182Z\",\"created_at\":\"2021-10-28T00:53:04.578Z\",\"updated_at\":\"2021-10-28T21:48:34.204Z\"},{\"id\":2390720,\"occurrence\":0,\"final_mark\":16,\"status\":\"finished\",\"validated?\":false,\"current_team_id\":3858139,\"project\":{\"id\":1911,\"name\":\"Germany Basecamp Final Exam\",\"slug\":\"germany-basecamp-final-exam\",\"parent_id\":null},\"cursus_ids\":[42],\"marked_at\":\"2021-11-02T09:25:23.032Z\",\"marked\":true,\"retriable_at\":null,\"created_at\":\"2021-10-26T17:04:17.450Z\",\"updated_at\":\"2021-11-02T09:25:23.060Z\"},{\"id\":2384860,\"occurrence\":1,\"final_mark\":75,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":3861734,\"project\":{\"id\":1895,\"name\":\"Germany Basecamp C 03\",\"slug\":\"germany-basecamp-c-03\",\"parent_id\":null},\"cursus_ids\":[42],\"marked_at\":\"2021-10-29T00:48:47.129Z\",\"marked\":true,\"retriable_at\":\"2021-10-29T01:28:47.191Z\",\"created_at\":\"2021-10-21T09:50:58.890Z\",\"updated_at\":\"2021-10-29T00:48:47.205Z\"},{\"id\":2384143,\"occurrence\":2,\"final_mark\":75,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":3858546,\"project\":{\"id\":1894,\"name\":\"Germany Basecamp C 02\",\"slug\":\"germany-basecamp-c-02\",\"parent_id\":null},\"cursus_ids\":[42],\"marked_at\":\"2021-10-27T22:16:44.752Z\",\"marked\":true,\"retriable_at\":\"2021-10-27T23:16:44.848Z\",\"created_at\":\"2021-10-20T17:10:49.595Z\",\"updated_at\":\"2021-10-27T22:16:44.862Z\"},{\"id\":2382824,\"occurrence\":0,\"final_mark\":100,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":3852212,\"project\":{\"id\":1908,\"name\":\"Germany Basecamp Rush 01\",\"slug\":\"germany-basecamp-rush-01\",\"parent_id\":null},\"cursus_ids\":[42],\"marked_at\":\"2021-10-26T13:47:03.189Z\",\"marked\":true,\"retriable_at\":null,\"created_at\":\"2021-10-19T21:03:06.665Z\",\"updated_at\":\"2021-10-26T13:47:03.662Z\"},{\"id\":2382709,\"occurrence\":1,\"final_mark\":100,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":3848878,\"project\":{\"id\":1893,\"name\":\"Germany Basecamp C 01\",\"slug\":\"germany-basecamp-c-01\",\"parent_id\":null},\"cursus_ids\":[42],\"marked_at\":\"2021-10-21T09:49:46.967Z\",\"marked\":true,\"retriable_at\":\"2021-10-21T10:29:47.042Z\",\"created_at\":\"2021-10-19T17:40:49.265Z\",\"updated_at\":\"2021-10-21T09:49:47.057Z\"},{\"id\":2382014,\"occurrence\":0,\"final_mark\":28,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":3845655,\"project\":{\"id\":1910,\"name\":\"Germany Basecamp Exam 01\",\"slug\":\"germany-basecamp-exam-01\",\"parent_id\":null},\"cursus_ids\":[42],\"marked_at\":\"2021-10-26T10:34:22.814Z\",\"marked\":true,\"retriable_at\":null,\"created_at\":\"2021-10-19T09:02:30.403Z\",\"updated_at\":\"2021-10-26T10:34:23.074Z\"},{\"id\":2379086,\"occurrence\":0,\"final_mark\":72,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":3841482,\"project\":{\"id\":1892,\"name\":\"Germany Basecamp C 00\",\"slug\":\"germany-basecamp-c-00\",\"parent_id\":null},\"cursus_ids\":[42],\"marked_at\":\"2021-10-19T17:38:34.923Z\",\"marked\":true,\"retriable_at\":\"2021-10-19T17:58:35.001Z\",\"created_at\":\"2021-10-16T12:28:33.995Z\",\"updated_at\":\"2021-10-19T17:38:35.015Z\"},{\"id\":2378298,\"occurrence\":0,\"final_mark\":120,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":3840758,\"project\":{\"id\":1907,\"name\":\"Germany Basecamp Rush 00\",\"slug\":\"germany-basecamp-rush-00\",\"parent_id\":null},\"cursus_ids\":[42],\"marked_at\":\"2021-10-19T07:32:29.825Z\",\"marked\":true,\"retriable_at\":null,\"created_at\":\"2021-10-15T08:35:08.381Z\",\"updated_at\":\"2021-10-19T07:32:43.503Z\"},{\"id\":2374296,\"occurrence\":3,\"final_mark\":100,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":3841753,\"project\":{\"id\":1890,\"name\":\"Germany Basecamp Shell 00\",\"slug\":\"germany-basecamp-germany-basecamp-shell-00\",\"parent_id\":null},\"cursus_ids\":[42],\"marked_at\":\"2021-10-17T09:12:28.757Z\",\"marked\":true,\"retriable_at\":\"2021-10-17T11:12:28.822Z\",\"created_at\":\"2021-10-12T19:45:10.206Z\",\"updated_at\":\"2021-10-17T09:12:28.837Z\"},{\"id\":2372985,\"occurrence\":1,\"final_mark\":100,\"status\":\"finished\",\"validated?\":true,\"current_team_id\":3833803,\"project\":{\"id\":1889,\"name\":\"Germany Basecamp I Accept (OLD)\",\"slug\":\"germany-basecamp-i-accept-old\",\"parent_id\":null},\"cursus_ids\":[42],\"marked_at\":\"2021-10-12T16:19:14.152Z\",\"marked\":true,\"retriable_at\":\"2021-10-12T16:59:14.219Z\",\"created_at\":\"2021-10-12T08:45:11.562Z\",\"updated_at\":\"2021-10-12T16:20:05.156Z\"}],\"languages_users\":[{\"id\":437433,\"language_id\":6,\"user_id\":99637,\"position\":1,\"created_at\":\"2021-10-08T11:07:58.588Z\"},{\"id\":437434,\"language_id\":2,\"user_id\":99637,\"position\":2,\"created_at\":\"2021-10-08T11:07:58.624Z\"},{\"id\":437435,\"language_id\":1,\"user_id\":99637,\"position\":3,\"created_at\":\"2021-10-08T11:07:58.667Z\"}],\"achievements\":[{\"id\":41,\"name\":\"All work and no play makes Jack a dull boy\",\"description\":\"Logged for a total of 90 hours over a week.\",\"tier\":\"none\",\"kind\":\"scolarity\",\"visible\":true,\"image\":\"/uploads/achievement/image/41/SCO001.svg\",\"nbr_of_success\":null,\"users_url\":\"https://api.intra.42.fr/v2/achievements/41/users\"},{\"id\":54,\"name\":\"Attendee\",\"description\":\"Attended 1 event.\",\"tier\":\"none\",\"kind\":\"scolarity\",\"visible\":true,\"image\":\"/uploads/achievement/image/54/SCO003.svg\",\"nbr_of_success\":1,\"users_url\":\"https://api.intra.42.fr/v2/achievements/54/users\"},{\"id\":55,\"name\":\"Attendee\",\"description\":\"Attended 3 events.\",\"tier\":\"none\",\"kind\":\"scolarity\",\"visible\":true,\"image\":\"/uploads/achievement/image/55/SCO003.svg\",\"nbr_of_success\":3,\"users_url\":\"https://api.intra.42.fr/v2/achievements/55/users\"},{\"id\":56,\"name\":\"Attendee\",\"description\":\"Attended 10 events.\",\"tier\":\"easy\",\"kind\":\"scolarity\",\"visible\":true,\"image\":\"/uploads/achievement/image/56/SCO003.svg\",\"nbr_of_success\":10,\"users_url\":\"https://api.intra.42.fr/v2/achievements/56/users\"},{\"id\":57,\"name\":\"Attendee\",\"description\":\"Attended 21 events.\",\"tier\":\"medium\",\"kind\":\"scolarity\",\"visible\":true,\"image\":\"/uploads/achievement/image/57/SCO003.svg\",\"nbr_of_success\":21,\"users_url\":\"https://api.intra.42.fr/v2/achievements/57/users\"},{\"id\":58,\"name\":\"Attendee\",\"description\":\"Attended 42 events.\",\"tier\":\"hard\",\"kind\":\"scolarity\",\"visible\":true,\"image\":\"/uploads/achievement/image/58/SCO003.svg\",\"nbr_of_success\":42,\"users_url\":\"https://api.intra.42.fr/v2/achievements/58/users\"},{\"id\":17,\"name\":\"Bonus Hunter\",\"description\":\"Validated 1 project with the maximum score.\",\"tier\":\"easy\",\"kind\":\"project\",\"visible\":true,\"image\":\"/uploads/achievement/image/17/PRO005.svg\",\"nbr_of_success\":1,\"users_url\":\"https://api.intra.42.fr/v2/achievements/17/users\"},{\"id\":18,\"name\":\"Bonus Hunter\",\"description\":\"Validated 3 projects with the maximum score.\",\"tier\":\"medium\",\"kind\":\"project\",\"visible\":true,\"image\":\"/uploads/achievement/image/18/PRO005.svg\",\"nbr_of_success\":3,\"users_url\":\"https://api.intra.42.fr/v2/achievements/18/users\"},{\"id\":19,\"name\":\"Bonus Hunter\",\"description\":\"Validated 10 projects with the maximum score.\",\"tier\":\"hard\",\"kind\":\"project\",\"visible\":true,\"image\":\"/uploads/achievement/image/19/PRO005.svg\",\"nbr_of_success\":10,\"users_url\":\"https://api.intra.42.fr/v2/achievements/19/users\"},{\"id\":20,\"name\":\"Bonus Hunter\",\"description\":\"Validated 21 projects with the maximum score.\",\"tier\":\"challenge\",\"kind\":\"project\",\"visible\":true,\"image\":\"/uploads/achievement/image/20/PRO005.svg\",\"nbr_of_success\":21,\"users_url\":\"https://api.intra.42.fr/v2/achievements/20/users\"},{\"id\":4,\"name\":\"Code Explorer\",\"description\":\"Valided your first project.\",\"tier\":\"none\",\"kind\":\"project\",\"visible\":true,\"image\":\"/uploads/achievement/image/4/PRO002.svg\",\"nbr_of_success\":1,\"users_url\":\"https://api.intra.42.fr/v2/achievements/4/users\"},{\"id\":5,\"name\":\"Code Explorer\",\"description\":\"Validated 3 projects\",\"tier\":\"none\",\"kind\":\"project\",\"visible\":true,\"image\":\"/uploads/achievement/image/5/PRO002.svg\",\"nbr_of_success\":3,\"users_url\":\"https://api.intra.42.fr/v2/achievements/5/users\"},{\"id\":6,\"name\":\"Code Explorer\",\"description\":\"Validated 10 projects.\",\"tier\":\"none\",\"kind\":\"project\",\"visible\":true,\"image\":\"/uploads/achievement/image/6/PRO002.svg\",\"nbr_of_success\":10,\"users_url\":\"https://api.intra.42.fr/v2/achievements/6/users\"},{\"id\":7,\"name\":\"Code Explorer\",\"description\":\"Validated 21 projects.\",\"tier\":\"none\",\"kind\":\"project\",\"visible\":true,\"image\":\"/uploads/achievement/image/7/PRO002.svg\",\"nbr_of_success\":21,\"users_url\":\"https://api.intra.42.fr/v2/achievements/7/users\"},{\"id\":359,\"name\":\"Community I\",\"description\":\"Participate at most of the events of the first week of Basecamp\",\"tier\":\"easy\",\"kind\":\"pedagogy\",\"visible\":true,\"image\":\"/uploads/achievement/image/359/Comunidade_I.svg\",\"nbr_of_success\":null,\"users_url\":\"https://api.intra.42.fr/v2/achievements/359/users\"},{\"id\":360,\"name\":\"Community II\",\"description\":\"Participate in most of the events in the second week of Basecamp.\",\"tier\":\"medium\",\"kind\":\"pedagogy\",\"visible\":true,\"image\":\"/uploads/achievement/image/360/Comunidade_II.svg\",\"nbr_of_success\":null,\"users_url\":\"https://api.intra.42.fr/v2/achievements/360/users\"},{\"id\":361,\"name\":\"Community III\",\"description\":\"Participate in most of the events in the third week of Basecamp.\",\"tier\":\"hard\",\"kind\":\"pedagogy\",\"visible\":true,\"image\":\"/uploads/achievement/image/361/Comunidade_III.svg\",\"nbr_of_success\":null,\"users_url\":\"https://api.intra.42.fr/v2/achievements/361/users\"},{\"id\":362,\"name\":\"Explorer\",\"description\":\"Be active on at least 5 of 7 days in the third week of Basecamp.\",\"tier\":\"hard\",\"kind\":\"pedagogy\",\"visible\":true,\"image\":\"/uploads/achievement/image/362/Explorador_Exploradora.svg\",\"nbr_of_success\":null,\"users_url\":\"https://api.intra.42.fr/v2/achievements/362/users\"},{\"id\":369,\"name\":\"Field Recognition\",\"description\":\"Be active on at least 5 of 7 days in the first week of Basecamp.\",\"tier\":\"easy\",\"kind\":\"pedagogy\",\"visible\":true,\"image\":\"/uploads/achievement/image/369/Reconhecimento_de_Campo.svg\",\"nbr_of_success\":null,\"users_url\":\"https://api.intra.42.fr/v2/achievements/369/users\"},{\"id\":46,\"name\":\"Film buff\",\"description\":\"Watched 1 video from the e-learning.\",\"tier\":\"none\",\"kind\":\"pedagogy\",\"visible\":true,\"image\":\"/uploads/achievement/image/46/PED005.svg\",\"nbr_of_success\":1,\"users_url\":\"https://api.intra.42.fr/v2/achievements/46/users\"},{\"id\":47,\"name\":\"Film buff\",\"description\":\"Watched 3 videos from the e-learning.\",\"tier\":\"none\",\"kind\":\"pedagogy\",\"visible\":true,\"image\":\"/uploads/achievement/image/47/PED005.svg\",\"nbr_of_success\":3,\"users_url\":\"https://api.intra.42.fr/v2/achievements/47/users\"},{\"id\":48,\"name\":\"Film buff\",\"description\":\"Watched 10 videos from the e-learning.\",\"tier\":\"none\",\"kind\":\"pedagogy\",\"visible\":true,\"image\":\"/uploads/achievement/image/48/PED005.svg\",\"nbr_of_success\":10,\"users_url\":\"https://api.intra.42.fr/v2/achievements/48/users\"},{\"id\":49,\"name\":\"Film buff\",\"description\":\"Watched 21 videos from the e-learning.\",\"tier\":\"none\",\"kind\":\"pedagogy\",\"visible\":true,\"image\":\"/uploads/achievement/image/49/PED005.svg\",\"nbr_of_success\":21,\"users_url\":\"https://api.intra.42.fr/v2/achievements/49/users\"},{\"id\":368,\"name\":\"First Footprints\",\"description\":\"Be active on at least 5 of 7 days in the second week of Basecamp.\",\"tier\":\"medium\",\"kind\":\"pedagogy\",\"visible\":true,\"image\":\"/uploads/achievement/image/368/Primeiras_Trilhas.svg\",\"nbr_of_success\":null,\"users_url\":\"https://api.intra.42.fr/v2/achievements/368/users\"},{\"id\":363,\"name\":\"Focus I\",\"description\":\"Achieve in the second week at least the number of points earned in the first week of Basecamp.\",\"tier\":\"medium\",\"kind\":\"pedagogy\",\"visible\":true,\"image\":\"/uploads/achievement/image/363/Foco_I.svg\",\"nbr_of_success\":null,\"users_url\":\"https://api.intra.42.fr/v2/achievements/363/users\"},{\"id\":364,\"name\":\"Focus II\",\"description\":\"Achieve in the third week at least the number of points earned in the second week of Basecamp.\",\"tier\":\"hard\",\"kind\":\"pedagogy\",\"visible\":true,\"image\":\"/uploads/achievement/image/364/Foco_II.svg\",\"nbr_of_success\":null,\"users_url\":\"https://api.intra.42.fr/v2/achievements/364/users\"},{\"id\":45,\"name\":\"Home is where the code is\",\"description\":\"Logged into the same cluster for a month in a row\",\"tier\":\"none\",\"kind\":\"scolarity\",\"visible\":true,\"image\":\"/uploads/achievement/image/45/SCO002.svg\",\"nbr_of_success\":null,\"users_url\":\"https://api.intra.42.fr/v2/achievements/45/users\"},{\"id\":82,\"name\":\"I have no idea what I'm doing\",\"description\":\"Made a defense without having validated the project.\",\"tier\":\"none\",\"kind\":\"pedagogy\",\"visible\":true,\"image\":\"/uploads/achievement/image/82/PED011.svg\",\"nbr_of_success\":null,\"users_url\":\"https://api.intra.42.fr/v2/achievements/82/users\"},{\"id\":84,\"name\":\"I'm reliable !\",\"description\":\"Participated in 21 defenses in a row without missing any.\",\"tier\":\"easy\",\"kind\":\"pedagogy\",\"visible\":true,\"image\":\"/uploads/achievement/image/84/PED009.svg\",\"nbr_of_success\":21,\"users_url\":\"https://api.intra.42.fr/v2/achievements/84/users\"},{\"id\":36,\"name\":\"It's a rich man's world\",\"description\":\"Collected 100 wallet points.\",\"tier\":\"none\",\"kind\":\"social\",\"visible\":true,\"image\":\"/uploads/achievement/image/36/SOC004.svg\",\"nbr_of_success\":100,\"users_url\":\"https://api.intra.42.fr/v2/achievements/36/users\"},{\"id\":37,\"name\":\"It's a rich man's world\",\"description\":\"Collected 200 wallet points.\",\"tier\":\"none\",\"kind\":\"social\",\"visible\":true,\"image\":\"/uploads/achievement/image/37/SOC004.svg\",\"nbr_of_success\":200,\"users_url\":\"https://api.intra.42.fr/v2/achievements/37/users\"},{\"id\":38,\"name\":\"It's a rich man's world\",\"description\":\"Collected 500 wallet points.\",\"tier\":\"none\",\"kind\":\"social\",\"visible\":true,\"image\":\"/uploads/achievement/image/38/SOC004.svg\",\"nbr_of_success\":500,\"users_url\":\"https://api.intra.42.fr/v2/achievements/38/users\"},{\"id\":155,\"name\":\"Je voudrais un croissant\",\"description\":\"Visited 42 campus in Paris.\",\"tier\":\"none\",\"kind\":\"scolarity\",\"visible\":true,\"image\":\"/uploads/achievement/image/155/BADGE_SCOLARITY_paris.svg\",\"nbr_of_success\":null,\"users_url\":\"https://api.intra.42.fr/v2/achievements/155/users\"},{\"id\":25,\"name\":\"Rigorous Basterd\",\"description\":\"Validated 3 projects in a row (Piscine days included).\",\"tier\":\"none\",\"kind\":\"project\",\"visible\":true,\"image\":\"/uploads/achievement/image/25/PRO010.svg\",\"nbr_of_success\":3,\"users_url\":\"https://api.intra.42.fr/v2/achievements/25/users\"},{\"id\":26,\"name\":\"Rigorous Basterd\",\"description\":\"Validated 10 projects in a row (Piscine days included).\",\"tier\":\"easy\",\"kind\":\"project\",\"visible\":true,\"image\":\"/uploads/achievement/image/26/PRO010.svg\",\"nbr_of_success\":10,\"users_url\":\"https://api.intra.42.fr/v2/achievements/26/users\"},{\"id\":374,\"name\":\"United Village I\",\"description\":\"At least 80% of your Village members have been active on min. 5 of 7 days in the first week of Basecamp.\",\"tier\":\"easy\",\"kind\":\"pedagogy\",\"visible\":true,\"image\":\"/uploads/achievement/image/374/Vila_Unida_I.svg\",\"nbr_of_success\":null,\"users_url\":\"https://api.intra.42.fr/v2/achievements/374/users\"},{\"id\":375,\"name\":\"United Village II\",\"description\":\"At least 80% of your Village members have been active on min. 5 of 7 days in the second week of Basecamp.\",\"tier\":\"medium\",\"kind\":\"pedagogy\",\"visible\":true,\"image\":\"/uploads/achievement/image/375/Vila_Unida_II.svg\",\"nbr_of_success\":null,\"users_url\":\"https://api.intra.42.fr/v2/achievements/375/users\"},{\"id\":376,\"name\":\"United Village III\",\"description\":\"At least 80% of your Village members have been active on min. 5 of 7 days in the third week of Basecamp.\",\"tier\":\"hard\",\"kind\":\"pedagogy\",\"visible\":true,\"image\":\"/uploads/achievement/image/376/Vila_Unida_III.svg\",\"nbr_of_success\":null,\"users_url\":\"https://api.intra.42.fr/v2/achievements/376/users\"},{\"id\":1,\"name\":\"Welcome, Cadet !\",\"description\":\"You have passed the C Piscine! Welcome to 42!\",\"tier\":\"none\",\"kind\":\"project\",\"visible\":true,\"image\":\"/uploads/achievement/image/1/PRO001.svg\",\"nbr_of_success\":null,\"users_url\":\"https://api.intra.42.fr/v2/achievements/1/users\"},{\"id\":218,\"name\":\"Welcome, Learner !\",\"description\":\"You passed the C Piscine. Welcome at 42!\",\"tier\":\"none\",\"kind\":\"project\",\"visible\":true,\"image\":\"/uploads/achievement/image/218/PRO001-2.svg\",\"nbr_of_success\":null,\"users_url\":\"https://api.intra.42.fr/v2/achievements/218/users\"}],\"titles\":[{\"id\":21,\"name\":\"%login, Khonvoum\"}],\"titles_users\":[{\"id\":17997,\"user_id\":99637,\"title_id\":21,\"selected\":true,\"created_at\":\"2022-11-14T18:30:02.387Z\",\"updated_at\":\"2023-08-27T09:43:11.795Z\"}],\"partnerships\":[],\"patroned\":[],\"patroning\":[],\"expertises_users\":[],\"roles\":[],\"campus\":[{\"id\":1,\"name\":\"Paris\",\"time_zone\":\"Europe/Paris\",\"language\":{\"id\":1,\"name\":\"Français\",\"identifier\":\"fr\",\"created_at\":\"2014-11-02T16:43:38.466Z\",\"updated_at\":\"2023-10-03T10:48:43.574Z\"},\"users_count\":27454,\"vogsphere_id\":1,\"country\":\"France\",\"address\":\"96, boulevard Bessières\",\"zip\":\"75017\",\"city\":\"Paris\",\"website\":\"http://www.42.fr/\",\"facebook\":\"https://facebook.com/42born2code\",\"twitter\":\"https://twitter.com/42born2code\",\"active\":true,\"public\":true,\"email_extension\":\"42.fr\",\"default_hidden_phone\":false},{\"id\":39,\"name\":\"Heilbronn\",\"time_zone\":\"Europe/Berlin\",\"language\":{\"id\":2,\"name\":\"English\",\"identifier\":\"en\",\"created_at\":\"2015-04-14T16:07:38.122Z\",\"updated_at\":\"2023-09-29T09:21:59.591Z\"},\"users_count\":1979,\"vogsphere_id\":28,\"country\":\"Germany\",\"address\":\"Weipertstr 8 - 10\",\"zip\":\"74076\",\"city\":\"Heilbronn\",\"website\":\"https://42heilbronn.de/\",\"facebook\":\"https://www.facebook.com/42heilbronn\",\"twitter\":\"https://twitter.com/42Heilbronn\",\"active\":true,\"public\":true,\"email_extension\":\"42heilbronn.de\",\"default_hidden_phone\":false}],\"campus_users\":[{\"id\":156814,\"user_id\":99637,\"campus_id\":1,\"is_primary\":false,\"created_at\":\"2023-08-30T07:32:20.225Z\",\"updated_at\":\"2023-08-30T07:32:20.225Z\"},{\"id\":91260,\"user_id\":99637,\"campus_id\":39,\"is_primary\":true,\"created_at\":\"2021-09-26T19:14:22.113Z\",\"updated_at\":\"2021-09-26T19:14:22.113Z\"}]}",
+	"_json": {
+		"id": 99637,
+		"email": "ktashbae@student.42heilbronn.de",
+		"login": "ktashbae",
+		"first_name": "Kanykei",
+		"last_name": "Tashbaeva",
+		"usual_full_name": "Kanykei Tashbaeva",
+		"usual_first_name": null,
+		"url": "https://api.intra.42.fr/v2/users/ktashbae",
+		"phone": "hidden",
+		"displayname": "Kanykei Tashbaeva",
+		"kind": "student",
+		"image": {
+			"link": "https://cdn.intra.42.fr/users/c33564370773ca145294c2296c25cd91/ktashbae.jpg",
+			"versions": {
+				"large": "https://cdn.intra.42.fr/users/cb4b125f95ebc90b4ca9853ecb8b634b/large_ktashbae.jpg",
+				"medium": "https://cdn.intra.42.fr/users/e89471cf275432edb5afa7b4ae9d9e90/medium_ktashbae.jpg",
+				"small": "https://cdn.intra.42.fr/users/5a2a74f2aa53fc75e2ea4706de8797fc/small_ktashbae.jpg",
+				"micro": "https://cdn.intra.42.fr/users/3a7f16b442f065219f270b41730750b5/micro_ktashbae.jpg"
+			}
+		},
+		"staff?": false,
+		"correction_point": 2,
+		"pool_month": "october",
+		"pool_year": "2021",
+		"location": "2-a-2",
+		"wallet": 785,
+		"anonymize_date": "2026-10-05T00:00:00.000+02:00",
+		"data_erasure_date": "2026-10-05T00:00:00.000+02:00",
+		"created_at": "2021-09-26T19:14:22.076Z",
+		"updated_at": "2023-10-05T17:38:23.514Z",
+		"alumnized_at": null,
+		"alumni?": false,
+		"active?": true,
+		"groups": [],
+		"cursus_users": [
+			{
+				"grade": null,
+				"level": 0,
+				"skills": [],
+				"blackholed_at": null,
+				"id": 139302,
+				"begin_at": "2021-10-14T20:45:42.000Z",
+				"end_at": "2021-10-14T20:45:43.000Z",
+				"cursus_id": 9,
+				"has_coalition": true,
+				"created_at": "2021-09-26T19:14:23.322Z",
+				"updated_at": "2021-10-05T15:10:05.567Z",
+				"user": {
+					"id": 99637,
+					"email": "ktashbae@student.42heilbronn.de",
+					"login": "ktashbae",
+					"first_name": "Kanykei",
+					"last_name": "Tashbaeva",
+					"usual_full_name": "Kanykei Tashbaeva",
+					"usual_first_name": null,
+					"url": "https://api.intra.42.fr/v2/users/ktashbae",
+					"phone": "hidden",
+					"displayname": "Kanykei Tashbaeva",
+					"kind": "student",
+					"image": {
+						"link": "https://cdn.intra.42.fr/users/c33564370773ca145294c2296c25cd91/ktashbae.jpg",
+						"versions": {
+							"large": "https://cdn.intra.42.fr/users/cb4b125f95ebc90b4ca9853ecb8b634b/large_ktashbae.jpg",
+							"medium": "https://cdn.intra.42.fr/users/e89471cf275432edb5afa7b4ae9d9e90/medium_ktashbae.jpg",
+							"small": "https://cdn.intra.42.fr/users/5a2a74f2aa53fc75e2ea4706de8797fc/small_ktashbae.jpg",
+							"micro": "https://cdn.intra.42.fr/users/3a7f16b442f065219f270b41730750b5/micro_ktashbae.jpg"
+						}
+					},
+					"staff?": false,
+					"correction_point": 2,
+					"pool_month": "october",
+					"pool_year": "2021",
+					"location": "2-a-2",
+					"wallet": 785,
+					"anonymize_date": "2026-10-05T00:00:00.000+02:00",
+					"data_erasure_date": "2026-10-05T00:00:00.000+02:00",
+					"created_at": "2021-09-26T19:14:22.076Z",
+					"updated_at": "2023-10-05T17:38:23.514Z",
+					"alumnized_at": null,
+					"alumni?": false,
+					"active?": true
+				},
+				"cursus": {
+					"id": 9,
+					"created_at": "2015-11-04T10:58:13.979Z",
+					"name": "C Piscine",
+					"slug": "c-piscine",
+					"kind": "piscine"
+				}
+			},
+			{
+				"grade": "Learner",
+				"level": 12.91,
+				"skills": [
+					{
+						"id": 16,
+						"name": "Company experience",
+						"level": 11.79
+					},
+					{
+						"id": 10,
+						"name": "Network & system administration",
+						"level": 7.76
+					},
+					{
+						"id": 3,
+						"name": "Rigor",
+						"level": 7.08
+					},
+					{
+						"id": 7,
+						"name": "Group & interpersonal",
+						"level": 6.75
+					},
+					{
+						"id": 17,
+						"name": "Object-oriented programming",
+						"level": 6.08
+					},
+					{
+						"id": 2,
+						"name": "Imperative programming",
+						"level": 4.85
+					},
+					{
+						"id": 4,
+						"name": "Unix",
+						"level": 4.48
+					},
+					{
+						"id": 1,
+						"name": "Algorithms & AI",
+						"level": 4.17
+					},
+					{
+						"id": 5,
+						"name": "Graphics",
+						"level": 3.05
+					}
+				],
+				"blackholed_at": "2024-01-20T08:42:00.000Z",
+				"id": 146635,
+				"begin_at": "2022-03-21T08:42:00.000Z",
+				"end_at": null,
+				"cursus_id": 21,
+				"has_coalition": true,
+				"created_at": "2021-11-10T15:33:30.547Z",
+				"updated_at": "2021-11-10T15:33:30.547Z",
+				"user": {
+					"id": 99637,
+					"email": "ktashbae@student.42heilbronn.de",
+					"login": "ktashbae",
+					"first_name": "Kanykei",
+					"last_name": "Tashbaeva",
+					"usual_full_name": "Kanykei Tashbaeva",
+					"usual_first_name": null,
+					"url": "https://api.intra.42.fr/v2/users/ktashbae",
+					"phone": "hidden",
+					"displayname": "Kanykei Tashbaeva",
+					"kind": "student",
+					"image": {
+						"link": "https://cdn.intra.42.fr/users/c33564370773ca145294c2296c25cd91/ktashbae.jpg",
+						"versions": {
+							"large": "https://cdn.intra.42.fr/users/cb4b125f95ebc90b4ca9853ecb8b634b/large_ktashbae.jpg",
+							"medium": "https://cdn.intra.42.fr/users/e89471cf275432edb5afa7b4ae9d9e90/medium_ktashbae.jpg",
+							"small": "https://cdn.intra.42.fr/users/5a2a74f2aa53fc75e2ea4706de8797fc/small_ktashbae.jpg",
+							"micro": "https://cdn.intra.42.fr/users/3a7f16b442f065219f270b41730750b5/micro_ktashbae.jpg"
+						}
+					},
+					"staff?": false,
+					"correction_point": 2,
+					"pool_month": "october",
+					"pool_year": "2021",
+					"location": "2-a-2",
+					"wallet": 785,
+					"anonymize_date": "2026-10-05T00:00:00.000+02:00",
+					"data_erasure_date": "2026-10-05T00:00:00.000+02:00",
+					"created_at": "2021-09-26T19:14:22.076Z",
+					"updated_at": "2023-10-05T17:38:23.514Z",
+					"alumnized_at": null,
+					"alumni?": false,
+					"active?": true
+				},
+				"cursus": {
+					"id": 21,
+					"created_at": "2019-07-29T08:45:17.896Z",
+					"name": "42cursus",
+					"slug": "42cursus",
+					"kind": "main"
+				}
+			},
+			{
+				"grade": null,
+				"level": 0,
+				"skills": [],
+				"blackholed_at": null,
+				"id": 141426,
+				"begin_at": "2021-10-06T09:42:00.000Z",
+				"end_at": "2021-10-12T10:00:00.000Z",
+				"cursus_id": 41,
+				"has_coalition": false,
+				"created_at": "2021-10-05T15:10:06.816Z",
+				"updated_at": "2021-10-11T12:59:09.072Z",
+				"user": {
+					"id": 99637,
+					"email": "ktashbae@student.42heilbronn.de",
+					"login": "ktashbae",
+					"first_name": "Kanykei",
+					"last_name": "Tashbaeva",
+					"usual_full_name": "Kanykei Tashbaeva",
+					"usual_first_name": null,
+					"url": "https://api.intra.42.fr/v2/users/ktashbae",
+					"phone": "hidden",
+					"displayname": "Kanykei Tashbaeva",
+					"kind": "student",
+					"image": {
+						"link": "https://cdn.intra.42.fr/users/c33564370773ca145294c2296c25cd91/ktashbae.jpg",
+						"versions": {
+							"large": "https://cdn.intra.42.fr/users/cb4b125f95ebc90b4ca9853ecb8b634b/large_ktashbae.jpg",
+							"medium": "https://cdn.intra.42.fr/users/e89471cf275432edb5afa7b4ae9d9e90/medium_ktashbae.jpg",
+							"small": "https://cdn.intra.42.fr/users/5a2a74f2aa53fc75e2ea4706de8797fc/small_ktashbae.jpg",
+							"micro": "https://cdn.intra.42.fr/users/3a7f16b442f065219f270b41730750b5/micro_ktashbae.jpg"
+						}
+					},
+					"staff?": false,
+					"correction_point": 2,
+					"pool_month": "october",
+					"pool_year": "2021",
+					"location": "2-a-2",
+					"wallet": 785,
+					"anonymize_date": "2026-10-05T00:00:00.000+02:00",
+					"data_erasure_date": "2026-10-05T00:00:00.000+02:00",
+					"created_at": "2021-09-26T19:14:22.076Z",
+					"updated_at": "2023-10-05T17:38:23.514Z",
+					"alumnized_at": null,
+					"alumni?": false,
+					"active?": true
+				},
+				"cursus": {
+					"id": 41,
+					"created_at": "2021-01-04T20:55:03.543Z",
+					"name": "Basecamp Warm Up Germany",
+					"slug": "basecamp-warm-up-germany",
+					"kind": "piscine_community"
+				}
+			},
+			{
+				"grade": null,
+				"level": 6.16,
+				"skills": [],
+				"blackholed_at": null,
+				"id": 142208,
+				"begin_at": "2021-10-12T08:30:00.000Z",
+				"end_at": "2021-11-09T22:35:00.000Z",
+				"cursus_id": 42,
+				"has_coalition": false,
+				"created_at": "2021-10-12T08:16:04.315Z",
+				"updated_at": "2021-11-09T22:34:45.140Z",
+				"user": {
+					"id": 99637,
+					"email": "ktashbae@student.42heilbronn.de",
+					"login": "ktashbae",
+					"first_name": "Kanykei",
+					"last_name": "Tashbaeva",
+					"usual_full_name": "Kanykei Tashbaeva",
+					"usual_first_name": null,
+					"url": "https://api.intra.42.fr/v2/users/ktashbae",
+					"phone": "hidden",
+					"displayname": "Kanykei Tashbaeva",
+					"kind": "student",
+					"image": {
+						"link": "https://cdn.intra.42.fr/users/c33564370773ca145294c2296c25cd91/ktashbae.jpg",
+						"versions": {
+							"large": "https://cdn.intra.42.fr/users/cb4b125f95ebc90b4ca9853ecb8b634b/large_ktashbae.jpg",
+							"medium": "https://cdn.intra.42.fr/users/e89471cf275432edb5afa7b4ae9d9e90/medium_ktashbae.jpg",
+							"small": "https://cdn.intra.42.fr/users/5a2a74f2aa53fc75e2ea4706de8797fc/small_ktashbae.jpg",
+							"micro": "https://cdn.intra.42.fr/users/3a7f16b442f065219f270b41730750b5/micro_ktashbae.jpg"
+						}
+					},
+					"staff?": false,
+					"correction_point": 2,
+					"pool_month": "october",
+					"pool_year": "2021",
+					"location": "2-a-2",
+					"wallet": 785,
+					"anonymize_date": "2026-10-05T00:00:00.000+02:00",
+					"data_erasure_date": "2026-10-05T00:00:00.000+02:00",
+					"created_at": "2021-09-26T19:14:22.076Z",
+					"updated_at": "2023-10-05T17:38:23.514Z",
+					"alumnized_at": null,
+					"alumni?": false,
+					"active?": true
+				},
+				"cursus": {
+					"id": 42,
+					"created_at": "2021-01-06T16:09:07.027Z",
+					"name": "Germany Basecamp",
+					"slug": "germany-basecamp",
+					"kind": "piscine_community"
+				}
+			}
+		],
+		"projects_users": [
+			{
+				"id": 3330794,
+				"occurrence": 0,
+				"final_mark": 0,
+				"status": "finished",
+				"validated?": false,
+				"current_team_id": 5200453,
+				"project": {
+					"id": 2268,
+					"name": "Python - 0 - Starting",
+					"slug": "python-0-starting",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2023-09-26T11:02:52.263Z",
+				"marked": true,
+				"retriable_at": "2023-09-26T11:02:52.310Z",
+				"created_at": "2023-09-23T11:01:58.115Z",
+				"updated_at": "2023-09-26T11:02:52.339Z"
+			},
+			{
+				"id": 3269045,
+				"occurrence": 0,
+				"final_mark": null,
+				"status": "in_progress",
+				"validated?": null,
+				"current_team_id": 5103849,
+				"project": {
+					"id": 2267,
+					"name": "Python for Data Science",
+					"slug": "python-for-data-science",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": null,
+				"marked": false,
+				"retriable_at": null,
+				"created_at": "2023-08-27T09:36:56.562Z",
+				"updated_at": "2023-08-27T09:36:56.682Z"
+			},
+			{
+				"id": 3267164,
+				"occurrence": 0,
+				"final_mark": 100,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 5100055,
+				"project": {
+					"id": 1643,
+					"name": "Internship I - Peer Video",
+					"slug": "internship-i-internship-i-peer-video",
+					"parent_id": 1638
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2023-08-26T18:11:17.696Z",
+				"marked": true,
+				"retriable_at": "2023-08-26T18:11:18.579Z",
+				"created_at": "2023-08-25T14:49:00.117Z",
+				"updated_at": "2023-08-26T18:11:18.598Z"
+			},
+			{
+				"id": 2986111,
+				"occurrence": 0,
+				"final_mark": 125,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4693655,
+				"project": {
+					"id": 1638,
+					"name": "Internship I",
+					"slug": "internship-i",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2023-08-26T18:11:18.104Z",
+				"marked": true,
+				"retriable_at": "2023-08-29T18:11:18.525Z",
+				"created_at": "2023-02-15T15:29:16.045Z",
+				"updated_at": "2023-08-26T18:11:18.549Z"
+			},
+			{
+				"id": 2987713,
+				"occurrence": 0,
+				"final_mark": 125,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4695998,
+				"project": {
+					"id": 1642,
+					"name": "internship I - Company Final Evaluation",
+					"slug": "internship-i-internship-i-company-final-evaluation",
+					"parent_id": 1638
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2023-08-25T14:47:36.985Z",
+				"marked": true,
+				"retriable_at": null,
+				"created_at": "2023-02-16T10:15:10.859Z",
+				"updated_at": "2023-08-25T14:47:37.030Z"
+			},
+			{
+				"id": 3128004,
+				"occurrence": 0,
+				"final_mark": null,
+				"status": "in_progress",
+				"validated?": null,
+				"current_team_id": 4892481,
+				"project": {
+					"id": 1324,
+					"name": "Exam Rank 06",
+					"slug": "exam-rank-06",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": null,
+				"marked": false,
+				"retriable_at": null,
+				"created_at": "2023-06-20T15:03:58.613Z",
+				"updated_at": "2023-06-20T15:03:58.761Z"
+			},
+			{
+				"id": 3128002,
+				"occurrence": 0,
+				"final_mark": null,
+				"status": "creating_group",
+				"validated?": null,
+				"current_team_id": 4962134,
+				"project": {
+					"id": 1337,
+					"name": "ft_transcendence",
+					"slug": "ft_transcendence",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": null,
+				"marked": false,
+				"retriable_at": null,
+				"created_at": "2023-06-20T15:03:06.653Z",
+				"updated_at": "2023-06-20T15:03:06.653Z"
+			},
+			{
+				"id": 2909685,
+				"occurrence": 0,
+				"final_mark": 125,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4793580,
+				"project": {
+					"id": 1332,
+					"name": "webserv",
+					"slug": "webserv",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2023-06-19T14:59:45.349Z",
+				"marked": true,
+				"retriable_at": "2023-06-22T14:59:45.623Z",
+				"created_at": "2022-12-08T17:57:09.190Z",
+				"updated_at": "2023-06-19T14:59:48.066Z"
+			},
+			{
+				"id": 2987712,
+				"occurrence": 0,
+				"final_mark": 118,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4695997,
+				"project": {
+					"id": 1641,
+					"name": "internship I - Company Mid Evaluation",
+					"slug": "internship-i-internship-i-company-mid-evaluation",
+					"parent_id": 1638
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2023-06-02T14:37:27.542Z",
+				"marked": true,
+				"retriable_at": null,
+				"created_at": "2023-02-16T10:15:10.451Z",
+				"updated_at": "2023-06-02T14:37:27.583Z"
+			},
+			{
+				"id": 2987711,
+				"occurrence": 0,
+				"final_mark": 110,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4695996,
+				"project": {
+					"id": 1639,
+					"name": "Internship I - Duration",
+					"slug": "internship-i-internship-i-duration",
+					"parent_id": 1638
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2023-04-17T10:58:11.751Z",
+				"marked": true,
+				"retriable_at": null,
+				"created_at": "2023-02-16T10:15:10.013Z",
+				"updated_at": "2023-04-17T10:58:11.806Z"
+			},
+			{
+				"id": 2987709,
+				"occurrence": 0,
+				"final_mark": 100,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4695994,
+				"project": {
+					"id": 1640,
+					"name": "internship I - Contract Upload",
+					"slug": "internship-i-internship-i-contract-upload",
+					"parent_id": 1638
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2023-02-16T10:15:09.890Z",
+				"marked": true,
+				"retriable_at": "2023-02-16T10:15:09.955Z",
+				"created_at": "2023-02-16T10:15:09.406Z",
+				"updated_at": "2023-02-16T10:15:09.979Z"
+			},
+			{
+				"id": 2903112,
+				"occurrence": 0,
+				"final_mark": 100,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4579251,
+				"project": {
+					"id": 1335,
+					"name": "ft_containers",
+					"slug": "ft_containers",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2023-01-21T14:37:04.735Z",
+				"marked": true,
+				"retriable_at": "2023-01-24T14:37:04.925Z",
+				"created_at": "2022-12-01T13:35:32.593Z",
+				"updated_at": "2023-01-21T14:37:04.941Z"
+			},
+			{
+				"id": 2903116,
+				"occurrence": 0,
+				"final_mark": 110,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4579256,
+				"project": {
+					"id": 1983,
+					"name": "Inception",
+					"slug": "inception",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-12-17T19:38:00.925Z",
+				"marked": true,
+				"retriable_at": "2022-12-20T19:38:01.141Z",
+				"created_at": "2022-12-01T13:36:01.554Z",
+				"updated_at": "2022-12-17T19:38:01.157Z"
+			},
+			{
+				"id": 2903118,
+				"occurrence": 0,
+				"final_mark": 100,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4579257,
+				"project": {
+					"id": 1323,
+					"name": "Exam Rank 05",
+					"slug": "exam-rank-05",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-12-08T13:16:37.290Z",
+				"marked": true,
+				"retriable_at": "2022-12-08T13:16:37.320Z",
+				"created_at": "2022-12-01T13:36:22.566Z",
+				"updated_at": "2022-12-08T13:16:45.543Z"
+			},
+			{
+				"id": 2858296,
+				"occurrence": 1,
+				"final_mark": 100,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4570425,
+				"project": {
+					"id": 1322,
+					"name": "Exam Rank 04",
+					"slug": "exam-rank-04",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-12-01T12:45:38.664Z",
+				"marked": true,
+				"retriable_at": "2022-12-01T12:45:38.689Z",
+				"created_at": "2022-10-29T23:25:09.495Z",
+				"updated_at": "2022-12-01T12:45:44.990Z"
+			},
+			{
+				"id": 2858291,
+				"occurrence": 0,
+				"final_mark": 100,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4518696,
+				"project": {
+					"id": 2007,
+					"name": "NetPractice",
+					"slug": "netpractice",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-11-20T23:12:02.627Z",
+				"marked": true,
+				"retriable_at": "2022-11-23T23:12:02.806Z",
+				"created_at": "2022-10-29T23:15:11.061Z",
+				"updated_at": "2022-11-20T23:12:02.825Z"
+			},
+			{
+				"id": 2881523,
+				"occurrence": 0,
+				"final_mark": 100,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4550321,
+				"project": {
+					"id": 1346,
+					"name": "CPP Module 08",
+					"slug": "cpp-module-08",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-11-17T20:36:28.520Z",
+				"marked": true,
+				"retriable_at": "2022-11-18T20:36:28.717Z",
+				"created_at": "2022-11-16T15:44:22.923Z",
+				"updated_at": "2022-11-17T20:36:28.732Z"
+			},
+			{
+				"id": 2877664,
+				"occurrence": 0,
+				"final_mark": 100,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4544876,
+				"project": {
+					"id": 1345,
+					"name": "CPP Module 07",
+					"slug": "cpp-module-07",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-11-16T15:43:56.149Z",
+				"marked": true,
+				"retriable_at": "2022-11-17T15:43:56.178Z",
+				"created_at": "2022-11-13T20:40:44.109Z",
+				"updated_at": "2022-11-16T15:43:56.195Z"
+			},
+			{
+				"id": 2858292,
+				"occurrence": 0,
+				"final_mark": 125,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4518697,
+				"project": {
+					"id": 1315,
+					"name": "miniRT",
+					"slug": "minirt",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-11-14T18:30:01.538Z",
+				"marked": true,
+				"retriable_at": "2022-11-17T18:30:01.786Z",
+				"created_at": "2022-10-29T23:16:05.247Z",
+				"updated_at": "2022-11-14T18:30:02.085Z"
+			},
+			{
+				"id": 2877106,
+				"occurrence": 0,
+				"final_mark": 100,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4544045,
+				"project": {
+					"id": 1344,
+					"name": "CPP Module 06",
+					"slug": "cpp-module-06",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-11-13T20:40:05.207Z",
+				"marked": true,
+				"retriable_at": "2022-11-14T20:40:05.237Z",
+				"created_at": "2022-11-13T00:29:22.779Z",
+				"updated_at": "2022-11-13T20:40:05.251Z"
+			},
+			{
+				"id": 2874611,
+				"occurrence": 1,
+				"final_mark": 100,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4543832,
+				"project": {
+					"id": 1343,
+					"name": "CPP Module 05",
+					"slug": "cpp-module-05",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-11-13T00:28:52.611Z",
+				"marked": true,
+				"retriable_at": "2022-11-14T00:28:52.641Z",
+				"created_at": "2022-11-10T12:41:34.465Z",
+				"updated_at": "2022-11-13T00:28:52.657Z"
+			},
+			{
+				"id": 2872796,
+				"occurrence": 0,
+				"final_mark": 100,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4538365,
+				"project": {
+					"id": 1342,
+					"name": "CPP Module 04",
+					"slug": "cpp-module-04",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-11-10T12:37:23.506Z",
+				"marked": true,
+				"retriable_at": "2022-11-11T12:37:23.536Z",
+				"created_at": "2022-11-09T13:24:55.178Z",
+				"updated_at": "2022-11-10T12:37:23.550Z"
+			},
+			{
+				"id": 2871245,
+				"occurrence": 0,
+				"final_mark": 100,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4536226,
+				"project": {
+					"id": 1341,
+					"name": "CPP Module 03",
+					"slug": "cpp-module-03",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-11-09T13:23:50.500Z",
+				"marked": true,
+				"retriable_at": "2022-11-10T13:23:50.528Z",
+				"created_at": "2022-11-08T12:58:22.087Z",
+				"updated_at": "2022-11-09T13:23:50.544Z"
+			},
+			{
+				"id": 2865382,
+				"occurrence": 0,
+				"final_mark": 100,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4528313,
+				"project": {
+					"id": 1340,
+					"name": "CPP Module 02",
+					"slug": "cpp-module-02",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-11-08T12:57:38.867Z",
+				"marked": true,
+				"retriable_at": "2022-11-09T12:57:38.897Z",
+				"created_at": "2022-11-03T15:02:30.334Z",
+				"updated_at": "2022-11-08T12:57:38.911Z"
+			},
+			{
+				"id": 2862356,
+				"occurrence": 0,
+				"final_mark": 100,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4524299,
+				"project": {
+					"id": 1339,
+					"name": "CPP Module 01",
+					"slug": "cpp-module-01",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-11-03T14:57:44.842Z",
+				"marked": true,
+				"retriable_at": "2022-11-04T14:57:44.876Z",
+				"created_at": "2022-11-01T22:22:22.072Z",
+				"updated_at": "2022-11-03T14:57:44.890Z"
+			},
+			{
+				"id": 2858293,
+				"occurrence": 0,
+				"final_mark": 100,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4518698,
+				"project": {
+					"id": 1338,
+					"name": "CPP Module 00",
+					"slug": "cpp-module-00",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-11-01T21:46:09.018Z",
+				"marked": true,
+				"retriable_at": "2022-11-02T21:46:09.114Z",
+				"created_at": "2022-10-29T23:18:27.968Z",
+				"updated_at": "2022-11-01T21:46:09.127Z"
+			},
+			{
+				"id": 2761406,
+				"occurrence": 0,
+				"final_mark": 125,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4379271,
+				"project": {
+					"id": 1331,
+					"name": "minishell",
+					"slug": "42cursus-minishell",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-10-29T23:01:16.974Z",
+				"marked": true,
+				"retriable_at": "2022-11-01T00:01:17.187Z",
+				"created_at": "2022-09-01T12:23:37.672Z",
+				"updated_at": "2022-10-29T23:01:17.410Z"
+			},
+			{
+				"id": 2761404,
+				"occurrence": 0,
+				"final_mark": 125,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4378965,
+				"project": {
+					"id": 1334,
+					"name": "Philosophers",
+					"slug": "42cursus-philosophers",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-09-29T20:10:32.573Z",
+				"marked": true,
+				"retriable_at": "2022-10-01T20:10:32.824Z",
+				"created_at": "2022-09-01T12:23:26.918Z",
+				"updated_at": "2022-09-29T20:10:32.841Z"
+			},
+			{
+				"id": 2761408,
+				"occurrence": 0,
+				"final_mark": 100,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4378967,
+				"project": {
+					"id": 1321,
+					"name": "Exam Rank 03",
+					"slug": "exam-rank-03",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-09-08T11:32:51.501Z",
+				"marked": true,
+				"retriable_at": "2022-09-08T11:32:51.520Z",
+				"created_at": "2022-09-01T12:23:44.981Z",
+				"updated_at": "2022-09-08T11:33:01.023Z"
+			},
+			{
+				"id": 2591164,
+				"occurrence": 4,
+				"final_mark": 100,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4356086,
+				"project": {
+					"id": 1320,
+					"name": "Exam Rank 02",
+					"slug": "exam-rank-02",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-09-01T11:57:31.651Z",
+				"marked": true,
+				"retriable_at": "2022-09-01T11:57:31.671Z",
+				"created_at": "2022-05-16T20:25:24.787Z",
+				"updated_at": "2022-09-01T11:57:41.827Z"
+			},
+			{
+				"id": 2581782,
+				"occurrence": 0,
+				"final_mark": 97,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4122232,
+				"project": {
+					"id": 1471,
+					"name": "push_swap",
+					"slug": "42cursus-push_swap",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-06-05T18:30:42.077Z",
+				"marked": true,
+				"retriable_at": "2022-06-07T18:30:42.329Z",
+				"created_at": "2022-05-04T09:33:01.367Z",
+				"updated_at": "2022-06-05T18:30:42.352Z"
+			},
+			{
+				"id": 2579290,
+				"occurrence": 0,
+				"final_mark": 125,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4118648,
+				"project": {
+					"id": 2004,
+					"name": "pipex",
+					"slug": "pipex",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-05-17T14:12:02.089Z",
+				"marked": true,
+				"retriable_at": "2022-05-19T14:12:02.331Z",
+				"created_at": "2022-05-01T21:12:59.569Z",
+				"updated_at": "2022-05-17T14:12:02.362Z"
+			},
+			{
+				"id": 2579291,
+				"occurrence": 0,
+				"final_mark": 125,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4118649,
+				"project": {
+					"id": 2009,
+					"name": "so_long",
+					"slug": "so_long",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-05-16T18:34:13.617Z",
+				"marked": true,
+				"retriable_at": "2022-05-19T18:34:13.819Z",
+				"created_at": "2022-05-01T21:13:23.254Z",
+				"updated_at": "2022-05-16T18:34:13.839Z"
+			},
+			{
+				"id": 2556254,
+				"occurrence": 0,
+				"final_mark": 116,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4088147,
+				"project": {
+					"id": 1994,
+					"name": "Born2beroot",
+					"slug": "born2beroot",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-05-01T19:52:06.349Z",
+				"marked": true,
+				"retriable_at": "2022-05-02T19:52:06.571Z",
+				"created_at": "2022-04-09T08:45:51.145Z",
+				"updated_at": "2022-05-01T19:52:06.587Z"
+			},
+			{
+				"id": 2563236,
+				"occurrence": 0,
+				"final_mark": 125,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4097378,
+				"project": {
+					"id": 1327,
+					"name": "get_next_line",
+					"slug": "42cursus-get_next_line",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-04-20T15:47:06.248Z",
+				"marked": true,
+				"retriable_at": "2022-04-21T15:47:06.350Z",
+				"created_at": "2022-04-15T18:56:03.584Z",
+				"updated_at": "2022-04-20T15:47:06.388Z"
+			},
+			{
+				"id": 2556334,
+				"occurrence": 0,
+				"final_mark": 125,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4088288,
+				"project": {
+					"id": 1316,
+					"name": "ft_printf",
+					"slug": "42cursus-ft_printf",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-04-14T00:29:32.659Z",
+				"marked": true,
+				"retriable_at": "2022-04-15T00:29:32.768Z",
+				"created_at": "2022-04-09T12:54:19.776Z",
+				"updated_at": "2022-04-14T00:29:32.787Z"
+			},
+			{
+				"id": 2537503,
+				"occurrence": 0,
+				"final_mark": 125,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 4061017,
+				"project": {
+					"id": 1314,
+					"name": "Libft",
+					"slug": "42cursus-libft",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					21
+				],
+				"marked_at": "2022-04-09T08:44:54.675Z",
+				"marked": true,
+				"retriable_at": "2022-04-10T08:44:54.808Z",
+				"created_at": "2022-03-22T06:53:12.849Z",
+				"updated_at": "2022-04-09T08:44:54.829Z"
+			},
+			{
+				"id": 2393333,
+				"occurrence": 0,
+				"final_mark": 100,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 3861774,
+				"project": {
+					"id": 1898,
+					"name": "Germany Basecamp C 06",
+					"slug": "germany-basecamp-c-06",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					42
+				],
+				"marked_at": "2021-10-29T07:25:48.513Z",
+				"marked": true,
+				"retriable_at": "2021-10-29T07:45:48.597Z",
+				"created_at": "2021-10-29T00:49:29.682Z",
+				"updated_at": "2021-10-29T07:25:48.617Z"
+			},
+			{
+				"id": 2392137,
+				"occurrence": 0,
+				"final_mark": 70,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 3860221,
+				"project": {
+					"id": 1896,
+					"name": "Germany Basecamp C 04",
+					"slug": "germany-basecamp-c-04",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					42
+				],
+				"marked_at": "2021-10-28T21:48:34.085Z",
+				"marked": true,
+				"retriable_at": "2021-10-28T22:08:34.182Z",
+				"created_at": "2021-10-28T00:53:04.578Z",
+				"updated_at": "2021-10-28T21:48:34.204Z"
+			},
+			{
+				"id": 2390720,
+				"occurrence": 0,
+				"final_mark": 16,
+				"status": "finished",
+				"validated?": false,
+				"current_team_id": 3858139,
+				"project": {
+					"id": 1911,
+					"name": "Germany Basecamp Final Exam",
+					"slug": "germany-basecamp-final-exam",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					42
+				],
+				"marked_at": "2021-11-02T09:25:23.032Z",
+				"marked": true,
+				"retriable_at": null,
+				"created_at": "2021-10-26T17:04:17.450Z",
+				"updated_at": "2021-11-02T09:25:23.060Z"
+			},
+			{
+				"id": 2384860,
+				"occurrence": 1,
+				"final_mark": 75,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 3861734,
+				"project": {
+					"id": 1895,
+					"name": "Germany Basecamp C 03",
+					"slug": "germany-basecamp-c-03",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					42
+				],
+				"marked_at": "2021-10-29T00:48:47.129Z",
+				"marked": true,
+				"retriable_at": "2021-10-29T01:28:47.191Z",
+				"created_at": "2021-10-21T09:50:58.890Z",
+				"updated_at": "2021-10-29T00:48:47.205Z"
+			},
+			{
+				"id": 2384143,
+				"occurrence": 2,
+				"final_mark": 75,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 3858546,
+				"project": {
+					"id": 1894,
+					"name": "Germany Basecamp C 02",
+					"slug": "germany-basecamp-c-02",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					42
+				],
+				"marked_at": "2021-10-27T22:16:44.752Z",
+				"marked": true,
+				"retriable_at": "2021-10-27T23:16:44.848Z",
+				"created_at": "2021-10-20T17:10:49.595Z",
+				"updated_at": "2021-10-27T22:16:44.862Z"
+			},
+			{
+				"id": 2382824,
+				"occurrence": 0,
+				"final_mark": 100,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 3852212,
+				"project": {
+					"id": 1908,
+					"name": "Germany Basecamp Rush 01",
+					"slug": "germany-basecamp-rush-01",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					42
+				],
+				"marked_at": "2021-10-26T13:47:03.189Z",
+				"marked": true,
+				"retriable_at": null,
+				"created_at": "2021-10-19T21:03:06.665Z",
+				"updated_at": "2021-10-26T13:47:03.662Z"
+			},
+			{
+				"id": 2382709,
+				"occurrence": 1,
+				"final_mark": 100,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 3848878,
+				"project": {
+					"id": 1893,
+					"name": "Germany Basecamp C 01",
+					"slug": "germany-basecamp-c-01",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					42
+				],
+				"marked_at": "2021-10-21T09:49:46.967Z",
+				"marked": true,
+				"retriable_at": "2021-10-21T10:29:47.042Z",
+				"created_at": "2021-10-19T17:40:49.265Z",
+				"updated_at": "2021-10-21T09:49:47.057Z"
+			},
+			{
+				"id": 2382014,
+				"occurrence": 0,
+				"final_mark": 28,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 3845655,
+				"project": {
+					"id": 1910,
+					"name": "Germany Basecamp Exam 01",
+					"slug": "germany-basecamp-exam-01",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					42
+				],
+				"marked_at": "2021-10-26T10:34:22.814Z",
+				"marked": true,
+				"retriable_at": null,
+				"created_at": "2021-10-19T09:02:30.403Z",
+				"updated_at": "2021-10-26T10:34:23.074Z"
+			},
+			{
+				"id": 2379086,
+				"occurrence": 0,
+				"final_mark": 72,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 3841482,
+				"project": {
+					"id": 1892,
+					"name": "Germany Basecamp C 00",
+					"slug": "germany-basecamp-c-00",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					42
+				],
+				"marked_at": "2021-10-19T17:38:34.923Z",
+				"marked": true,
+				"retriable_at": "2021-10-19T17:58:35.001Z",
+				"created_at": "2021-10-16T12:28:33.995Z",
+				"updated_at": "2021-10-19T17:38:35.015Z"
+			},
+			{
+				"id": 2378298,
+				"occurrence": 0,
+				"final_mark": 120,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 3840758,
+				"project": {
+					"id": 1907,
+					"name": "Germany Basecamp Rush 00",
+					"slug": "germany-basecamp-rush-00",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					42
+				],
+				"marked_at": "2021-10-19T07:32:29.825Z",
+				"marked": true,
+				"retriable_at": null,
+				"created_at": "2021-10-15T08:35:08.381Z",
+				"updated_at": "2021-10-19T07:32:43.503Z"
+			},
+			{
+				"id": 2374296,
+				"occurrence": 3,
+				"final_mark": 100,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 3841753,
+				"project": {
+					"id": 1890,
+					"name": "Germany Basecamp Shell 00",
+					"slug": "germany-basecamp-germany-basecamp-shell-00",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					42
+				],
+				"marked_at": "2021-10-17T09:12:28.757Z",
+				"marked": true,
+				"retriable_at": "2021-10-17T11:12:28.822Z",
+				"created_at": "2021-10-12T19:45:10.206Z",
+				"updated_at": "2021-10-17T09:12:28.837Z"
+			},
+			{
+				"id": 2372985,
+				"occurrence": 1,
+				"final_mark": 100,
+				"status": "finished",
+				"validated?": true,
+				"current_team_id": 3833803,
+				"project": {
+					"id": 1889,
+					"name": "Germany Basecamp I Accept (OLD)",
+					"slug": "germany-basecamp-i-accept-old",
+					"parent_id": null
+				},
+				"cursus_ids": [
+					42
+				],
+				"marked_at": "2021-10-12T16:19:14.152Z",
+				"marked": true,
+				"retriable_at": "2021-10-12T16:59:14.219Z",
+				"created_at": "2021-10-12T08:45:11.562Z",
+				"updated_at": "2021-10-12T16:20:05.156Z"
+			}
+		],
+		"languages_users": [
+			{
+				"id": 437433,
+				"language_id": 6,
+				"user_id": 99637,
+				"position": 1,
+				"created_at": "2021-10-08T11:07:58.588Z"
+			},
+			{
+				"id": 437434,
+				"language_id": 2,
+				"user_id": 99637,
+				"position": 2,
+				"created_at": "2021-10-08T11:07:58.624Z"
+			},
+			{
+				"id": 437435,
+				"language_id": 1,
+				"user_id": 99637,
+				"position": 3,
+				"created_at": "2021-10-08T11:07:58.667Z"
+			}
+		],
+		"achievements": [
+			{
+				"id": 41,
+				"name": "All work and no play makes Jack a dull boy",
+				"description": "Logged for a total of 90 hours over a week.",
+				"tier": "none",
+				"kind": "scolarity",
+				"visible": true,
+				"image": "/uploads/achievement/image/41/SCO001.svg",
+				"nbr_of_success": null,
+				"users_url": "https://api.intra.42.fr/v2/achievements/41/users"
+			},
+			{
+				"id": 54,
+				"name": "Attendee",
+				"description": "Attended 1 event.",
+				"tier": "none",
+				"kind": "scolarity",
+				"visible": true,
+				"image": "/uploads/achievement/image/54/SCO003.svg",
+				"nbr_of_success": 1,
+				"users_url": "https://api.intra.42.fr/v2/achievements/54/users"
+			},
+			{
+				"id": 55,
+				"name": "Attendee",
+				"description": "Attended 3 events.",
+				"tier": "none",
+				"kind": "scolarity",
+				"visible": true,
+				"image": "/uploads/achievement/image/55/SCO003.svg",
+				"nbr_of_success": 3,
+				"users_url": "https://api.intra.42.fr/v2/achievements/55/users"
+			},
+			{
+				"id": 56,
+				"name": "Attendee",
+				"description": "Attended 10 events.",
+				"tier": "easy",
+				"kind": "scolarity",
+				"visible": true,
+				"image": "/uploads/achievement/image/56/SCO003.svg",
+				"nbr_of_success": 10,
+				"users_url": "https://api.intra.42.fr/v2/achievements/56/users"
+			},
+			{
+				"id": 57,
+				"name": "Attendee",
+				"description": "Attended 21 events.",
+				"tier": "medium",
+				"kind": "scolarity",
+				"visible": true,
+				"image": "/uploads/achievement/image/57/SCO003.svg",
+				"nbr_of_success": 21,
+				"users_url": "https://api.intra.42.fr/v2/achievements/57/users"
+			},
+			{
+				"id": 58,
+				"name": "Attendee",
+				"description": "Attended 42 events.",
+				"tier": "hard",
+				"kind": "scolarity",
+				"visible": true,
+				"image": "/uploads/achievement/image/58/SCO003.svg",
+				"nbr_of_success": 42,
+				"users_url": "https://api.intra.42.fr/v2/achievements/58/users"
+			},
+			{
+				"id": 17,
+				"name": "Bonus Hunter",
+				"description": "Validated 1 project with the maximum score.",
+				"tier": "easy",
+				"kind": "project",
+				"visible": true,
+				"image": "/uploads/achievement/image/17/PRO005.svg",
+				"nbr_of_success": 1,
+				"users_url": "https://api.intra.42.fr/v2/achievements/17/users"
+			},
+			{
+				"id": 18,
+				"name": "Bonus Hunter",
+				"description": "Validated 3 projects with the maximum score.",
+				"tier": "medium",
+				"kind": "project",
+				"visible": true,
+				"image": "/uploads/achievement/image/18/PRO005.svg",
+				"nbr_of_success": 3,
+				"users_url": "https://api.intra.42.fr/v2/achievements/18/users"
+			},
+			{
+				"id": 19,
+				"name": "Bonus Hunter",
+				"description": "Validated 10 projects with the maximum score.",
+				"tier": "hard",
+				"kind": "project",
+				"visible": true,
+				"image": "/uploads/achievement/image/19/PRO005.svg",
+				"nbr_of_success": 10,
+				"users_url": "https://api.intra.42.fr/v2/achievements/19/users"
+			},
+			{
+				"id": 20,
+				"name": "Bonus Hunter",
+				"description": "Validated 21 projects with the maximum score.",
+				"tier": "challenge",
+				"kind": "project",
+				"visible": true,
+				"image": "/uploads/achievement/image/20/PRO005.svg",
+				"nbr_of_success": 21,
+				"users_url": "https://api.intra.42.fr/v2/achievements/20/users"
+			},
+			{
+				"id": 4,
+				"name": "Code Explorer",
+				"description": "Valided your first project.",
+				"tier": "none",
+				"kind": "project",
+				"visible": true,
+				"image": "/uploads/achievement/image/4/PRO002.svg",
+				"nbr_of_success": 1,
+				"users_url": "https://api.intra.42.fr/v2/achievements/4/users"
+			},
+			{
+				"id": 5,
+				"name": "Code Explorer",
+				"description": "Validated 3 projects",
+				"tier": "none",
+				"kind": "project",
+				"visible": true,
+				"image": "/uploads/achievement/image/5/PRO002.svg",
+				"nbr_of_success": 3,
+				"users_url": "https://api.intra.42.fr/v2/achievements/5/users"
+			},
+			{
+				"id": 6,
+				"name": "Code Explorer",
+				"description": "Validated 10 projects.",
+				"tier": "none",
+				"kind": "project",
+				"visible": true,
+				"image": "/uploads/achievement/image/6/PRO002.svg",
+				"nbr_of_success": 10,
+				"users_url": "https://api.intra.42.fr/v2/achievements/6/users"
+			},
+			{
+				"id": 7,
+				"name": "Code Explorer",
+				"description": "Validated 21 projects.",
+				"tier": "none",
+				"kind": "project",
+				"visible": true,
+				"image": "/uploads/achievement/image/7/PRO002.svg",
+				"nbr_of_success": 21,
+				"users_url": "https://api.intra.42.fr/v2/achievements/7/users"
+			},
+			{
+				"id": 359,
+				"name": "Community I",
+				"description": "Participate at most of the events of the first week of Basecamp",
+				"tier": "easy",
+				"kind": "pedagogy",
+				"visible": true,
+				"image": "/uploads/achievement/image/359/Comunidade_I.svg",
+				"nbr_of_success": null,
+				"users_url": "https://api.intra.42.fr/v2/achievements/359/users"
+			},
+			{
+				"id": 360,
+				"name": "Community II",
+				"description": "Participate in most of the events in the second week of Basecamp.",
+				"tier": "medium",
+				"kind": "pedagogy",
+				"visible": true,
+				"image": "/uploads/achievement/image/360/Comunidade_II.svg",
+				"nbr_of_success": null,
+				"users_url": "https://api.intra.42.fr/v2/achievements/360/users"
+			},
+			{
+				"id": 361,
+				"name": "Community III",
+				"description": "Participate in most of the events in the third week of Basecamp.",
+				"tier": "hard",
+				"kind": "pedagogy",
+				"visible": true,
+				"image": "/uploads/achievement/image/361/Comunidade_III.svg",
+				"nbr_of_success": null,
+				"users_url": "https://api.intra.42.fr/v2/achievements/361/users"
+			},
+			{
+				"id": 362,
+				"name": "Explorer",
+				"description": "Be active on at least 5 of 7 days in the third week of Basecamp.",
+				"tier": "hard",
+				"kind": "pedagogy",
+				"visible": true,
+				"image": "/uploads/achievement/image/362/Explorador_Exploradora.svg",
+				"nbr_of_success": null,
+				"users_url": "https://api.intra.42.fr/v2/achievements/362/users"
+			},
+			{
+				"id": 369,
+				"name": "Field Recognition",
+				"description": "Be active on at least 5 of 7 days in the first week of Basecamp.",
+				"tier": "easy",
+				"kind": "pedagogy",
+				"visible": true,
+				"image": "/uploads/achievement/image/369/Reconhecimento_de_Campo.svg",
+				"nbr_of_success": null,
+				"users_url": "https://api.intra.42.fr/v2/achievements/369/users"
+			},
+			{
+				"id": 46,
+				"name": "Film buff",
+				"description": "Watched 1 video from the e-learning.",
+				"tier": "none",
+				"kind": "pedagogy",
+				"visible": true,
+				"image": "/uploads/achievement/image/46/PED005.svg",
+				"nbr_of_success": 1,
+				"users_url": "https://api.intra.42.fr/v2/achievements/46/users"
+			},
+			{
+				"id": 47,
+				"name": "Film buff",
+				"description": "Watched 3 videos from the e-learning.",
+				"tier": "none",
+				"kind": "pedagogy",
+				"visible": true,
+				"image": "/uploads/achievement/image/47/PED005.svg",
+				"nbr_of_success": 3,
+				"users_url": "https://api.intra.42.fr/v2/achievements/47/users"
+			},
+			{
+				"id": 48,
+				"name": "Film buff",
+				"description": "Watched 10 videos from the e-learning.",
+				"tier": "none",
+				"kind": "pedagogy",
+				"visible": true,
+				"image": "/uploads/achievement/image/48/PED005.svg",
+				"nbr_of_success": 10,
+				"users_url": "https://api.intra.42.fr/v2/achievements/48/users"
+			},
+			{
+				"id": 49,
+				"name": "Film buff",
+				"description": "Watched 21 videos from the e-learning.",
+				"tier": "none",
+				"kind": "pedagogy",
+				"visible": true,
+				"image": "/uploads/achievement/image/49/PED005.svg",
+				"nbr_of_success": 21,
+				"users_url": "https://api.intra.42.fr/v2/achievements/49/users"
+			},
+			{
+				"id": 368,
+				"name": "First Footprints",
+				"description": "Be active on at least 5 of 7 days in the second week of Basecamp.",
+				"tier": "medium",
+				"kind": "pedagogy",
+				"visible": true,
+				"image": "/uploads/achievement/image/368/Primeiras_Trilhas.svg",
+				"nbr_of_success": null,
+				"users_url": "https://api.intra.42.fr/v2/achievements/368/users"
+			},
+			{
+				"id": 363,
+				"name": "Focus I",
+				"description": "Achieve in the second week at least the number of points earned in the first week of Basecamp.",
+				"tier": "medium",
+				"kind": "pedagogy",
+				"visible": true,
+				"image": "/uploads/achievement/image/363/Foco_I.svg",
+				"nbr_of_success": null,
+				"users_url": "https://api.intra.42.fr/v2/achievements/363/users"
+			},
+			{
+				"id": 364,
+				"name": "Focus II",
+				"description": "Achieve in the third week at least the number of points earned in the second week of Basecamp.",
+				"tier": "hard",
+				"kind": "pedagogy",
+				"visible": true,
+				"image": "/uploads/achievement/image/364/Foco_II.svg",
+				"nbr_of_success": null,
+				"users_url": "https://api.intra.42.fr/v2/achievements/364/users"
+			},
+			{
+				"id": 45,
+				"name": "Home is where the code is",
+				"description": "Logged into the same cluster for a month in a row",
+				"tier": "none",
+				"kind": "scolarity",
+				"visible": true,
+				"image": "/uploads/achievement/image/45/SCO002.svg",
+				"nbr_of_success": null,
+				"users_url": "https://api.intra.42.fr/v2/achievements/45/users"
+			},
+			{
+				"id": 82,
+				"name": "I have no idea what I'm doing",
+				"description": "Made a defense without having validated the project.",
+				"tier": "none",
+				"kind": "pedagogy",
+				"visible": true,
+				"image": "/uploads/achievement/image/82/PED011.svg",
+				"nbr_of_success": null,
+				"users_url": "https://api.intra.42.fr/v2/achievements/82/users"
+			},
+			{
+				"id": 84,
+				"name": "I'm reliable !",
+				"description": "Participated in 21 defenses in a row without missing any.",
+				"tier": "easy",
+				"kind": "pedagogy",
+				"visible": true,
+				"image": "/uploads/achievement/image/84/PED009.svg",
+				"nbr_of_success": 21,
+				"users_url": "https://api.intra.42.fr/v2/achievements/84/users"
+			},
+			{
+				"id": 36,
+				"name": "It's a rich man's world",
+				"description": "Collected 100 wallet points.",
+				"tier": "none",
+				"kind": "social",
+				"visible": true,
+				"image": "/uploads/achievement/image/36/SOC004.svg",
+				"nbr_of_success": 100,
+				"users_url": "https://api.intra.42.fr/v2/achievements/36/users"
+			},
+			{
+				"id": 37,
+				"name": "It's a rich man's world",
+				"description": "Collected 200 wallet points.",
+				"tier": "none",
+				"kind": "social",
+				"visible": true,
+				"image": "/uploads/achievement/image/37/SOC004.svg",
+				"nbr_of_success": 200,
+				"users_url": "https://api.intra.42.fr/v2/achievements/37/users"
+			},
+			{
+				"id": 38,
+				"name": "It's a rich man's world",
+				"description": "Collected 500 wallet points.",
+				"tier": "none",
+				"kind": "social",
+				"visible": true,
+				"image": "/uploads/achievement/image/38/SOC004.svg",
+				"nbr_of_success": 500,
+				"users_url": "https://api.intra.42.fr/v2/achievements/38/users"
+			},
+			{
+				"id": 155,
+				"name": "Je voudrais un croissant",
+				"description": "Visited 42 campus in Paris.",
+				"tier": "none",
+				"kind": "scolarity",
+				"visible": true,
+				"image": "/uploads/achievement/image/155/BADGE_SCOLARITY_paris.svg",
+				"nbr_of_success": null,
+				"users_url": "https://api.intra.42.fr/v2/achievements/155/users"
+			},
+			{
+				"id": 25,
+				"name": "Rigorous Basterd",
+				"description": "Validated 3 projects in a row (Piscine days included).",
+				"tier": "none",
+				"kind": "project",
+				"visible": true,
+				"image": "/uploads/achievement/image/25/PRO010.svg",
+				"nbr_of_success": 3,
+				"users_url": "https://api.intra.42.fr/v2/achievements/25/users"
+			},
+			{
+				"id": 26,
+				"name": "Rigorous Basterd",
+				"description": "Validated 10 projects in a row (Piscine days included).",
+				"tier": "easy",
+				"kind": "project",
+				"visible": true,
+				"image": "/uploads/achievement/image/26/PRO010.svg",
+				"nbr_of_success": 10,
+				"users_url": "https://api.intra.42.fr/v2/achievements/26/users"
+			},
+			{
+				"id": 374,
+				"name": "United Village I",
+				"description": "At least 80% of your Village members have been active on min. 5 of 7 days in the first week of Basecamp.",
+				"tier": "easy",
+				"kind": "pedagogy",
+				"visible": true,
+				"image": "/uploads/achievement/image/374/Vila_Unida_I.svg",
+				"nbr_of_success": null,
+				"users_url": "https://api.intra.42.fr/v2/achievements/374/users"
+			},
+			{
+				"id": 375,
+				"name": "United Village II",
+				"description": "At least 80% of your Village members have been active on min. 5 of 7 days in the second week of Basecamp.",
+				"tier": "medium",
+				"kind": "pedagogy",
+				"visible": true,
+				"image": "/uploads/achievement/image/375/Vila_Unida_II.svg",
+				"nbr_of_success": null,
+				"users_url": "https://api.intra.42.fr/v2/achievements/375/users"
+			},
+			{
+				"id": 376,
+				"name": "United Village III",
+				"description": "At least 80% of your Village members have been active on min. 5 of 7 days in the third week of Basecamp.",
+				"tier": "hard",
+				"kind": "pedagogy",
+				"visible": true,
+				"image": "/uploads/achievement/image/376/Vila_Unida_III.svg",
+				"nbr_of_success": null,
+				"users_url": "https://api.intra.42.fr/v2/achievements/376/users"
+			},
+			{
+				"id": 1,
+				"name": "Welcome, Cadet !",
+				"description": "You have passed the C Piscine! Welcome to 42!",
+				"tier": "none",
+				"kind": "project",
+				"visible": true,
+				"image": "/uploads/achievement/image/1/PRO001.svg",
+				"nbr_of_success": null,
+				"users_url": "https://api.intra.42.fr/v2/achievements/1/users"
+			},
+			{
+				"id": 218,
+				"name": "Welcome, Learner !",
+				"description": "You passed the C Piscine. Welcome at 42!",
+				"tier": "none",
+				"kind": "project",
+				"visible": true,
+				"image": "/uploads/achievement/image/218/PRO001-2.svg",
+				"nbr_of_success": null,
+				"users_url": "https://api.intra.42.fr/v2/achievements/218/users"
+			}
+		],
+		"titles": [
+			{
+				"id": 21,
+				"name": "%login, Khonvoum"
+			}
+		],
+		"titles_users": [
+			{
+				"id": 17997,
+				"user_id": 99637,
+				"title_id": 21,
+				"selected": true,
+				"created_at": "2022-11-14T18:30:02.387Z",
+				"updated_at": "2023-08-27T09:43:11.795Z"
+			}
+		],
+		"partnerships": [],
+		"patroned": [],
+		"patroning": [],
+		"expertises_users": [],
+		"roles": [],
+		"campus": [
+			{
+				"id": 1,
+				"name": "Paris",
+				"time_zone": "Europe/Paris",
+				"language": {
+					"id": 1,
+					"name": "Français",
+					"identifier": "fr",
+					"created_at": "2014-11-02T16:43:38.466Z",
+					"updated_at": "2023-10-03T10:48:43.574Z"
+				},
+				"users_count": 27454,
+				"vogsphere_id": 1,
+				"country": "France",
+				"address": "96, boulevard Bessières",
+				"zip": "75017",
+				"city": "Paris",
+				"website": "http://www.42.fr/",
+				"facebook": "https://facebook.com/42born2code",
+				"twitter": "https://twitter.com/42born2code",
+				"active": true,
+				"public": true,
+				"email_extension": "42.fr",
+				"default_hidden_phone": false
+			},
+			{
+				"id": 39,
+				"name": "Heilbronn",
+				"time_zone": "Europe/Berlin",
+				"language": {
+					"id": 2,
+					"name": "English",
+					"identifier": "en",
+					"created_at": "2015-04-14T16:07:38.122Z",
+					"updated_at": "2023-09-29T09:21:59.591Z"
+				},
+				"users_count": 1979,
+				"vogsphere_id": 28,
+				"country": "Germany",
+				"address": "Weipertstr 8 - 10",
+				"zip": "74076",
+				"city": "Heilbronn",
+				"website": "https://42heilbronn.de/",
+				"facebook": "https://www.facebook.com/42heilbronn",
+				"twitter": "https://twitter.com/42Heilbronn",
+				"active": true,
+				"public": true,
+				"email_extension": "42heilbronn.de",
+				"default_hidden_phone": false
+			}
+		],
+		"campus_users": [
+			{
+				"id": 156814,
+				"user_id": 99637,
+				"campus_id": 1,
+				"is_primary": false,
+				"created_at": "2023-08-30T07:32:20.225Z",
+				"updated_at": "2023-08-30T07:32:20.225Z"
+			},
+			{
+				"id": 91260,
+				"user_id": 99637,
+				"campus_id": 39,
+				"is_primary": true,
+				"created_at": "2021-09-26T19:14:22.113Z",
+				"updated_at": "2021-09-26T19:14:22.113Z"
+			}
+		]
+	}
+}

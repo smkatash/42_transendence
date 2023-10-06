@@ -3,24 +3,33 @@ version: '3.8'
 services:
   angular:
     container_name: angular
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     volumes:
-      - ./frontend/angular:/app-frontend
+      - /Users/ktashbae/Desktop/trans/frontend/angular:/app-frontend
     ports:
       - 4200:4200
     depends_on:
       - nestjs
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
 
   nestjs:
     container_name: nestjs
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     volumes:
-      - ./backend/nest/app:/app-backend
+      - /Users/ktashbae/Desktop/trans/backend/nest/app:/app-backend
     ports:
       - 3000:3000
     depends_on:
       - postgres
       - redis
+    environment:
+      - CHOKIDAR_USEPOLLING=true
 
   postgres:
     container_name: postgres

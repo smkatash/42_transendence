@@ -13,7 +13,8 @@ export class SessionGuard implements CanActivate {
     if (!request.session || !request.sessionID) {
 		return false
     }
-	console.log("Session END")
+    console.log("Session verified")
+
     return true
   }
 }

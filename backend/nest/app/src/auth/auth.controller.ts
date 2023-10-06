@@ -24,7 +24,8 @@ export class AuthController {
     async handleRedirect(@GetUser() user: User, @Res({ passthrough: true }) res: Response) {
         if (user) {
             await this.authService.updateUserStatus(user.id, Status.ONLINE)
-            res.status(302).redirect(FRONT_END_CALLBACK_URL)
+            //res.status(302).redirect(FRONT_END_CALLBACK_URL)
+            res.status(302).redirect('/user/profile')
         }
     }
     

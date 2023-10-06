@@ -3,12 +3,7 @@ export interface Profile {
     login: string
     image_url: string
     provide: string
-	
+	titles: Array<{id: string, name: string}> | []
     _raw: Object
-    _json: {
-		titles: [ {
-			id: number,
-			name: string
-		} ]
-	}
+    _json: Object
 }
