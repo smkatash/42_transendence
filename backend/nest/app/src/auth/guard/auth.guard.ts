@@ -1,5 +1,6 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, UseGuards } from '@nestjs/common';
 import * as session from 'express-session';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class SessionGuard implements CanActivate {
@@ -13,8 +14,13 @@ export class SessionGuard implements CanActivate {
     if (!request.session || !request.sessionID) {
 		return false
     }
-    console.log("Session verified")
-
-    return true
+	
+	if (request.user) {
+		const user: User = request.user
+		if (user.mfa) {
+			return user.mfaVerified
+		}
+	}
+	return true
   }
 }

@@ -16,6 +16,15 @@ export class User {
     @Column()
     avatar: string
 
+	@Column({nullable: true})
+    email: string
+
+	@Column({default: false})
+	mfa: boolean
+
+	@Column({default: false})
+	mfaVerified: boolean
+
     @Column({ default: Status.OFFLINE})
     status: Status
 

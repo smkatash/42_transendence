@@ -24,6 +24,7 @@ import { RankingModule } from './ranking/ranking.module';
 // import { ChannelModule } from './chat/channel/channel.module';
 // import { ChatGatewayGateway } from './chat/chat-gateway/chat-gateway.gateway';
 import { ChatGateway } from './chat/chat/chat.gateway';
+import { AuthToken } from './auth/entities/auth-token.entity';
 
 
 @Module({
@@ -45,7 +46,7 @@ import { ChatGateway } from './chat/chat/chat.gateway';
       username: DB_USERNAME,
       password: DB_PASSWORD,
       database: DB_NAME,
-      entities: [User, Match, Player, Queue],
+      entities: [User, Match, Player, Queue, AuthToken],
       synchronize: true
     }),
     GameModule,

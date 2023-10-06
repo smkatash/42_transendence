@@ -54,6 +54,25 @@ export class UserService {
 		return this.saveValidUser(user)
 	}
 
+	async enableMfaVerification(id: string, email: string): Promise<User> {
+		const user = await this.getUserById(id)
+		user.mfa = true
+		user.email = email
+		return this.saveValidUser(user)
+	}
+
+	async disableMfaVerification(id: string): Promise<User> {
+		const user = await this.getUserById(id)
+		user.mfa = false
+		return this.saveValidUser(user)
+	}
+
+	async setMfaVerificationStatus(id: string, state: boolean) {
+		const user = await this.getUserById(id)
+		user.mfaVerified = state
+		return this.saveValidUser(user)
+	}
+
     async getUserFriends(id: string) {
       try {
         const currentUser: User = await this.userRepo.findOne({

@@ -35,7 +35,7 @@ export class UserController {
 
 	@Patch('username')
 	@UseGuards(SessionGuard)
-	async updateUsername(@Body() newName: string, @GetUser() currentUser: User) {
+	async updateUsername(@Body('username') newName: string, @GetUser() currentUser: User) {
 		if (currentUser && currentUser.id) {
 			try {
 				return await this.userService.updateUsername(currentUser.id, newName)	
@@ -49,7 +49,7 @@ export class UserController {
 
 	@Patch('title')
 	@UseGuards(SessionGuard)
-	async updateTitle(@Body() newTitle: string, @GetUser() currentUser: User) {
+	async updateTitle(@Body('title') newTitle: string, @GetUser() currentUser: User) {
 		if (currentUser && currentUser.id) {
 			return await this.userService.updateTitle(currentUser.id, newTitle)	
 		} else {

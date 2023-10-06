@@ -2,7 +2,7 @@ import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-42"
 import { CALLBACK_URL, CLIENT_ID, CLIENT_SECRET } from "src/Constants";
-import { AuthService } from "../auth.service";
+import { AuthService } from "../services/auth.service";
 import { AuthUserDto } from "../utils/auth.user.dto";
 import { Profile } from "../utils/profile";
 import { User } from "src/user/entities/user.entity";
