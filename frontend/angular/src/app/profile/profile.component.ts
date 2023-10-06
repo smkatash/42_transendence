@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ProfileService } from './profile.service';
 import { Match, Stats, User } from '../entities.interface';
-import { catchError, fromEvent, switchMap } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -11,15 +10,19 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class ProfileComponent implements OnInit {
 
-  constructor(private profileService: ProfileService, private route: ActivatedRoute){ }
+  constructor(private profileService: ProfileService, private route: ActivatedRoute, private cd: ChangeDetectorRef){ }
 
   id: string | null = null
+  currentUserID: string | null = null
   profile?: User
   friends: User[] = []
   matches: Match[] = []
   rank: number = 0
   stats: Stats = {wins: 0, losses: 0}
+
   selectedImage: File | null = null
+  isEditingName: boolean = false
+  isEditingTitle: boolean = false
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -28,6 +31,7 @@ export class ProfileComponent implements OnInit {
         this.getCurrentUserProfile()
       } else {
         this.getUserProfile()
+        this.getCurrentUserID()
       }
     })
   }
@@ -66,9 +70,38 @@ export class ProfileComponent implements OnInit {
         next: friends => {console.log(friends); this.friends = friends},
         error: err => alert(err.message) // TODO: Route to Unauthorized or Not found page depending on error
       })
-
-
   }
+
+  /* Only used when I want to compare the id with the current id to check if I want to display add friend button */
+  getCurrentUserID(): void {
+    this.profileService.getCurrentUser()
+      .subscribe(user => this.currentUserID = user.id)
+  }
+
+  toggleNameEdit(): void {
+    this.isEditingName = !this.isEditingName
+    this.cd.detectChanges();
+  }
+
+  toggleTitleEdit(): void {
+    this.isEditingTitle = !this.isEditingTitle
+    this.cd.detectChanges();
+  }
+
+  changeName(): void {
+    this.isEditingName = false
+    if (this.profile) {
+      this.profileService.setName(this.profile.username)
+    }
+  }
+
+  changeTitle(): void {
+    this.isEditingTitle = false
+    if (this.profile) {
+      this.profileService.setTitle(this.profile.title)
+    }
+  }
+
 
   onImageSelected(event: any) {
     this.selectedImage = event.target.files[0]

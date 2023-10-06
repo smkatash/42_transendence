@@ -5,6 +5,7 @@ import { ProfileRoutingModule } from './profile-routing.module';
 import { SharedModule } from '../shared/shared.module';
 import { FriendComponent } from './friend/friend.component';
 import { MatchComponent } from './match/match.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { MatchComponent } from './match/match.component';
   imports: [
     CommonModule,
     ProfileRoutingModule,
-    SharedModule
+    SharedModule,
+    FormsModule
   ]
 })
 export class ProfileModule { }

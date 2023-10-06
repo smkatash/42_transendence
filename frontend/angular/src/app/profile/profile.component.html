@@ -7,14 +7,26 @@
     <div class="info-container">
       <div class="profile-pic">
         <input type="file" accept="image/*" (change)="onImageSelected($event)" #imageUpload>
-        <img crossorigin="use-credentials" src="http://127.0.0.1:3000/user/image/{{ profile?.avatar }}">
-        <div class="edit-image" (click)="imageUpload.click()"></div>
+        <img class="ppic" crossorigin="use-credentials" src="http://127.0.0.1:3000/user/image/{{ profile?.avatar }}">
+
+        <div class="edit-image" (click)="imageUpload.click()" *ngIf="id === null">
+          <img src="data:image/svg+xml,%3Csvg width='487' height='487' xmlns='http://www.w3.org/2000/svg' xmlns:svg='http://www.w3.org/2000/svg'%3E%3Cg class='layer'%3E%3Ctitle%3ELayer 1%3C/title%3E%3Cg id='svg_1'%3E%3Cg id='svg_2'%3E%3Cpath d='m308.1,277.95c0,35.7 -28.9,64.6 -64.6,64.6s-64.6,-28.9 -64.6,-64.6s28.9,-64.6 64.6,-64.6s64.6,28.9 64.6,64.6zm132.2,-161.9c25.8,0 46.7,20.9 46.7,46.7l0,122.4l0,103.8c0,27.5 -22.3,49.8 -49.8,49.8l-387.4,0c-27.5,0 -49.8,-22.3 -49.8,-49.8l0,-103.9l0,-122.3l0,0c0,-25.8 20.9,-46.7 46.7,-46.7l93.4,0l4.4,-18.6c6.7,-28.8 32.4,-49.2 62,-49.2l74.1,0c29.6,0 55.3,20.4 62,49.2l4.3,18.6l93.4,0zm-342.9,67.4c0,-12.9 -10.5,-23.4 -23.4,-23.4c-13,0 -23.5,10.5 -23.5,23.4s10.5,23.4 23.4,23.4c13,0.1 23.5,-10.4 23.5,-23.4zm261.3,94.5c0,-63.6 -51.6,-115.2 -115.2,-115.2s-115.2,51.6 -115.2,115.2s51.6,115.2 115.2,115.2s115.2,-51.6 115.2,-115.2z' fill='%23ffffff' id='svg_3'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E">
+        </div>
+
       </div>
-      <h1 class="username">{{ profile?.username }}</h1>
-      <h2 class="title">{{ profile?.title }}</h2>
+      <h1 class="username" (click)="toggleNameEdit()">{{ profile?.username }}</h1>
+      <div class="name-input-container" *ngIf="profile && isEditingName">
+        <input class="name-input" type="text" id="username" #username="ngModel" [class.is-invalid]="username.invalid" [(ngModel)]="profile.username" required minlength="2" maxlength="10" pattern="[^\s]*">
+        <button class="change-btn" (click)="changeName()" [disabled]="username.invalid" [class.btn-invalid]="username.invalid">Change</button>
+      </div>
+      <h2 class="title" (click)="toggleTitleEdit()">{{ profile?.title }}</h2>
+      <div class="title-input-container" *ngIf="profile && isEditingTitle">
+        <input class="title-input" type="text" id="usertitle" #usertitle="ngModel" [class.is-invalid]="usertitle.invalid" [(ngModel)]="profile.title" required minlength="2" maxlength="25">
+        <button class="change-btn" (click)="changeTitle()" [disabled]="usertitle.invalid" [class.btn-invalid]="usertitle.invalid">Change</button>
+      </div>
 
       <!-- These should be hidden if the user is the user of the session -->
-      <div class="status">
+      <div class="status" *ngIf="id !== null">
         <div class="dot-offline" *ngIf="profile?.status === 0"></div>
         <h2 *ngIf="profile?.status === 0">Offline</h2>
         <div class="dot-online" *ngIf="profile?.status === 1"></div>
@@ -23,7 +35,10 @@
         <h2 *ngIf="profile?.status === 2">Playing</h2>
       </div>
 
-      <button class="add-friend">Add friend</button>
+      <button *ngIf="id !== null && id !== currentUserID">Add friend</button>
+      <button *ngIf="id === null">Enable 2FA</button>
+      <!-- <button *ngIf="id === null">Disable 2FA</button> -->
+      <button class="logout" *ngIf="id === null">Logout</button>
 
     </div>
 
@@ -51,7 +66,7 @@
 
         <div class="friends">
           <div class="wrapper">
-            <h1>Friends:</h1>
+            <h1 *ngIf="friends.length">Friends:</h1>
             <div class="friends-container" *ngIf="friends.length">
               <div *ngFor="let friend of friends">
                 <app-friend [user]="friend"></app-friend>

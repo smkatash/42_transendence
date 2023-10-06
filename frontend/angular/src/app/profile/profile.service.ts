@@ -50,6 +50,16 @@ export class ProfileService {
     return this.http.post<User>(url, formData, { withCredentials: true })
   }
 
+  setName(username: string): void {
+    const url =`http://127.0.0.1:3000/user/username`
+    this.http.patch(url, {username: username}, { withCredentials: true }).subscribe()
+  }
+
+  setTitle(title: string): void {
+    const url =`http://127.0.0.1:3000/user/title`
+    this.http.patch(url, {title: title}, { withCredentials: true }).subscribe()
+  }
+
   sendRequest(friendID: string): void {
     const url =`http://127.0.0.1:3000/user/friend`
     const request$ = this.http.post<User>(url, friendID, { withCredentials: true }) // Post with ID in the body
