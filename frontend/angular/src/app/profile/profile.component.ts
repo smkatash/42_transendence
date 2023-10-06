@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ProfileService } from './profile.service';
 import { Match, Stats, User } from '../entities.interface';
 import { catchError, fromEvent, switchMap } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -10,8 +11,9 @@ import { catchError, fromEvent, switchMap } from 'rxjs';
 })
 export class ProfileComponent implements OnInit {
 
-  constructor(private profileService: ProfileService){ }
+  constructor(private profileService: ProfileService, private route: ActivatedRoute){ }
 
+  id: string | null = null
   profile?: User
   friends: User[] = []
   matches: Match[] = []
@@ -20,10 +22,17 @@ export class ProfileComponent implements OnInit {
   selectedImage: File | null = null
 
   ngOnInit(): void {
-    this.getProfile()
+    this.route.paramMap.subscribe(params => {
+      this.id = params.get('id')
+      if (this.id === null) {
+        this.getCurrentUserProfile()
+      } else {
+        this.getUserProfile()
+      }
+    })
   }
 
-  getProfile(): void {
+  getCurrentUserProfile(): void {
     this.profileService.getCurrentUser()
       .subscribe({
         next: user => this.profile = user,
@@ -41,6 +50,24 @@ export class ProfileComponent implements OnInit {
         next: stats => this.stats = stats,
         error: err => alert(err.message) // TODO: Route to Unauthorized or Not found page depending on error
       })
+  }
+
+  getUserProfile(): void {
+    if (!this.id) return
+
+    this.profileService.getUser(this.id)
+      .subscribe({
+        next: user => this.profile = user,
+        error: err => alert(err.message) // TODO: Route to Unauthorized or Not found page depending on error
+      })
+
+    this.profileService.getFriends(this.id)
+      .subscribe({
+        next: friends => {console.log(friends); this.friends = friends},
+        error: err => alert(err.message) // TODO: Route to Unauthorized or Not found page depending on error
+      })
+
+
   }
 
   onImageSelected(event: any) {
