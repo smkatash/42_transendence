@@ -30,21 +30,6 @@ export class ProfileService {
     return this.http.get<User[]>(url, { withCredentials: true })
   }
 
-  getRank(userID: string): Observable<number> {
-    const url = `http://127.0.0.1:3000/ranking/${userID}`
-    return this.http.get<number>(url, { withCredentials: true })
-  }
-
-  getCurrentUserStats(): Observable<Stats> {
-    const url = `http://127.0.0.1:3000/ranking/stats`
-    return this.http.get<Stats>(url, { withCredentials: true })
-  }
-
-/*   getMatches(userID: string): Observable<Match[]> {
-    const url = `http://127.0.0.1:3000/user/${userID}/matches`
-    return this.http.get<Match[]>(url, { withCredentials: true })
-  } */
-
   setAvatar(formData: FormData): Observable<User> {
     const url =`http://127.0.0.1:3000/user/image/upload`
     return this.http.post<User>(url, formData, { withCredentials: true })
@@ -70,5 +55,35 @@ export class ProfileService {
     const url =`http://127.0.0.1:3000/user/friend/${friendID}`
     const request$ = this.http.delete<User>(url, { withCredentials: true })
     request$.subscribe()
+  }
+
+  getCurrentUserRank(): Observable<number> {
+    const url = `http://127.0.0.1:3000/ranking/level`
+    return this.http.get<number>(url, { withCredentials: true })
+  }
+
+  getRank(userID: string): Observable<number> {
+    const url = `http://127.0.0.1:3000/ranking/${userID}/level`
+    return this.http.get<number>(url, { withCredentials: true })
+  }
+
+  getCurrentUserStats(): Observable<Stats> {
+    const url = `http://127.0.0.1:3000/ranking/stats`
+    return this.http.get<Stats>(url, { withCredentials: true })
+  }
+
+  getStats(userID: string): Observable<Stats> {
+    const url = `http://127.0.0.1:3000/ranking/${userID}/stats`
+    return this.http.get<Stats>(url, { withCredentials: true })
+  }
+
+  getCurrentUserHistory(): Observable<Match[]> {
+    const url = `http://127.0.0.1:3000/ranking/history`
+    return this.http.get<Match[]>(url, { withCredentials: true })
+  }
+
+  getHistory(userID: string): Observable<Match[]> {
+    const url = `http://127.0.0.1:3000/ranking/${userID}/history`
+    return this.http.get<Match[]>(url, { withCredentials: true })
   }
 }

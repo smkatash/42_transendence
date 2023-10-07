@@ -1,6 +1,7 @@
 <body>
   <app-navbar></app-navbar>
   <!-- Wrapper for all the profile -->
+  <app-twofactorauth [(showDialog)]="isbuttonClicked2FA" *ngIf="isbuttonClicked2FA"></app-twofactorauth>
   <div class="profile-interface">
 
     <!-- Wrapper for the left info box containing picture and name etc... -->
@@ -36,7 +37,7 @@
       </div>
 
       <button *ngIf="id !== null && id !== currentUserID">Add friend</button>
-      <button *ngIf="id === null">Enable 2FA</button>
+      <button *ngIf="id === null" (click)="toggle2FA()">Enable 2FA</button>
       <!-- <button *ngIf="id === null">Disable 2FA</button> -->
       <button class="logout" *ngIf="id === null">Logout</button>
 
@@ -81,11 +82,14 @@
 
         <div class="match-history">
           <div class="wrapper">
-            <h1>Match History:</h1>
-            <div class="matches-container">
+            <h1 *ngIf="matches.length">Match History:</h1>
+            <div class="matches-container" *ngIf="matches.length">
               <div *ngFor="let match of matches">
                 <app-match [match]="match"></app-match>
               </div>
+            </div>
+            <div class="no-matches" *ngIf="!matches.length">
+              <h1>No matches played</h1>
             </div>
           </div>
         </div>

@@ -328,3 +328,16 @@ input {
   margin: 1dvw 2dvw 2dvw 2dvw;
   overflow: auto;
 }
+
+.no-matches {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  height: 100%;
+}
+
+.no-matches h1 {
+  font-family: 'Bodoni Moda', serif;
+  font-size: 2dvw;
+}

@@ -6,12 +6,14 @@ import { SharedModule } from '../shared/shared.module';
 import { FriendComponent } from './friend/friend.component';
 import { MatchComponent } from './match/match.component';
 import { FormsModule } from '@angular/forms';
+import { TwofactorauthComponent } from './twofactorauth/twofactorauth.component';
 
 @NgModule({
   declarations: [
     ProfileComponent,
     FriendComponent,
     MatchComponent,
+    TwofactorauthComponent,
   ],
   imports: [
     CommonModule,
