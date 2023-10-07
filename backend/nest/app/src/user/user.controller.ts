@@ -57,7 +57,7 @@ export class UserController {
 		}
 	}
 
-	@Patch('mfa-email')
+	@Patch('enable-mfa')
 	@UseGuards(SessionGuard)
 	async enableMfaWithEmail(@Body('email') newEmail: string, @GetUser() currentUser: User) {
 		if (currentUser && currentUser.id) {
@@ -67,7 +67,7 @@ export class UserController {
 		}
 	}
 
-	@Patch('mfa')
+	@Patch('disable-mfa')
 	@UseGuards(SessionGuard)
 	async disableMfaWithEmail(@GetUser() currentUser: User) {
 		if (currentUser && currentUser.id) {

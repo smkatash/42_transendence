@@ -8,7 +8,6 @@ import { Status } from './utils/status.dto';
 import * as https from 'https';
 import * as fs from 'fs';
 import { MfaStatus } from 'src/auth/utils/mfa-status';
-import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class UserService {
@@ -17,6 +16,20 @@ export class UserService {
     async getUserById(id: string): Promise<User> {
       return this.userRepo.findOneBy({id})
     }
+
+	async logoutUser(id: string) {
+		const user = await this.getUserById(id)
+		user.status = Status.OFFLINE
+		user.mfaStatus = MfaStatus.DENY
+		return this.saveValidUser(user)
+	}
+
+	async verifyUserMfa(id: string) {
+		const user = await this.getUserById(id)
+		user.status = Status.ONLINE
+		user.mfaStatus = MfaStatus.VALIDATE
+		return this.saveValidUser(user)
+	}
     
     async saveValidUser(user: User) {
       const validate_error = await validate(user);
@@ -60,6 +73,7 @@ export class UserService {
 		user.mfaEnabled = true
 		user.email = email
 		user.mfaStatus = MfaStatus.DENY
+		user.status = Status.MFAPending
 		return this.saveValidUser(user)
 	}
 
@@ -168,7 +182,7 @@ export class UserService {
 
 		file.on('finish', () => {
 			file.close()
-		});
+			});
 		}).on('error', err => {
 			throw new InternalServerErrorException('Failed to get the user profile')
 		});
