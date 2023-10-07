@@ -1,13 +1,14 @@
-import { BadRequestException, HttpException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { AuthUserDto } from 'src/auth/utils/auth.user.dto';
 import { validate } from 'class-validator';
 import { Status } from './utils/status.dto';
-import { Player } from 'src/game/entities/player.entity';
 import * as https from 'https';
 import * as fs from 'fs';
+import { MfaStatus } from 'src/auth/utils/mfa-status';
+import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class UserService {
@@ -54,6 +55,27 @@ export class UserService {
 		return this.saveValidUser(user)
 	}
 
+	async enableMfaVerification(id: string, email: string): Promise<User> {
+		const user = await this.getUserById(id)
+		user.mfaEnabled = true
+		user.email = email
+		user.mfaStatus = MfaStatus.DENY
+		return this.saveValidUser(user)
+	}
+
+	async disableMfaVerification(id: string): Promise<User> {
+		const user = await this.getUserById(id)
+		user.mfaEnabled = false
+		user.mfaStatus = MfaStatus.DENY
+		return this.saveValidUser(user)
+	}
+
+	async setMfaVerificationStatus(id: string, state: MfaStatus) {
+		const user = await this.getUserById(id)
+		user.mfaStatus = state
+		return this.saveValidUser(user)
+	}
+
     async getUserFriends(id: string) {
       try {
         const currentUser: User = await this.userRepo.findOne({
@@ -70,20 +92,49 @@ export class UserService {
       }
     } 
 
+	async sendFriendRequest(id: string, friendId: string) {
+		const currentUser: User = await this.userRepo.findOne({
+			where: {id}, relations: ['friends', 'sentFriendRequests']
+		  })
+		const newFriend = await this.userRepo.findOne({where: {id: friendId}})
+
+		if (!currentUser || !newFriend) {
+			throw new NotFoundException('User not found')
+		}
+
+		const isAlreadyFriends = currentUser.friends.some((user) => user.id === friendId);
+		const hasPendingRequest = currentUser.sentFriendRequests.some((user) => user.id === friendId)
+
+		if (isAlreadyFriends || hasPendingRequest) {
+			throw new BadRequestException('Friend request already sent or accepted');
+		}
+
+		currentUser.sentFriendRequests.push(newFriend)
+		newFriend.pendingFriendRequests.push(currentUser)
+		await this.userRepo.save([currentUser, newFriend])
+	}
+
     async addUserFriend(id: string, friendId: string) {
       try {
         const currentUser: User = await this.userRepo.findOne({
-          where: {id}, relations: ['friends']
+          where: {id}, relations: ['friends', 'sentFriendRequests']
         })
-        const friend = await this.userRepo.findOne({where: {id: friendId}})
+        const friend = await this.userRepo.findOne({
+			where: {id: friendId}, relations: ['pendingFriendRequests']
+		})
 
         if (!currentUser || !friend) {
           throw new HttpException('User not found', 404)
         }
 
         currentUser.friends.push(friend)
+		currentUser.sentFriendRequests = currentUser.sentFriendRequests.filter(
+			(user) => user.id !== friendId
+		)
         friend.friendOf.push(currentUser)
-
+		friend.pendingFriendRequests = friend.pendingFriendRequests.filter(
+			(user) => user.id !== currentUser.id
+		)
         return this.userRepo.save([currentUser, friend])
       } catch (err) {
         throw new InternalServerErrorException()

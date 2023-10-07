@@ -57,6 +57,27 @@ export class UserController {
 		}
 	}
 
+	@Patch('mfa-email')
+	@UseGuards(SessionGuard)
+	async enableMfaWithEmail(@Body('email') newEmail: string, @GetUser() currentUser: User) {
+		if (currentUser && currentUser.id) {
+			return await this.userService.enableMfaVerification(currentUser.id, newEmail)
+		} else {
+			throw new UnauthorizedException('Access denied');
+		}
+	}
+
+	@Patch('mfa')
+	@UseGuards(SessionGuard)
+	async disableMfaWithEmail(@GetUser() currentUser: User) {
+		if (currentUser && currentUser.id) {
+			return await this.userService.disableMfaVerification(currentUser.id)
+		} else {
+			throw new UnauthorizedException('Access denied');
+		}
+	}
+
+
     @Post('image/upload')
     @UseGuards(SessionGuard)
     @UseInterceptors(FileInterceptor('image', localStorage))
@@ -100,15 +121,26 @@ export class UserController {
         }
     }
 
-    @Post('friend')
+    @Patch('add-friend')
     @UseGuards(SessionGuard)
-    async addNewFriend(@Body() friendId: string, @GetUser() currentUser: User) {
+    async addNewFriend(@Body('friendId') friendId: string, @GetUser() currentUser: User) {
         if (currentUser && currentUser.id && friendId) {
            return await this.userService.addUserFriend(currentUser.id, friendId)
         } else {
             throw new UnauthorizedException('Access denied');
         }
     }
+
+	@Post('request-friend')
+    @UseGuards(SessionGuard)
+    async sendFriendRequest(@Body('friendId') friendId: string, @GetUser() currentUser: User) {
+        if (currentUser && currentUser.id && friendId) {
+           return await this.userService.sendFriendRequest(currentUser.id, friendId)
+        } else {
+            throw new UnauthorizedException('Access denied');
+        }
+    }
+
 
     @Delete('friend/:id')
     @UseGuards(SessionGuard)
