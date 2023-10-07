@@ -11,17 +11,24 @@ export class MailService {
 	constructor() {
 		this.settings = config.settings
 		this.options = config.options
-
 	}
 
 	public async send(receiver: string, body: string) {
         if(nodemailer && this.options) {
             const transporter = nodemailer.createTransport(this.settings)
+			transporter.verify((err, success) => {
+				if (err) console.error(err)
+				console.log('Your config is correct')
+			});
 
 			this.options.to = receiver
 			this.options.text = body
-			const info = await transporter.sendMail(this.options)
-			console.log('Message ' + info.messageId)
+			try {
+				const info = await transporter.sendMail(this.options)
+				console.log('Message ' + info.messageId)
+			} catch (error) {
+				console.log(error)
+			}
         }
     }
 

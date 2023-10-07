@@ -1,7 +1,7 @@
 export interface MailSettings {
 	host: string
-	port: number
-	secure: boolean
+	port?: number
+	secure?: boolean
 	auth: {
 		user: string
 		pass: string
@@ -9,18 +9,18 @@ export interface MailSettings {
 }
 
 export const settings: MailSettings = {
-	host: "smtp.forwardemail.net",
+	host: "smtp.gmail.com",
 	port: 465,
 	secure: true,
 	auth: {
-	  user: '',
-	  pass: ''
+	  user: '42.master.pong@gmail.com',
+	  pass: 'nrvbszqkuckandnn'
 	}
 }
 
 
 export const options = {
-    from: '"Pong Master " <noreply@pong.master.com>',
+    from: '42.master.pong@gmail.com',
     to: "", 
     subject: "Verify your accont", 
     text: ""

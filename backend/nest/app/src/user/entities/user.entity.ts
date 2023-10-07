@@ -1,5 +1,6 @@
 import { Column, Entity, JoinTable, ManyToMany, PrimaryColumn} from "typeorm";
 import { Status } from "../utils/status.dto";
+import { MfaStatus } from "src/auth/utils/mfa-status";
 
 
 @Entity({name: 'users'})
@@ -20,10 +21,10 @@ export class User {
     email: string
 
 	@Column({default: false})
-	mfa: boolean
+	mfaEnabled: boolean
 
-	@Column({default: false})
-	mfaVerified: boolean
+	@Column({default: MfaStatus.DENY})
+	mfaStatus: MfaStatus
 
     @Column({ default: Status.OFFLINE})
     status: Status

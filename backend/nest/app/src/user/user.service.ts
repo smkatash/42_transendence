@@ -5,9 +5,9 @@ import { Repository } from 'typeorm';
 import { AuthUserDto } from 'src/auth/utils/auth.user.dto';
 import { validate } from 'class-validator';
 import { Status } from './utils/status.dto';
-import { Player } from 'src/game/entities/player.entity';
 import * as https from 'https';
 import * as fs from 'fs';
+import { MfaStatus } from 'src/auth/utils/mfa-status';
 
 @Injectable()
 export class UserService {
@@ -56,20 +56,22 @@ export class UserService {
 
 	async enableMfaVerification(id: string, email: string): Promise<User> {
 		const user = await this.getUserById(id)
-		user.mfa = true
+		user.mfaEnabled = true
 		user.email = email
+		user.mfaStatus = MfaStatus.DENY
 		return this.saveValidUser(user)
 	}
 
 	async disableMfaVerification(id: string): Promise<User> {
 		const user = await this.getUserById(id)
-		user.mfa = false
+		user.mfaEnabled = false
+		user.mfaStatus = MfaStatus.DENY
 		return this.saveValidUser(user)
 	}
 
-	async setMfaVerificationStatus(id: string, state: boolean) {
+	async setMfaVerificationStatus(id: string, state: MfaStatus) {
 		const user = await this.getUserById(id)
-		user.mfaVerified = state
+		user.mfaStatus = state
 		return this.saveValidUser(user)
 	}
 

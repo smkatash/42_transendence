@@ -1,6 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext, UseGuards } from '@nestjs/common';
-import * as session from 'express-session';
 import { User } from 'src/user/entities/user.entity';
+import { Status } from 'src/user/utils/status.dto';
+import { MfaStatus } from '../utils/mfa-status';
 
 @Injectable()
 export class SessionGuard implements CanActivate {
@@ -14,13 +15,18 @@ export class SessionGuard implements CanActivate {
     if (!request.session || !request.sessionID) {
 		return false
     }
-	
+
 	if (request.user) {
 		const user: User = request.user
-		if (user.mfa) {
-			return user.mfaVerified
+		if (user.status === Status.MFAPending) {
+			return true
+		}
+		
+		if (user.mfaEnabled === true) {
+			return MfaStatus.VALIDATE === user.mfaStatus
 		}
 	}
 	return true
   }
 }
+
