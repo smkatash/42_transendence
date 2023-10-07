@@ -2,11 +2,12 @@ import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-42"
 import { CALLBACK_URL, CLIENT_ID, CLIENT_SECRET } from "src/Constants";
-import { AuthService } from "../auth.service";
+import { AuthService } from "../services/auth.service";
 import { AuthUserDto } from "../utils/auth.user.dto";
 import { Profile } from "../utils/profile";
 import { User } from "src/user/entities/user.entity";
 import { Status } from "src/user/utils/status.dto";
+import * as fs from 'fs';
 
 @Injectable()
 export class OauthStrategy extends PassportStrategy(Strategy, '42') {
@@ -18,8 +19,8 @@ export class OauthStrategy extends PassportStrategy(Strategy, '42') {
             profileFields: {
 				'id': function (obj) { return String(obj.id); },
                 'login': 'login',
-                'email': function (obj) { return String(obj.email); },
 				'image_url': function (obj) { return obj.image.link},
+				'titles': 'titles'
 			}
         })
     }
@@ -29,14 +30,20 @@ export class OauthStrategy extends PassportStrategy(Strategy, '42') {
         console.log(accessToken)
         console.log(refreshToken)
         console.log('-------')
-		console.log(profile)
+
+        let title = 'Pong Master'
+        if (profile.titles && profile.titles[0]) {
+            title = profile.titles[0].name.replace('%login, ', '')
+        }
+
         const authUserDto: AuthUserDto = {
             id: profile.id,
             username: profile.login,
-            email: profile.email,
+            title: title,
             avatar: profile.image_url,
             status: Status.ONLINE
         }
+
         const user = await this.authService.validateUser(authUserDto)
         if (!user) {
             throw new UnauthorizedException()

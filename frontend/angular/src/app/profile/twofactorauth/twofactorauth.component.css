@@ -1,0 +1,88 @@
+.dialog-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.dialog-box {
+  width: 30%;
+  height: 30%;
+  background-color: #4F6D7A;
+  border: .7dvw solid #E8DAB2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+button {
+  margin-top: 2%;
+  margin-right: 10%;
+  color: #4F6D7A;
+  background-color: #E8DAB2;
+  font-size: 1dvw;
+  font-family: 'Quattrocento', serif;
+  font-weight: bolder;
+  cursor: pointer;
+  height: 5dvh;
+  width: 8dvw;
+  border: .2dvh solid #2f424a;
+  float: right;
+}
+
+button:hover {
+  background-color: #e9d5a1;
+}
+
+.btn-invalid {
+  color: #2b3a41;
+  background-color: #988e6f;
+}
+
+.btn-invalid:hover {
+  color: #2b3a41;
+  background-color: #988e6f;
+}
+
+label, p{
+  display: block;
+  margin-left: 10%;
+  margin-right: 10%;
+  font-size: 1dvw;
+  font-family: 'Quattrocento', serif;
+  font-weight: bolder;
+  color: #E8DAB2;
+}
+
+p {
+  line-height: 1.3dvw;
+}
+
+input {
+  display: block;
+  margin-left: 10%;
+  margin-right: 10%;
+  margin-top: 3%;
+  padding: 3%;
+  width: 74%;
+  font-size: 0.9dvw;
+  font-family: 'Quattrocento', serif;
+  font-weight: bolder;
+  border: none;
+  border-bottom: .1dvw solid #E8DAB2;
+  background-color: #425c68;
+  color: #E8DAB2;
+  outline: none;
+}
+
+.is-invalid {
+  border-bottom: .1dvw solid #b04343;
+}
+

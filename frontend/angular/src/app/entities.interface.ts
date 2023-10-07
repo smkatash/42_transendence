@@ -8,9 +8,12 @@ export interface Channel {
 export interface User {
   id: string
   username: string
-  email: string
+  title: string
   avatar: string
+  email: string
   status: number
+  mfaEnable: boolean
+  mfaStatus: number
 }
 
 export interface Stats {

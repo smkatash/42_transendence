@@ -29,9 +29,9 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   async handleConnection(@ConnectedSocket() client: Socket, @GetUser() user: User, @Req() req: Request) {
     this.logger.log(`Client id: ${client.id} connected`);
       //const userId = await this.authService.getUserSession(client)
-    //   let user: User =  {"id":"99637","username":"ktashbae","status": 1, "avatar" : "test", "email": "test@email.com", "friends": [], "friendOf": []}
-    console.log(client)
-    console.log(client.data.user) 
+    //  user =  {"id":"99637","username":"ktashbae","status": 1, "avatar" : "test", "title": "test@email.com", "friends": [], "friendOf": []}
+    // console.log(client)
+    // console.log(client.data.user) 
     if (!user) {
         console.log('disconnecting')
         return client.disconnect()
@@ -62,6 +62,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('start')
   async handleStartMatch(@ConnectedSocket() client: Socket) {
+    client.handshake.headers.cookie
     console.log("bonjour putain")
     if (!client.data.user.id) return
     this.logger.debug(client.data.user.id)
@@ -70,7 +71,8 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
     if (currentPlayer) {
       let playersInQueue: Player[] = await this.matchService.waitInQueue(currentPlayer)
-      if (playersInQueue.length >= 2) {
+      // if (playersInQueue.length >= 2) {
+        if (playersInQueue.length <= 2) {
         const match = await this.matchService.makeAmatch(playersInQueue)
         playersInQueue = await this.matchService.updateQueue(match.players)
         for (const player of playersInQueue) {
@@ -86,7 +88,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
           }
         }
       } else {
-        client.emit('start', 'Waiting players to join.')
+        client.emit('start', 'Waiting players to join2.')
       }
       
     }

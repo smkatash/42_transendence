@@ -1,4 +1,4 @@
-import { Controller, Get, HttpException, Inject, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Controller, Get, HttpException, Inject, Param, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { RankingService } from './ranking.service';
 import { GetUser } from 'src/auth/utils/get-user.decorator';
 import { User } from 'src/user/entities/user.entity';
@@ -13,13 +13,28 @@ export class RankingController {
     
     @Get('history')
     @UseGuards(SessionGuard)
-    async getMatchHistory(@GetUser() user: User) {
-        if (user && user.id) {
-            const matchSummary: Match[] = await this.rankingService.getMatchesByUserId(user.id)
+    async getCurrentMatchHistory(@GetUser() currentUser: User) {
+        if (currentUser && currentUser.id) {
+            const matchSummary: Match[] = await this.rankingService.getMatchesByUserId(currentUser.id)
             const matchHistory: MatchHistoryDto[] = []
             
            for (const match of matchSummary) {
-                matchHistory.push(new MatchHistoryDto(match, user.id))
+                matchHistory.push(new MatchHistoryDto(match, currentUser.id))
+           }
+           return matchHistory
+        }
+        throw new UnauthorizedException('Access denied')
+    }
+
+    @Get(':id/history')
+    @UseGuards(SessionGuard)
+    async getUserMatchHistory(@Param('id') userId: string, @GetUser() currentUser: User) {
+        if (currentUser && currentUser.id && userId) {
+            const matchSummary: Match[] = await this.rankingService.getMatchesByUserId(userId)
+            const matchHistory: MatchHistoryDto[] = []
+            
+           for (const match of matchSummary) {
+                matchHistory.push(new MatchHistoryDto(match, userId))
            }
            return matchHistory
         }
@@ -28,28 +43,47 @@ export class RankingController {
 
     @Get('board')
     @UseGuards(SessionGuard)
-    async getRankingBoard(@GetUser() user: User) {
-        if (user && user.id) {
+    async getRankingBoard(@GetUser() currentUser: User) {
+        if (currentUser && currentUser.id) {
             return this.rankingService.getAllUserStats()
         }
         throw new UnauthorizedException('Access denied')
 		
     }
 	
-	@Get(':id')
+	@Get('level')
 	@UseGuards(SessionGuard)
-	async getUserPosition(@GetUser() user: User) {
-		if (user && user.id) {
-			return this.rankingService.getUserPosition(user.id)
+	async getCurrentPosition(@GetUser() currentUser: User) {
+		if (currentUser && currentUser.id) {
+			return this.rankingService.getUserPosition(currentUser.id)
+		}
+		throw new UnauthorizedException('Access denied')
+	}
+
+    @Get(':id/level')
+	@UseGuards(SessionGuard)
+	async getUserPosition(@Param('id') userId: string, @GetUser() currentUser: User) {
+		if (currentUser && currentUser.id && userId) {
+			return this.rankingService.getUserPosition(userId)
 		}
 		throw new UnauthorizedException('Access denied')
 	}
 
 	@Get('stats')
 	@UseGuards(SessionGuard)
-	async get(@GetUser() user: User) {
-		if (user && user.id) {
-			const stats: StatsDto = await this.rankingService.getUserStatsById(user.id)
+	async getCurrentStats(@GetUser() currentUser: User) {
+		if (currentUser && currentUser.id) {
+			const stats: StatsDto = await this.rankingService.getUserStatsById(currentUser.id)
+			return stats
+		}
+		throw new UnauthorizedException('Access denied')
+	}
+
+    @Get(':id/stats')
+	@UseGuards(SessionGuard)
+	async getUserStats(@Param('id') userId: string, @GetUser() currentUser: User) {
+		if (currentUser && currentUser.id && userId) {
+			const stats: StatsDto = await this.rankingService.getUserStatsById(userId)
 			return stats
 		}
 		throw new UnauthorizedException('Access denied')
