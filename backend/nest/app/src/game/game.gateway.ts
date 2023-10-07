@@ -11,7 +11,7 @@ import { Game, GameState, MessageMatch} from './utls/game';
 import { SessionGuard } from 'src/auth/guard/auth.guard';
 import { GetUser } from 'src/auth/utils/get-user.decorator';
 
-@WebSocketGateway({ namespace: 'game', cors: true })
+@WebSocketGateway({ namespace: 'game', cors: true})
 export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger = new Logger(GameGateway.name)
   @WebSocketServer()
@@ -25,13 +25,14 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     this.logger.log("Initialized")
   }
 
-  @UseGuards(SessionGuard)
-  async handleConnection(@ConnectedSocket() client: Socket, @GetUser() user: User, @Req() req: Request) {
+  // @UseGuards(SessionGuard)
+  async handleConnection(@ConnectedSocket() client: Socket, @Req() req: Request) {
     this.logger.log(`Client id: ${client.id} connected`);
       //const userId = await this.authService.getUserSession(client)
     //   let user: User =  {"id":"99637","username":"ktashbae","status": 1, "avatar" : "test", "email": "test@email.com", "friends": [], "friendOf": []}
     console.log(client)
-    console.log(client.data.user) 
+    console.log(client.data.user)
+	let user = client.data.user
     if (!user) {
         console.log('disconnecting')
         return client.disconnect()
