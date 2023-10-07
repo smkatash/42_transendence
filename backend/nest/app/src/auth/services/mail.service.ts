@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import * as nodemailer from 'nodemailer'
 import { MailOptions } from "nodemailer/lib/json-transport";
 import * as config from '../utils/config'
@@ -17,17 +17,17 @@ export class MailService {
         if(nodemailer && this.options) {
             const transporter = nodemailer.createTransport(this.settings)
 			transporter.verify((err, success) => {
-				if (err) console.error(err)
-				console.log('Your config is correct')
-			});
+				if (err) {
+					new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR)
+				}
+			})
 
 			this.options.to = receiver
 			this.options.text = body
 			try {
-				const info = await transporter.sendMail(this.options)
-				console.log('Message ' + info.messageId)
+				await transporter.sendMail(this.options)
 			} catch (error) {
-				console.log(error)
+				new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR)
 			}
         }
     }

@@ -7,6 +7,7 @@ import { Status } from 'src/user/utils/status.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthToken } from '../entities/auth-token.entity';
 import { Repository } from 'typeorm';
+import { createHash } from 'crypto';
 
 
 
@@ -44,7 +45,7 @@ export class AuthService {
 	}
 
 	async isValidTokenData(userId: string, value: string) {
-		const expiresIn = 1000 * 60 * 60 * 15;
+		const expiresIn = 1000 * 60 * 60 * 15
 		const token: AuthToken = await this.tokenRepo.findOneBy({value})
 		
 		if (token) {
@@ -71,7 +72,9 @@ export class AuthService {
 
 	private getRandomCode(): string {
 		const randomString = v4().replace(/-/g, "")
-		return Buffer.from(randomString, 'hex').toString('base64')
+		const hash = createHash('sha256').update(randomString).digest('hex')
+		const baseHash = Buffer.from(hash, 'hex').toString('base64')
+		return baseHash.slice(0, 8)
 	}
     
 }

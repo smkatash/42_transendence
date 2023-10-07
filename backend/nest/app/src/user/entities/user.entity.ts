@@ -35,4 +35,11 @@ export class User {
 
     @ManyToMany(() => User, (user) => user.friendOf)
     friends: User[]
+
+	@ManyToMany(() => User, (user) => user.pendingFriendRequests)
+	@JoinTable()
+	sentFriendRequests: User[]
+
+	@ManyToMany(() => User, (user) => user.sentFriendRequests)
+	pendingFriendRequests: User[]
 }
