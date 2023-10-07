@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Res, UseGuards, UnauthorizedException, Req, Post, Body } from '@nestjs/common';
+import { Controller, Get, Inject, Res, UseGuards, UnauthorizedException, Req, Post, Body, HttpStatus } from '@nestjs/common';
 import { OauthGuard } from './guard/oauth.guard';
 import { Response } from 'express';
 import { AuthService } from './services/auth.service';
@@ -47,7 +47,7 @@ export class AuthController {
             console.log('Success')
             return { message: 'OK' }
         } else {
-            throw new UnauthorizedException()
+			throw new UnauthorizedException()
         }
     }
 	
@@ -55,8 +55,12 @@ export class AuthController {
 	@UseGuards(SessionGuard)
 	async sendVerificationCode(@GetUser() user: User) {
 		if (user && user.id) {
+			console.log('Here')
 			if (user.mfaEnabled === true && user.email) {
+				console.log('Here2')
 				const token = await this.authService.createAuthToken(user.id)
+				console.log('The code sent ' + token.value)
+				console.log('The code sent to ' + user.email )
 				await this.mailService.send(user.email, `Your Auth Code is: ${token.value}`)
 				return user
 			}
@@ -65,9 +69,9 @@ export class AuthController {
 	}
 
 
-	@Post('verify-mfa')
+	@Post('login-verify-mfa')
 	@UseGuards(SessionGuard)
-	async handleMfaVerification(@GetUser() user: User, @Body('code') code: string, 
+	async handleLoginMfaVerification(@GetUser() user: User, @Body('code') code: string, 
 								@Res({ passthrough: true }) res: Response) {
         if (user && user.id) {
 			if (this.authService.isValidTokenData(user.id, code)) {
@@ -78,6 +82,23 @@ export class AuthController {
 		}
 		throw new UnauthorizedException()
     }
+	@Post('verify-mfa')
+	@UseGuards(SessionGuard)
+	async handleMfaVerification(@GetUser() user: User, @Body('code') code: string, 
+								@Res({ passthrough: true }) res: Response) {
+        if (user && user.id) {
+			console.log('To verify')
+			if (this.authService.isValidTokenData(user.id, code)) {
+				console.log('Verified')
+				await this.userService.verifyUserMfa(user.id)
+				await this.authService.removeToken(code)
+				console.log('Successful')
+				return HttpStatus.ACCEPTED
+			}
+		}
+		throw new UnauthorizedException()
+    }
+	
 	
 
     @Get('logout')

@@ -74,6 +74,7 @@ export class UserService {
 		user.email = email
 		user.mfaStatus = MfaStatus.DENY
 		user.status = Status.MFAPending
+		console.log('user service: ' + email)
 		return this.saveValidUser(user)
 	}
 

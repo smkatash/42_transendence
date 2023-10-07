@@ -29,7 +29,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   async handleConnection(@ConnectedSocket() client: Socket, @GetUser() user: User, @Req() req: Request) {
     this.logger.log(`Client id: ${client.id} connected`);
       //const userId = await this.authService.getUserSession(client)
-     user =  {"id":"99637","username":"ktashbae","status": 1, "avatar" : "test", "title": "test@email.com", "friends": [], "friendOf": []}
+    //  user =  {"id":"99637","username":"ktashbae","status": 1, "avatar" : "test", "title": "test@email.com", "friends": [], "friendOf": []}
     // console.log(client)
     // console.log(client.data.user) 
     if (!user) {

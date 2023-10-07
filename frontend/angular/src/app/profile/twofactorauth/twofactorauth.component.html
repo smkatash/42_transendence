@@ -3,13 +3,14 @@
     <!-- Your dialog content goes here -->
     <div *ngSwitchCase="'sendEmail'">
       <label for="email">Please enter the email address where you'd like to enable two-factor authentication:</label>
-      <input class="email" type="email" id="emailInput" #emailInput="ngModel" [class.is-invalid]="emailInput.invalid" [ngModel]="email" required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,3}$">
+      <input class="email" type="email" id="emailInput" #emailInput="ngModel" [class.is-invalid]="emailInput.invalid" [(ngModel)]="email" required>
+      <!-- pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,3}$" -->
       <button (click)="sendEmail()" [disabled]="emailInput.invalid" [class.btn-invalid]="emailInput.invalid">Use email</button>
     </div>
 
     <div *ngSwitchCase="'sendCode'">
       <label for="code">Enter the verification code sent to your email:</label>
-      <input class="code" type="text" id="code" #codeInput="ngModel" [class.is-invalid]="codeInput.invalid" [ngModel]="code" required minlength="6" maxlength="6">
+      <input class="code" type="text" id="code" #codeInput="ngModel" [class.is-invalid]="codeInput.invalid" [(ngModel)]="code" required minlength="8" maxlength="8">
       <button (click)="verifyEmail()" [disabled]="codeInput.invalid" [class.btn-invalid]="codeInput.invalid">Verify</button>
     </div>
 

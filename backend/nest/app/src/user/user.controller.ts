@@ -61,7 +61,10 @@ export class UserController {
 	@UseGuards(SessionGuard)
 	async enableMfaWithEmail(@Body('email') newEmail: string, @GetUser() currentUser: User) {
 		if (currentUser && currentUser.id) {
-			return await this.userService.enableMfaVerification(currentUser.id, newEmail)
+            console.log(newEmail)
+			const user = await this.userService.enableMfaVerification(currentUser.id, newEmail)
+            console.log(user)
+            return user
 		} else {
 			throw new UnauthorizedException('Access denied');
 		}

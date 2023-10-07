@@ -133,6 +133,7 @@ export class ProfileComponent implements OnInit {
 
   toggle2FA(): void {
     this.isbuttonClicked2FA = !this.isbuttonClicked2FA
+    this.cd.detectChanges();
   }
 
 /*   onFriendRequest(userID: string): void {
