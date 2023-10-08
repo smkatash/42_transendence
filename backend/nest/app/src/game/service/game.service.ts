@@ -70,15 +70,14 @@ export class GameService {
         const dir: Position = this.calculateVector()
         const ball: Ball = {
             position: {
-                x: GameService.options.table.height / DEFAULT_TABLE_PROPORTION,
-                y: GameService.options.table.width / DEFAULT_TABLE_PROPORTION,
+                x: GameService.options.table.width / DEFAULT_TABLE_PROPORTION,
+                y: GameService.options.table.height / DEFAULT_TABLE_PROPORTION,
             },
             velocity: {
                 x: dir.x,
                 y: dir.y
             }
         }
-
         return ball
     }
 
@@ -106,30 +105,34 @@ export class GameService {
         game.ball.position.x += game.ball.velocity.x
         game.ball.position.y += game.ball.velocity.y
 
-        if (game.ball.position.y >=  GameService.options.table.height) {
+        if (game.ball.position.y >=  GameService.options.table.height - 5) {
             game.ball.velocity.y *= -1
-            game.ball.position.y = GameService.options.table.height - 0.5
+            game.ball.position.y = GameService.options.table.height - 6
             return game
-        } else if (game.ball.position.y < 0) {
+        } else if (game.ball.position.y < 5) {
             game.ball.velocity.y *= -1
-            game.ball.position.y = 0.5
+            game.ball.position.y = 6
             return game
         }
         console.log('Throw2')
-        if (game.ball.position.x <= GameService.options.paddleDistance) {
+        // if (game.ball.position.x <= GameService.options.paddleDistance) {
+        if (game.ball.position.x <= 15) {
             if (game.ball.position.y > (game.leftPaddle.position.y - (game.leftPaddle.length / 2)) &&
                     game.ball.position.y < (game.leftPaddle.position.y + (game.leftPaddle.length / 2))) {
                     game.ball.velocity.x *= -1
-                    game.ball.position.x = GameService.options.paddleDistance + 0.5
+                    // game.ball.position.x = GameService.options.paddleDistance + 0.5
+                    game.ball.position.x = 50 + 0.5
                     return game
              }
             console.log('Throw3')
             return this.resetGame(game, Paddletype.RIGHT)
-        } else if (game.ball.position.x > GameService.options.table.width - GameService.options.paddleDistance) {
+        // } else if (game.ball.position.x > GameService.options.table.width - GameService.options.paddleDistance) {
+        } else if (game.ball.position.x > GameService.options.table.width - 15) {
             if (game.ball.position.y > (game.rightPaddle.position.y - (game.rightPaddle.length / 2)) &&
                     game.ball.position.y < (game.rightPaddle.position.y + (game.rightPaddle.length / 2))) {
                     game.ball.velocity.x *= -1
-                    game.ball.position.x = GameService.options.table.width - GameService.options.paddleDistance - 0.5
+                    // game.ball.position.x = GameService.options.table.width - GameService.options.paddleDistance - 0.5
+                    game.ball.position.x = GameService.options.table.width - 50 - 0.5
                     return game
             }
             console.log('Throw4')
@@ -137,8 +140,6 @@ export class GameService {
         }
         return game
     }
-    
-
 }
 
 // 1. random value -1 and 1 , to identify the start direction

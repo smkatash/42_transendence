@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { User } from '../entities.interface';
+import { User , Game, GamePlayer, SocketResponse  } from '../entities.interface';
 import { GameSocket } from '../app.module';
+import { Subject } from 'rxjs';
 
 
 
@@ -9,22 +10,9 @@ async function waitOneSecond() {
   console.log("...");
 }
 
-interface Player {
-  id: string;
-  clientId: string;
-  score: number;
-  gameState: number;
-  queue: any;
-}
-
-interface SocketResponse {
-  id: string;
-  status: number;
-  players: Player[];
-  scores: any;
-}
 
 var matchID : string = "";
+var gameInfo! : Game;
 
 @Injectable({
   providedIn: 'root'
@@ -32,8 +20,27 @@ var matchID : string = "";
 export class GameService {
 
   constructor(private socket: GameSocket) {}
-  
+  public test : number[] = [0,0];
+  private testSubject = new Subject<number[]>();
+
+  returnValue(){
+    // return gameInfo;
+    return this.test
+  }
+
+  getTestObservable() {
+    return this.testSubject.asObservable();
+  }
+
+
   startGame(): void {
+    this.socket.on('join', (msg: any) => { })
+    this.socket.on('play', (msg: any) => {
+      gameInfo = msg;
+      this.test[0] = gameInfo.ball.position.x
+      this.test[1] = gameInfo.ball.position.y
+      this.testSubject.next(this.test);
+    })
     this.socket.on('start', (msg: any) => {
       if (msg == 'Waiting players to join.')
       {
@@ -46,13 +53,8 @@ export class GameService {
         console.log(socketResponse);
       }
     })
-
-    this.socket.on('join', (msg: any) => {
-      console.log(msg);
-    })
-
     this.socket.emit('start')
-    // if(matchID != "")
+    // this.socket.disconnect();
   }
 
   getUser(): void {

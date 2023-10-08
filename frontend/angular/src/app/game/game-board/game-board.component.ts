@@ -1,4 +1,6 @@
-import { Component,HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { GameService } from '../game.service';
+import { Game } from '../../entities.interface';
 
 @Component({
   selector: 'app-game-board',
@@ -6,6 +8,10 @@ import { Component,HostListener } from '@angular/core';
   styleUrls: ['./game-board.component.css']
 })
 export class GameBoardComponent {
+
+  constructor(private gameDataService: GameService) {}
+
+   
     // const
     ballWidth = 3;
     ballHeight = 4;
@@ -20,12 +26,17 @@ export class GameBoardComponent {
     racket1Y = 40;
     racket0X = this.racketMargin;
     racket1X = 100 - this.racketMargin - this.racketWidth;
-    ballX = -1 * this.ballWidth;
-    ballY = -1 * this.ballHeight;
+    // ballX = -1 * this.ballWidth;
+    // ballY = -1 * this.ballHeight;
+    ballX = 0
+    ballY = 0
     canMoveBall = false;
     canMoveRackets = false;
     racket0Increment = 0;
     racket1Increment = 0;
+
+
+    testValues: number[] = [0, 0];
   
     @HostListener('window:keydown', ['$event'])
     onKeyDown(e: any) {
@@ -62,25 +73,59 @@ export class GameBoardComponent {
     resetBallAndRackets(): void {
       this.racket0Y = 40;
       this.racket1Y = 40;
-      this.ballX = -1 * this.ballWidth;
-      this.ballY = -1 * this.ballHeight;
+      // this.ballX = -1 * this.ballWidth;
+      // this.ballY = -1 * this.ballHeight;
+      this.ballX = 0;
+      this.ballY = 0;
       this.canMoveBall = false;
     }
 
+    valueConversion(x : number , y : number) {
+      const maxHeight = 500;
+      const maxWidth = 1000;
+      var percentageX = (100 / maxWidth) * x;
+      var percentageY = ( 100/ maxHeight ) * y;
+      var value : number [] = [percentageX , percentageY];
+      return value;
+    }
+
+    ngOnInit(){
+      // console.log(value.ball);
+      // while(1){
+      //   var value = this.gameDataService.returnValue()
+      //   console.log(value[0]);
+      //   console.log(value[1]);
+      // }
+      this.gameDataService.getTestObservable().subscribe((test: number[]) => {
+        this.testValues = test;
+        this.resetAll();
+        // console.log("Y")
+        // console.log(test[0]);
+        // console.log("X");
+        console.log(this.testValues[0]);
+        this.testValues = this.valueConversion(this.testValues[0], this.testValues[1]);
+        window.requestAnimationFrame(() => this.moveBall(this.testValues[0], this.testValues[1]));
+      })
+    }
+
     newGame(): void {
-      this.resetAll();
       this.startRound();
+      this.resetAll();
+      
     }
   
     startRound(): void {
-      this.setBall();
-      const xIncrement = this.getRandomIncrement();
-      const yIncrement = this.getRandomIncrement();
+      // this.setBall();
+      // const xIncrement = this.getRandomIncrement();
+      // const yIncrement = this.getRandomIncrement();
       this.canMoveBall = true;
       this.canMoveRackets = true;
       window.requestAnimationFrame(() => this.moveRacket0(this.racket0Increment));
       window.requestAnimationFrame(() => this.moveRacket1(this.racket1Increment));
-      window.requestAnimationFrame(() => this.moveBall(xIncrement, yIncrement));
+      // window.requestAnimationFrame(() => this.moveBall(xIncrement, yIncrement));
+      var value = this.gameDataService.returnValue()
+      console.log(value[0]);
+      console.log(value[1]);
     }
   
      getRandomIncrement(): number {
@@ -89,42 +134,15 @@ export class GameBoardComponent {
     }
   
     setBall(): void {
-      this.ballX = 48.5;
-      this.ballY = Math.floor(Math.random() * (100 - this.ballHeight + 1));
+      // this.ballX = 48.5;
+      // this.ballY = Math.floor(Math.random() * (100 - this.ballHeight + 1));
+      this.ballX = 0;
+      this.ballY = 0;
     }
   
     async moveBall(xIncrement: number, yIncrement: number): Promise<void> {
-      if (!this.canMoveBall) {
-        return;
-      }
-      this.ballX += xIncrement;
-      this.ballY += yIncrement;
-  
-      if (this.isBallCollidedWithWalls()) {
-        yIncrement *= -1;
-      }
-  
-      if (this.isBallCollidedWithRacket0()) {
-        xIncrement *= -1;
-      } else if (this.isBallCollidedWithRacket1()) {
-        xIncrement *= -1;
-      }
-  
-      if (this.isPlayer0Scored()) {
-        this.score0++;
-        if (!this.isPlayer0Win() && !this.isPlayer1Win()) {
-          await this.delay(1000);
-          this.startRound();
-        }
-        return;
-      } else if (this.isPlayer1Scored()) {
-        this.score1++;
-        if (!this.isPlayer0Win() && !this.isPlayer1Win()) {
-          await this.delay(1000);
-          this.startRound();
-        }
-        return;
-      }
+      this.ballX = xIncrement;
+      this.ballY = yIncrement;
       window.requestAnimationFrame(() => this.moveBall(xIncrement, yIncrement));
     }
   
