@@ -172,6 +172,23 @@ export class UserService {
       }
     }
 
+	async declineUserFriend(id: string, friendId: string) {
+		try {
+		  const currentUser = await this.userRepo.findOne({ where: {id}, relations: ['sentFriendRequests']})
+		  const friendToDecline = await this.userRepo.findOne({where: {id: friendId}, relations: ['pendingFriendRequests']})
+		  if (!currentUser || !friendToDecline) {
+			throw new HttpException('User not found', 404)
+		  }
+  
+		  currentUser.sentFriendRequests = currentUser.sentFriendRequests.filter((u) => u.id !== friendId)
+		  friendToDecline.pendingFriendRequests = friendToDecline.pendingFriendRequests.filter((u) => u.id !== id)
+  
+		  return await this.userRepo.save([currentUser, friendToDecline])
+		} catch (err) {
+		  throw new InternalServerErrorException()
+		}
+	  }
+
     async removeUserFriend(id: string, friendId: string) {
       try {
         const currentUser = await this.userRepo.findOneOrFail({ where: {id}, relations: ['friends']})

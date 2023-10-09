@@ -133,6 +133,16 @@ export class UserController {
 			throw new UnauthorizedException('Access denied');
         }
     }
+
+	@Patch('decline-friend')
+    @UseGuards(SessionGuard)
+    async declineNewFriend(@Body('friendId') friendId: string, @GetUser() currentUser: User) {
+        if (currentUser && currentUser.id && friendId) {
+			return await this.userService.declineUserFriend(currentUser.id, friendId)
+        } else {
+			throw new UnauthorizedException('Access denied');
+        }
+    }
 	
 	@Post('request-friend')
     @UseGuards(SessionGuard)
