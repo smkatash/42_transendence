@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Match, Stats, User } from '../entities.interface';
 
 @Injectable({
@@ -48,8 +48,8 @@ export class ProfileService {
   }
 
   sendRequest(friendID: string): void {
-    const url =`${this.domain}/user/friend`
-    const request$ = this.http.post<User>(url, friendID, { withCredentials: true }) // Post with ID in the body
+    const url =`${this.domain}/user/request-friend`
+    const request$ = this.http.post<User>(url, { friendId: friendID}, { withCredentials: true }) // Post with ID in the body
     request$.subscribe()
   }
 
