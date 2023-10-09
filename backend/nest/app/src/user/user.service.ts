@@ -107,26 +107,42 @@ export class UserService {
       }
     } 
 
+	async getPendingFriendRequests(id: string): Promise<User[]> {
+		const currentUser: User = await this.userRepo.findOne({
+			where: {id}, relations: ['pendingFriendRequests']
+		})
+
+		return currentUser.pendingFriendRequests
+	}
+
+	async getSentFriendRequests(id: string): Promise<User[]> {
+		const currentUser: User = await this.userRepo.findOne({
+			where: {id}, relations: ['sentFriendRequests']
+		})
+
+		return currentUser.sentFriendRequests
+	}
+
 	async sendFriendRequest(id: string, friendId: string) {
 		const currentUser: User = await this.userRepo.findOne({
 			where: {id}, relations: ['friends', 'sentFriendRequests']
 		  })
-		const newFriend = await this.userRepo.findOne({where: {id: friendId}})
+		const newFriend: User = await this.userRepo.findOne({
+			where: {id: friendId}
+		})
 
 		if (!currentUser || !newFriend) {
 			throw new NotFoundException('User not found')
 		}
-
-		const isAlreadyFriends = currentUser.friends.some((user) => user.id === friendId);
-		const hasPendingRequest = currentUser.sentFriendRequests.some((user) => user.id === friendId)
-
-		if (isAlreadyFriends || hasPendingRequest) {
-			throw new BadRequestException('Friend request already sent or accepted');
+		if (currentUser.friends && currentUser.friends.some((user) => user.id === friendId)) {
+			throw new BadRequestException('Friend request already accepted');
+		}
+		if (currentUser.sentFriendRequests && currentUser.sentFriendRequests.some((user) => user.id === friendId)) {
+			throw new BadRequestException('Friend request already sent');
 		}
 
 		currentUser.sentFriendRequests.push(newFriend)
-		newFriend.pendingFriendRequests.push(currentUser)
-		await this.userRepo.save([currentUser, newFriend])
+		await this.userRepo.save(currentUser)
 	}
 
     async addUserFriend(id: string, friendId: string) {
@@ -134,23 +150,23 @@ export class UserService {
         const currentUser: User = await this.userRepo.findOne({
           where: {id}, relations: ['friends', 'sentFriendRequests']
         })
+
         const friend = await this.userRepo.findOne({
-			where: {id: friendId}, relations: ['pendingFriendRequests']
+			where: {id: friendId}
 		})
 
         if (!currentUser || !friend) {
           throw new HttpException('User not found', 404)
         }
 
-        currentUser.friends.push(friend)
+		if (currentUser.friends && currentUser.friends.some((user) => user.id === friendId)) {
+			throw new BadRequestException('Friend request already accepted');
+		}
+		currentUser.friendOf.push(friend)
 		currentUser.sentFriendRequests = currentUser.sentFriendRequests.filter(
 			(user) => user.id !== friendId
 		)
-        friend.friendOf.push(currentUser)
-		friend.pendingFriendRequests = friend.pendingFriendRequests.filter(
-			(user) => user.id !== currentUser.id
-		)
-        return this.userRepo.save([currentUser, friend])
+        return this.userRepo.save(currentUser)
       } catch (err) {
         throw new InternalServerErrorException()
       }

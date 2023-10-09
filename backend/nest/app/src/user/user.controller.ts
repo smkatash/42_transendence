@@ -128,22 +128,21 @@ export class UserController {
     @UseGuards(SessionGuard)
     async addNewFriend(@Body('friendId') friendId: string, @GetUser() currentUser: User) {
         if (currentUser && currentUser.id && friendId) {
-           return await this.userService.addUserFriend(currentUser.id, friendId)
+			return await this.userService.addUserFriend(currentUser.id, friendId)
         } else {
-            throw new UnauthorizedException('Access denied');
+			throw new UnauthorizedException('Access denied');
         }
     }
-
+	
 	@Post('request-friend')
     @UseGuards(SessionGuard)
     async sendFriendRequest(@Body('friendId') friendId: string, @GetUser() currentUser: User) {
-        if (currentUser && currentUser.id && friendId) {
+		if (currentUser && currentUser.id && friendId) {
            return await this.userService.sendFriendRequest(currentUser.id, friendId)
         } else {
             throw new UnauthorizedException('Access denied');
         }
     }
-
 
     @Delete('friend/:id')
     @UseGuards(SessionGuard)
@@ -163,8 +162,27 @@ export class UserController {
 			return await this.userService.getUserById(userId)
 		} else {
 		throw new UnauthorizedException('Access denied');
-	}
+		}
+    }
 
+	@Get('friends/pending')
+    @UseGuards(SessionGuard)
+    async getPendingFriendRequests(@GetUser() currentUser: User) {
+		if (currentUser && currentUser.id) {
+			return await this.userService.getPendingFriendRequests(currentUser.id)
+		} else {
+		throw new UnauthorizedException('Access denied');
+		}
+    }
+
+	@Get('friends/requests')
+    @UseGuards(SessionGuard)
+    async getSentFriendRequests(@GetUser() currentUser: User) {
+		if (currentUser && currentUser.id) {
+			return await this.userService.getSentFriendRequests(currentUser.id)
+		} else {
+		throw new UnauthorizedException('Access denied');
+		}
     }
 
 }
