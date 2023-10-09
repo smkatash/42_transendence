@@ -1,9 +1,16 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "src/user/entities/user.entity";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class Channel    {
     @PrimaryGeneratedColumn()
     chatId: number;
+
+    @CreateDateColumn()
+    createdAt: Date;
+
+    @UpdateDateColumn()
+    updatedAt: Date;
 
     @Column({unique: true})
     name: string;
@@ -11,14 +18,18 @@ export class Channel    {
     @Column()
     private: boolean;
 
-    @Column()
-    owner: number;
+    @ManyToOne(()=> User, (owner)=> owner.channels)
+    owner: User;
 
     @Column()
     hash: string;
 
-    @Column()
+    @Column({nullable: true})
     topic: string;
+
+    @ManyToMany(() => User)
+    @JoinTable()
+    users: User[];
 
     // @Column()
 

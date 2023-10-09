@@ -22,6 +22,9 @@ import { RankingModule } from './ranking/ranking.module';
 // import { ChatGatewayGateway } from './chat/chat-gateway/chat-gateway.gateway';
 import { ChatModule } from './chat/chat.module';
 import { ChatGateway } from './chat/chat.gateway';
+import { MessageService } from './chat/service/message.service';
+import { Channel } from './chat/entities/channel.entity';
+import { ChannelService } from './chat/service/channel.service';
 
 
 @Module({
@@ -43,7 +46,7 @@ import { ChatGateway } from './chat/chat.gateway';
       username: DB_USERNAME,
       password: DB_PASSWORD,
       database: DB_NAME,
-      entities: [User, Match, Player, Queue],
+      entities: [User, Match, Player, Queue, Channel],
       synchronize: true
     }),
     GameModule,
@@ -54,7 +57,7 @@ import { ChatGateway } from './chat/chat.gateway';
     ChatModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ChatGateway],
+  providers: [AppService, ChatGateway, MessageService, ChannelService],
 })
 
 export class AppModule {}
