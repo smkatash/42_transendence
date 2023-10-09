@@ -54,6 +54,7 @@ export class ProfileComponent implements OnInit {
     }).subscribe({
       next: ({ currentUser, friends, rank, stats, history }) => {
         this.profile = currentUser;
+        console.log(friends)
         this.friends = friends;
         this.rank = rank;
         this.stats = stats;
@@ -87,6 +88,12 @@ export class ProfileComponent implements OnInit {
   getCurrentUserID(): void {
     this.profileService.getCurrentUser()
       .subscribe(user => this.currentUserID = user.id)
+  }
+
+  addFriend(): void {
+    if (this.id) {
+      this.profileService.sendRequest(this.id)
+    }
   }
 
   toggleNameEdit(): void {

@@ -36,7 +36,7 @@
         <h2 *ngIf="profile?.status === 2">Playing</h2>
       </div>
 
-      <button *ngIf="id !== null && id !== currentUserID">Add friend</button>
+      <button *ngIf="id !== null && id !== currentUserID" (click)="addFriend()">Add friend</button>
       <button *ngIf="id === null" (click)="toggle2FA()">Enable 2FA</button>
       <!-- <button *ngIf="id === null">Disable 2FA</button> -->
       <button class="logout" *ngIf="id === null">Logout</button>

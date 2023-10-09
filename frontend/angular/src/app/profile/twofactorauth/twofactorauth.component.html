@@ -1,10 +1,9 @@
 <div class="dialog-overlay">
   <div class="dialog-box" ngSwitch="{{ verificationStep }}">
-    <!-- Your dialog content goes here -->
+
     <div *ngSwitchCase="'sendEmail'">
       <label for="email">Please enter the email address where you'd like to enable two-factor authentication:</label>
       <input class="email" type="email" id="emailInput" #emailInput="ngModel" [class.is-invalid]="emailInput.invalid" [(ngModel)]="email" required>
-      <!-- pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,3}$" -->
       <button (click)="sendEmail()" [disabled]="emailInput.invalid" [class.btn-invalid]="emailInput.invalid">Use email</button>
     </div>
 

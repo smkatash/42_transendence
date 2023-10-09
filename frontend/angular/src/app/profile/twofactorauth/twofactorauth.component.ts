@@ -1,6 +1,5 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { ProfileService } from '../profile.service';
-import { concatMap, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-twofactorauth',
@@ -8,7 +7,7 @@ import { concatMap, switchMap } from 'rxjs';
   styleUrls: ['./twofactorauth.component.css']
 })
 export class TwofactorauthComponent {
-  constructor(private profileService: ProfileService) { }
+  constructor(private profileService: ProfileService, private cd: ChangeDetectorRef) { }
 
   @Input() showDialog: boolean = false
   @Output() showDialogChange = new EventEmitter<boolean>
@@ -20,21 +19,16 @@ export class TwofactorauthComponent {
 
   sendEmail(): void { // TODO: make clean
     this.profileService.enable2FA(this.email)
-      .subscribe(user1 => {
-        console.log(user1)
-        console.log('Now we are sending the email')
-        this.profileService.enableSend2FA()
-          .subscribe(user2 => {
-            console.log('this is the other user')
-            console.log(user2)
-          })
-      })
+      .subscribe(_=>
+        this.profileService.enableSend2FA().subscribe()
+      )
     this.verificationStep = 'sendCode'
+    this.cd.detectChanges();
   }
 
   verifyEmail(): void {
     this.profileService.verificationEnable2FA(this.code)
-      .subscribe()
+      .subscribe() // TODO: Check if it as been actually verified or not
     this.verificationStep = 'verified'
   }
 
