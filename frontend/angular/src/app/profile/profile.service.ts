@@ -27,8 +27,18 @@ export class ProfileService {
     return this.http.get<User[]>(url, { withCredentials: true })
   }
 
+  getCurrentUserRequests(): Observable<User[]> {
+    const url = `${this.domain}/user/requests`
+    return this.http.get<User[]>(url, { withCredentials: true })
+  }
+
   getFriends(userID: string): Observable<User[]> {
     const url = `${this.domain}/user/${userID}/friends`
+    return this.http.get<User[]>(url, { withCredentials: true })
+  }
+
+  getRequests(userID: string): Observable<User[]> {
+    const url = `${this.domain}/user/${userID}/requests`
     return this.http.get<User[]>(url, { withCredentials: true })
   }
 

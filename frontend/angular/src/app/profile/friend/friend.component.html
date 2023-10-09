@@ -7,3 +7,11 @@
     <div class="status" *ngIf="user?.status === 2">Playing</div>
   </div>
 </div>
+
+<div class="request" [routerLink]="['/profile', user?.id]">
+  <div class="wrapper">
+    <div class="profile-pic"><img src="http://127.0.0.1:3000/user/image/{{ user?.avatar }}"></div>
+    <div class="name" >{{ user?.username }}</div>
+    <p>sent you a friend request<span>Accept</span><span>Decline</span></p>
+  </div>
+</div>

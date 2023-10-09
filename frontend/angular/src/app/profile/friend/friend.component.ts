@@ -8,4 +8,5 @@ import { User } from 'src/app/entities.interface';
 })
 export class FriendComponent {
   @Input() user?: User
+  @Input() type?: string
 }
