@@ -72,15 +72,13 @@ export class ProfileComponent implements OnInit {
     forkJoin({
       user: this.profileService.getUser(this.id),
       friends: this.profileService.getFriends(this.id),
-      requests: this.profileService.getRequests(this.id),
       rank: this.profileService.getRank(this.id),
       stats: this.profileService.getStats(this.id),
       matches: this.profileService.getHistory(this.id),
     }).subscribe({
-      next: ({ user, friends, requests, rank, stats, matches }) => {
+      next: ({ user, friends, rank, stats, matches }) => {
         this.profile = user
         this.friends = friends
-        this.requests = requests
         this.rank = rank
         this.stats = stats
         this.matches = matches

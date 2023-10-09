@@ -28,17 +28,12 @@ export class ProfileService {
   }
 
   getCurrentUserRequests(): Observable<User[]> {
-    const url = `${this.domain}/user/requests`
+    const url = `${this.domain}/user/friends/pending`
     return this.http.get<User[]>(url, { withCredentials: true })
   }
 
   getFriends(userID: string): Observable<User[]> {
     const url = `${this.domain}/user/${userID}/friends`
-    return this.http.get<User[]>(url, { withCredentials: true })
-  }
-
-  getRequests(userID: string): Observable<User[]> {
-    const url = `${this.domain}/user/${userID}/requests`
     return this.http.get<User[]>(url, { withCredentials: true })
   }
 
@@ -62,6 +57,7 @@ export class ProfileService {
     const request$ = this.http.post<User>(url, { friendId: friendID}, { withCredentials: true }) // Post with ID in the body
     request$.subscribe()
   }
+
 
   removeFriend(friendID: string): void {
     const url =`${this.domain}/user/friend/${friendID}`
