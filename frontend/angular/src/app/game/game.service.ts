@@ -21,7 +21,8 @@ export class GameService {
 
   constructor(private socket: GameSocket) {}
   public test : number[] = [0,0];
-  private testSubject = new Subject<number[]>();
+  private testSubject = new Subject<Game>();
+  // private testSubject = new Subject<number[]>();
 
   returnValue(){
     // return gameInfo;
@@ -32,14 +33,12 @@ export class GameService {
     return this.testSubject.asObservable();
   }
 
-
   startGame(): void {
     this.socket.on('join', (msg: any) => { })
     this.socket.on('play', (msg: any) => {
       gameInfo = msg;
-      this.test[0] = gameInfo.ball.position.x
-      this.test[1] = gameInfo.ball.position.y
-      this.testSubject.next(this.test);
+      this.socket.emit('key', '10');
+      this.testSubject.next(msg);
     })
     this.socket.on('start', (msg: any) => {
       if (msg == 'Waiting players to join.')

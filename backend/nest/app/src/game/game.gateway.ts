@@ -29,15 +29,16 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   async handleConnection(@ConnectedSocket() client: Socket, @GetUser() user: User, @Req() req: Request) {
     this.logger.log(`Client id: ${client.id} connected`);
       //const userId = await this.authService.getUserSession(client)
-     user =  {"id":"99637","username":"ktashbae","status": 1, "avatar" : "test", "title": "test@email.com", "friends": [], "friendOf": []}
+    user =  {"id":"99637","username":"ktashbae","status": 1, "avatar" : "test", "title": "test@email.com", "friends": [], "friendOf": []}
     // console.log(client)
     // console.log(client.data.user) 
+    user = await this.userService.createUser(user);
     if (!user) {
-        console.log('disconnecting')
+        console.log('No user: disconnecting')
         return client.disconnect()
       }
-      user = await this.userService.updateUserStatus(user.id, Status.GAME)
-      let player = await this.playerService.getPlayerByUser(user, client.id)
+    user = await this.userService.updateUserStatus(user.id, Status.GAME)
+    let player = await this.playerService.getPlayerByUser(user, client.id)
 	  if (!player) {
 		player = await this.playerService.createPlayer(user, client.id)
 	  }
@@ -67,7 +68,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     if (!client.data.user.id) return
     this.logger.debug(client.data.user.id)
     const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
-
 
     if (currentPlayer) {
       let playersInQueue: Player[] = await this.matchService.waitInQueue(currentPlayer)

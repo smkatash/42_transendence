@@ -1,6 +1,13 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, Injectable, OnInit } from '@angular/core';
 import { GameService } from '../game.service';
 import { Game } from '../../entities.interface';
+import { GameSocket } from 'src/app/app.module';
+
+
+
+@Injectable({
+  providedIn: 'root'
+})  
 
 @Component({
   selector: 'app-game-board',
@@ -9,8 +16,8 @@ import { Game } from '../../entities.interface';
 })
 export class GameBoardComponent {
 
-  constructor(private gameDataService: GameService) {}
-
+  constructor(private gameDataService: GameService,
+              private socket: GameSocket ) {}
    
     // const
     ballWidth = 3;
@@ -31,20 +38,25 @@ export class GameBoardComponent {
     ballX = 0
     ballY = 0
     canMoveBall = false;
-    canMoveRackets = false;
+    canMoveRackets = true;
     racket0Increment = 0;
     racket1Increment = 0;
 
-
+    game?:Game;
     testValues: number[] = [0, 0];
   
     @HostListener('window:keydown', ['$event'])
     onKeyDown(e: any) {
       if (e.code === 'KeyW') {
-        this.racket0Increment = -this.racketSpeed;
+        // this.racket0Increment = -this.racketSpeed;
+        this.socket.emit('key', '10');
+        console.log("hello up");
       }
       if (e.code === 'KeyS') {
-        this.racket0Increment = this.racketSpeed;
+        // this.racket0Increment = this.racketSpeed;
+        this.socket.emit('key', '-10');
+        console.log("hello down");
+
       }
       if (e.code === 'ArrowUp') {
         this.racket1Increment = -this.racketSpeed;
@@ -80,31 +92,29 @@ export class GameBoardComponent {
       this.canMoveBall = false;
     }
 
-    valueConversion(x : number , y : number) {
+    valueConversion(game: Game) {
       const maxHeight = 500;
       const maxWidth = 1000;
-      var percentageX = (100 / maxWidth) * x;
-      var percentageY = ( 100/ maxHeight ) * y;
-      var value : number [] = [percentageX , percentageY];
-      return value;
+      game.ball.position.x = (100 / maxWidth) * game.ball.position.x;
+      game.ball.position.y = ( 100/ maxHeight ) * game.ball.position.y;
+      game.leftPaddle.position.y  = ( 100/ maxHeight) * game.leftPaddle.position.y;
+      game.rightPaddle.position.y  = ( 100/ maxHeight) * game.rightPaddle.position.y;
+      return game;
     }
 
     ngOnInit(){
-      // console.log(value.ball);
-      // while(1){
-      //   var value = this.gameDataService.returnValue()
-      //   console.log(value[0]);
-      //   console.log(value[1]);
-      // }
-      this.gameDataService.getTestObservable().subscribe((test: number[]) => {
-        this.testValues = test;
-        this.resetAll();
-        // console.log("Y")
-        // console.log(test[0]);
-        // console.log("X");
+      this.gameDataService.getTestObservable().subscribe((test: Game) => {
+        this.game = test;
         console.log(this.testValues[0]);
-        this.testValues = this.valueConversion(this.testValues[0], this.testValues[1]);
-        window.requestAnimationFrame(() => this.moveBall(this.testValues[0], this.testValues[1]));
+        this.game = this.valueConversion(this.game);
+        const positionX = this.game.ball.position.x;
+        const positionY = this.game.ball.position.y;
+        window.requestAnimationFrame(() => this.moveBall(positionX, positionY));
+        console.log(this.game.leftPaddle.position.y);
+        var positionPaddle = this.game.leftPaddle.position.y
+        window.requestAnimationFrame(() => this.moveLeftRacket(positionPaddle));
+        window.requestAnimationFrame(() => this.moveRacket1(this.racket1Increment));
+        this.resetAll();
       })
     }
 
@@ -114,6 +124,18 @@ export class GameBoardComponent {
       
     }
   
+    moveLeftRacket(yIncrement: number): void {
+      // if (!this.canMoveRackets) {
+      //   return;
+      // }
+      let newY = yIncrement;
+      // this check to be sure that the racket don't disappear on borders:
+      newY = Math.min(newY, 100 - this.racketHeight);
+      newY = Math.max(newY, 0);
+      this.racket0Y = newY;
+      // window.requestAnimationFrame(() => this.moveLeftRacket(this.racket0Increment));
+    }
+
     startRound(): void {
       // this.setBall();
       // const xIncrement = this.getRandomIncrement();
@@ -143,7 +165,7 @@ export class GameBoardComponent {
     async moveBall(xIncrement: number, yIncrement: number): Promise<void> {
       this.ballX = xIncrement;
       this.ballY = yIncrement;
-      window.requestAnimationFrame(() => this.moveBall(xIncrement, yIncrement));
+      // window.requestAnimationFrame(() => this.moveBall(xIncrement, yIncrement));
     }
   
     moveRacket0(yIncrement: number): void {
