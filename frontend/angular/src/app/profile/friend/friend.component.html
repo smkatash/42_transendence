@@ -8,7 +8,7 @@
   </div>
 </div>
 
-<div class="request" [routerLink]="['/profile', user.id]" *ngIf="type === 'request' && user">
+<div class="request" *ngIf="type === 'request' && user">
   <div class="wrapper">
     <div class="profile-pic"><img src="http://127.0.0.1:3000/user/image/{{ user.avatar }}"></div>
     <div class="name" >{{ user.username }}</div>

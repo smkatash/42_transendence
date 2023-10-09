@@ -58,6 +58,17 @@ export class ProfileService {
     request$.subscribe()
   }
 
+  acceptRequest(friendID: string): void {
+    const url =`${this.domain}/user/add-friend`
+    const request$ = this.http.patch<User>(url, { friendId: friendID}, { withCredentials: true }) // Patch with ID in the body
+    request$.subscribe()
+  }
+
+  declineRequest(friendID: string): void {
+    const url =`${this.domain}/user/decline-friend`
+    const request$ = this.http.patch<User>(url, { friendId: friendID}, { withCredentials: true }) // Patch with ID in the body
+    request$.subscribe()
+  }
 
   removeFriend(friendID: string): void {
     const url =`${this.domain}/user/friend/${friendID}`

@@ -128,7 +128,9 @@ export class UserController {
     @UseGuards(SessionGuard)
     async addNewFriend(@Body('friendId') friendId: string, @GetUser() currentUser: User) {
         if (currentUser && currentUser.id && friendId) {
-			return await this.userService.addUserFriend(currentUser.id, friendId)
+            const user = await this.userService.addUserFriend(currentUser.id, friendId)
+            console.log(user)
+            return user
         } else {
 			throw new UnauthorizedException('Access denied');
         }
@@ -179,7 +181,10 @@ export class UserController {
     @UseGuards(SessionGuard)
     async getPendingFriendRequests(@GetUser() currentUser: User) {
 		if (currentUser && currentUser.id) {
-			return await this.userService.getPendingFriendRequests(currentUser.id)
+			const user = await this.userService.getPendingFriendRequests(currentUser.id)
+            console.log('--------------------------------------------------')
+            console.log(user)
+            return user
 		} else {
 		throw new UnauthorizedException('Access denied');
 		}

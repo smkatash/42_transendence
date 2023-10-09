@@ -15,11 +15,12 @@ export class FriendComponent {
   @Input() type?: string
 
   acceptRequest(userID: string) {
-    // this.profileService.acceptRequest(userID)
+    this.profileService.acceptRequest(userID)
+    console.log('Ich accepte' + userID)
   }
 
   declineRequest(userID: string) {
-    // this.profileService.declineRequest(userID)
+    this.profileService.declineRequest(userID)
   }
 
 }

@@ -142,17 +142,16 @@ export class UserService {
 		}
 
 		currentUser.sentFriendRequests.push(newFriend)
-		await this.userRepo.save(currentUser)
+		return await this.userRepo.save(currentUser)
 	}
 
     async addUserFriend(id: string, friendId: string) {
-      try {
         const currentUser: User = await this.userRepo.findOne({
-          where: {id}, relations: ['friends', 'sentFriendRequests']
+          where: {id}, relations: ['friends', 'pendingFriendRequests']
         })
-
+		
         const friend = await this.userRepo.findOne({
-			where: {id: friendId}
+			where: {id: friendId}, relations: ['sentFriendRequests']
 		})
 
         if (!currentUser || !friend) {
@@ -162,14 +161,19 @@ export class UserService {
 		if (currentUser.friends && currentUser.friends.some((user) => user.id === friendId)) {
 			throw new BadRequestException('Friend request already accepted');
 		}
-		currentUser.friendOf.push(friend)
-		currentUser.sentFriendRequests = currentUser.sentFriendRequests.filter(
+		currentUser.friends.push(friend)
+		currentUser.pendingFriendRequests = currentUser.pendingFriendRequests.filter(
 			(user) => user.id !== friendId
 		)
-        return this.userRepo.save(currentUser)
-      } catch (err) {
-        throw new InternalServerErrorException()
-      }
+		friend.sentFriendRequests = friend.sentFriendRequests.filter(
+			(user) => user.id !== currentUser.id
+		)
+
+		console.log("!!!!!!!!!!!!!!!!!!!!!!!!")
+		console.log(currentUser)
+		console.log(friend)
+		console.log("!!!!!!!!!!!!!!!!!!!!!!!!")
+        return this.userRepo.save([currentUser, friend])
     }
 
 	async declineUserFriend(id: string, friendId: string) {
