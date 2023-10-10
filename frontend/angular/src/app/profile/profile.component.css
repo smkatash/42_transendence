@@ -14,6 +14,25 @@ body {
   display: flex;
 }
 
+button {
+  margin-top: 3%;
+  color: #4F6D7A;
+  background-color: #E8DAB2;
+  font-size: 1dvw;
+  font-family: 'Quattrocento', serif;
+  font-weight: bolder;
+  border: none;
+  cursor: pointer;
+  align-self: center;
+  justify-self: center;
+  height: 4dvh;
+  width: 8dvw;
+}
+
+button:hover {
+  background-color: #e9d5a1;
+}
+
 /************************* User info *************************/
 
 .info-container {
@@ -34,13 +53,34 @@ body {
   display: none;
 }
 
-.profile-pic img {
+.profile-pic .ppic {
   border: .2dvw solid #2f424a;
   border-radius: 50%;
   clip-path: circle();
   background-size: cover;
   height: 12dvw;
   width: 12dvw;
+}
+
+.edit-image {
+  position: fixed;
+  opacity: 0%;
+  background-color: #2f424a;
+  border-radius: 50%;
+  clip-path: circle();
+  height: 12.2dvw;
+  width: 12.5dvw;
+}
+
+.edit-image:hover {
+  cursor: pointer;
+  opacity: 50%;
+}
+
+.edit-image img {
+  width: 4.5dvw;
+  margin-left: 4dvw;
+  margin-top: 3.7dvw;
 }
 
 .username {
@@ -51,11 +91,61 @@ body {
   color: #E8DAB2;
 }
 
+.username:hover, .title:hover {
+  cursor: pointer;
+}
+
 .title {
   margin: 0% 0%;
   font-family: 'Bodoni Moda', serif;
   font-size: 1.5dvw;
   color: #2f424a;
+}
+
+.name-input-container, .title-input-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+input {
+  padding: 2%;
+  padding-left: 4%;
+  width: 70%;
+  box-sizing: border-box;
+  height: 100%;
+  font-size: 0.9dvw;
+  font-family: 'Quattrocento', serif;
+  font-weight: bolder;
+  border: none;
+  border-bottom: .1dvw solid #E8DAB2;
+  border-top: .1dvw solid #425c68;
+  background-color: #425c68;
+  color: #E8DAB2;
+  outline: none;
+}
+
+.is-invalid {
+  border-bottom: .1dvw solid #b04343;
+}
+
+.change-btn {
+  margin-top: 0%;
+  font-size: 1dvw;
+  height: 2.4dvw;
+  width: 4.5dvw;
+  border: .2dvh solid #2f424a;
+}
+
+.btn-invalid {
+  color: #2b3a41;
+  background-color: #988e6f;
+}
+
+.btn-invalid:hover {
+  color: #2b3a41;
+  background-color: #988e6f;
 }
 
 .status {
@@ -89,23 +179,8 @@ body {
   color: #E8DAB2;
 }
 
-.add-friend {
-  margin-top: 3%;
-  color: #4F6D7A;
-  background-color: #E8DAB2;
-  font-size: 1dvw;
-  font-family: 'Quattrocento', serif;
-  font-weight: bolder;
-  border: none;
-  cursor: pointer;
-  align-self: center;
-  justify-self: center;
-  height: 4dvh;
-  width: 8dvw;
-}
-
-.add-friend:hover {
-  background-color: #e9d5a1;
+.logout {
+  color: #b04343;
 }
 
 /************************* Stats *************************/
@@ -207,6 +282,34 @@ body {
   color: #2f424a;
 }
 
+.friends-container {
+  margin: 1dvw 2dvw 2dvw 2dvw;
+  overflow: auto;
+}
+
+.no-friends {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  height: 100%;
+}
+
+.no-friends h1 {
+  font-family: 'Bodoni Moda', serif;
+  font-size: 2dvw;
+  margin: 0%;
+  padding: 0%;
+}
+
+.no-friends h2 {
+  font-family: 'Bodoni Moda', serif;
+  font-size: 1dvw;
+  margin: 0%;
+  padding: 0%;
+  color: #2f424a;
+}
+
 .match-history {
   width: 50%;
   height: 100%;
@@ -221,12 +324,20 @@ body {
   box-sizing: border-box;
 }
 
-.friends-container {
+.matches-container {
   margin: 1dvw 2dvw 2dvw 2dvw;
   overflow: auto;
 }
 
-.matches-container {
-  margin: 1dvw 2dvw 2dvw 2dvw;
-  overflow: auto;
+.no-matches {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  height: 100%;
+}
+
+.no-matches h1 {
+  font-family: 'Bodoni Moda', serif;
+  font-size: 2dvw;
 }

@@ -1,10 +1,10 @@
 import { Injectable, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http'
-import { SocketIoModule, SocketIoConfig, Socket } from 'ngx-socket-io';
+import { Socket } from 'ngx-socket-io';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LoginComponent } from './login/login.component';
+import { LoginComponent } from './auth/auth.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 

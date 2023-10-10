@@ -1,14 +1,38 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { LoginComponent } from './login/login.component';
+import { LoginComponent } from './auth/auth.component';
+import { authGuard } from './auth/auth.guard';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/profile', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
-  // { path: 'chat', loadChildren: () => import('./chat/chat.module').then(m => m.ChatModule) },
-  { path: 'game', loadChildren: () => import('./game/game.module').then(m => m.GameModule) },
-  { path: 'leaderboard', loadChildren: () => import('./leaderboard/leaderboard.module').then(m => m.LeaderboardModule) },
-  { path: 'profile', loadChildren: () => import('./profile/profile.module').then(m => m.ProfileModule) },
+  {
+    path: '',
+    redirectTo: '/profile',
+    pathMatch: 'full'
+  },
+  {
+    path: 'login',
+    component: LoginComponent
+  },
+  // {
+  //   path: 'chat',
+  //   loadChildren: () => import('./chat/chat.module').then(m => m.ChatModule),
+  //   canActivate: [ authGuard ]
+  // },
+  {
+    path: 'game',
+    loadChildren: () => import('./game/game.module').then(m => m.GameModule),
+    canActivate: [ authGuard ]
+  },
+  {
+    path: 'leaderboard',
+    loadChildren: () => import('./leaderboard/leaderboard.module').then(m => m.LeaderboardModule),
+    canActivate: [ authGuard ]
+  },
+  {
+    path: 'profile',
+    loadChildren: () => import('./profile/profile.module').then(m => m.ProfileModule),
+    canActivate: [ authGuard ]
+  },
 ];
 
 @NgModule({
