@@ -57,7 +57,7 @@ import { ChannelService } from './chat/service/channel.service';
     ChatModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ChatGateway, MessageService, ChannelService],
+  providers: [AppService],
 })
 
 export class AppModule {}

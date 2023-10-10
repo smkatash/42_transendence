@@ -1,6 +1,11 @@
 import { Logger, UnauthorizedException } from '@nestjs/common';
 import { MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { ChannelService } from './service/channel.service';
+import { createChannelDto } from './dto/createChannel.dto';
+import { Channel } from './entities/channel.entity';
+import { User } from 'src/user/entities/user.entity';
+import { UserService } from 'src/user/user.service';
 
 @WebSocketGateway({
   namespace: 'chat',
@@ -11,11 +16,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
 
   @WebSocketServer()
   server: Server;
-  constructor(){}
+  constructor(
+    private readonly channelService: ChannelService,
+    private readonly userService: UserService
+  ){}
   // clients: Map<Number, Socket>;
 
   // handleConnection(client: any, ...args: any[]) {
-    handleConnection(socket: Socket) {
+    /*async*/handleConnection(socket: Socket) {
     Logger.log('New connection:', socket);
     //TODO check session here
     // const user: User await etc
@@ -25,6 +33,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
     //     return this.disconect(socket);
     //   }  else  {
       // socket.data.user = user;
+      // const channels = await this.channelService.getUsersChannels(user.id)
+      // this.server.to(socket.id).emit('channels', channels)
   //  }
     // } catch {
     //   return this.disconect(socket)
@@ -49,8 +59,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect{
   }
 
   //bye bye
+
   private disconect(socket: Socket) {
     socket.emit('Error', new UnauthorizedException());
     socket.disconnect();
+  }
+
+  @SubscribeMessage('createChannel')
+  async onCreateChannel(socket: Socket, channel: createChannelDto): Promise<Channel>{
+    const user: User = await this.userService.getUserById(socket.data.user)
+    // if (!user)
+      // bla bla
+    return this.channelService.createChannel(channel, user);
   }
 }
