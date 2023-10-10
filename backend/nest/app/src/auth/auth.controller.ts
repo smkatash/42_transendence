@@ -99,7 +99,7 @@ export class AuthController {
 		if (user && user.id) {
 			await this.userService.logoutUser(user.id)
 			res.clearCookie('pong.sid')
-			res.redirect('/')
+			res.redirect(FRONT_END_CALLBACK_URL)
 		}
 		throw new UnauthorizedException()
     }
