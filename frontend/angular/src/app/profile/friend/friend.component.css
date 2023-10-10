@@ -1,4 +1,4 @@
-.friend {
+.friend, .request {
   position: relative;
   background-color: #2f424a;
   border: 0.17dvw solid #2f424a;
@@ -47,7 +47,26 @@
   overflow: hidden;
 }
 
-.friend:hover {
+button {
+  color: #4F6D7A;
+  background-color: #E8DAB2;
+  font-size: .7dvw;
+  font-family: 'Quattrocento', serif;
+  font-weight: bolder;
+  border: none;
+  cursor: pointer;
+  align-self: center;
+  justify-self: center;
+  height: 4dvh;
+  width: 8dvw;
+}
+
+button:hover {
+  background-color: #e9d5a1;
+}
+
+
+.friend:hover, .request:hover {
   background-color: #223036;
   border: 0.17dvw solid #223036;
   cursor: pointer;

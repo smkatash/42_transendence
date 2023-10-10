@@ -67,16 +67,34 @@
 
         <div class="friends">
           <div class="wrapper">
-            <h1 *ngIf="friends.length">Friends:</h1>
-            <div class="friends-container" *ngIf="friends.length">
+
+            <div class="friend-sections">
+              <div [class.selected]="selectedTab === 'friends'" (click)="selectTab('friends')"><h1>Friends:</h1></div>
+              <div [class.selected]="selectedTab === 'requests'" (click)="selectTab('requests')"><h1>Requests:</h1></div>
+            </div>
+
+            <!-- When the friends tab is selected -->
+            <div class="friends-container" *ngIf="selectedTab === 'friends' && friends.length">
               <div *ngFor="let friend of friends">
-                <app-friend [user]="friend"></app-friend>
+                <app-friend [user]="friend" [type]="'friend'"></app-friend>
               </div>
             </div>
-            <div class="no-friends" *ngIf="!friends.length">
+            <div class="no-friends" *ngIf="selectedTab === 'friends' && !friends.length">
               <h1>No friends</h1>
               <h2>play sad violin music</h2>
             </div>
+
+            <!-- When the requests tab is selected -->
+            <div class="requests-container" *ngIf="selectedTab === 'requests' && requests.length">
+              <div *ngFor="let request of requests">
+                <app-friend [user]="request" [type]="'request'"></app-friend>
+              </div>
+            </div>
+            <div class="no-requests" *ngIf="selectedTab === 'requests' && !requests.length">
+              <h1>No requests</h1>
+              <h2>play even sadder violin music</h2>
+            </div>
+
           </div>
         </div>
 

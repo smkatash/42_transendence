@@ -17,6 +17,7 @@ export class ProfileComponent implements OnInit {
   currentUserID: string | null = null
   profile?: User
   friends: User[] = []
+  requests: User[] = []
   matches: Match[] = []
   rank: number = 0
   stats: Stats = {wins: 0, losses: 0}
@@ -25,6 +26,7 @@ export class ProfileComponent implements OnInit {
   isEditingName: boolean = false
   isEditingTitle: boolean = false
   isbuttonClicked2FA: boolean = false
+  selectedTab: string = 'friends'
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -48,17 +50,18 @@ export class ProfileComponent implements OnInit {
     forkJoin({
       currentUser: this.profileService.getCurrentUser(),
       friends: this.profileService.getCurrentUserFriends(),
+      requests: this.profileService.getCurrentUserRequests(),
       rank: this.profileService.getCurrentUserRank(),
       stats: this.profileService.getCurrentUserStats(),
       history: this.profileService.getCurrentUserHistory(),
     }).subscribe({
-      next: ({ currentUser, friends, rank, stats, history }) => {
-        this.profile = currentUser;
-        console.log(friends)
-        this.friends = friends;
-        this.rank = rank;
-        this.stats = stats;
-        this.matches = history;
+      next: ({ currentUser, friends, requests, rank, stats, history }) => {
+        this.profile = currentUser
+        this.friends = friends
+        this.requests = requests
+        this.rank = rank
+        this.stats = stats
+        this.matches = history
       },
       error: err => this.handleError(err)
     });
@@ -74,11 +77,11 @@ export class ProfileComponent implements OnInit {
       matches: this.profileService.getHistory(this.id),
     }).subscribe({
       next: ({ user, friends, rank, stats, matches }) => {
-        this.profile = user;
-        this.friends = friends;
-        this.rank = rank;
-        this.stats = stats;
-        this.matches = matches;
+        this.profile = user
+        this.friends = friends
+        this.rank = rank
+        this.stats = stats
+        this.matches = matches
       },
       error: err => this.handleError(err)
     });
@@ -143,7 +146,11 @@ export class ProfileComponent implements OnInit {
     this.cd.detectChanges();
   }
 
-/*   onFriendRequest(userID: string): void {
-    this.profileService.sendRequest(userID)
-  } */
+  selectTab(tab: string) {
+    if (tab === 'friends') {
+      this.selectedTab= 'friends'
+    } else {
+      this.selectedTab= 'requests'
+    }
+  }
 }

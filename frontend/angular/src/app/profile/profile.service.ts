@@ -27,6 +27,11 @@ export class ProfileService {
     return this.http.get<User[]>(url, { withCredentials: true })
   }
 
+  getCurrentUserRequests(): Observable<User[]> {
+    const url = `${this.domain}/user/friends/pending`
+    return this.http.get<User[]>(url, { withCredentials: true })
+  }
+
   getFriends(userID: string): Observable<User[]> {
     const url = `${this.domain}/user/${userID}/friends`
     return this.http.get<User[]>(url, { withCredentials: true })
@@ -50,6 +55,18 @@ export class ProfileService {
   sendRequest(friendID: string): void {
     const url =`${this.domain}/user/request-friend`
     const request$ = this.http.post<User>(url, { friendId: friendID}, { withCredentials: true }) // Post with ID in the body
+    request$.subscribe()
+  }
+
+  acceptRequest(friendID: string): void {
+    const url =`${this.domain}/user/add-friend`
+    const request$ = this.http.patch<User>(url, { friendId: friendID}, { withCredentials: true }) // Patch with ID in the body
+    request$.subscribe()
+  }
+
+  declineRequest(friendID: string): void {
+    const url =`${this.domain}/user/decline-friend`
+    const request$ = this.http.patch<User>(url, { friendId: friendID}, { withCredentials: true }) // Patch with ID in the body
     request$.subscribe()
   }
 
