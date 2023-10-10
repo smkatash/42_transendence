@@ -13,16 +13,12 @@ import { Match } from './game/entities/match.entity';
 import { Player } from './game/entities/player.entity';
 import { Queue } from './game/entities/queue.entity';
 import { ScheduleModule } from '@nestjs/schedule';
-// import { ChannelUserModule } from './chat/channel_user/channel_user.module';
-// import { ChannelMessageModule } from './chat/channel_message/channel_message.module';
-// import { BlockListModule } from './chat/block_list/block_list.module';
-// import { FriendListModule } from './chat/friend_list/friend_list.module';
 import { RankingModule } from './ranking/ranking.module';
-// import { ChannelModule } from './chat/channel/channel.module';
-// import { ChatGatewayGateway } from './chat/chat-gateway/chat-gateway.gateway';
 import { ChatModule } from './chat/chat.module';
 import { AuthToken } from './auth/entities/auth-token.entity';
 import { Channel } from './chat/entities/channel.entity';
+import { ChatUser } from './chat/entities/chatUser.entity';
+import { Message } from './chat/entities/message.entity';
 
 
 @Module({
@@ -44,12 +40,11 @@ import { Channel } from './chat/entities/channel.entity';
       username: DB_USERNAME,
       password: DB_PASSWORD,
       database: DB_NAME,
-      entities: [User, Match, Player, Queue, AuthToken, Channel],
+      entities: [User, Match, Player, Queue, AuthToken, Channel, ChatUser, Message],
       synchronize: true
     }),
     GameModule,
     ScheduleModule.forRoot(),
-    // ChannelUserModule,
     // FriendListModule,
     RankingModule,
     ChatModule,

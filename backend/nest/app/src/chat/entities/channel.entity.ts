@@ -1,5 +1,6 @@
 import { User } from "src/user/entities/user.entity";
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Message } from "./message.entity";
 
 @Entity()
 export class Channel    {
@@ -31,6 +32,11 @@ export class Channel    {
     @JoinTable()
     users: User[];
 
-    // @Column()
+    @ManyToMany(() => User)
+    @JoinTable()
+    admins: User[]
+
+    @OneToMany(() => Message, (message) => message.channel)
+    messages: Message[]
 
 }

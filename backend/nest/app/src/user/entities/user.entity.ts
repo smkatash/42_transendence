@@ -41,6 +41,10 @@ export class User {
     @JoinTable()
     channels: Channel[];
 
+    @ManyToMany(() => Channel, channel => channel.admins)
+    @JoinTable()
+    adminAt: Channel[]
+
     @OneToMany(() => Channel, (channel) => channel.owner)
     ownedChannels: Channel[]
     

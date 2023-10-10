@@ -227,4 +227,8 @@ export class UserService {
 		return imageName ?? ''
 	}
 
+	//for updates
+	async saveUser(user: User)	{
+		return await this.userRepo.save(user);
+	}
 }
