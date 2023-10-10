@@ -79,6 +79,7 @@ export class ProfileComponent implements OnInit {
       next: ({ user, friends, rank, stats, matches }) => {
         this.profile = user
         this.friends = friends
+        // this.requests = [] // Set it back to empty if fetching a user's profile
         this.rank = rank
         this.stats = stats
         this.matches = matches

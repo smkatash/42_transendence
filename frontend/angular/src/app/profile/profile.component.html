@@ -68,9 +68,12 @@
         <div class="friends">
           <div class="wrapper">
 
-            <div class="friend-sections">
+            <div class="friend-sections" *ngIf="id === null">
               <div [class.selected]="selectedTab === 'friends'" (click)="selectTab('friends')"><h1>Friends:</h1></div>
               <div [class.selected]="selectedTab === 'requests'" (click)="selectTab('requests')"><h1>Requests:</h1></div>
+            </div>
+            <div class="friend-sections" *ngIf="id !== null && id !== currentUserID">
+              <h1>Friends:</h1>
             </div>
 
             <!-- When the friends tab is selected -->
