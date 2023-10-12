@@ -1,5 +1,5 @@
 import { Column, Entity, JoinTable, ManyToMany, PrimaryColumn} from "typeorm";
-import { Status } from "../utils/status.dto";
+import { Status } from "../utils/status.enum";
 import { MfaStatus } from "src/auth/utils/mfa-status";
 
 

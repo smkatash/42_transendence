@@ -6,7 +6,7 @@ import { AuthService } from "../services/auth.service";
 import { AuthUserDto } from "../utils/auth.user.dto";
 import { Profile } from "../utils/profile";
 import { User } from "src/user/entities/user.entity";
-import { Status } from "src/user/utils/status.dto";
+import { Status } from "src/user/utils/status.enum";
 import * as fs from 'fs';
 
 @Injectable()

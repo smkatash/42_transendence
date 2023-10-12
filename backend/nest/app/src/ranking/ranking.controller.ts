@@ -6,6 +6,8 @@ import { SessionGuard } from 'src/auth/guard/auth.guard';
 import { MatchHistoryDto } from './dto/match-history.dto';
 import { Match } from 'src/game/entities/match.entity';
 import { StatsDto } from './dto/stats.dto';
+import { SessionUserDto } from 'src/user/utils/user.dto';
+import { ParamUserIdDto } from 'src/user/utils/entity.dto';
 
 @Controller('ranking')
 export class RankingController {
@@ -13,7 +15,7 @@ export class RankingController {
     
     @Get('history')
     @UseGuards(SessionGuard)
-    async getCurrentMatchHistory(@GetUser() currentUser: User) {
+    async getCurrentMatchHistory(@GetUser() currentUser: SessionUserDto) {
         if (currentUser && currentUser.id) {
             const matchSummary: Match[] = await this.rankingService.getMatchesByUserId(currentUser.id)
             const matchHistory: MatchHistoryDto[] = []
@@ -28,13 +30,13 @@ export class RankingController {
 
     @Get(':id/history')
     @UseGuards(SessionGuard)
-    async getUserMatchHistory(@Param('id') userId: string, @GetUser() currentUser: User) {
-        if (currentUser && currentUser.id && userId) {
-            const matchSummary: Match[] = await this.rankingService.getMatchesByUserId(userId)
+    async getUserMatchHistory(@Param() userIdDto: ParamUserIdDto, @GetUser() currentUser: SessionUserDto) {
+        if (currentUser && currentUser.id && userIdDto.id) {
+            const matchSummary: Match[] = await this.rankingService.getMatchesByUserId(userIdDto.id)
             const matchHistory: MatchHistoryDto[] = []
             
            for (const match of matchSummary) {
-                matchHistory.push(new MatchHistoryDto(match, userId))
+                matchHistory.push(new MatchHistoryDto(match, userIdDto.id))
            }
            return matchHistory
         }
@@ -43,7 +45,7 @@ export class RankingController {
 
     @Get('board')
     @UseGuards(SessionGuard)
-    async getRankingBoard(@GetUser() currentUser: User) {
+    async getRankingBoard(@GetUser() currentUser: SessionUserDto) {
         if (currentUser && currentUser.id) {
             return this.rankingService.getAllUserStats()
         }
@@ -53,7 +55,7 @@ export class RankingController {
 	
 	@Get('level')
 	@UseGuards(SessionGuard)
-	async getCurrentPosition(@GetUser() currentUser: User) {
+	async getCurrentPosition(@GetUser() currentUser: SessionUserDto) {
 		if (currentUser && currentUser.id) {
 			return this.rankingService.getUserPosition(currentUser.id)
 		}
@@ -62,16 +64,16 @@ export class RankingController {
 
     @Get(':id/level')
 	@UseGuards(SessionGuard)
-	async getUserPosition(@Param('id') userId: string, @GetUser() currentUser: User) {
-		if (currentUser && currentUser.id && userId) {
-			return this.rankingService.getUserPosition(userId)
+	async getUserPosition(@Param() userIdDto: ParamUserIdDto, @GetUser() currentUser: SessionUserDto) {
+		if (currentUser && currentUser.id && userIdDto.id) {
+			return this.rankingService.getUserPosition(userIdDto.id)
 		}
 		throw new UnauthorizedException('Access denied')
 	}
 
 	@Get('stats')
 	@UseGuards(SessionGuard)
-	async getCurrentStats(@GetUser() currentUser: User) {
+	async getCurrentStats(@GetUser() currentUser: SessionUserDto) {
 		if (currentUser && currentUser.id) {
 			const stats: StatsDto = await this.rankingService.getUserStatsById(currentUser.id)
 			return stats
@@ -81,9 +83,9 @@ export class RankingController {
 
     @Get(':id/stats')
 	@UseGuards(SessionGuard)
-	async getUserStats(@Param('id') userId: string, @GetUser() currentUser: User) {
-		if (currentUser && currentUser.id && userId) {
-			const stats: StatsDto = await this.rankingService.getUserStatsById(userId)
+	async getUserStats(@Param() userIdDto: ParamUserIdDto, @GetUser() currentUser: SessionUserDto) {
+		if (currentUser && currentUser.id && userIdDto.id) {
+			const stats: StatsDto = await this.rankingService.getUserStatsById(userIdDto.id)
 			return stats
 		}
 		throw new UnauthorizedException('Access denied')

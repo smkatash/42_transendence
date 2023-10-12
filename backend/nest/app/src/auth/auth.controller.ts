@@ -5,10 +5,12 @@ import { AuthService } from './services/auth.service';
 import { GetUser } from './utils/get-user.decorator';
 import { User } from 'src/user/entities/user.entity';
 import { SessionGuard } from './guard/auth.guard';
-import { Status } from 'src/user/utils/status.dto';
+import { Status } from 'src/user/utils/status.enum';
 import { FRONT_END_2FA_CALLBACK_URL, FRONT_END_CALLBACK_URL } from 'src/Constants';
-import { UserService } from 'src/user/user.service';
+import { UserService } from 'src/user/service/user.service';
 import { MailService } from './services/mail.service';
+import { SessionUserDto } from 'src/user/utils/user.dto';
+import { CodeDto } from './utils/entity.dto';
 
 @Controller('42auth')
 export class AuthController {
@@ -25,7 +27,7 @@ export class AuthController {
     
     @Get('redirect')
     @UseGuards(OauthGuard)
-    async handleRedirect(@GetUser() user: User, @Res({ passthrough: true }) res: Response) {
+    async handleRedirect(@GetUser() user: SessionUserDto, @Res({ passthrough: true }) res: Response) {
         if (user && user.id) {
 			if (user.mfaEnabled === true && user.email) {
 				const token = await this.authService.createAuthToken(user.id)
@@ -42,7 +44,7 @@ export class AuthController {
 
     @Get('test')
     @UseGuards(SessionGuard)
-    async handleTest(@GetUser() user: User) {
+    async handleTest(@GetUser() user: SessionUserDto) {
         if (user) {
             return { message: 'OK' }
         } else {
@@ -52,7 +54,7 @@ export class AuthController {
 	
 	@Get('send-code-mfa')
 	@UseGuards(SessionGuard)
-	async sendVerificationCode(@GetUser() user: User) {
+	async sendVerificationCode(@GetUser() user: SessionUserDto) {
 		if (user && user.id) {
 			if (user.mfaEnabled === true && user.email) {
 				const token = await this.authService.createAuthToken(user.id)
@@ -66,12 +68,12 @@ export class AuthController {
 
 	@Post('login-verify-mfa')
 	@UseGuards(SessionGuard)
-	async handleLoginMfaVerification(@GetUser() user: User, @Body('code') code: string, 
+	async handleLoginMfaVerification(@GetUser() user: SessionUserDto, @Body() codeDto: CodeDto, 
 								@Res({ passthrough: true }) res: Response) {
         if (user && user.id) {
-			if (this.authService.isValidTokenData(user.id, code)) {
+			if (this.authService.isValidTokenData(user.id, codeDto.code)) {
 				await this.userService.verifyUserMfa(user.id)
-				await this.authService.removeToken(code)
+				await this.authService.removeToken(codeDto.code)
 				res.status(302).redirect(FRONT_END_CALLBACK_URL)
 			}
 		}
@@ -79,12 +81,12 @@ export class AuthController {
     }
 	@Post('verify-mfa')
 	@UseGuards(SessionGuard)
-	async handleMfaVerification(@GetUser() user: User, @Body('code') code: string, 
+	async handleMfaVerification(@GetUser() user: SessionUserDto, @Body() codeDto: CodeDto, 
 								@Res({ passthrough: true }) res: Response) {
         if (user && user.id) {
-			if (this.authService.isValidTokenData(user.id, code)) {
+			if (this.authService.isValidTokenData(user.id, codeDto.code)) {
 				await this.userService.verifyUserMfa(user.id)
-				await this.authService.removeToken(code)
+				await this.authService.removeToken(codeDto.code)
 				return HttpStatus.ACCEPTED
 			}
 		}
@@ -95,7 +97,7 @@ export class AuthController {
 
     @Get('logout')
     @UseGuards(SessionGuard)
-    async handleLogOut(@GetUser() user: User, @Res() res: Response) {
+    async handleLogOut(@GetUser() user: SessionUserDto, @Res() res: Response) {
 		if (user && user.id) {
 			await this.userService.logoutUser(user.id)
 			res.clearCookie('pong.sid')

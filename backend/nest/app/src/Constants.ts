@@ -10,6 +10,7 @@ export const DB_USERNAME='postgres'
 export const DB_PASSWORD='postgresDB'
 export const DB_NAME='postgresapp'
 export const SESSION_SECRET='topsecretahahsjfkgklh'
+export const IMAGE_UPLOADS_PATH='uploads/images/'
 
 export const REDIS_HOST='redis'
 export const REDIS_PORT=6379
@@ -21,3 +22,4 @@ export const DEFAULT_PADDLE_LENGTH = 10
 export const DEFAULT_TABLE_PROPORTION = 2
 export const DEFAULT_TABLE_HEIGHT = 500
 export const DEFAULT_PADDLE_GAP = 10
+export const POSTGRES_UNIQUE_VIOLATION = '23505'

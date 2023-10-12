@@ -1,20 +1,26 @@
-import { BadRequestException, HttpException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
+import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
 import { AuthUserDto } from 'src/auth/utils/auth.user.dto';
 import { validate } from 'class-validator';
-import { Status } from './utils/status.dto';
+import { Status } from '../utils/status.enum';
 import * as https from 'https';
 import * as fs from 'fs';
 import { MfaStatus } from 'src/auth/utils/mfa-status';
+import { IMAGE_UPLOADS_PATH } from 'src/Constants';
 
 @Injectable()
 export class UserService {
     constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
 
     async getUserById(id: string): Promise<User> {
-      return this.userRepo.findOneBy({id})
+      const user = this.userRepo.findOneBy({id})
+		
+	  if (!user) {
+		throw new NotFoundException('User not found')
+	  }
+	  return user
     }
 
 	async logoutUser(id: string) {
@@ -34,7 +40,7 @@ export class UserService {
     async saveValidUser(user: User) {
       const validate_error = await validate(user);
       if (validate_error.length > 0) {
-        throw new BadRequestException();
+        throw new UnprocessableEntityException('Invalid user format');
       }
       return this.userRepo.save(user);
     }
@@ -74,7 +80,6 @@ export class UserService {
 		user.email = email
 		user.mfaStatus = MfaStatus.DENY
 		user.status = Status.MFAPending
-		console.log('user service: ' + email)
 		return this.saveValidUser(user)
 	}
 
@@ -92,19 +97,15 @@ export class UserService {
 	}
 
     async getUserFriends(id: string) {
-      try {
         const currentUser: User = await this.userRepo.findOne({
           where: {id}, relations: ['friends']
         })
 
         if (!currentUser) {
-          throw new HttpException('User not found', 404)
+          throw new NotFoundException('User not found')
         }
-  
+
         return currentUser.friends
-      } catch(err) {
-        throw new InternalServerErrorException()
-      }
     } 
 
 	async getPendingFriendRequests(id: string): Promise<User[]> {
@@ -147,65 +148,61 @@ export class UserService {
 
     async addUserFriend(id: string, friendId: string) {
         const currentUser: User = await this.userRepo.findOne({
-          where: {id}, relations: ['friendOf', 'friends', 'pendingFriendRequests']
+          where: {id}, relations: ['friendOf', 'friends', 'sentFriendRequests', 'pendingFriendRequests']
         })
-		
+
         const friend = await this.userRepo.findOne({
-			where: {id: friendId}, relations: ['sentFriendRequests']
+			where: {id: friendId}
 		})
 
         if (!currentUser || !friend) {
-          throw new HttpException('User not found', 404)
+          throw new NotFoundException('User not found')
         }
 
 		if (currentUser.friends && currentUser.friends.some((user) => user.id === friendId)) {
 			throw new BadRequestException('Friend request already accepted');
 		}
+
 		currentUser.friendOf.push(friend)
 		currentUser.friends.push(friend)
 		currentUser.pendingFriendRequests = currentUser.pendingFriendRequests.filter(
 			(user) => user.id !== friendId
 		)
-		friend.sentFriendRequests = friend.sentFriendRequests.filter(
-			(user) => user.id !== currentUser.id
+		currentUser.sentFriendRequests = currentUser.sentFriendRequests.filter(
+			(user) => user.id !== friendId
 		)
-
-		console.log("!!!!!!!!!!!!!!!!!!!!!!!!")
-		console.log(currentUser)
-		console.log(friend)
-		console.log("!!!!!!!!!!!!!!!!!!!!!!!!")
-        return this.userRepo.save([currentUser, friend])
+        return this.userRepo.save(currentUser)
     }
 
 	async declineUserFriend(id: string, friendId: string) {
-		try {
-		  const currentUser = await this.userRepo.findOne({ where: {id}, relations: ['sentFriendRequests']})
-		  const friendToDecline = await this.userRepo.findOne({where: {id: friendId}, relations: ['pendingFriendRequests']})
+		  const currentUser = await this.userRepo.findOne({ 
+			where: {id}, relations: ['sentFriendRequests', 'pendingFriendRequests']
+		})
+		  const friendToDecline = await this.userRepo.findOne({
+			where: {id: friendId}
+		})
 		  if (!currentUser || !friendToDecline) {
-			throw new HttpException('User not found', 404)
+			throw new NotFoundException('User not found')
 		  }
   
 		  currentUser.sentFriendRequests = currentUser.sentFriendRequests.filter((u) => u.id !== friendId)
-		  friendToDecline.pendingFriendRequests = friendToDecline.pendingFriendRequests.filter((u) => u.id !== id)
+		  currentUser.pendingFriendRequests = currentUser.pendingFriendRequests.filter((u) => u.id !== friendId)
   
-		  return await this.userRepo.save([currentUser, friendToDecline])
-		} catch (err) {
-		  throw new InternalServerErrorException()
-		}
+		  return this.userRepo.save(currentUser)
 	  }
 
     async removeUserFriend(id: string, friendId: string) {
       try {
-        const currentUser = await this.userRepo.findOneOrFail({ where: {id}, relations: ['friends']})
-        const friendToRemove = await this.userRepo.findOneOrFail({where: {id: friendId}, relations: ['friendOf']})
+        const currentUser = await this.userRepo.findOne({ where: {id}, relations: ['friends', 'friendOf']})
+        const friendToRemove = await this.userRepo.findOne({where: {id: friendId}})
         if (!currentUser || !friendToRemove) {
           throw new HttpException('User not found', 404)
         }
 
         currentUser.friends = currentUser.friends.filter((u) => u.id !== friendId)
-        friendToRemove.friendOf = friendToRemove.friendOf.filter((u) => u.id !== id)
+        currentUser.friendOf = currentUser.friendOf.filter((u) => u.id !== friendId)
 
-        return await this.userRepo.save([currentUser, friendToRemove])
+        return await this.userRepo.save(currentUser)
       } catch (err) {
         throw new InternalServerErrorException()
       }
@@ -214,7 +211,7 @@ export class UserService {
 	async getIntraProfile(imageUrl: string): Promise<string> {
 		const imageSplit = imageUrl.split('/')
 		const imageName = imageSplit[imageSplit.length - 1]
-		const file = fs.createWriteStream(`./uploads/images/${imageName}`)
+		const file = fs.createWriteStream(IMAGE_UPLOADS_PATH + imageName)
 
 		https.get(imageUrl, response => {
 		response.pipe(file);
@@ -228,4 +225,10 @@ export class UserService {
 		return imageName ?? ''
 	}
 
+
+	async getUserRelations(id: string) {
+		return this.userRepo.findOne({
+			where: { id }, relations: ['friends', 'friendOf', 'sentFriendRequests', 'pendingFriendRequests']
+		})
+	}
 }

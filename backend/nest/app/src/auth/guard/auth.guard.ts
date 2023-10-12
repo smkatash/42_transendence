@@ -1,7 +1,8 @@
 import { Injectable, CanActivate, ExecutionContext, UseGuards } from '@nestjs/common';
 import { User } from 'src/user/entities/user.entity';
-import { Status } from 'src/user/utils/status.dto';
+import { Status } from 'src/user/utils/status.enum';
 import { MfaStatus } from '../utils/mfa-status';
+import * as request from 'supertest';
 
 @Injectable()
 export class SessionGuard implements CanActivate {

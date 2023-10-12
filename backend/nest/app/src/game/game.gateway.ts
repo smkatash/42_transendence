@@ -1,9 +1,9 @@
 import {  Logger, Req, UseGuards } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { UserService } from '../user/user.service';
+import { UserService } from '../user/service/user.service';
 import { User } from 'src/user/entities/user.entity';
-import { Status } from 'src/user/utils/status.dto';
+import { Status } from 'src/user/utils/status.enum';
 import { MatchService } from './service/match.service';
 import { Player } from './entities/player.entity';
 import { PlayerService } from './service/player.service';
@@ -62,8 +62,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('start')
   async handleStartMatch(@ConnectedSocket() client: Socket) {
-    client.handshake.headers.cookie
-    console.log("bonjour putain")
+	console.log("bonjour putain")
     if (!client.data.user.id) return
     this.logger.debug(client.data.user.id)
     const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
