@@ -2,12 +2,11 @@ import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-42"
 import { CALLBACK_URL, CLIENT_ID, CLIENT_SECRET } from "src/Constants";
-import { AuthService } from "../services/auth.service";
+import { AuthService } from "../service/auth.service";
 import { AuthUserDto } from "../utils/auth.user.dto";
 import { Profile } from "../utils/profile";
 import { User } from "src/user/entities/user.entity";
 import { Status } from "src/user/utils/status.enum";
-import * as fs from 'fs';
 
 @Injectable()
 export class OauthStrategy extends PassportStrategy(Strategy, '42') {
@@ -26,11 +25,6 @@ export class OauthStrategy extends PassportStrategy(Strategy, '42') {
     }
 
     async validate(accessToken: string, refreshToken: string, profile: Profile): Promise<User> {
-        console.log('Validation')
-        console.log(accessToken)
-        console.log(refreshToken)
-        console.log('-------')
-
         let title = 'Pong Master'
         if (profile.titles && profile.titles[0]) {
             title = profile.titles[0].name.replace('%login, ', '')
@@ -46,9 +40,8 @@ export class OauthStrategy extends PassportStrategy(Strategy, '42') {
 
         const user = await this.authService.validateUser(authUserDto)
         if (!user) {
-            throw new UnauthorizedException()
+            throw new UnauthorizedException('Access denied')
         }
-        console.log('Returning: ' + JSON.stringify(user))
         return user
     }
 }

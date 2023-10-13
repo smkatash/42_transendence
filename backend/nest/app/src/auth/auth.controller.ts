@@ -1,14 +1,14 @@
-import { Controller, Get, Inject, Res, UseGuards, UnauthorizedException, Req, Post, Body, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Inject, Res, UseGuards, UnauthorizedException, Req, Post, Body, HttpStatus, InternalServerErrorException } from '@nestjs/common';
 import { OauthGuard } from './guard/oauth.guard';
 import { Response } from 'express';
-import { AuthService } from './services/auth.service';
+import { AuthService } from './service/auth.service';
 import { GetUser } from './utils/get-user.decorator';
 import { User } from 'src/user/entities/user.entity';
 import { SessionGuard } from './guard/auth.guard';
 import { Status } from 'src/user/utils/status.enum';
 import { FRONT_END_2FA_CALLBACK_URL, FRONT_END_CALLBACK_URL } from 'src/Constants';
 import { UserService } from 'src/user/service/user.service';
-import { MailService } from './services/mail.service';
+import { MailService } from './service/mail.service';
 import { SessionUserDto } from 'src/user/utils/user.dto';
 import { CodeDto } from './utils/entity.dto';
 
@@ -27,83 +27,118 @@ export class AuthController {
     
     @Get('redirect')
     @UseGuards(OauthGuard)
-    async handleRedirect(@GetUser() user: SessionUserDto, @Res({ passthrough: true }) res: Response) {
-        if (user && user.id) {
-			if (user.mfaEnabled === true && user.email) {
-				const token = await this.authService.createAuthToken(user.id)
-				await this.mailService.send(user.email, `Your Auth Code is: ${token.value}`)
-				await this.userService.updateUserStatus(user.id, Status.MFAPending)
-				res.status(302).redirect(FRONT_END_2FA_CALLBACK_URL)
-				//res.status(302).redirect('mfa')
+    async handleRedirect(@GetUser() currentUser: SessionUserDto, @Res({ passthrough: true }) res: Response) {
+		if (!currentUser) {
+			throw new UnauthorizedException('Access denied');
+		}
+
+
+		try {
+			if (currentUser.mfaEnabled === true && currentUser.email) {
+					const token = await this.authService.createAuthToken(currentUser.id)
+					await this.mailService.send(currentUser.email, `Your Auth Code is: ${token.value}`)
+					await this.userService.updateUserStatus(currentUser.id, Status.MFAPending)
+					res.status(302).redirect(FRONT_END_2FA_CALLBACK_URL)
+					//res.status(302).redirect('mfa')
 			}
-			await this.userService.updateUserStatus(user.id, Status.ONLINE)
+			await this.userService.updateUserStatus(currentUser.id, Status.ONLINE)
 			res.status(302).redirect(FRONT_END_CALLBACK_URL)
-			//res.status(302).redirect('test')
-        }
+				//res.status(302).redirect('test')
+		} catch (error) {
+			throw error
+		}
     }
 
     @Get('test')
     @UseGuards(SessionGuard)
-    async handleTest(@GetUser() user: SessionUserDto) {
-        if (user) {
+    async handleTest(@GetUser() currentUser: SessionUserDto) {
+        if (currentUser) {
             return { message: 'OK' }
         } else {
-			throw new UnauthorizedException()
+			throw new UnauthorizedException('Access denied');
         }
     }
 	
 	@Get('send-code-mfa')
 	@UseGuards(SessionGuard)
-	async sendVerificationCode(@GetUser() user: SessionUserDto) {
-		if (user && user.id) {
-			if (user.mfaEnabled === true && user.email) {
-				const token = await this.authService.createAuthToken(user.id)
-				await this.mailService.send(user.email, `Your Auth Code is: ${token.value}`)
-				return user
-			}
+	async sendVerificationCode(@GetUser() currentUser: SessionUserDto) {
+		if (!currentUser) {
+			throw new UnauthorizedException('Access denied');
 		}
-		throw new UnauthorizedException()
+
+		try {
+			if (currentUser.mfaEnabled === true && currentUser.email) {
+				const token = await this.authService.createAuthToken(currentUser.id)
+				if (token && token.value) {
+					await this.mailService.send(currentUser.email, `Your Auth Code is: ${token.value}`)
+					return currentUser
+				} else {
+					throw new InternalServerErrorException('Failed to send token')
+				}
+			}
+		} catch(error) {
+			throw error
+		}
 	}
 
 
 	@Post('login-verify-mfa')
 	@UseGuards(SessionGuard)
-	async handleLoginMfaVerification(@GetUser() user: SessionUserDto, @Body() codeDto: CodeDto, 
-								@Res({ passthrough: true }) res: Response) {
-        if (user && user.id) {
-			if (this.authService.isValidTokenData(user.id, codeDto.code)) {
-				await this.userService.verifyUserMfa(user.id)
-				await this.authService.removeToken(codeDto.code)
-				res.status(302).redirect(FRONT_END_CALLBACK_URL)
+	async handleLoginMfaVerification(@GetUser() currentUser: SessionUserDto, @Body() codeDto: CodeDto, 
+		@Res({ passthrough: true }) res: Response) {
+			if (!currentUser) {
+				throw new UnauthorizedException('Access denied');
 			}
+
+			try {
+				if (this.authService.isValidTokenData(currentUser.id, codeDto.code)) {
+					await this.userService.verifyUserMfa(currentUser.id)
+					await this.authService.removeToken(codeDto.code)
+					res.status(302).redirect(FRONT_END_CALLBACK_URL)
+				}
+			} catch (error) {
+				throw error
+			}
+			throw new UnauthorizedException('Invalid token')
 		}
-		throw new UnauthorizedException()
-    }
+
+
 	@Post('verify-mfa')
 	@UseGuards(SessionGuard)
-	async handleMfaVerification(@GetUser() user: SessionUserDto, @Body() codeDto: CodeDto, 
-								@Res({ passthrough: true }) res: Response) {
-        if (user && user.id) {
-			if (this.authService.isValidTokenData(user.id, codeDto.code)) {
-				await this.userService.verifyUserMfa(user.id)
+	async handleMfaVerification(@GetUser() currentUser: SessionUserDto, @Body() codeDto: CodeDto, 
+		@Res({ passthrough: true }) res: Response) {
+        if (!currentUser) {
+				throw new UnauthorizedException('Access denied');
+		}
+
+		try {
+			if (this.authService.isValidTokenData(currentUser.id, codeDto.code)) {
+				await this.userService.verifyUserMfa(currentUser.id)
 				await this.authService.removeToken(codeDto.code)
 				return HttpStatus.ACCEPTED
 			}
+		} catch (error) {
+			throw error
 		}
-		throw new UnauthorizedException()
+		throw new UnauthorizedException('Invalid token')
     }
 	
 	
 
     @Get('logout')
     @UseGuards(SessionGuard)
-    async handleLogOut(@GetUser() user: SessionUserDto, @Res() res: Response) {
-		if (user && user.id) {
-			await this.userService.logoutUser(user.id)
+    async handleLogOut(@GetUser() currentUser: SessionUserDto, @Res() res: Response) {
+		if (!currentUser) {
+			throw new UnauthorizedException('Access denied');
+		}
+
+		try {
+			await this.userService.logoutUser(currentUser.id)
 			res.clearCookie('pong.sid')
 			res.redirect(FRONT_END_CALLBACK_URL)
-		}
-		throw new UnauthorizedException()
+		} catch (error) {
+			throw error
+		} 
     }
 
 }

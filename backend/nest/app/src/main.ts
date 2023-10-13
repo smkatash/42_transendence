@@ -4,7 +4,7 @@ import * as session from 'express-session';
 import {createClient} from "redis"
 import RediStore from 'connect-redis'
 import { FRONT_END_URL, REDIS_CLIENT, SESSION_SECRET } from './Constants';
-import * as passport from 'passport'
+import * as passport from 'passport';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
