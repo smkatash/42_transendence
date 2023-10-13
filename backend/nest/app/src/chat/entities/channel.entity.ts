@@ -5,7 +5,7 @@ import { Message } from "./message.entity";
 @Entity()
 export class Channel    {
     @PrimaryGeneratedColumn()
-    chatId: number;
+    id: number;
 
     @CreateDateColumn()
     createdAt: Date;
@@ -19,10 +19,10 @@ export class Channel    {
     @Column()
     private: boolean;
 
-    @ManyToOne(()=> User, (owner)=> owner.channels)
+    @ManyToOne(()=> User, (owner)=> owner.channels, {nullable: true})
     owner: User;
 
-    @Column()
+    @Column({nullable: true})
     hash: string;
 
     @Column({nullable: true})
@@ -32,11 +32,20 @@ export class Channel    {
     @JoinTable()
     users: User[];
 
-    @ManyToMany(() => User)
+    @ManyToMany(() => User, {nullable: true})
     @JoinTable()
-    admins: User[]
+    admins: User[];
 
     @OneToMany(() => Message, (message) => message.channel)
-    messages: Message[]
+    messages: Message[];
+
+    @Column({default: false})
+    protected: boolean;
+
+    // @ManyToMany(()=> User)
+    // @JoinTable()
+    // invited: User[]
+
+
 
 }

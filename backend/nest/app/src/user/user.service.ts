@@ -231,4 +231,13 @@ export class UserService {
 	async saveUser(user: User)	{
 		return await this.userRepo.save(user);
 	}
+
+	//tmp
+	async findUserByName(name: string)	{
+		return	await this.userRepo.findOne({
+			where: {
+				username: name
+			}
+		})
+	}
 }

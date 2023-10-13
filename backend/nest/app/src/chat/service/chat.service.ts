@@ -1,8 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { ChannelService } from './channel.service';
 import { MessageService } from './message.service';
-import { createChannelDto } from '../dto/createChannel.dto';
+import { JoinChannelDto, CreateChannelDto } from '../dto/channel.dto';
 import { User } from 'src/user/entities/user.entity';
 import { Channel } from '../entities/channel.entity';
 
@@ -22,17 +22,18 @@ export class ChatService {
       return await this.channelService.getUsersChannels(userId);
    }
 
-   async newChannel(channelInfo: createChannelDto, user: User): Promise<Channel> {
+   async newChannel(channelInfo: CreateChannelDto, user: User): Promise<Channel> {
       try   {
          const channel = await this.channelService.createChannel(channelInfo, user);
          try   {
+            user.channels = [];
             user.channels.push(channel);
             this.userService.saveUser(user);
             return channel;
          }  catch (error)  {
             Logger.error(error);           
             //TODO delete channel
-            // await this.channelService.
+            // await this.channelService
             return ;
          }
       } catch  (error)  {
@@ -42,11 +43,23 @@ export class ChatService {
    }
 
    async deleteChat(user: User, channelId: number) {
-
+      const channel = await this.channelService.getChannel(channelId);
+      if (!channel)  {
+         throw new HttpException('Channel not found', 404);
+      }
+      
    }
 
-   async join(user: User, channelId: number) {
-
+   async join(user: User, joinDto: JoinChannelDto) {
+      try   {
+         return await this.channelService.join(user, joinDto)
+      }  catch (error)  {
+            if (error  instanceof BadRequestException)   {
+               throw error; 
+            }  else  {
+               throw new HttpException('Server encountered an error', HttpStatus.INTERNAL_SERVER_ERROR)
+            }
+      }
    }
 
    async leave(user: User, channelId)  {
@@ -80,4 +93,6 @@ export class ChatService {
    async password(user: User, oldPass: string, newPass: string)   {
 
    }
+
+   
 }

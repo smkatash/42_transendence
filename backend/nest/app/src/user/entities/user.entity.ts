@@ -2,6 +2,7 @@ import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn} from "
 import { Status } from "../utils/status.dto";
 import { Channel } from "src/chat/entities/channel.entity";
 import { MfaStatus } from "src/auth/utils/mfa-status";
+import { Message } from "src/chat/entities/message.entity";
 
 
 @Entity({name: 'users'})
@@ -37,21 +38,24 @@ export class User {
     @ManyToMany(() => User, (user) => user.friendOf)
     friends: User[]
 
-    @ManyToMany(() => Channel, channel => channel.users)
-    @JoinTable()
-    channels: Channel[];
-
-    @ManyToMany(() => Channel, channel => channel.admins)
-    @JoinTable()
-    adminAt: Channel[]
-
-    @OneToMany(() => Channel, (channel) => channel.owner)
-    ownedChannels: Channel[]
-    
 	@ManyToMany(() => User, (user) => user.pendingFriendRequests)
 	@JoinTable()
 	sentFriendRequests: User[]
 
 	@ManyToMany(() => User, (user) => user.sentFriendRequests)
 	pendingFriendRequests: User[]
+
+    @ManyToMany(() => Channel, channel => channel.users)
+    // @JoinTable()
+    channels: Channel[];
+
+    @ManyToMany(() => Channel, channel => channel.admins)
+    // @JoinTable()
+    adminAt: Channel[]
+
+    @OneToMany(() => Channel, (channel) => channel.owner)
+    ownedChannels: Channel[]
+
+    @OneToMany(()=> Message, (message) => message.user)
+    messages: Message[]
 }
