@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { User , Game, GamePlayer, SocketResponse  } from '../entities.interface';
 import { GameSocket } from '../app.module';
 import { Subject } from 'rxjs';
@@ -9,7 +9,6 @@ async function waitOneSecond() {
   await new Promise((resolve) => setTimeout(resolve, 1000));
   console.log("...");
 }
-
 
 var matchID : string = "";
 var gameInfo! : Game;
@@ -33,12 +32,21 @@ export class GameService {
     return this.testSubject.asObservable();
   }
 
+  paddlePosition: string = '0';
+  public keyPress: EventEmitter<string> = new EventEmitter();
+  
+  handlePadleEvent(movementValue: string) {
+    this.paddlePosition = movementValue;
+    if(this.paddlePosition != '0'){
+      this.socket.emit('key', this.paddlePosition);
+    }
+  }
+
   startGame(): void {
     this.socket.on('join', (msg: any) => { })
     this.socket.on('play', (msg: any) => {
-      gameInfo = msg;
-      this.socket.emit('key', '10');
-      this.testSubject.next(msg);
+    gameInfo = msg;
+    this.testSubject.next(msg);
     })
     this.socket.on('start', (msg: any) => {
       if (msg == 'Waiting players to join.')

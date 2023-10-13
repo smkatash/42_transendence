@@ -7,8 +7,10 @@ import { Match } from '../entities/match.entity';
 export class GameService {
     static options = Object.freeze(new GameOptions(DEFAULT_TABLE_HEIGHT, DEFAULT_PADDLE_GAP, GameMode.EASY))
     private MAXPOINTS = 10
+    private increment = 1; //value to fix speed;
 
     constructor() {}
+
 
     public launchGame(match: Match): Game {
         const ball: Ball = this.launchBall()
@@ -55,7 +57,7 @@ export class GameService {
     private calculateVector(): Position {
         const randomAngle = this.getRandomAngle()
         const radian = this.degreesToRadian(randomAngle)
-        return { x: Math.cos(radian), y: Math.sin(radian) }
+        return { x: Math.cos(radian) + this.increment, y: Math.sin(radian) + this.increment }
     }
 
     private getRandomAngle(): number {
@@ -67,7 +69,7 @@ export class GameService {
     }
 
     private launchBall(): Ball {
-        const dir: Position = this.calculateVector()
+        const dir: Position = this.calculateVector() 
         const ball: Ball = {
             position: {
                 x: GameService.options.table.width / DEFAULT_TABLE_PROPORTION,
@@ -114,7 +116,7 @@ export class GameService {
             game.ball.position.y = 6
             return game
         }
-        console.log('Throw2')
+        // console.log('Throw2')
         // if (game.ball.position.x <= GameService.options.paddleDistance) {
         if (game.ball.position.x <= 15) {
             if (game.ball.position.y > (game.leftPaddle.position.y - (game.leftPaddle.length / 2)) &&
@@ -124,7 +126,7 @@ export class GameService {
                     game.ball.position.x = 50 + 0.5
                     return game
              }
-            console.log('Throw3')
+            // console.log('Throw3')
             return this.resetGame(game, Paddletype.RIGHT)
         // } else if (game.ball.position.x > GameService.options.table.width - GameService.options.paddleDistance) {
         } else if (game.ball.position.x > GameService.options.table.width - 15) {
@@ -135,7 +137,7 @@ export class GameService {
                     game.ball.position.x = GameService.options.table.width - 50 - 0.5
                     return game
             }
-            console.log('Throw4')
+            // console.log('Throw4')
             return this.resetGame(game, Paddletype.LEFT)
         }
         return game

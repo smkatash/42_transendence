@@ -1,9 +1,7 @@
-import { Component, HostListener, Injectable, OnInit } from '@angular/core';
+import { Component, EventEmitter, HostListener, Injectable, OnInit, Output } from '@angular/core';
 import { GameService } from '../game.service';
-import { Game } from '../../entities.interface';
+import { Ball, Game } from '../../entities.interface';
 import { GameSocket } from 'src/app/app.module';
-
-
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +13,7 @@ import { GameSocket } from 'src/app/app.module';
   styleUrls: ['./game-board.component.css']
 })
 export class GameBoardComponent {
+  gameService: any;
 
   constructor(private gameDataService: GameService,
               private socket: GameSocket ) {}
@@ -44,37 +43,43 @@ export class GameBoardComponent {
 
     game?:Game;
     testValues: number[] = [0, 0];
-  
+    
+    @Output() customEvent = new EventEmitter<string>();
+
+    emitEvent() {
+      this.customEvent.emit('Data from child component');
+    }
+
+
+    @Output() paddlePositionChange = new EventEmitter<string>();
+
+    @HostListener('window:keydown', ['$event'])
+    handleKeyPress(event: KeyboardEvent) {
+      if (event.key === 'w' || event.key === 's') {
+        console.log(" HELLO WWW HERE ")
+        this.gameService.keyPress.emit(event.key);
+      }
+    }
+    
     @HostListener('window:keydown', ['$event'])
     onKeyDown(e: any) {
       if (e.code === 'KeyW') {
-        // this.racket0Increment = -this.racketSpeed;
-        this.socket.emit('key', '10');
-        console.log("hello up");
+        this.moveLeftRacket(this.racket0Y + ( 100 / 500) * 1)
+        this.paddlePositionChange.emit("+1");
       }
       if (e.code === 'KeyS') {
-        // this.racket0Increment = this.racketSpeed;
-        this.socket.emit('key', '-10');
-        console.log("hello down");
-
-      }
-      if (e.code === 'ArrowUp') {
-        this.racket1Increment = -this.racketSpeed;
-      }
-      if (e.code === 'ArrowDown') {
-        this.racket1Increment = this.racketSpeed;
+        this.moveLeftRacket(this.racket0Y - ( 100 / 500) * 1)
+        this.paddlePositionChange.emit("-1");
       }
     }
-  
+    
     @HostListener('window:keyup', ['$event'])
     onKeyUp(e: any) {
       if (e.code === 'KeyW' || e.code === 'KeyS') {
-        this.racket0Increment = 0;
-      }
-      if (e.code === 'ArrowUp' || e.code === 'ArrowDown') {
-        this.racket1Increment = 0;
+        this.paddlePositionChange.emit("0");
       }
     }
+    
   
     resetAll(): void {
       this.score0 = 0;
@@ -85,11 +90,23 @@ export class GameBoardComponent {
     resetBallAndRackets(): void {
       this.racket0Y = 40;
       this.racket1Y = 40;
-      // this.ballX = -1 * this.ballWidth;
-      // this.ballY = -1 * this.ballHeight;
       this.ballX = 0;
       this.ballY = 0;
       this.canMoveBall = false;
+    }
+
+    /* 
+        Here we need to be sure that the racket don't pass trough the borders:
+        .   The smaller beetween 100% - the value in which the racket is
+        .   The bigger beetween 0% + the value in which the racket is
+    */
+    moveLeftRacket(position: number): void {
+      let newPosition = position;
+      const maxvalue = 100 - this.racketHeight;
+      const minvalue = 0;
+      newPosition = Math.min(newPosition, maxvalue);
+      newPosition = Math.max(newPosition, minvalue);
+      this.racket0Y = newPosition;
     }
 
     valueConversion(game: Game) {
@@ -99,7 +116,49 @@ export class GameBoardComponent {
       game.ball.position.y = ( 100/ maxHeight ) * game.ball.position.y;
       game.leftPaddle.position.y  = ( 100/ maxHeight) * game.leftPaddle.position.y;
       game.rightPaddle.position.y  = ( 100/ maxHeight) * game.rightPaddle.position.y;
+      game.ball.velocity.x = (100 / maxWidth) * game.ball.velocity.x;
+      game.ball.velocity.y = (100 / maxWidth) * game.ball.velocity.y;
+
       return game;
+    }
+
+    async moveBall(ball: Ball): Promise<void> {
+      if(ball.velocity.x > 0){
+        if(ball.velocity.y > 0 && (this.ballY + ball.velocity.y) < 100){
+          if(this.ballX <= ball.position.x){
+            this.ballX = ball.position.x;
+          } else { this.ballX = this.ballX + ball.velocity.x; }
+          if(this.ballY <= ball.position.y){
+            this.ballY = ball.position.y;
+          } else { this.ballY = this.ballY + ball.velocity.y }  
+        } else {
+          if(this.ballX <= ball.position.x) {
+            this.ballX = ball.position.x; 
+          } else { this.ballX = this.ballX + ball.velocity.x; }
+          if(this.ballY >= ball.position.y) {
+            this.ballY = ball.position.y;
+          } else { this.ballY = this.ballY - ball.velocity.y }
+        }
+      } else {
+        if(ball.velocity.y > 0 && (this.ballY + ball.velocity.y) < 100){
+          if(this.ballX >= ball.position.x){
+            this.ballX = ball.position.x;
+          } else { this.ballX = this.ballX - ball.velocity.x; }
+          if(this.ballY <= ball.position.y){
+            this.ballY = ball.position.y;
+          } else { this.ballY = this.ballY + ball.velocity.y; }  
+        } else {
+          if(this.ballX >= ball.position.x) {
+            this.ballX = ball.position.x; 
+          } else { this.ballX = this.ballX - ball.velocity.x; }
+          if(this.ballY >= ball.position.y) {
+            this.ballY = ball.position.y;
+          } else { this.ballY = this.ballY - ball.velocity.y}
+        }
+      }
+      // this.ballX = ball.position.x;
+      // this.ballY = ball.position.y;
+      // window.requestAnimationFrame(() => this.moveBall(xIncrement, yIncrement));
     }
 
     ngOnInit(){
@@ -107,13 +166,14 @@ export class GameBoardComponent {
         this.game = test;
         console.log(this.testValues[0]);
         this.game = this.valueConversion(this.game);
+        var ball = this.game.ball;
         const positionX = this.game.ball.position.x;
         const positionY = this.game.ball.position.y;
-        window.requestAnimationFrame(() => this.moveBall(positionX, positionY));
+        window.requestAnimationFrame(() => this.moveBall(ball));
         console.log(this.game.leftPaddle.position.y);
         var positionPaddle = this.game.leftPaddle.position.y
         window.requestAnimationFrame(() => this.moveLeftRacket(positionPaddle));
-        window.requestAnimationFrame(() => this.moveRacket1(this.racket1Increment));
+        // window.requestAnimationFrame(() => this.moveRacket1(this.racket1Increment));
         this.resetAll();
       })
     }
@@ -122,18 +182,6 @@ export class GameBoardComponent {
       this.startRound();
       this.resetAll();
       
-    }
-  
-    moveLeftRacket(yIncrement: number): void {
-      // if (!this.canMoveRackets) {
-      //   return;
-      // }
-      let newY = yIncrement;
-      // this check to be sure that the racket don't disappear on borders:
-      newY = Math.min(newY, 100 - this.racketHeight);
-      newY = Math.max(newY, 0);
-      this.racket0Y = newY;
-      // window.requestAnimationFrame(() => this.moveLeftRacket(this.racket0Increment));
     }
 
     startRound(): void {
@@ -160,12 +208,6 @@ export class GameBoardComponent {
       // this.ballY = Math.floor(Math.random() * (100 - this.ballHeight + 1));
       this.ballX = 0;
       this.ballY = 0;
-    }
-  
-    async moveBall(xIncrement: number, yIncrement: number): Promise<void> {
-      this.ballX = xIncrement;
-      this.ballY = yIncrement;
-      // window.requestAnimationFrame(() => this.moveBall(xIncrement, yIncrement));
     }
   
     moveRacket0(yIncrement: number): void {
@@ -227,24 +269,13 @@ export class GameBoardComponent {
     isBallCollidedWithWalls(): boolean {
       return this.ballY <= 0 || this.ballY + this.ballHeight >= 100;
     }
-  
-    isPlayer0Scored(): boolean {
-      return this.ballX >= 100;
-    }
-  
-    isPlayer1Scored(): boolean {
-      return this.ballX + this.ballWidth <= 0;
-    }
-  
-    isPlayer0Win(): boolean {
-      return this.score0 === 10;
-    }
-  
-    isPlayer1Win(): boolean {
-      return this.score1 === 10;
-    }
-  
-    delay(ms: number): Promise<void> {
-      return new Promise((f) => setTimeout(f, ms));
-    }
-}
+}  
+    // delay(ms: number): Promise<void> {
+    //   return new Promise((f) => setTimeout(f, ms));
+    // }
+// }
+
+// function handlePadleEvent(arg0: string) {
+//   throw new Error('Function not implemented.');
+// }
+

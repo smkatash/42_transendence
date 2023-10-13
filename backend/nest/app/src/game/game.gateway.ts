@@ -114,6 +114,11 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @SubscribeMessage('key')
   async handleKeyPress(@ConnectedSocket() client: Socket, @MessageBody() step: string) {
+    var i = 0;
+    while(i < 100) {
+      console.log("PORCO DI DIO");
+      i++;
+    }
     if (!client.data.user.id) return
     const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
      this.matchService.updatePlayerPosition(currentPlayer, parseInt(step))
