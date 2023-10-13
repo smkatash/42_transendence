@@ -147,7 +147,7 @@ export class UserService {
 
     async addUserFriend(id: string, friendId: string) {
         const currentUser: User = await this.userRepo.findOne({
-          where: {id}, relations: ['friends', 'pendingFriendRequests']
+          where: {id}, relations: ['friendOf', 'friends', 'pendingFriendRequests']
         })
 		
         const friend = await this.userRepo.findOne({
@@ -161,6 +161,7 @@ export class UserService {
 		if (currentUser.friends && currentUser.friends.some((user) => user.id === friendId)) {
 			throw new BadRequestException('Friend request already accepted');
 		}
+		currentUser.friendOf.push(friend)
 		currentUser.friends.push(friend)
 		currentUser.pendingFriendRequests = currentUser.pendingFriendRequests.filter(
 			(user) => user.id !== friendId

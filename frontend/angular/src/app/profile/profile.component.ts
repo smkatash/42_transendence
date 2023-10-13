@@ -3,6 +3,7 @@ import { ProfileService } from './profile.service';
 import { Match, Stats, User } from '../entities.interface';
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -11,7 +12,11 @@ import { forkJoin } from 'rxjs';
 })
 export class ProfileComponent implements OnInit {
 
-  constructor(private profileService: ProfileService, private route: ActivatedRoute, private cd: ChangeDetectorRef){ }
+  constructor(
+    private profileService: ProfileService,
+    private route: ActivatedRoute,
+    private cd: ChangeDetectorRef,
+    private auth: AuthService) { }
 
   id: string | null = null
   currentUserID: string | null = null
@@ -79,6 +84,7 @@ export class ProfileComponent implements OnInit {
       next: ({ user, friends, rank, stats, matches }) => {
         this.profile = user
         this.friends = friends
+        // this.requests = [] // Set it back to empty if fetching a user's profile
         this.rank = rank
         this.stats = stats
         this.matches = matches
@@ -141,9 +147,17 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  toggle2FA(): void {
+  enable2FA(): void {
     this.isbuttonClicked2FA = !this.isbuttonClicked2FA
     this.cd.detectChanges();
+  }
+
+  disable2FA(): void {
+    // Code for disabling 2FA
+  }
+
+  logout(): void {
+    this.auth.logout()
   }
 
   selectTab(tab: string) {

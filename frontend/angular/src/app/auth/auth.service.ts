@@ -12,8 +12,13 @@ export class AuthService {
 
   domain: string = 'http://127.0.0.1:3000'
 
-  login(){
+  login(): void {
     this.document.location.href = `${this.domain}/42auth/login`
+  }
+
+  logout(): void {
+    const url = `${this.domain}/42auth/logout`
+    this.http.get(url, { withCredentials: true }).subscribe()
   }
 
   isUserLoggedIn(): Observable<boolean> {
