@@ -13,11 +13,11 @@ const routes: Routes = [
     path: 'login',
     component: LoginComponent
   },
-  // {
-  //   path: 'chat',
-  //   loadChildren: () => import('./chat/chat.module').then(m => m.ChatModule),
-  //   canActivate: [ authGuard ]
-  // },
+  {
+    path: 'chat',
+    loadChildren: () => import('./chat/chat.module').then(m => m.ChatModule),
+    canActivate: [ authGuard ]
+  },
   {
     path: 'game',
     loadChildren: () => import('./game/game.module').then(m => m.GameModule),
