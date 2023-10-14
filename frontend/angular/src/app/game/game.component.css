@@ -7,8 +7,8 @@ body {
 
   .game_board {
     background-color: #4F6D7A;
-    width: 80%;
-    height: 77%;
+    width: 100%;
+    height: 50%;
     margin: auto;
     display: flex;
     justify-content: space-between;

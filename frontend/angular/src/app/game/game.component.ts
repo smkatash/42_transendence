@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, HostListener, OnInit, Output, Renderer2 } from '@angular/core';
 import { GameService } from './game.service';
 import { Ball, Game } from '../entities.interface';
 import { GameSocket } from 'src/app/app.module';
@@ -9,13 +9,13 @@ import { GameSocket } from 'src/app/app.module';
   styleUrls: ['./game.component.css']
 })
 
-export class GameComponent /* implements OnInit */ {
+export class GameComponent implements AfterViewInit {
 
-  constructor(private gameService: GameService, private socket: GameSocket ) 
+  constructor(private rend: Renderer2, 
+              private gameService: GameService,
+              private socket: GameSocket ) 
   {
-    this.gameService.getUser()
-    this.gameService.keyPress.subscribe((key: string) => {
-    this.handleKeyPress(key); });
+    this.gameService.getUser();
   }
 
   yourScore = 0;
@@ -35,7 +35,7 @@ export class GameComponent /* implements OnInit */ {
   paddleLeftY = 40;
   paddleLeftX = this.paddleMargin;
 
-  paddleRightX = 100 - this.paddleMargin - this.paddleWidth/2;
+  paddleRightX = 100 - this.paddleMargin - this.paddleWidth + 1.5 ;
   paddleRightY = 40;
 
   ballX = 0
@@ -46,14 +46,17 @@ export class GameComponent /* implements OnInit */ {
 
   game?:Game;
 
+  checkSize() {
+    let board = document.querySelector('.game_board');
+    // console.log(board!.clientHeight);
+    let widthValue = board!.clientWidth;
+    let heightValue = widthValue / 2;
+    this.rend.setStyle(board, "height", heightValue + "px");
+    this.gameService.updateSize(widthValue, heightValue);
+  }
 
-  handleKeyPress(key: string) {
-    // Handle key press events in the parent component.
-    if (key === 'w') {
-      console.log("DIOCANE")
-    } else if (key === 's') {
-      // Do something when 's' is pressed.
-    }
+  ngAfterViewInit(): void {
+    this.checkSize();
   }
 
   @Output() paddlePositionChange = new EventEmitter<string>();
@@ -61,27 +64,40 @@ export class GameComponent /* implements OnInit */ {
   @HostListener('window:keydown', ['$event'])
   onKeyDown(e: any) {
     if (e.code === 'KeyW') {
-      this.moveLeftRacket(this.paddleLeftY - ( 100 / 500) * 1)
-      this.paddlePositionChange.emit("-1");
+      this.gameService.handlePadleEvent("-10")
     }
     if (e.code === 'KeyS') {
-      this.moveLeftRacket(this.paddleLeftY + ( 100 / 500) * 1)
-      this.paddlePositionChange.emit("+1");
+      this.gameService.handlePadleEvent("+10")
     }
   }
 
+  @HostListener('window:keyup', ['$event'])
+  onKeyUp(e: any) {
+    if (e.code === 'KeyW' || e.code === 'KeyS') {
+      this.paddlePositionChange.emit("0");
+    }
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(e: any) {
+    this.checkSize();
+  }
   /* 
     Here we need to be sure that the racket don't pass trough the borders:
     .   The smaller beetween 100% - the value in which the racket is
     .   The bigger beetween 0% + the value in which the racket is
   */
   moveLeftRacket(position: number): void {
+    let board = document.querySelector('.game_board');
     let newPosition = position;
-    const maxvalue = 100 - this.paddleHeight;
-    const minvalue = 0;
-    newPosition = Math.min(newPosition, maxvalue);
-    newPosition = Math.max(newPosition, minvalue);
+    if (newPosition >= board!.clientHeight - this.paddleHeight)
+      newPosition = this.paddleLeftY;
+    else if ( newPosition <= 0 + this.paddleHeight)
+      newPosition = this.paddleLeftY;
     this.paddleLeftY = newPosition;
+    // newPosition = position > 100 - this.paddleHeight ? 100 - this.paddleHeight : newPosition;
+    // this.paddleLeftY = newPosition < 0 ? 0 : newPosition;
+    window.requestAnimationFrame(() => this.moveLeftRacket(this.paddleLeftY));
   }
 
   /*
@@ -90,8 +106,8 @@ export class GameComponent /* implements OnInit */ {
     that's how we do that:
   */
   valueConversion(game: Game) {
-    const maxHeight = 500;
-    const maxWidth = 1000;
+    const maxHeight = this.gameService.height;
+    const maxWidth = this.gameService.width;
     game.ball.position.x = (100 / maxWidth) * game.ball.position.x;
     game.ball.position.y = ( 100/ maxHeight ) * game.ball.position.y;
     game.leftPaddle.position.y  = ( 100/ maxHeight) * game.leftPaddle.position.y;
@@ -108,41 +124,42 @@ export class GameComponent /* implements OnInit */ {
   }
 
   async moveBall(ball: Ball): Promise<void> {
-    if(ball.velocity.x > 0){
-      if(ball.velocity.y > 0 && (this.ballY + ball.velocity.y) < 100){
-        if(this.ballX <= ball.position.x){
-          this.ballX = ball.position.x;
-        } else { this.ballX = this.ballX + ball.velocity.x; }
-        if(this.ballY <= ball.position.y){
-          this.ballY = ball.position.y;
-        } else { this.ballY = this.ballY + ball.velocity.y }  
-      } else {
-        if(this.ballX <= ball.position.x) {
-          this.ballX = ball.position.x; 
-        } else { this.ballX = this.ballX + ball.velocity.x; }
-        if(this.ballY >= ball.position.y) {
-          this.ballY = ball.position.y;
-        } else { this.ballY = this.ballY - ball.velocity.y }
-      }
-    } else {
-      if(ball.velocity.y > 0 && (this.ballY + ball.velocity.y) < 100){
-        if(this.ballX >= ball.position.x){
-          this.ballX = ball.position.x;
-        } else { this.ballX = this.ballX - ball.velocity.x; }
-        if(this.ballY <= ball.position.y){
-          this.ballY = ball.position.y;
-        } else { this.ballY = this.ballY + ball.velocity.y; }  
-      } else {
-        if(this.ballX >= ball.position.x) {
-          this.ballX = ball.position.x; 
-        } else { this.ballX = this.ballX - ball.velocity.x; }
-        if(this.ballY >= ball.position.y) {
-          this.ballY = ball.position.y;
-        } else { this.ballY = this.ballY - ball.velocity.y}
-      }
-    }
-    // this.ballX = ball.position.x;
-    // this.ballY = ball.position.y;
+    // if(ball.velocity.x > 0){
+    //   if(ball.velocity.y > 0 && (this.ballY + ball.velocity.y) < 100){
+    //     if(this.ballX <= ball.position.x){
+    //       this.ballX = ball.position.x;
+    //     } else { this.ballX = this.ballX + ball.velocity.x; }
+    //     if(this.ballY <= ball.position.y){
+    //       this.ballY = ball.position.y;
+    //     } else { this.ballY = this.ballY + ball.velocity.y }  
+    //   } else {
+    //     if(this.ballX <= ball.position.x) {
+    //       this.ballX = ball.position.x; 
+    //     } else { this.ballX = this.ballX + ball.velocity.x; }
+    //     if(this.ballY >= ball.position.y) {
+    //       this.ballY = ball.position.y;
+    //     } else { this.ballY = this.ballY - ball.velocity.y }
+    //   }
+    // } else {
+    //   if(ball.velocity.y > 0 && (this.ballY + ball.velocity.y) < 100){
+    //     if(this.ballX >= ball.position.x){
+    //       this.ballX = ball.position.x;
+    //     } else { this.ballX = this.ballX - ball.velocity.x; }
+    //     if(this.ballY <= ball.position.y){
+    //       this.ballY = ball.position.y;
+    //     } else { this.ballY = this.ballY + ball.velocity.y; }  
+    //   } else {
+    //     if(this.ballX >= ball.position.x) {
+    //       this.ballX = ball.position.x; 
+    //     } else { this.ballX = this.ballX - ball.velocity.x; }
+    //     if(this.ballY >= ball.position.y) {
+    //       this.ballY = ball.position.y;
+    //     } else { this.ballY = this.ballY - ball.velocity.y}
+    //   }
+    // }
+    this.ballX = ball.position.x;
+    this.ballY = ball.position.y;
+    window.requestAnimationFrame(() => this.moveBall(ball));
     // window.requestAnimationFrame(() => this.moveBall(xIncrement, yIncrement));
   }
 
@@ -150,20 +167,23 @@ export class GameComponent /* implements OnInit */ {
     this.gameService.getTestObservable().subscribe((test: Game) => {
       this.game = test;
       this.game = this.valueConversion(this.game);
+      // this.game.ball.position.y = 0;
       var ball = this.game.ball;
       const positionX = this.game.ball.position.x;
+      // const positionY = 0;
       const positionY = this.game.ball.position.y;
-      console.log(" MA CRISTO IDDIO");
+
+      // console.log(positionX)
+      // console.log(positionY)
       window.requestAnimationFrame(() => this.moveBall(ball));
-      console.log(this.game.leftPaddle.position.y);
       var positionPaddle = this.game.leftPaddle.position.y
       window.requestAnimationFrame(() => this.moveLeftRacket(positionPaddle));
       // window.requestAnimationFrame(() => this.moveRacket1(this.racket1Increment));
       this.resetAll();
     })
-    if(this.game?.status !== 3){
-      this.startPlaying();
-    }
+    // if(this.game?.status !== 3){
+      // this.startPlaying();
+    // }
   }
 
   isGameOn: boolean = false;

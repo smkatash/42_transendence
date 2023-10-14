@@ -17,12 +17,17 @@ var gameInfo! : Game;
   providedIn: 'root'
 })
 export class GameService {
-
+  height = 1000;
+  width = 500;
   constructor(private socket: GameSocket) {}
   public test : number[] = [0,0];
   private testSubject = new Subject<Game>();
   // private testSubject = new Subject<number[]>();
 
+  updateSize(w: number, h: number) {
+    this.width = w;
+    this.height = h;
+  }
   returnValue(){
     // return gameInfo;
     return this.test
@@ -36,19 +41,18 @@ export class GameService {
   public keyPress: EventEmitter<string> = new EventEmitter();
   
   handlePadleEvent(movementValue: string) {
-    this.paddlePosition = movementValue;
-    if(this.paddlePosition != '0'){
-      this.socket.emit('key', this.paddlePosition);
-    }
+    this.socket.emit('key', movementValue);
   }
 
   startGame(): void {
-    this.socket.on('join', (msg: any) => { })
-    this.socket.on('play', (msg: any) => {
+    this.socket.on ('join', (msg: any) => { })
+
+    this.socket.on ('play', (msg: any) => {
     gameInfo = msg;
-    this.testSubject.next(msg);
-    })
-    this.socket.on('start', (msg: any) => {
+    this.testSubject.next(msg); 
+    } )
+
+    this.socket.on ('start', (msg: any) => {
       if (msg == 'Waiting players to join.')
       {
         waitOneSecond();

@@ -86,15 +86,18 @@ export class MatchService {
     updatePlayerPosition(player: Player, step: number) {
        for (const match of this.matches.values()) {
             if (match.status === GameState.INPROGRESS) {
-                const index = match.match.players.findIndex(matchPlayer => matchPlayer.id === player.id)
-                if (index != -1 ) {
-                    if (index === 0 ) {
-                        match.leftPaddle.position.y += step
-                    } else {
-                        match.rightPaddle.position.y += step
-                    }
+                console.log(step);
+                // const index = match.match.players.findIndex(matchPlayer => matchPlayer.id === player.id)
+                // if (index != -1 ) {
+                //     if (index === 0 ) {
+                         console.log(match.leftPaddle.position.y)
+                        match.leftPaddle.position.y += step;
+                        console.log(match.leftPaddle.position.y)
+                    // } else {
+                    //     match.rightPaddle.position.y += step
+                    // }
                     return
-                }
+                // }
             }
        }
     }   
