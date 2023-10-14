@@ -21,11 +21,10 @@ import { ChatGateway } from './chat/chat/chat.gateway';
 import { AuthToken } from './auth/entities/auth-token.entity';
 import { ConfigModule } from '@nestjs/config';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env.development',
+      envFilePath: 'dev.env',
       isGlobal: true
     }),
     PassportModule.register({ session: true}),
@@ -34,14 +33,14 @@ import { ConfigModule } from '@nestjs/config';
     RedisModule.forRoot({
       config: {
         host: REDIS_HOST,
-        port: REDIS_PORT,
+        port: Number(REDIS_PORT),
         password: REDIS_PASSWORD
       }
     }),
     TypeOrmModule.forRoot({
-      type: DB_TYPE,
+	  type: DB_TYPE,
       host: DB_HOST,
-      port: DB_PORT,
+      port: Number(DB_PORT),
       username: DB_USERNAME,
       password: DB_PASSWORD,
       database: DB_NAME,

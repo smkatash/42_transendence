@@ -1,4 +1,4 @@
-import {  Logger, Req, UseGuards } from '@nestjs/common';
+import {  Logger, Req, Session, UseGuards } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { UserService } from '../user/service/user.service';
@@ -9,9 +9,16 @@ import { Player } from './entities/player.entity';
 import { PlayerService } from './service/player.service';
 import { Game, GameState, MessageMatch} from './utls/game';
 import { SessionGuard } from 'src/auth/guard/auth.guard';
-import { GetUser } from 'src/auth/utils/get-user.decorator';
+import { GetUser, GetWsUser } from 'src/auth/utils/get-user.decorator';
+import { IncomingMessage } from 'http';
+import { WsAuthGuard } from 'src/auth/guard/ws-auth.guard';
+import { SessionUserDto } from 'src/user/utils/user.dto';
 
-@WebSocketGateway({ namespace: 'game', cors: true })
+@WebSocketGateway({
+	namespace: 'game', 
+	cors: {
+		origin: '*'
+	}})
 export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger = new Logger(GameGateway.name)
   @WebSocketServer()
@@ -25,28 +32,20 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     this.logger.log("Initialized")
   }
 
-  @UseGuards(SessionGuard)
-  async handleConnection(@ConnectedSocket() client: Socket, @GetUser() user: User, @Req() req: Request) {
+  async handleConnection(@ConnectedSocket() client: Socket, @GetWsUser() currentUser: any) {
+	let user = client.request["user"]
+	client.data.user = user
     this.logger.log(`Client id: ${client.id} connected`);
-      //const userId = await this.authService.getUserSession(client)
-    //  user =  {"id":"99637","username":"ktashbae","status": 1, "avatar" : "test", "title": "test@email.com", "friends": [], "friendOf": []}
-    // console.log(client)
-    // console.log(client.data.user) 
+
     if (!user) {
-        console.log('disconnecting')
-        return client.disconnect()
-      }
-      user = await this.userService.updateUserStatus(user.id, Status.GAME)
-      let player = await this.playerService.getPlayerByUser(user, client.id)
-	  if (!player) {
-		player = await this.playerService.createPlayer(user, client.id)
-	  }
-      if (player.clientId !== client.id) {
-        player = await this.playerService.updatePlayerClient(player, client.id)
-      }
-      client.join(player.id)
-      client.data.user = player
-      client.emit('user', { player })
+		console.log('disconnecting')
+    	return client.disconnect()
+     }
+    user = await this.userService.updateUserStatus(user.id, Status.GAME)
+    const player = await this.playerService.getPlayerByUser(user, client.id)
+	this.logger.debug(player)
+    client.join(player.id)
+    client.emit('user', { player })
   }
 
   handleDisconnect(@ConnectedSocket() client: Socket) {
@@ -118,6 +117,4 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
      this.matchService.updatePlayerPosition(currentPlayer, parseInt(step))
     }
   }
-
-
 

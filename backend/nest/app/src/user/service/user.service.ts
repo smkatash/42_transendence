@@ -15,11 +15,10 @@ export class UserService {
     constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
 
     async getUserById(id: string): Promise<User> {
-      const user = this.userRepo.findOneBy({id})
-		
-	  if (!user) {
-		throw new NotFoundException('User not found')
-	  }
+      const user = await this.userRepo.findOneBy({id})
+		if (!user) {
+			throw new NotFoundException('User not found')
+		}
 	  return user
     }
 

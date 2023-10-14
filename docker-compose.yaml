@@ -8,8 +8,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       # - /Users/jmaalouf/42_transendence/frontend/angular:/app-frontend
-      # - /Users/ktashbae/Desktop/trans/frontend/angular:/app-frontend
-      - C:\Users\ktashbae\Desktop\nest\frontend\angular:/app-frontend
+      - /Users/ktashbae/Desktop/trans/frontend/angular:/app-frontend
     ports:
       - 4200:4200
     depends_on:
@@ -19,12 +18,11 @@ services:
   nestjs:
     container_name: nestjs
     build:
-      context: C:\Users\ktashbae\Desktop\nest\backend
+      context: ./backend
       dockerfile: Dockerfile
     volumes:
      # - /Users/jmaalouf/42_transendence/backend/nest/app:/app-backend
-      #- /Users/ktashbae/Desktop/trans/backend/nest/app:/app-backend
-      - C:\Users\ktashbae\Desktop\nest\backend\nest\app:/app-backend
+      - /Users/ktashbae/Desktop/trans/backend/nest/app:/app-backend
     env_file:
       - ./backend/dev.env
     ports:
