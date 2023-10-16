@@ -1,6 +1,7 @@
 import { User } from "src/user/entities/user.entity";
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Message } from "./message.entity";
+import { JoinedChannel } from "./joinedChannel.entity";
 
 @Entity()
 export class Channel    {
@@ -42,6 +43,8 @@ export class Channel    {
     @Column({default: false})
     protected: boolean;
 
+    @OneToMany(() => JoinedChannel, (joinedChannel) => joinedChannel.channel)
+    joinedUsers: JoinedChannel[]
     // @ManyToMany(()=> User)
     // @JoinTable()
     // invited: User[]

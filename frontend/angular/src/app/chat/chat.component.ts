@@ -21,11 +21,13 @@ export class ChatComponent {
   isChannelToCreateActive: boolean = false;
 
   ngOnInit(): void {
+    this.chatService.connectSocket();
     this.getChannels();
   }
 
   getChannels(): void {
     this.chatService.getChannels()
+    // this.chatService.getUsersChannels()
         .subscribe((channels: Channel[]) => this.channels = channels);
   }
 

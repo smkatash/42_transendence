@@ -1,0 +1,18 @@
+### get current user's chats
+GET chat
+
+### get all existing channels
+GET chat/all
+
+### Body({name, private(bool), password?}) create new chat
+POST chat/create
+
+### Body({id, password?, })
+POST chat/join
+
+### Param(id) of a chat to delete
+DELETE chat/#/:id
+
+
+
+

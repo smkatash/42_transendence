@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Channel } from "./channel.entity";
 import { User } from "src/user/entities/user.entity";
 
@@ -17,13 +17,13 @@ export class Message    {
     @JoinColumn()
     user: User;
 
-    @Column()
-    recipient: string;
-
-    @Column()
-    createdAt: Date;
+    // @Column()
+    // recipient: string;
 
     @ManyToOne(() => Channel, (channel) => channel.messages)
     @JoinTable()
     channel: Channel;
+
+    @CreateDateColumn()
+    createdAt: Date
 }

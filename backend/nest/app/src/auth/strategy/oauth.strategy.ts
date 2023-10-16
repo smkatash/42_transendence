@@ -26,10 +26,10 @@ export class OauthStrategy extends PassportStrategy(Strategy, '42') {
     }
 
     async validate(accessToken: string, refreshToken: string, profile: Profile): Promise<User> {
-        console.log('Validation')
-        console.log(accessToken)
-        console.log(refreshToken)
-        console.log('-------')
+        // console.log('Validation')
+        // console.log(accessToken)
+        // console.log(refreshToken)
+        // console.log('-------')
 
         let title = 'Pong Master'
         if (profile.titles && profile.titles[0]) {

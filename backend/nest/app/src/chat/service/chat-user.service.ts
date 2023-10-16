@@ -23,8 +23,13 @@ export class ChatUserService {
         return await this.chatUserRepo.save(chatUser);
     }
 
-    async findByUser(user: User): Promise<ChatUser[]>{
-        return await this.chatUserRepo.find({where: {user}})//???
+    //ONLY ONE LOGIN!!
+    async findByUser(user: User): Promise<ChatUser>{
+        return await this.chatUserRepo.findOne({
+            where: {user}
+        })
+        // return await this.chatUserRepo.find({where: {user}})
+        // return await this.chatUserRepo.find({user})
     }
 
     async   deleteBySocketId(socketId: string)  {

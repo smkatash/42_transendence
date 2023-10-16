@@ -9,9 +9,9 @@ export interface SessionParams {
 export const GetSession = createParamDecorator(
     (_data, context: ExecutionContext): SessionParams => {
     const request = context.switchToHttp().getRequest()
-    console.log('Getting session')
-    console.log(request.session)
-    console.log(request.sessionID)
+    // console.log('Getting session')
+    // console.log(request.session)
+    // console.log(request.sessionID)
     
     if  (!request.session || !request.sessionID) {
 		throw new UnauthorizedException()

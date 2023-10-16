@@ -3,6 +3,7 @@ import { Status } from "../utils/status.dto";
 import { Channel } from "src/chat/entities/channel.entity";
 import { MfaStatus } from "src/auth/utils/mfa-status";
 import { Message } from "src/chat/entities/message.entity";
+import { JoinedChannel } from "src/chat/entities/joinedChannel.entity";
 
 
 @Entity({name: 'users'})
@@ -58,4 +59,7 @@ export class User {
 
     @OneToMany(()=> Message, (message) => message.user)
     messages: Message[]
+
+    @OneToMany(() => JoinedChannel, (joinedChannel) => joinedChannel.channel)
+    joinedChannels: JoinedChannel[]
 }

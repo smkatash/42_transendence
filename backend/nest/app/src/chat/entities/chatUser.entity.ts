@@ -12,5 +12,4 @@ export class ChatUser   {
     @OneToOne(() => User)
     @JoinColumn()
     user: User;
-    
 }

@@ -27,13 +27,13 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   @UseGuards(SessionGuard)
   async handleConnection(@ConnectedSocket() client: Socket, @GetUser() user: User, @Req() req: Request) {
-    this.logger.log(`Client id: ${client.id} connected`);
+    // this.logger.log(`Client id: ${client.id} connected`);
       //const userId = await this.authService.getUserSession(client)
     //  user =  {"id":"99637","username":"ktashbae","status": 1, "avatar" : "test", "title": "test@email.com", "friends": [], "friendOf": []}
     // console.log(client)
     // console.log(client.data.user) 
     if (!user) {
-        console.log('disconnecting')
+        // console.log('disconnecting')
         return client.disconnect()
       }
       user = await this.userService.updateUserStatus(user.id, Status.GAME)
@@ -50,7 +50,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   handleDisconnect(@ConnectedSocket() client: Socket) {
-    this.logger.log(`Cliend id:${client.id} disconnected`)
+    // this.logger.log(`Cliend id:${client.id} disconnected`)
     return client.disconnect()
   }
 

@@ -6,7 +6,7 @@ import { User } from 'src/user/entities/user.entity';
 import { CreateChannelDto, JoinChannelDto } from './dto/channel.dto';
 
 @Controller('chat')
-// @UseGuards(SessionGuard)
+@UseGuards(SessionGuard)
 
 export class ChatController {
     constructor(
@@ -16,6 +16,7 @@ export class ChatController {
     @Get('all')
     // @UseGuards(SessionGuard)
     async getAllChats(@GetUser() user: User)    {
+        console.log(user);
         if (user && user.id)    {
             return await this.chatService.getChats();
         } else  {
@@ -33,7 +34,6 @@ export class ChatController {
         }
     }
 
-    //TODO validation pipe?!
     @Post('create')
     // @UseGuards(SessionGuard)
     async createChannel(

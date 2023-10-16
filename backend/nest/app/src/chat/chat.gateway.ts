@@ -10,10 +10,17 @@ import { ChatUserService } from './service/chat-user.service';
 import { SessionGuard } from 'src/auth/guard/auth.guard';
 import { UserDto } from 'src/user/utils/user.dto';
 import { AuthUserDto } from 'src/auth/utils/auth.user.dto';
+import { GetUser } from 'src/auth/utils/get-user.decorator';
+import { transformAuthInfo } from 'passport';
+import { JoinedChannelService } from './service/joined-channel.service';
+import { MessageService } from './service/message.service';
 
+
+@UseGuards(SessionGuard)
 @WebSocketGateway({
   namespace: 'chat',
   //TODO temporel
+  // cors: ['http://127.0.0.1:4200']
   cors: '*'
 })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit{
@@ -23,35 +30,52 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   constructor(
     private readonly channelService: ChannelService,
     private readonly userService: UserService,
-    private readonly chatUserService: ChatUserService
+    private readonly chatUserService: ChatUserService,
+    private readonly joinedChannelService: JoinedChannelService,
+    private readonly messageService: MessageService
   ){}
-  // clients: Map<Number, Socket>;
+
     async onModuleInit() {
-      await this.chatUserService.deleteAll()
+      await this.chatUserService.deleteAll();
+      await this.joinedChannelService.purge()
     }
-  // handleConnection(client: any, ...args: any[]) {
-    @UseGuards(SessionGuard)
-    async handleConnection(@ConnectedSocket() socket: Socket) {
-    Logger.log('New connection:');
+    // @GetUser() user: User,
+    async handleConnection( @ConnectedSocket() socket: Socket) {
+    Logger.log('New CHAT connection:');
     console.log(socket.id)
+    // console.log(socket)
+    this.server.emit('message', 'test');
     //TODO check session here
     //testing
-    const userDto: AuthUserDto = {
-      id: '1',
-      username: 'test1',
-      title: 'the Tester',
-      avatar: '',
-      status: 1
+    // const userDto: AuthUserDto = {
+      // id: '151',
+      // username: 'test151',
+      // title: 'the Tester',
+      // avatar: '',
+      // status: 1
+    // }
+    let user : User = await this.userService.findUserByName('hntest2');
+    let chater = await this.chatUserService.findByUser(user);
+    console.log(chater)
+    if (chater)  {
+      user = await this.userService.findUserByName('hntest1');
+      chater = await this.chatUserService.findByUser(user);
     }
     
-    let user : User = await this.userService.findUserByName(userDto.username);
-    if (!user)  {
-      user = await this.userService.createUser(userDto);
+    console.log(chater)
+    if (chater)  {
+      return ;
     }
-    console.log(user)
+    // user = await this.userService.findUserByName('test151')
+    // if (!user)  {
+        // user = await this.userService.createUser(userDto);
+    // }
+
+      console.log(user)
     // const user: User await etc
     // try {
     //   //get user
+      
       if (!user)  {
         return this.disconect(socket);
       }  else  {
@@ -67,7 +91,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   //TODO set user ofline here
   async handleDisconnect(socket: Socket) {
-    Logger.log('Client disconnected', socket)
+    Logger.log('Client disconnected')
+    console.log(socket.id)
     await this.chatUserService.deleteBySocketId(socket.id);
     socket.disconnect();
   }
@@ -99,5 +124,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   async typing(
     @MessageBody('isTyping') isTyping: boolean)  {
 
+  }
+
+  @SubscribeMessage('getChannelMessages')
+  async onGetChannelMessages(socket: Socket, channel: Channel)  {
+    const messages = await this.messageService.findMessagesByChannel(channel);
+    this.server.to(socket.id).emit('messages', messages)
   }
 }

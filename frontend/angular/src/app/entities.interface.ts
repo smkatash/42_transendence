@@ -2,7 +2,12 @@ export interface Channel {
   id: number
   name: string
   type: string
-  avatar: string
+  private: boolean
+  // avatar: string
+  owner: User
+  users: User[]
+  admins: User[]
+  protected: boolean
 }
 
 export interface User {

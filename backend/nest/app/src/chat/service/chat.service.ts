@@ -5,13 +5,17 @@ import { MessageService } from './message.service';
 import { JoinChannelDto, CreateChannelDto } from '../dto/channel.dto';
 import { User } from 'src/user/entities/user.entity';
 import { Channel } from '../entities/channel.entity';
+import { JoinedChannelService } from './joined-channel.service';
+import { ChatUserService } from './chat-user.service';
 
 @Injectable()
 export class ChatService {
    constructor(
-    private readonly channelService: ChannelService,
-    private readonly userService: UserService,
-    private readonly msgService: MessageService
+    /*private*/ readonly channelService: ChannelService,
+    /*private */readonly userService: UserService,
+    /*private*/ readonly msgService: MessageService,
+    private readonly joinedChannelService: JoinedChannelService,
+    private readonly chatUserService: ChatUserService
    ){} 
    
    async getChats(): Promise<Channel[]> {
@@ -29,6 +33,9 @@ export class ChatService {
             user.channels = [];
             user.channels.push(channel);
             this.userService.saveUser(user);
+            //TODO maybe check if found dunno 🤷‍♂️
+            const socketId = (await this.chatUserService.findByUser(user)).socketId;
+            this.joinedChannelService.create(user, socketId, channel);
             return channel;
          }  catch (error)  {
             Logger.error(error);           

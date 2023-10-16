@@ -18,7 +18,13 @@ export class GameSocket extends Socket {
 @Injectable()
 export class ChatSocket extends Socket {
   constructor() {
-    super({ url: 'http://127.0.0.1:3000/chat', options: { withCredentials: true } })
+    super({
+      url: 'http://127.0.0.1:3000/chat',
+      options: {
+        withCredentials: true,
+       //TODO need authorisatioon here 
+      }
+    })
   }
 }
 

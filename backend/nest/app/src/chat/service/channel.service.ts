@@ -16,11 +16,10 @@ export class ChannelService {
     async createChannel(channel: CreateChannelDto, owner: User): Promise<Channel>{
         // const exists = await this.channelRepository.findOneBy({name: CreateChannelDto.name})
         try {
-            console.log('HERERERERER')
-            console.log(channel)
+            // console.log(channel)
             const newChannel = this.channelRepository.create(channel);
             newChannel.owner = owner;
-            console.log('createchannel', newChannel)
+            // console.log('createchannel', newChannel)
             newChannel.messages = [];
             newChannel.users = [];
             newChannel.admins = [];
@@ -46,6 +45,10 @@ export class ChannelService {
         if (!channel)   {
             throw new BadRequestException('No such channel') 
         }
+        if (channel.owner && channel.owner.id !== user.id)  {
+            throw new BadRequestException('No rights')
+        }
+        return await this.channelRepository.delete(channel.id);
 
     }
     async getUsersChannels(userId: number): Promise<Channel[]>  {
@@ -64,7 +67,7 @@ export class ChannelService {
     async getChannel(channelId: number): Promise<Channel> {
         return await this.channelRepository.findOne({
             where: {id: channelId},
-            // relations: ['users']
+            relations: ['users']
         })
     }
     async join(user: User, joinDto: JoinChannelDto) {

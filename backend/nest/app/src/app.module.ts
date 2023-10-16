@@ -19,6 +19,7 @@ import { AuthToken } from './auth/entities/auth-token.entity';
 import { Channel } from './chat/entities/channel.entity';
 import { ChatUser } from './chat/entities/chatUser.entity';
 import { Message } from './chat/entities/message.entity';
+import { JoinedChannel } from './chat/entities/joinedChannel.entity';
 
 
 @Module({
@@ -40,7 +41,7 @@ import { Message } from './chat/entities/message.entity';
       username: DB_USERNAME,
       password: DB_PASSWORD,
       database: DB_NAME,
-      entities: [User, Match, Player, Queue, AuthToken, Channel, ChatUser, Message],
+      entities: [User, Match, Player, Queue, AuthToken, Channel, ChatUser, Message, JoinedChannel],
       synchronize: true
     }),
     GameModule,

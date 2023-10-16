@@ -3,16 +3,36 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Channel, Message, User } from '../entities.interface';
+import { ChatSocket } from '../app.module';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private socket: ChatSocket
+  ) { }
 
+  //all existing channels
   getChannels(): Observable<Channel[]> {
-    const url = 'api/channels';
-    return this.http.get<Channel[]>(url)
+    // const url = 'api/channels';
+    const url = 'http://127.0.0.1:3000/chat/all'
+    return this.http.get<Channel[]>(url, {
+      withCredentials: true
+    })
+      .pipe(
+        catchError(this.handleError<Channel[]>('getChannels', []))
+        )
+      }
+
+    //channels, that user is on
+    getUsersChannels(): Observable<Channel[]> {
+    // const url = 'api/channels';
+    const url = 'http://127.0.0.1:3000/chat'
+    return this.http.get<Channel[]>(url, {
+      withCredentials: true
+    })
       .pipe(
         catchError(this.handleError<Channel[]>('getChannels', []))
         )
@@ -44,4 +64,18 @@ export class ChatService {
       return of(result as T);
     }
   }
+
+    /**
+     * messing up with Jad's odcs
+     **/
+    connectSocket() {
+      this.socket.connect();
+    }
+    sendMessage() {
+      return
+    }
+
+    getMessage()  {
+      return console.log(this.socket.fromEvent('message'))
+    }
 }

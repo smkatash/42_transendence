@@ -1,0 +1,13 @@
+{
+	"/":	{
+		"target": "http://:3000",
+		"secure": false,
+		"changeOrigin": true
+	},
+	"/socket.io/":	{
+		"target": "http://:3000",
+		"secure": false,
+		"changeOrigin": true
+	}
+}
+

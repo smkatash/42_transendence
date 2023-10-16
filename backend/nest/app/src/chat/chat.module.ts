@@ -10,6 +10,8 @@ import { MessageService } from './service/message.service';
 import { Message } from './entities/message.entity';
 import { ChatUser } from './entities/chatUser.entity';
 import { ChatUserService } from './service/chat-user.service';
+import { JoinedChannel } from './entities/joinedChannel.entity';
+import { JoinedChannelService } from './service/joined-channel.service';
 
 @Module({
   imports: [
@@ -17,7 +19,8 @@ import { ChatUserService } from './service/chat-user.service';
     TypeOrmModule.forFeature([
       Channel,
       ChatUser,
-      Message
+      Message,
+      JoinedChannel
     ])
   ],
   controllers: [ChatController],
@@ -26,7 +29,8 @@ import { ChatUserService } from './service/chat-user.service';
     ChatService,
     ChatGateway,
     MessageService,
-    ChatUserService
+    ChatUserService,
+    JoinedChannelService
   ]
 })
 export class ChatModule {}
