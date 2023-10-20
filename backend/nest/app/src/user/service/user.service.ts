@@ -270,7 +270,7 @@ export class UserService {
 
 	async getUserRelations(id: string) {
 		return this.userRepo.findOne({
-			where: { id }, relations: ['friends', 'friendOf', 'sentFriendRequests', 'pendingFriendRequests']
+			where: { id }, relations: ['friends', 'friendOf', 'sentFriendRequests', 'pendingFriendRequests', 'blockedUsers']
 		})
 	}
 }
