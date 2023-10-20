@@ -112,21 +112,23 @@ export class MatchService {
     }   
 
 	async checkDisconnectedPlayers(match: Game){
-		const players = match.match.players
-		const playerOne = await this.playerService.getPlayerById(players[0].id)
-		const playerTwo = await this.playerService.getPlayerById(players[1].id)
-		if (playerOne.user.status !== Status.GAME) {
-			match.match.status = GameState.PAUSE
-			match.match.loser = playerOne
-			match.match.winner = playerTwo
-		}
-		if (playerTwo.user.status !== Status.GAME) {
-			match.match.status = GameState.PAUSE
-			match.match.loser = playerTwo
-			match.match.winner = playerOne
-		}
-	}
-
+        if (match.match.players.length === 2) {
+            const players = match.match.players
+            const playerOne = await this.playerService.getUserByPlayerId(players[0].id)
+            const playerTwo = await this.playerService.getUserByPlayerId(players[1].id)
+            if (playerOne.user.status !== Status.GAME) {
+                match.match.status = GameState.PAUSE
+                match.match.loser = playerOne
+                match.match.winner = playerTwo
+            }
+            if (playerTwo.user.status !== Status.GAME) {
+                match.match.status = GameState.PAUSE
+                match.match.loser = playerTwo
+                match.match.winner = playerOne
+            }
+        }
+    }
+	
     async getCurrentMatch(matchId: string): Promise<Match> {
         return this.getMatchById(matchId)
     }
