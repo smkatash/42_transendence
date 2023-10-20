@@ -27,6 +27,7 @@ export enum GameState {
   READY = 0,
   START,
   INPROGRESS,
+  PAUSE,
   END
 }
 
