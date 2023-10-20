@@ -2,6 +2,8 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ProfileService } from './profile.service';
 import { Match, Stats, User } from '../entities.interface';
 import { ActivatedRoute } from '@angular/router';
+import { forkJoin } from 'rxjs';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -10,12 +12,17 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class ProfileComponent implements OnInit {
 
-  constructor(private profileService: ProfileService, private route: ActivatedRoute, private cd: ChangeDetectorRef){ }
+  constructor(
+    private profileService: ProfileService,
+    private route: ActivatedRoute,
+    private cd: ChangeDetectorRef,
+    private auth: AuthService) { }
 
   id: string | null = null
   currentUserID: string | null = null
   profile?: User
   friends: User[] = []
+  requests: User[] = []
   matches: Match[] = []
   rank: number = 0
   stats: Stats = {wins: 0, losses: 0}
@@ -23,6 +30,8 @@ export class ProfileComponent implements OnInit {
   selectedImage: File | null = null
   isEditingName: boolean = false
   isEditingTitle: boolean = false
+  isbuttonClicked2FA: boolean = false
+  selectedTab: string = 'friends'
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -36,46 +45,64 @@ export class ProfileComponent implements OnInit {
     })
   }
 
+  private handleError(err: any): void {
+    // TODO: Route to Unauthorized or Not found page depending on error
+    alert(err.message);
+  }
+
+  /* Gets the current user's profile,  */
   getCurrentUserProfile(): void {
-    this.profileService.getCurrentUser()
-      .subscribe({
-        next: user => this.profile = user,
-        error: err => alert(err.message) // TODO: Route to Unauthorized or Not found page depending on error
-      })
-
-    this.profileService.getCurrentUserFriends()
-      .subscribe({
-        next: friends => {console.log(friends); this.friends = friends},
-        error: err => alert(err.message) // TODO: Route to Unauthorized or Not found page depending on error
-      })
-
-    this.profileService.getCurrentUserStats()
-      .subscribe({
-        next: stats => this.stats = stats,
-        error: err => alert(err.message) // TODO: Route to Unauthorized or Not found page depending on error
-      })
+    forkJoin({
+      currentUser: this.profileService.getCurrentUser(),
+      friends: this.profileService.getCurrentUserFriends(),
+      requests: this.profileService.getCurrentUserRequests(),
+      rank: this.profileService.getCurrentUserRank(),
+      stats: this.profileService.getCurrentUserStats(),
+      history: this.profileService.getCurrentUserHistory(),
+    }).subscribe({
+      next: ({ currentUser, friends, requests, rank, stats, history }) => {
+        this.profile = currentUser
+        this.friends = friends
+        this.requests = requests
+        this.rank = rank
+        this.stats = stats
+        this.matches = history
+      },
+      error: err => this.handleError(err)
+    });
   }
 
   getUserProfile(): void {
     if (!this.id) return
-
-    this.profileService.getUser(this.id)
-      .subscribe({
-        next: user => this.profile = user,
-        error: err => alert(err.message) // TODO: Route to Unauthorized or Not found page depending on error
-      })
-
-    this.profileService.getFriends(this.id)
-      .subscribe({
-        next: friends => {console.log(friends); this.friends = friends},
-        error: err => alert(err.message) // TODO: Route to Unauthorized or Not found page depending on error
-      })
+    forkJoin({
+      user: this.profileService.getUser(this.id),
+      friends: this.profileService.getFriends(this.id),
+      rank: this.profileService.getRank(this.id),
+      stats: this.profileService.getStats(this.id),
+      matches: this.profileService.getHistory(this.id),
+    }).subscribe({
+      next: ({ user, friends, rank, stats, matches }) => {
+        this.profile = user
+        this.friends = friends
+        // this.requests = [] // Set it back to empty if fetching a user's profile
+        this.rank = rank
+        this.stats = stats
+        this.matches = matches
+      },
+      error: err => this.handleError(err)
+    });
   }
 
   /* Only used when I want to compare the id with the current id to check if I want to display add friend button */
   getCurrentUserID(): void {
     this.profileService.getCurrentUser()
       .subscribe(user => this.currentUserID = user.id)
+  }
+
+  addFriend(): void {
+    if (this.id) {
+      this.profileService.sendRequest(this.id)
+    }
   }
 
   toggleNameEdit(): void {
@@ -102,7 +129,6 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-
   onImageSelected(event: any) {
     this.selectedImage = event.target.files[0]
 
@@ -121,7 +147,24 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-/*   onFriendRequest(userID: string): void {
-    this.profileService.sendRequest(userID)
-  } */
+  enable2FA(): void {
+    this.isbuttonClicked2FA = !this.isbuttonClicked2FA
+    this.cd.detectChanges();
+  }
+
+  disable2FA(): void {
+    // Code for disabling 2FA
+  }
+
+  logout(): void {
+    this.auth.logout()
+  }
+
+  selectTab(tab: string) {
+    if (tab === 'friends') {
+      this.selectedTab= 'friends'
+    } else {
+      this.selectedTab= 'requests'
+    }
+  }
 }

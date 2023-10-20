@@ -10,7 +10,10 @@ export interface User {
   username: string
   title: string
   avatar: string
+  email: string
   status: number
+  mfaEnable: boolean
+  mfaStatus: number
 }
 
 export interface Stats {

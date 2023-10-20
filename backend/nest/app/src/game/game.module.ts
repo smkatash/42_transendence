@@ -11,10 +11,10 @@ import { Queue } from './entities/queue.entity';
 import { QueueService } from './service/queue.service';
 import { GameService } from './service/game.service';
 import { PassportModule } from '@nestjs/passport';
-import { RedisSessionModule } from 'src/redis/redis-session.module';
+import { AuthToken } from 'src/auth/entities/auth-token.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Match, Player, Queue]), UserModule, AuthModule, PassportModule, RedisSessionModule],
+    imports: [TypeOrmModule.forFeature([Match, Player, Queue, AuthToken]), UserModule, AuthModule, PassportModule],
     providers: [GameGateway, MatchService, PlayerService, QueueService, GameService],
     exports: [MatchService, PlayerService]
 })

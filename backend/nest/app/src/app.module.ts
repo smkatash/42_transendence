@@ -16,45 +16,42 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ChannelModule } from './chat/channel/channel.module';
 import { BlockListModule } from './chat/block-list/block-list.module';
 import { ChannelMessageModule } from './chat/channel-message/channel-message.module';
-// import { ChannelUserModule } from './chat/channel_user/channel_user.module';
-// import { ChannelMessageModule } from './chat/channel_message/channel_message.module';
-// import { BlockListModule } from './chat/block_list/block_list.module';
-// import { FriendListModule } from './chat/friend_list/friend_list.module';
 import { RankingModule } from './ranking/ranking.module';
-// import { ChannelModule } from './chat/channel/channel.module';
-// import { ChatGatewayGateway } from './chat/chat-gateway/chat-gateway.gateway';
 import { ChatGateway } from './chat/chat/chat.gateway';
-
+import { AuthToken } from './auth/entities/auth-token.entity';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath: 'dev.env',
+      isGlobal: true
+    }),
     PassportModule.register({ session: true}),
     AuthModule,
     UserModule,
     RedisModule.forRoot({
       config: {
         host: REDIS_HOST,
-        port: REDIS_PORT,
+        port: Number(REDIS_PORT),
         password: REDIS_PASSWORD
       }
     }),
     TypeOrmModule.forRoot({
-      type: DB_TYPE,
+	  type: DB_TYPE,
       host: DB_HOST,
-      port: DB_PORT,
+      port: Number(DB_PORT),
       username: DB_USERNAME,
       password: DB_PASSWORD,
       database: DB_NAME,
-      entities: [User, Match, Player, Queue],
+      entities: [User, Match, Player, Queue, AuthToken],
       synchronize: true
     }),
     GameModule,
     ScheduleModule.forRoot(),
     ChannelModule,
-    // ChannelUserModule,
     ChannelMessageModule,
     BlockListModule,
-    // FriendListModule,
     RankingModule,
   ],
   controllers: [AppController],

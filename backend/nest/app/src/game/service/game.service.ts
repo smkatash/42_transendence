@@ -5,14 +5,13 @@ import { Match } from '../entities/match.entity';
 
 @Injectable()
 export class GameService {
-    static options = Object.freeze(new GameOptions(DEFAULT_TABLE_HEIGHT, DEFAULT_PADDLE_GAP, GameMode.EASY))
-    private MAXPOINTS = 10
-    private increment = 1; //value to fix speed;
+    private options: Readonly<GameOptions>
+	private MAXPOINTS = 10
 
     constructor() {}
 
-
-    public launchGame(match: Match): Game {
+    public launchGame(match: Match, mode: GameMode): Game {
+		this.options = Object.freeze(new GameOptions(DEFAULT_TABLE_HEIGHT, DEFAULT_PADDLE_GAP, mode))
         const ball: Ball = this.launchBall()
         const leftPaddle: Paddle = this.launchPaddle(Paddletype.LEFT) 
         const rightPaddle: Paddle = this.launchPaddle(Paddletype.RIGHT)
@@ -72,8 +71,8 @@ export class GameService {
         const dir: Position = this.calculateVector() 
         const ball: Ball = {
             position: {
-                x: GameService.options.table.width / DEFAULT_TABLE_PROPORTION,
-                y: GameService.options.table.height / DEFAULT_TABLE_PROPORTION,
+                x: this.options.table.height / DEFAULT_TABLE_PROPORTION,
+                y: this.options.table.width / DEFAULT_TABLE_PROPORTION,
             },
             velocity: {
                 x: dir.x,
@@ -87,15 +86,15 @@ export class GameService {
         let x: number
         
         if (type === Paddletype.LEFT) {
-            x = GameService.options.paddleDistance
+            x = this.options.paddleDistance
         } else {
-            x = GameService.options.table.width - GameService.options.paddleDistance
+            x = this.options.table.width - this.options.paddleDistance
         }
 
         const paddle: Paddle = {
             position: {
                 x: x,
-                y: GameService.options.table.height / 2,
+                y: this.options.table.height / 2,
             },
             length: DEFAULT_PADDLE_LENGTH,
         }
@@ -103,38 +102,35 @@ export class GameService {
         return paddle
     }
 
+
     throwBall(game: Game): Game {
         game.ball.position.x += game.ball.velocity.x
         game.ball.position.y += game.ball.velocity.y
 
-        if (game.ball.position.y >=  GameService.options.table.height - 5) {
+        if (game.ball.position.y >=  this.options.table.height) {
             game.ball.velocity.y *= -1
-            game.ball.position.y = GameService.options.table.height - 6
+            game.ball.position.y = this.options.table.height - 0.5
             return game
         } else if (game.ball.position.y < 5) {
             game.ball.velocity.y *= -1
             game.ball.position.y = 6
             return game
         }
-        // console.log('Throw2')
-        // if (game.ball.position.x <= GameService.options.paddleDistance) {
-        if (game.ball.position.x <= 15) {
+        console.log('Throw2')
+        if (game.ball.position.x <= this.options.paddleDistance) {
             if (game.ball.position.y > (game.leftPaddle.position.y - (game.leftPaddle.length / 2)) &&
                     game.ball.position.y < (game.leftPaddle.position.y + (game.leftPaddle.length / 2))) {
                     game.ball.velocity.x *= -1
-                    // game.ball.position.x = GameService.options.paddleDistance + 0.5
-                    game.ball.position.x = 50 + 0.5
+                    game.ball.position.x = this.options.paddleDistance + 0.5
                     return game
              }
             // console.log('Throw3')
             return this.resetGame(game, Paddletype.RIGHT)
-        // } else if (game.ball.position.x > GameService.options.table.width - GameService.options.paddleDistance) {
-        } else if (game.ball.position.x > GameService.options.table.width - 15) {
+        } else if (game.ball.position.x > this.options.table.width - this.options.paddleDistance) {
             if (game.ball.position.y > (game.rightPaddle.position.y - (game.rightPaddle.length / 2)) &&
                     game.ball.position.y < (game.rightPaddle.position.y + (game.rightPaddle.length / 2))) {
                     game.ball.velocity.x *= -1
-                    // game.ball.position.x = GameService.options.table.width - GameService.options.paddleDistance - 0.5
-                    game.ball.position.x = GameService.options.table.width - 50 - 0.5
+                    game.ball.position.x = this.options.table.width - this.options.paddleDistance - 0.5
                     return game
             }
             // console.log('Throw4')

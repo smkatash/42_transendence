@@ -1,5 +1,5 @@
 import { IsBoolean, IsEnum, IsString} from "class-validator"
-import { Status } from "src/user/utils/status.dto"
+import { Status } from "src/user/utils/status.enum"
 
 
 export class AuthUserDto {

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { validate } from 'class-validator';
@@ -43,7 +43,7 @@ export class PlayerService {
     async saveValidPlayer(player: Player) {
         const validate_error = await validate(player);
         if (validate_error.length > 0) {
-          throw new BadRequestException();
+            throw new UnprocessableEntityException('Invalid player format');
         }
         return this.playerRepo.save(player);
       }
@@ -61,7 +61,6 @@ export class PlayerService {
         return this.playerRepo.save(players)
     }
 
-
     async updatePlayerQueue(player: Player, queue?: Queue) {
         if (!queue) {
             player.queue = null
@@ -75,6 +74,13 @@ export class PlayerService {
         player.gameState = state
         return this.saveValidPlayer(player)
     }
+
+	async getInvitedPlayers(currentPlayerId: string, invitedPlayerId: string): Promise<Player[]> {
+		const playerOne: Player = await this.getPlayerById(currentPlayerId)
+		const playerTwo: Player = await this.getPlayerById(invitedPlayerId)
+
+		return [playerOne, playerTwo]
+	}
 
     getPlayers(): Promise<Player[]> {
         return this.playerRepo.find()
