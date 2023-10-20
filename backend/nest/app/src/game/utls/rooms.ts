@@ -7,5 +7,6 @@ export const INVITE_TO_MATCH = "invite"
 export const QUEUE = "queue"
 export const ERROR = "error"
 export const INGAME = "game"
+export const POSITION_CHANGE = "key"
 
 export const WAITING_MESSAGE = "Waiting players to join"

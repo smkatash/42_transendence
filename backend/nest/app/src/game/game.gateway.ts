@@ -8,7 +8,7 @@ import { Player } from './entities/player.entity';
 import { PlayerService } from './service/player.service';
 import { Game} from './utls/game';
 import { User } from 'src/user/entities/user.entity';
-import { ERROR, INVITE_TO_MATCH, JOIN_MATCH, QUEUE, START_MATCH, USER, WAITING_MESSAGE } from './utls/rooms';
+import { ERROR, INVITE_TO_MATCH, JOIN_MATCH, POSITION_CHANGE, QUEUE, START_MATCH, USER, WAITING_MESSAGE } from './utls/rooms';
 import { InvitedUserDto, JoinMatchDto, PositionDto } from './utls/message-dto';
 
 
@@ -54,12 +54,6 @@ async handleDisconnect(@ConnectedSocket() client: Socket) {
 	} catch (error) {
 		this.emitError(client, error)
 	}
-  }
-
-  @SubscribeMessage('message')
-  handleMessage(@ConnectedSocket() client: Socket, @MessageBody() data: string) {
-    this.logger.debug(`Payload: ${data}`)
-    this.server.emit('message', data)
   }
 
   @SubscribeMessage(START_MATCH)
@@ -120,7 +114,7 @@ async handleDisconnect(@ConnectedSocket() client: Socket) {
    }
 }
 
-  @SubscribeMessage('key')
+  @SubscribeMessage(POSITION_CHANGE)
   async handleKeyPress(@ConnectedSocket() client: Socket, @MessageBody() positionDto: PositionDto) {
 	try {
 		if (!client.data.user.id) throw new UnauthorizedException()
