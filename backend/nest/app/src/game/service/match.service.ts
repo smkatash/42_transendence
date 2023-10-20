@@ -78,6 +78,7 @@ export class MatchService {
                 if (updateGame.status === GameState.END) {
 					await this.saveMatchHistory(updateGame)
                     this.server.to(match.match.id).emit(INGAME, updateGame)
+					this.server.in(match.match.id).disconnectSockets(true)
                     this.server.socketsLeave(match.match.id)
 					this.matches.delete(match.match.id)
                 }
@@ -87,10 +88,10 @@ export class MatchService {
 				// TODO check the game state
 				await this.saveMatchHistory(match)
                 this.server.to(match.match.id).emit(INGAME, match)
+				this.server.in(match.match.id).disconnectSockets(true)
                 this.server.socketsLeave(match.match.id)
 				this.matches.delete(match.match.id)
 			}
-
         }
     }
 
