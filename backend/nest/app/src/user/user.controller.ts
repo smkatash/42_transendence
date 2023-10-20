@@ -1,5 +1,5 @@
-import { BadRequestException, Body, Controller, Delete, Get, HttpException, HttpStatus, Inject, Param, Patch, Post, Res, UnauthorizedException, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
-import { UserService } from './user.service';
+import { BadRequestException, Body, ConflictException, Controller, Delete, Get, HttpException, HttpStatus, Inject, Logger, Param, Patch, Post, Query, Res, UnauthorizedException, UploadedFile, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
+import { UserService } from './service/user.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { v4 as uuid } from 'uuid';
@@ -7,11 +7,14 @@ import { User } from './entities/user.entity';
 import { GetUser } from 'src/auth/utils/get-user.decorator';
 import { SessionGuard } from 'src/auth/guard/auth.guard';
 import * as path from 'path';
+import { IMAGE_UPLOADS_PATH, POSTGRES_UNIQUE_VIOLATION } from 'src/Constants';
+import { SessionUserDto } from './utils/user.dto';
+import { FriendIdDto, ParamAvatarDto, ParamUserIdDto, UpdateEmailDto, UpdateTitleDto, UpdateUsernameDto } from './utils/entity.dto';
 
 
 export const localStorage = {
     storage: diskStorage({
-    destination: './uploads/images',
+    destination: IMAGE_UPLOADS_PATH,
     filename: (req, file, cb) => {
         const filename: string = path.parse(file.originalname).name.replace(/\s/g, '') + uuid()
         const extention: string = path.parse(file.originalname).ext
@@ -21,62 +24,87 @@ export const localStorage = {
 
 @Controller('user')
 export class UserController {
+	private readonly logger = new Logger()
+
     constructor(@Inject(UserService) private userService: UserService) {}
 
     @Get('profile')
     @UseGuards(SessionGuard)
-    async getUserInfo(@GetUser() currentUser: User) {
-        if (currentUser && currentUser.id) {
+    async getUserInfo(@GetUser() currentUser: SessionUserDto) {
+        if (!currentUser) {
+			throw new UnauthorizedException('Access denied');
+		}
+
+		try {
             return await this.userService.getUserById(currentUser.id)
-        } else {
-            throw new UnauthorizedException('Access denied');
-        }
+		} catch(error) {
+			this.logger.error(error)
+			throw error
+		}
+
     }
 
 	@Patch('username')
 	@UseGuards(SessionGuard)
-	async updateUsername(@Body('username') newName: string, @GetUser() currentUser: User) {
-		if (currentUser && currentUser.id) {
-			try {
-                return await this.userService.updateUsername(currentUser.id, newName)
-			} catch (error) {
-				throw new HttpException(`${newName} username already exists`, HttpStatus.CONFLICT)
-			}
-		} else {
+	async updateUsername(@Body() updateUsernameDto: UpdateUsernameDto, @GetUser() currentUser: SessionUserDto) {
+		if (!currentUser) {
 			throw new UnauthorizedException('Access denied');
 		}
+		
+		try {
+			return await this.userService.updateUsername(currentUser.id, updateUsernameDto.username)
+		} catch(error) {
+			if (error.code === POSTGRES_UNIQUE_VIOLATION) {
+				throw new ConflictException(`${updateUsernameDto.username} username already exists`)
+			} else {
+				this.logger.error(error)
+				throw error
+			}
+		}
+		
 	}
 
 	@Patch('title')
 	@UseGuards(SessionGuard)
-	async updateTitle(@Body('title') newTitle: string, @GetUser() currentUser: User) {
-		if (currentUser && currentUser.id) {
-			return await this.userService.updateTitle(currentUser.id, newTitle)	
-		} else {
+	async updateTitle(@Body('title') updateTitleDto: UpdateTitleDto, @GetUser() currentUser: SessionUserDto) {
+		if (!currentUser) {
 			throw new UnauthorizedException('Access denied');
+		}
+
+		try {
+			return await this.userService.updateTitle(currentUser.id, updateTitleDto.title)
+		} catch (error) {
+			this.logger.error(error)
+			throw error
 		}
 	}
 
 	@Patch('enable-mfa')
 	@UseGuards(SessionGuard)
-	async enableMfaWithEmail(@Body('email') newEmail: string, @GetUser() currentUser: User) {
-		if (currentUser && currentUser.id) {
-            console.log(newEmail)
-			const user = await this.userService.enableMfaVerification(currentUser.id, newEmail)
-            console.log(user)
-            return user
-		} else {
+	async enableMfaWithEmail(@Body() updateEmailDto: UpdateEmailDto, @GetUser() currentUser: SessionUserDto) {
+		if (!currentUser) {
 			throw new UnauthorizedException('Access denied');
+		}
+		
+		try {
+			return await this.userService.enableMfaVerification(currentUser.id, updateEmailDto.email)
+		} catch (error) {
+			this.logger.error(error)
+			throw error
 		}
 	}
 
 	@Patch('disable-mfa')
 	@UseGuards(SessionGuard)
-	async disableMfaWithEmail(@GetUser() currentUser: User) {
-		if (currentUser && currentUser.id) {
-			return await this.userService.disableMfaVerification(currentUser.id)
-		} else {
+	async disableMfaWithEmail(@GetUser() currentUser: SessionUserDto) {
+		if (!currentUser) {
 			throw new UnauthorizedException('Access denied');
+		}
+		try {
+			return await this.userService.disableMfaVerification(currentUser.id)
+		} catch (error) {
+			this.logger.error(error)
+			throw error
 		}
 	}
 
@@ -84,121 +112,174 @@ export class UserController {
     @Post('image/upload')
     @UseGuards(SessionGuard)
     @UseInterceptors(FileInterceptor('image', localStorage))
-    async uploadAvatar(@GetUser() currentUser: User, @UploadedFile() file: Express.Multer.File) {
-        if (currentUser && currentUser.id) {
+    async uploadAvatar(@GetUser() currentUser: SessionUserDto, @UploadedFile() file: Express.Multer.File) {
+        if (!currentUser) {
+			throw new UnauthorizedException('Access denied');
+		}
+
+		try {
             return await this.userService.updateUserAvatar(currentUser.id, file.filename)
-        } else {
-            throw new UnauthorizedException('Access denied');
-        }
+		} catch (error) {
+			this.logger.error(error)
+			throw error
+		}
     }
 
     @Get('image/:avatar')
     @UseGuards(SessionGuard)
-    getUserAvatar(@Param('avatar') avatar: string, @Res() res) {
-		if (avatar) {
-			return res.sendFile(path.join(process.cwd(),'uploads/images/' + avatar))
-		} else {
-			throw new BadRequestException('Avatar not provided')
+    getUserAvatar(@GetUser() currentUser: SessionUserDto, @Param() paramAvatarDto: ParamAvatarDto, @Res() res) {
+		if (!currentUser) {
+			throw new UnauthorizedException('Access denied');
+		}
+
+		try {
+			return res.sendFile(path.join(process.cwd(), IMAGE_UPLOADS_PATH + paramAvatarDto.avatar))
+		} catch(error) {
+			this.logger.error(error)
+			throw error
 		}
     }
 
     @Get('friends')
     @UseGuards(SessionGuard)
-    async getCurrentUserFriends(@GetUser() currentUser: User) {
-        if (currentUser && currentUser.id) {
+    async getCurrentUserFriends(@GetUser() currentUser: SessionUserDto) {
+		if (!currentUser) {
+			throw new UnauthorizedException('Access denied');
+		}
+
+        try {
             const friends: User[] = await this.userService.getUserFriends(currentUser.id)
             return friends
-        } else {
-            throw new UnauthorizedException('Access denied');
-        }
+		} catch (error) {
+			throw error
+		}
     }
 
     @Get(':id/friends')
     @UseGuards(SessionGuard)
-    async getUserFriends(@Param('id') userId: string, @GetUser() currentUser: User) {
-        if (currentUser && currentUser.id && userId) {
-            const friends: User[] = await this.userService.getUserFriends(userId)
+    async getUserFriends(@Param() paramUserIdDto: ParamUserIdDto, @GetUser() currentUser: SessionUserDto) {
+        if (!currentUser) {
+			throw new UnauthorizedException('Access denied');
+		}
+
+		try {
+            const friends: User[] = await this.userService.getUserFriends(paramUserIdDto.id)
             return friends
-        } else {
-            throw new UnauthorizedException('Access denied');
-        }
+		} catch (error) {
+			throw error
+		}
     }
 
     @Patch('add-friend')
     @UseGuards(SessionGuard)
-    async addNewFriend(@Body('friendId') friendId: string, @GetUser() currentUser: User) {
-        if (currentUser && currentUser.id && friendId) {
-            const user = await this.userService.addUserFriend(currentUser.id, friendId)
-            console.log(user)
-            return user
-        } else {
+    async addNewFriend(@Body() friendIdDto: FriendIdDto, @GetUser() currentUser: SessionUserDto) {
+		if (!currentUser) {
 			throw new UnauthorizedException('Access denied');
-        }
+		}
+
+		try {
+            return await this.userService.addUserFriend(currentUser.id, friendIdDto.friendId)
+		} catch (error) {
+			throw error
+		}
     }
 
 	@Patch('decline-friend')
     @UseGuards(SessionGuard)
-    async declineNewFriend(@Body('friendId') friendId: string, @GetUser() currentUser: User) {
-        if (currentUser && currentUser.id && friendId) {
-			return await this.userService.declineUserFriend(currentUser.id, friendId)
-        } else {
+    async declineNewFriend(@Body() friendIdDto: FriendIdDto, @GetUser() currentUser: SessionUserDto) {
+        if (!currentUser) {
 			throw new UnauthorizedException('Access denied');
-        }
+		}
+		
+		try {
+			return await this.userService.declineUserFriend(currentUser.id, friendIdDto.friendId)
+        } catch(error) {
+			throw error
+		}
     }
 	
 	@Post('request-friend')
     @UseGuards(SessionGuard)
-    async sendFriendRequest(@Body('friendId') friendId: string, @GetUser() currentUser: User) {
-		if (currentUser && currentUser.id && friendId) {
-           return await this.userService.sendFriendRequest(currentUser.id, friendId)
-        } else {
-            throw new UnauthorizedException('Access denied');
-        }
+    async sendFriendRequest(@Body() friendIdDto: FriendIdDto, @GetUser() currentUser: SessionUserDto) {
+		if (!currentUser) {
+			throw new UnauthorizedException('Access denied');
+		}
+
+		try {
+           return await this.userService.sendFriendRequest(currentUser.id, friendIdDto.friendId)
+        } catch(error) {
+			throw error
+		}
     }
 
     @Delete('friend/:id')
     @UseGuards(SessionGuard)
-    async deleteUserFriend(@Param('id') friendId: string, 
-                            @GetUser() currentUser: User) {
-        if (currentUser && currentUser.id && friendId) {
-            return await this.userService.removeUserFriend(currentUser.id, friendId);
-        } else {
-            throw new UnauthorizedException('Access denied');
-        }
+    async deleteUserFriend(@Param() friendIdDto: FriendIdDto, 
+                            @GetUser() currentUser: SessionUserDto) {
+		if (!currentUser) {
+			throw new UnauthorizedException('Access denied');
+		}
+
+        try {
+            return await this.userService.removeUserFriend(currentUser.id, friendIdDto.friendId);
+        } catch(error) {
+			throw error
+		}
     }
 
 	@Get('profile/:id')
     @UseGuards(SessionGuard)
-    async getUsersInfo(@Param('id') userId: string, @GetUser() currentUser: User) {
-		if (currentUser && currentUser.id && userId) {
-			return await this.userService.getUserById(userId)
-		} else {
-		throw new UnauthorizedException('Access denied');
+    async getUsersInfo(@Param() paramUserIdDto: ParamUserIdDto, @GetUser() currentUser: SessionUserDto) {
+		if (!currentUser) {
+			throw new UnauthorizedException('Access denied');
 		}
-    }
+
+		try {
+			return await this.userService.getUserById(paramUserIdDto.id)
+		} catch(error) {
+			throw error
+		}
+	}
 
 	@Get('friends/pending')
     @UseGuards(SessionGuard)
-    async getPendingFriendRequests(@GetUser() currentUser: User) {
-		if (currentUser && currentUser.id) {
-			const user = await this.userService.getPendingFriendRequests(currentUser.id)
-            console.log('--------------------------------------------------')
-            console.log(user)
-            return user
-		} else {
-		throw new UnauthorizedException('Access denied');
+    async getPendingFriendRequests(@GetUser() currentUser: SessionUserDto) {
+		if (!currentUser) {
+			throw new UnauthorizedException('Access denied');
+		}
+
+		try {
+			return await this.userService.getPendingFriendRequests(currentUser.id)
+		} catch(error) {
+			throw error
 		}
     }
 
 	@Get('friends/requests')
     @UseGuards(SessionGuard)
-    async getSentFriendRequests(@GetUser() currentUser: User) {
-		if (currentUser && currentUser.id) {
+    async getSentFriendRequests(@GetUser() currentUser: SessionUserDto) {
+		if (!currentUser) {
+			throw new UnauthorizedException('Access denied');
+		}
+
+		try {
 			return await this.userService.getSentFriendRequests(currentUser.id)
-		} else {
-		throw new UnauthorizedException('Access denied');
+		} catch(error) {
+			throw error
 		}
     }
 
-}
 
+	//TODO dto fuer Frau Taschbaeva
+	@Get('find-by-username/:username')
+	@UseGuards(SessionGuard)
+	async getAllByUsername(
+		@GetUser() user: User,
+		@Query('username') username: string)	{
+		if (user?.id)   {
+			return await this.userService.findAllByUsername(username);
+		}   else	{
+			throw new UnauthorizedException('Access denied')
+		}
+	}
+}

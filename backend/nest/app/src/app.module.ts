@@ -21,23 +21,28 @@ import { ChatUser } from './chat/entities/chatUser.entity';
 import { Message } from './chat/entities/message.entity';
 import { JoinedChannel } from './chat/entities/joinedChannel.entity';
 
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath: 'dev.env',
+      isGlobal: true
+    }),
     PassportModule.register({ session: true}),
     AuthModule,
     UserModule,
     RedisModule.forRoot({
       config: {
         host: REDIS_HOST,
-        port: REDIS_PORT,
+        port: Number(REDIS_PORT),
         password: REDIS_PASSWORD
       }
     }),
     TypeOrmModule.forRoot({
-      type: DB_TYPE,
+	  type: DB_TYPE,
       host: DB_HOST,
-      port: DB_PORT,
+      port: Number(DB_PORT),
       username: DB_USERNAME,
       password: DB_PASSWORD,
       database: DB_NAME,

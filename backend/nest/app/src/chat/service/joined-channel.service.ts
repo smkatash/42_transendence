@@ -26,15 +26,35 @@ export class JoinedChannelService {
     }
 
     async findByChannel(channel: Channel): Promise<JoinedChannel[]>  {
+        console.log(channel);
         return await this.joinedChannelRepo.find({
+            relations: ['channel'],
             where: {
-                channel
+                channel: {id: channel.id}
             }
         })
     }
 
-    async deleteBySocketId(socketId: string)  {
-        return await this.joinedChannelRepo.delete(socketId);
+    async deleteBySocketId(socketId: string, channel: Channel)  {
+        return await this.joinedChannelRepo.delete({
+            socketID: socketId,
+            channel: {
+                id: channel.id
+            }
+        });
+    }
+
+    async deleteByUserChannel(user: User, channel: Channel)    {
+        return await this.joinedChannelRepo.delete({
+            // user: user,
+            // channel: channel
+            user: {
+                id: user.id
+            },
+            channel: {
+                id: channel.id
+            }
+        })
     }
 
     async purge() {
@@ -42,5 +62,9 @@ export class JoinedChannelService {
         .createQueryBuilder()
         .delete()
         .execute();
+    }
+
+    async updateSocket(conn: JoinedChannel)    {
+        await this.joinedChannelRepo.save(conn)
     }
 }

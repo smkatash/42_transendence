@@ -1,5 +1,5 @@
 import { User } from "src/user/entities/user.entity";
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Message } from "./message.entity";
 import { JoinedChannel } from "./joinedChannel.entity";
 
@@ -21,6 +21,7 @@ export class Channel    {
     private: boolean;
 
     @ManyToOne(()=> User, (owner)=> owner.channels, {nullable: true})
+    @JoinColumn()
     owner: User;
 
     @Column({nullable: true})
@@ -29,15 +30,20 @@ export class Channel    {
     @Column({nullable: true})
     topic: string;
 
-    @ManyToMany(() => User)
+    @ManyToMany(() => User, (user) => user.channels)
     @JoinTable()
     users: User[];
 
-    @ManyToMany(() => User, {nullable: true})
+    @ManyToMany(() => User, (user) => user.adminAt, {nullable: true})
     @JoinTable()
+    // @JoinColumn()
     admins: User[];
 
-    @OneToMany(() => Message, (message) => message.channel)
+    @OneToMany(
+        () => Message, (message) => message.channel, {
+            cascade: ['remove']
+        }
+    )
     messages: Message[];
 
     @Column({default: false})
@@ -49,6 +55,10 @@ export class Channel    {
     // @JoinTable()
     // invited: User[]
 
+    @ManyToMany(() => User, (user)=> user.bannedAt)
+    // @JoinColumn()
+    @JoinTable()
+    banned: User[]
 
 
 }

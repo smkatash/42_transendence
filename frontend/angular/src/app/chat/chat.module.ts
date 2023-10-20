@@ -13,6 +13,7 @@ import { ChannelCreationMenuComponent } from './channel-creation-menu/channel-cr
 import { ChannelMessagesSettingsComponent } from './channel-messages-content/channel-messages-settings/channel-messages-settings.component';
 import { ChannelUserComponent } from './channel-messages-content/channel-messages-settings/channel-user/channel-user.component';
 import { SharedModule } from '../shared/shared.module';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,9 @@ import { SharedModule } from '../shared/shared.module';
     ChatRoutingModule,
     FormsModule,
     SharedModule,
-  ]
+  ],
+  // providers:  [
+  //   MatSnackBar
+  // ]
 })
 export class ChatModule { }

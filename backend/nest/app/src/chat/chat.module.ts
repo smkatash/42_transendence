@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ChatController } from './chat.controller';
-import { ChatService } from './service/chat.service';
+// import { ChatService } from './service/chat.service';
 import { ChatGateway } from './chat.gateway';
 import { UserModule } from 'src/user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -12,6 +11,7 @@ import { ChatUser } from './entities/chatUser.entity';
 import { ChatUserService } from './service/chat-user.service';
 import { JoinedChannel } from './entities/joinedChannel.entity';
 import { JoinedChannelService } from './service/joined-channel.service';
+import { User } from 'src/user/entities/user.entity';
 
 @Module({
   imports: [
@@ -23,10 +23,9 @@ import { JoinedChannelService } from './service/joined-channel.service';
       JoinedChannel
     ])
   ],
-  controllers: [ChatController],
   providers: [
     ChannelService,
-    ChatService,
+    // ChatService,
     ChatGateway,
     MessageService,
     ChatUserService,

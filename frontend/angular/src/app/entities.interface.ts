@@ -1,13 +1,15 @@
 export interface Channel {
-  id: number
-  name: string
-  type: string
-  private: boolean
+  id?: number
+  name?: string
+  type?: string
+  private?: boolean
   // avatar: string
-  owner: User
-  users: User[]
-  admins: User[]
-  protected: boolean
+  // owner?: string
+  owner?: User
+  users?: User[]
+  admins?: User[]
+  protected?: boolean
+  topic?: string
 }
 
 export interface User {
@@ -38,10 +40,16 @@ export interface Stats {
 // }
 
 export interface Message {
-  name: string
-  messageContent: string
-  timestamp: number
-  sessionUser: boolean
+  name?: string
+  messageContent?: string
+  timestamp?: number
+  sessionUser?: boolean
+  id?: number;
+  content: string;
+  user?: User;
+  channel?: Channel;
+  createdAt?: Date
+  channelId: number
 }
 
 export interface Match {
@@ -90,4 +98,9 @@ export interface Player{
 export interface Document {
   id: string
   doc: string
+}
+
+export  interface JoinChannelInfo {
+  id: number,
+  password?: string
 }

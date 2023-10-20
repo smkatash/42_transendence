@@ -10,22 +10,29 @@ export class ChannelService {
     constructor(
         @InjectRepository(Channel)
         private readonly channelRepository: Repository<Channel>
-        ){
-    }
+        ){}
 
     async createChannel(channel: CreateChannelDto, owner: User): Promise<Channel>{
         // const exists = await this.channelRepository.findOneBy({name: CreateChannelDto.name})
         try {
             // console.log(channel)
             const newChannel = this.channelRepository.create(channel);
-            newChannel.owner = owner;
-            // console.log('createchannel', newChannel)
+            newChannel.owner = owner
+            console.log('createchannel', newChannel)
             newChannel.messages = [];
             newChannel.users = [];
             newChannel.admins = [];
+            newChannel.banned = [];
             newChannel.users.push(owner);
-            return await this.channelRepository.save(newChannel);
+            newChannel.admins.push(owner);
+            console.log(newChannel)
+            console.log('----before save, at create chann---')
+           const c = await this.channelRepository.save(newChannel);
+            console.log(c)
+            return c
+            
         } catch (error) {
+            console.log("this is caught")
             Logger.error(error);
             if (error.code === 23505)   {
                 throw new HttpException('Channel already exists', HttpStatus.BAD_REQUEST)
@@ -35,23 +42,11 @@ export class ChannelService {
         }
     }
 
-    async deleteChannel(user: User, id: number) {
-        const channel = await this.channelRepository.findOne({
-            where:  {
-                id: id
-            },
-            // continue here
-            relations:['users',] })
-        if (!channel)   {
-            throw new BadRequestException('No such channel') 
-        }
-        if (channel.owner && channel.owner.id !== user.id)  {
-            throw new BadRequestException('No rights')
-        }
-        return await this.channelRepository.delete(channel.id);
-
+    async delete(id: number) {
+        return await this.channelRepository.delete(id);
     }
-    async getUsersChannels(userId: number): Promise<Channel[]>  {
+
+    async getUsersChannels(userId: string): Promise<Channel[]>  {
         const channels = await this.channelRepository
         .createQueryBuilder('channel')
         .leftJoin('channel.users', 'user')
@@ -61,13 +56,15 @@ export class ChannelService {
     }
 
     async getAllChannels(): Promise<Channel[]>  {
-        return await this.channelRepository.find();
+        return await this.channelRepository.find({
+            relations: ['users']
+        });
     }
 
-    async getChannel(channelId: number): Promise<Channel> {
+    async getChannel(channelId: number, relations: string[]): Promise<Channel> {
         return await this.channelRepository.findOne({
             where: {id: channelId},
-            relations: ['users']
+            relations:  relations
         })
     }
     async join(user: User, joinDto: JoinChannelDto) {
@@ -75,11 +72,14 @@ export class ChannelService {
             where:  {
                 id: joinDto.id
             },
-            relations: ['users', '']
+            relations: ['users']
         })
         if (!channel)   {
             throw new BadRequestException('No such channel');
         }
+console.log('--------join channels users------')
+        console.log(channel.users)
+        
         if (channel.users.includes(user)){
             throw new BadRequestException('Already in channel')
         }
@@ -93,6 +93,15 @@ export class ChannelService {
         //if user in invited, remove user
         return await this.channelRepository.save(channel);
     }
+
+    async getChannelsByUser(user: User)  {
+        return await this.channelRepository.find({
+            relations: ['users'],
+            where: {
+                users: {id: user.id}
+            }
+        })
+    }
  
     async leave(user: User, channelId)  {
  
@@ -102,9 +111,6 @@ export class ChannelService {
  
     }
  
-    async ban(user: User, userId: number, channelId: number)   {
-       
-    }
     async mute(user: User, userId: number, channelId: number)   {
        
     }
@@ -124,5 +130,9 @@ export class ChannelService {
  
     async password(user: User, oldPass: string, newPass: string)   {
  
+    }
+
+    async saveChannel(channel: Channel) {
+        return await this.channelRepository.save(channel);
     }
 }

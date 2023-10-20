@@ -1,0 +1,21 @@
+subscriptions:
+
+'createChannel', {CreateChannelDto}
+'join', {JoinChannelDto}
+'getUsersChannels'
+'getAllChannels'
+'getChannelMessages', channelId
+'leave', channelId
+'addAdmin', {UpdateChannelDto}
+'delAdmin', {UpdateChannelDto}
+'kick'/'ban'/'mute' {UpdateChannelDto}
+
+
+events:
+
+'error', error: any
+'usersChannels', Channel[]
+'allChannels', Channel[]
+'incMgs', {Message}
+'channelMessages', Message[]
+'channel', Channel

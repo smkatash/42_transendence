@@ -14,9 +14,7 @@ services:
       - 4200:4200
     depends_on:
       - nestjs
-    # environment:
-    #   - CHOKIDAR_USEPOLLING=true
-
+    restart: unless-stopped
 
   nestjs:
     container_name: nestjs
@@ -27,13 +25,15 @@ services:
       - /Users/ajazbuti/transcendence/backend/nest/app:/app-backend
       # - /Users/jmaalouf/42_transendence/backend/nest/app:/app-backend
       # - /Users/ktashbae/Desktop/trans/backend/nest/app:/app-backend
+     # - /Users/jmaalouf/42_transendence/backend/nest/app:/app-backend
+    env_file:
+      - ./backend/dev.env
     ports:
       - 3000:3000
     depends_on:
       - postgres
       - redis
-    # environment:
-    #   - CHOKIDAR_USEPOLLING=true
+    restart: unless-stopped
 
   postgres:
     container_name: postgres
@@ -41,10 +41,8 @@ services:
     restart: unless-stopped
     volumes:
       - db-volume:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: postgresapp
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgresDB
+    env_file:
+      - ./backend/dev.env
     ports:
       - 5432:5432
 
@@ -52,6 +50,8 @@ services:
     container_name: redis
     image: redis:7.2.1-alpine3.18
     restart: unless-stopped
+    env_file:
+      - ./backend/dev.env
     volumes: 
       - redis-volume:/data
     ports:

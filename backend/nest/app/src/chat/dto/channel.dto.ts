@@ -9,10 +9,16 @@ export class CreateChannelDto    {
     private: boolean;
 
     @IsString()
-    password: string;
+    password?: string;
 
     @IsString()
-    topic: string;
+    topic?: string;
+}
+
+export class PublicChannelDto   {
+    @IsString()
+    @IsNotEmpty()
+    name: string
 }
 
 export  class JoinChannelDto    {
@@ -22,4 +28,14 @@ export  class JoinChannelDto    {
 
     @IsString()
     password: string;
+}
+export class    UpdateChannelDto    {
+    @IsNumber()
+    @IsNotEmpty()
+    cId: number;
+
+    @IsString()
+    @IsNotEmpty()
+    uId: string;
+
 }

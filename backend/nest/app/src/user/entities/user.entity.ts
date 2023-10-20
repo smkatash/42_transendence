@@ -1,5 +1,5 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn} from "typeorm";
-import { Status } from "../utils/status.dto";
+import { Status } from "../utils/status.enum";
 import { Channel } from "src/chat/entities/channel.entity";
 import { MfaStatus } from "src/auth/utils/mfa-status";
 import { Message } from "src/chat/entities/message.entity";
@@ -46,13 +46,18 @@ export class User {
 	@ManyToMany(() => User, (user) => user.sentFriendRequests)
 	pendingFriendRequests: User[]
 
+    /**
+     * kello
+     */
     @ManyToMany(() => Channel, channel => channel.users)
-    // @JoinTable()
     channels: Channel[];
 
     @ManyToMany(() => Channel, channel => channel.admins)
-    // @JoinTable()
     adminAt: Channel[]
+
+    @ManyToMany(() => Channel, (channel) => channel.banned)
+    bannedAt: Channel[]
+
 
     @OneToMany(() => Channel, (channel) => channel.owner)
     ownedChannels: Channel[]
@@ -60,6 +65,6 @@ export class User {
     @OneToMany(()=> Message, (message) => message.user)
     messages: Message[]
 
-    @OneToMany(() => JoinedChannel, (joinedChannel) => joinedChannel.channel)
+    @OneToMany(() => JoinedChannel, (joinedChannel) => joinedChannel.user)
     joinedChannels: JoinedChannel[]
 }

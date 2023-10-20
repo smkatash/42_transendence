@@ -3,7 +3,8 @@
   <div class="chat-interface">
     <div class="channel-container-border">
       <div class="channel-container">
-        <div *ngFor="let channel of channels">
+        <div *ngFor="let channel of channels$ | async">
+          <!-- {{test | async }} -->
           <app-sidebar-channel [isSelected]="channel === selectedChannel"
                                [channel]="channel"
                                (click)="onChannelSelect(channel)"></app-sidebar-channel>
@@ -13,10 +14,15 @@
     </div>
     <div class="content-container">
       <app-channel-creation-menu [channelType]="channelToCreate"
-                                 [(isOpen)]="isChannelToCreateActive"></app-channel-creation-menu>
+                                 [(isOpen)]="isChannelToCreateActive"
+                                 (publicChannelInfoEmitter)="publicChannelNameEmitted($event)">
 
-      <app-channel-messages-content *ngIf="selectedChannel"
-                                    [channelId]="selectedChannel.id"></app-channel-messages-content>
+      </app-channel-creation-menu>
+
+      <app-channel-messages-content *ngIf="selectedChannel">
+                                    <!-- [channelId]="selectedChannel.id"> -->
+                                    [channel]="selectedChannel">
+      </app-channel-messages-content>
 
       <app-default-content *ngIf="selectedChannel === undefined"></app-default-content>
     </div>

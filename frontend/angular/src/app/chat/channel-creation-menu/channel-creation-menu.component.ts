@@ -28,8 +28,37 @@ export class ChannelCreationMenuComponent {
   @Input() isOpen?: boolean;
   @Output() isOpenChange = new EventEmitter<boolean>;
 
+  channelName: string = '';
+
   toggle(): void {
     this.isOpen = !this.isOpen;
     this.isOpenChange.emit(this.isOpen);
+  }
+
+  @Output() publicChannelInfoEmitter = new EventEmitter<string>()
+  createPublicChannel(channelName: string): void  {
+    // console.log(channelName);
+    // console.log('bubu')
+    this.publicChannelInfoEmitter.emit(channelName);
+  }
+
+  @Output() privateChannelInfoEmitter = new EventEmitter<string>()
+  createPrivateChannel(channelName: string): void  {
+    // console.log(channelName);
+    // console.log('bubu')
+    this.publicChannelInfoEmitter.emit(channelName);
+  }
+
+  @Output() protectedChannelInfoEmitter = new EventEmitter<string>()
+  createProtecctedChannel(channelName: string): void  {
+    // console.log(channelName);
+    // console.log('bubu')
+    this.publicChannelInfoEmitter.emit(channelName);
+  }
+
+  @Output() bubuEmitter = new EventEmitter<string>()
+  bubu(name: string){
+    const bubu = "Bubu"; //fu jad
+    this.bubuEmitter.emit(name);
   }
 }
