@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { User } from 'src/user/entities/user.entity';
 import { AuthUserDto } from 'src/auth/utils/auth.user.dto';
 import { v4 } from 'uuid';
@@ -22,6 +22,9 @@ export class AuthService {
 
 		try {
 			currentUser = await this.userService.getUserById(authUserDto.id)
+			if (currentUser.status === Status.ONLINE) {
+				throw new BadRequestException("User is logged in.")
+			}
 		} catch (error) {
 			if (error instanceof NotFoundException) {
 				authUserDto.avatar = await this.userService.getIntraProfile(authUserDto.avatar)
