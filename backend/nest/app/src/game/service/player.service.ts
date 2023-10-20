@@ -61,7 +61,6 @@ export class PlayerService {
         return this.playerRepo.save(players)
     }
 
-
     async updatePlayerQueue(player: Player, queue?: Queue) {
         if (!queue) {
             player.queue = null
@@ -75,6 +74,13 @@ export class PlayerService {
         player.gameState = state
         return this.saveValidPlayer(player)
     }
+
+	async getInvitedPlayers(currentPlayerId: string, invitedPlayerId: string): Promise<Player[]> {
+		const playerOne: Player = await this.getPlayerById(currentPlayerId)
+		const playerTwo: Player = await this.getPlayerById(invitedPlayerId)
+
+		return [playerOne, playerTwo]
+	}
 
     getPlayers(): Promise<Player[]> {
         return this.playerRepo.find()

@@ -1,9 +1,9 @@
-import { BadRequestException, Injectable} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Match } from '../entities/match.entity';
 import { v4 } from 'uuid';
-import { Game, GameState } from '../utls/game';
+import { Game, GameMode, GameState } from '../utls/game';
 import { validate } from 'class-validator';
 import { Player } from '../entities/player.entity';
 import { PlayerService } from './player.service';
@@ -12,12 +12,14 @@ import { Queue } from '../entities/queue.entity';
 import { GameService } from './game.service';
 import { Interval } from '@nestjs/schedule';
 import { Server } from 'socket.io';
+import { INGAME } from '../utls/rooms';
+import { Status } from 'src/user/utils/status.enum';
 
 
 @Injectable()
 export class MatchService {
-    matches: Map<string, Game> = new Map()
-    server: Server
+    private matches: Map<string, Game> = new Map()
+    private server: Server
 
     constructor(@InjectRepository(Match) private matchRepo: Repository<Match>,
                 private readonly queueService: QueueService,
@@ -55,11 +57,11 @@ export class MatchService {
     }
 
 
-    async joinMatch(matchId: string): Promise<Game> {
+    async joinMatch(matchId: string, mode: GameMode): Promise<Game> {
        const match = await this.getCurrentMatch(matchId) 
-        if (!match) return
+        if (!match) throw new NotFoundException()
 
-        const newGame = this.gameService.launchGame(match)
+        const newGame = this.gameService.launchGame(match, mode)
         this.matches.set(matchId, newGame)
         return newGame
     }
@@ -71,15 +73,24 @@ export class MatchService {
     @Interval(1000 / 60)
     async play() {
         for (const match of this.matches.values()) {
-            if (match.status === GameState.INPROGRESS) {
-                const updateGame = this.gameService.throwBall(match)
+			if (match.status === GameState.INPROGRESS) { 
+				const updateGame = this.gameService.throwBall(match)
                 if (updateGame.status === GameState.END) {
-                    await this.saveMatchHistory(updateGame)
-                    this.server.to(match.match.id).emit('play', updateGame)
+					await this.saveMatchHistory(updateGame)
+                    this.server.to(match.match.id).emit(INGAME, updateGame)
                     this.server.socketsLeave(match.match.id)
+					this.matches.delete(match.match.id)
                 }
-                this.server.to(match.match.id).emit('play', updateGame)
-            }
+                this.server.to(match.match.id).emit(INGAME, updateGame)
+				await this.checkDisconnectedPlayers(match)
+            } else if (match.status === GameState.PAUSE) {
+				// TODO check the game state
+				await this.saveMatchHistory(match)
+                this.server.to(match.match.id).emit(INGAME, match)
+                this.server.socketsLeave(match.match.id)
+				this.matches.delete(match.match.id)
+			}
+
         }
     }
 
@@ -99,6 +110,21 @@ export class MatchService {
        }
     }   
 
+	async checkDisconnectedPlayers(match: Game){
+		const players = match.match.players
+		const playerOne = await this.playerService.getPlayerById(players[0].id)
+		const playerTwo = await this.playerService.getPlayerById(players[1].id)
+		if (playerOne.user.status !== Status.GAME) {
+			match.match.status = GameState.PAUSE
+			match.match.loser = playerOne
+			match.match.winner = playerTwo
+		}
+		if (playerTwo.user.status !== Status.GAME) {
+			match.match.status = GameState.PAUSE
+			match.match.loser = playerTwo
+			match.match.winner = playerOne
+		}
+	}
 
     async getCurrentMatch(matchId: string): Promise<Match> {
         return this.getMatchById(matchId)
@@ -135,7 +161,6 @@ export class MatchService {
         return this.saveValidMatch(match)
     }
 
-    // TODO check if scores and player match
     async saveMatchHistory(game: Game) {
         const match = game.match
         match.scores = game.scores
