@@ -1,4 +1,4 @@
-import {  Logger, UnauthorizedException } from '@nestjs/common';
+import {  Logger, UnauthorizedException, UsePipes } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { UserService } from '../user/service/user.service';
@@ -10,6 +10,7 @@ import { Game} from './utls/game';
 import { User } from 'src/user/entities/user.entity';
 import { ERROR, INVITE_TO_MATCH, JOIN_MATCH, POSITION_CHANGE, QUEUE, START_MATCH, USER, WAITING_MESSAGE } from './utls/rooms';
 import { InvitedUserDto, JoinMatchDto, PositionDto } from './utls/message-dto';
+import { WSValidationPipe } from './ws-validation-pipe';
 
 
 @WebSocketGateway({
@@ -114,6 +115,8 @@ async handleDisconnect(@ConnectedSocket() client: Socket) {
    }
 }
 
+	// Todo check if pipe is working
+  @UsePipes(new WSValidationPipe())
   @SubscribeMessage(POSITION_CHANGE)
   async handleKeyPress(@ConnectedSocket() client: Socket, @MessageBody() positionDto: PositionDto) {
 	try {
