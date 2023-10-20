@@ -14,6 +14,20 @@ body {
     justify-content: space-between;
     align-items: center;
   }
+  .game_menu{
+    width: 800;
+    height: 300;
+    display: flex;
+    align-items: center;
+    /* justify-content: center; */
+  }
+  
+  app-game-menu {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Add other styling properties as needed */
+  }
   
   h1 {
     margin: 0;
@@ -30,16 +44,18 @@ body {
     fill: #E8DAB2;
   }
   
-  .net {
-    position: absolute;
+  /* .net {
+    position: relative;
     left: 50%;
     top: 0;
-    transform: translateX(-50%);
-    width: 1px;
+    content: "";
+    background-color: #E8DAB2;
+    transform: translateX(50%); 
+    width: 100px;
     height: 100%; background-color: #E8DAB2;
     stroke: #E8DAB2;
     stroke-width: 1%;
-  }
+   } */
   
   .start_button{
       display: flex;

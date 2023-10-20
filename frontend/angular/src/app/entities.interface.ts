@@ -143,6 +143,11 @@ export enum GameMode {
   HARD
 }
 
+export class JoinMatchDto {
+  matchId?: string
+  mode?: GameMode
+}
+
 export interface TableDimensions {
   height: number
   width: number

@@ -11,7 +11,7 @@ import { GameSocket } from 'src/app/app.module';
 
 export class GameComponent implements AfterViewInit {
 
-  constructor(private rend: Renderer2, 
+  constructor(private renderer: Renderer2, 
               private gameService: GameService,
               private socket: GameSocket ) 
   {
@@ -48,10 +48,10 @@ export class GameComponent implements AfterViewInit {
 
   checkSize() {
     let board = document.querySelector('.game_board');
-    // console.log(board!.clientHeight);
     let widthValue = board!.clientWidth;
     let heightValue = widthValue / 2;
-    this.rend.setStyle(board, "height", heightValue + "px");
+    this.renderer.setStyle(board, "height", heightValue + "px");
+    this.renderer.setStyle(board, "background-color", "black");
     this.gameService.updateSize(widthValue, heightValue);
   }
 
@@ -188,9 +188,9 @@ export class GameComponent implements AfterViewInit {
 
   isGameOn: boolean = false;
 
-  setGame(event: boolean) {
-    this.gameService.startGame()
-    this.isGameOn = event
+  setGame(event: number) {
+    this.gameService.startGame(event)
+    this.isGameOn = true
     this.startPlaying();
   }
 }

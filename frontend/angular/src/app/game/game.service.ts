@@ -1,9 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { User , Game, GamePlayer, SocketResponse  } from '../entities.interface';
+import { User , Game, GamePlayer, SocketResponse, GameMode, JoinMatchDto } from '../entities.interface';
 import { GameSocket } from '../app.module';
 import { Subject } from 'rxjs';
-
-
 
 async function waitOneSecond() {
   await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -17,12 +15,16 @@ var gameInfo! : Game;
   providedIn: 'root'
 })
 export class GameService {
+
+
   height = 1000;
   width = 500;
   constructor(private socket: GameSocket) {}
   public test : number[] = [0,0];
   private testSubject = new Subject<Game>();
   // private testSubject = new Subject<number[]>();
+  paddlePosition: string = '0';
+  public keyPress: EventEmitter<string> = new EventEmitter();
 
   updateSize(w: number, h: number) {
     this.width = w;
@@ -37,14 +39,19 @@ export class GameService {
     return this.testSubject.asObservable();
   }
 
-  paddlePosition: string = '0';
-  public keyPress: EventEmitter<string> = new EventEmitter();
+  createMatchInfo(ID:string, level:number){
+    const matchInfo : JoinMatchDto = {
+      matchId: ID,
+      mode: level
+    }
+    return matchInfo;
+  }
   
   handlePadleEvent(movementValue: string) {
     this.socket.emit('key', movementValue);
   }
 
-  startGame(): void {
+  startGame(level:number): void {
     this.socket.on ('join', (msg: any) => { })
 
     this.socket.on ('play', (msg: any) => {
@@ -59,7 +66,7 @@ export class GameService {
         this.socket.emit('start');
       } else {
         const socketResponse : SocketResponse = msg;
-        matchID = socketResponse.id
+        const matchID = this.createMatchInfo(socketResponse.id, level)
         this.socket.emit('join', matchID)
         console.log(socketResponse);
       }
