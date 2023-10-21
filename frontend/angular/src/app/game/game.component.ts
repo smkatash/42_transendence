@@ -1,7 +1,8 @@
 import { AfterViewInit, Component, EventEmitter, HostListener, OnInit, Output, Renderer2 } from '@angular/core';
 import { GameService } from './game.service';
-import { Ball, Game } from '../entities.interface';
+import { Ball, Game, Paddle } from '../entities.interface';
 import { GameSocket } from 'src/app/app.module';
+import { NONE_TYPE } from '@angular/compiler';
 
 @Component({
   selector: 'app-game',
@@ -38,13 +39,14 @@ export class GameComponent implements AfterViewInit {
   paddleRightX = 100 - this.paddleMargin - this.paddleWidth + 1.5 ;
   paddleRightY = 40;
 
-  ballX = 0
-  ballY = 0
+  ballX = 50;
+  ballY = 50;
+  ballRadius = 1.5;
 
   paddleLeftIncrement = 0;
   paddleRightIncrement = 0;
 
-  game?:Game;
+  gameInfo?:Game = {};
 
   checkSize() {
     let board = document.querySelector('.game_board');
@@ -64,10 +66,12 @@ export class GameComponent implements AfterViewInit {
   @HostListener('window:keydown', ['$event'])
   onKeyDown(e: any) {
     if (e.code === 'KeyW') {
-      this.gameService.handlePadleEvent("-10")
+      this.gameService.padlePositionEmitter("-10")
+      console.log("movedPaddleUp")
     }
     if (e.code === 'KeyS') {
-      this.gameService.handlePadleEvent("+10")
+      console.log("movedPaddleDown")
+      this.gameService.padlePositionEmitter("+10")
     }
   }
 
@@ -97,7 +101,7 @@ export class GameComponent implements AfterViewInit {
     this.paddleLeftY = newPosition;
     // newPosition = position > 100 - this.paddleHeight ? 100 - this.paddleHeight : newPosition;
     // this.paddleLeftY = newPosition < 0 ? 0 : newPosition;
-    window.requestAnimationFrame(() => this.moveLeftRacket(this.paddleLeftY));
+    // window.requestAnimationFrame(() => this.moveLeftRacket(this.paddleLeftY));
   }
 
   /*
@@ -108,12 +112,16 @@ export class GameComponent implements AfterViewInit {
   valueConversion(game: Game) {
     const maxHeight = this.gameService.height;
     const maxWidth = this.gameService.width;
-    game.ball.position.x = (100 / maxWidth) * game.ball.position.x;
-    game.ball.position.y = ( 100/ maxHeight ) * game.ball.position.y;
-    game.leftPaddle.position.y  = ( 100/ maxHeight) * game.leftPaddle.position.y;
-    game.rightPaddle.position.y  = ( 100/ maxHeight) * game.rightPaddle.position.y;
-    game.ball.velocity.x = (100 / maxWidth) * game.ball.velocity.x;
-    game.ball.velocity.y = (100 / maxWidth) * game.ball.velocity.y;
+    if( game.ball ){
+      game.ball!.position.x = (100 / maxWidth) * game.ball!.position.x;
+      game.ball!.position.y = ( 100/ maxHeight ) * game.ball!.position.y;
+      game.ball!.velocity.x = (100 / maxWidth) * game.ball!.velocity.x;
+      game.ball!.velocity.y = (100 / maxWidth) * game.ball!.velocity.y;
+    }
+    if (game.leftPaddle)
+      game.leftPaddle!.position.y  = ( 100/ maxHeight) * game.leftPaddle!.position.y;
+    if (game.rightPaddle)
+    game.rightPaddle!.position.y  = ( 100/ maxHeight) * game.rightPaddle!.position.y;
     return game;
   }
 
@@ -157,40 +165,69 @@ export class GameComponent implements AfterViewInit {
     //     } else { this.ballY = this.ballY - ball.velocity.y}
     //   }
     // }
-    this.ballX = ball.position.x;
-    this.ballY = ball.position.y;
-    window.requestAnimationFrame(() => this.moveBall(ball));
+      // this.gameInfo = this.valueConversion(this.gameInfo);
+      this.ballX = ball.position.x;
+      this.ballY = ball.position.y;
+      // window.requestAnimationFrame(() => this.moveBall(ball));
     // window.requestAnimationFrame(() => this.moveBall(xIncrement, yIncrement));
   }
 
-  startPlaying(){
-    this.gameService.getTestObservable().subscribe((test: Game) => {
-      this.game = test;
-      this.game = this.valueConversion(this.game);
-      // this.game.ball.position.y = 0;
-      var ball = this.game.ball;
-      const positionX = this.game.ball.position.x;
-      // const positionY = 0;
-      const positionY = this.game.ball.position.y;
-
-      // console.log(positionX)
-      // console.log(positionY)
-      window.requestAnimationFrame(() => this.moveBall(ball));
-      var positionPaddle = this.game.leftPaddle.position.y
-      window.requestAnimationFrame(() => this.moveLeftRacket(positionPaddle));
-      // window.requestAnimationFrame(() => this.moveRacket1(this.racket1Increment));
-      this.resetAll();
-    })
-    // if(this.game?.status !== 3){
-      // this.startPlaying();
-    // }
+  moveRightPaddle(rightPaddle: Paddle){
+    this.paddleRightY = rightPaddle!.position.y;
+    // window.requestAnimationFrame(() => this.moveRightPaddle(this.gameInfo!.rightPaddle!));
+  }
+  moveLeftPaddle(leftPaddle: Paddle){
+    this.paddleLeftY = leftPaddle!.position.y;
+    // window.requestAnimationFrame(() => this.moveRightPaddle(this.gameInfo!.rightPaddle!));
   }
 
+  startPlaying(){
+    if(this.gameInfo){
+      if( this.gameInfo.ball ) {
+        const ball = this.gameInfo.ball
+        window.requestAnimationFrame(() => this.moveBall(ball));
+      }
+      if(this.gameInfo.leftPaddle){
+        const paddle = this.gameInfo.leftPaddle
+        window.requestAnimationFrame(() => this.moveLeftPaddle(paddle));
+      }
+      if(this.gameInfo.rightPaddle){
+        const paddle = this.gameInfo.rightPaddle
+        window.requestAnimationFrame(() => this.moveRightPaddle(paddle));
+      }
+    }
+  }
+
+  isWaitingInQueue(){
+    this.gameService.getStatusQueue().subscribe((status: boolean) => {
+      if(status == true){
+        this.socket.emit('start');
+        // console.log("AM I EMITTING? TWICE AT LEAST?")
+      } else {
+        this.isInQueue = false;
+        this.isGameOn = true;
+        this.startPlaying();
+      }
+    })
+  }
+
+  gameObservableInit(){
+    this.gameService.getTestObservable().subscribe((game: Game) => {
+      if(game){
+        this.gameInfo = this.valueConversion(game);
+      }
+      this.startPlaying();
+      // console.log(game)
+    })
+  }
+
+  isInQueue: boolean = false;
   isGameOn: boolean = false;
 
   setGame(event: number) {
-    this.gameService.startGame(event)
-    this.isGameOn = true
-    this.startPlaying();
+    this.isInQueue = true;
+    this.gameObservableInit();
+    this.gameService.startGameService(event);
+    this.isWaitingInQueue();
   }
 }

@@ -1,9 +1,7 @@
 <body>
     <app-navbar></app-navbar>
-    <div class="game-menu"  *ngIf="!isGameOn">
-        <app-game-menu (newGameEvent)="setGame($event)"> 
-        </app-game-menu>
-    </div>
+    <app-game-menu (newGameEvent)="setGame($event)" *ngIf="!isInQueue && !isGameOn"></app-game-menu>
+    <div class ="waitingQueue" *ngIf="isInQueue && !isGameOn">WARTE</div>
     <div class = "game_board" *ngIf="isGameOn">
         <h1>{{yourScore | number:"1.0-0"}}</h1>
         <svg width="50%" height="50%" fill="#4F6D7A">
@@ -11,8 +9,9 @@
             <!-- <line id="net" x1="50%" y1="0px" x2="50%" y2="100%" /> -->
             <rect class="paddle" [attr.x]="paddleLeftX + '%'" [attr.y]="paddleLeftY + '%'" width="1%" height="20%"/>
             <rect class="paddle" [attr.x]="paddleRightX + '%'" [attr.y]="paddleRightY + '%'" width="1%" height="20%"/>
-            <rect id="ball" [attr.width]="ballWidth + '%'" [attr.height]="ballHeight + '%'" [attr.x]="ballX + '%'" [attr.y]="ballY + '%'" />
-        </svg>
+            <circle id="ball" [attr.cx]="ballX + '%'" [attr.cy]="ballY + '%'" [attr.r]="ballRadius + '%'" stroke-width="2" fill="black" />
+            <!-- <circle id="ball" [attr.width]="ballWidth + '%'" [attr.height]="ballHeight + '%'" [attr.x]="ballX + '%'" [attr.y]="ballY + '%'" /> -->
+        </svg> 
         <h1>{{opponentScore | number:"1.0-0"}}</h1>
     </div>
     <!-- <app-game-board *ngIf="!isGameOn"></app-game-board> -->

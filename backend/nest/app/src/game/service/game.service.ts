@@ -6,8 +6,9 @@ import { Match } from '../entities/match.entity';
 @Injectable()
 export class GameService {
     private options: Readonly<GameOptions>
-	private MAXPOINTS = 10
-
+	private MAXPOINTS = 1
+    private increment = 1; 
+    
     constructor() {}
 
     public launchGame(match: Match, mode: GameMode): Game {
@@ -102,7 +103,6 @@ export class GameService {
         return paddle
     }
 
-
     throwBall(game: Game): Game {
         game.ball.position.x += game.ball.velocity.x
         game.ball.position.y += game.ball.velocity.y
@@ -116,7 +116,7 @@ export class GameService {
             game.ball.position.y = 6
             return game
         }
-        console.log('Throw2')
+        //console.log('Throw2')
         if (game.ball.position.x <= this.options.paddleDistance) {
             if (game.ball.position.y > (game.leftPaddle.position.y - (game.leftPaddle.length / 2)) &&
                     game.ball.position.y < (game.leftPaddle.position.y + (game.leftPaddle.length / 2))) {

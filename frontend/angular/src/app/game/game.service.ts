@@ -1,11 +1,11 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { User , Game, GamePlayer, SocketResponse, GameMode, JoinMatchDto } from '../entities.interface';
+import { User , Game, GamePlayer, SocketResponse, GameMode, JoinMatchDto, PositionDto } from '../entities.interface';
 import { GameSocket } from '../app.module';
 import { Subject } from 'rxjs';
 
 async function waitOneSecond() {
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  console.log("...");
+  // console.log("...");
 }
 
 var matchID : string = "";
@@ -16,29 +16,43 @@ var gameInfo! : Game;
 })
 export class GameService {
 
-
   height = 1000;
   width = 500;
+
   constructor(private socket: GameSocket) {}
   public test : number[] = [0,0];
-  private testSubject = new Subject<Game>();
+
+  private gameInfoSubject: Subject <Game> = new Subject<Game>();
+  private inTheQueue : Subject<boolean> = new Subject<boolean>();
+  public keyPress: EventEmitter<string> = new EventEmitter();
+
+  public started = false;
+  private difficulty = 0;
+
   // private testSubject = new Subject<number[]>();
   paddlePosition: string = '0';
-  public keyPress: EventEmitter<string> = new EventEmitter();
 
   updateSize(w: number, h: number) {
     this.width = w;
     this.height = h;
   }
+
   returnValue(){
     // return gameInfo;
     return this.test
   }
 
+  // observable-----------------------------------------
   getTestObservable() {
-    return this.testSubject.asObservable();
+    return this.gameInfoSubject.asObservable();
+  }
+  getStatusQueue(){
+    return this.inTheQueue.asObservable();
   }
 
+
+
+  // utils--------------------------------------------
   createMatchInfo(ID:string, level:number){
     const matchInfo : JoinMatchDto = {
       matchId: ID,
@@ -46,33 +60,48 @@ export class GameService {
     }
     return matchInfo;
   }
-  
-  handlePadleEvent(movementValue: string) {
-    this.socket.emit('key', movementValue);
+
+  createPaddleDto(value: string){
+    const retValue: PositionDto = {
+      step: value
+    }
+    return retValue;
   }
 
-  startGame(level:number): void {
+
+  
+  padlePositionEmitter(movementValue: string) {
+    const toEmit = this.createPaddleDto(movementValue)
+    this.socket.emit('key', toEmit);
+    console.log(toEmit);
+  }
+
+  listenersInit(){
     this.socket.on ('join', (msg: any) => { })
 
-    this.socket.on ('play', (msg: any) => {
-    gameInfo = msg;
-    this.testSubject.next(msg); 
-    } )
-
+    this.socket.on ('game', (msg: any) => {
+      gameInfo = msg;
+      this.gameInfoSubject.next(msg);
+    })
     this.socket.on ('start', (msg: any) => {
-      if (msg == 'Waiting players to join.')
+      if (msg == 'Waiting players to join')
       {
+        this.inTheQueue.next(true);
         waitOneSecond();
-        this.socket.emit('start');
       } else {
+        this.inTheQueue.next(false);
         const socketResponse : SocketResponse = msg;
-        const matchID = this.createMatchInfo(socketResponse.id, level)
+        const matchID = this.createMatchInfo(socketResponse.id, this.difficulty)
         this.socket.emit('join', matchID)
-        console.log(socketResponse);
+        console.log(matchID.matchId);
       }
     })
-    this.socket.emit('start')
-    // this.socket.disconnect();
+  }
+
+  startGameService(level:number):void {
+    this.difficulty = level;
+    this.listenersInit();
+    this.socket.emit('start');
   }
 
   getUser(): void {

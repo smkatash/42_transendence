@@ -115,11 +115,11 @@ velocity: Position
 }
 
 export interface Game {
-ball: Ball
-leftPaddle: Paddle
-rightPaddle: Paddle
-match: Match
-status: GameState
+ball?: Ball
+leftPaddle?: Paddle
+rightPaddle?: Paddle
+match?: Match
+status?: GameState
 scores?: Record<string, number>
 }
 
@@ -149,6 +149,10 @@ export enum GameMode {
 export class JoinMatchDto {
   matchId?: string
   mode?: GameMode
+}
+
+export class PositionDto {
+    step: string
 }
 
 export interface TableDimensions {
