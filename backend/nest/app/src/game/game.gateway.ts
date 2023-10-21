@@ -38,6 +38,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 			throw new UnauthorizedException()
 		}
 		this.logger.log(`Client id: ${client.id} connected`);
+
 		await this.userService.updateUserStatus(user.id, Status.GAME)
 		const player = await this.playerService.getPlayerByUser(user, client.id);
 		client.data.user = player
@@ -61,23 +62,23 @@ async handleDisconnect(@ConnectedSocket() client: Socket) {
   @SubscribeMessage(START_MATCH)
   async handleStartMatch(@ConnectedSocket() client: Socket) {
 	try {
-		if (!client.data.user.id) throw new UnauthorizedException()
+    if (!client.data.user.id) throw new UnauthorizedException()
 		const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
 		
 		if (currentPlayer) {
 		  let playersInQueue: Player[] = await this.matchService.waitInQueue(currentPlayer)
 		  if (playersInQueue.length < 2) {
-			client.join(QUEUE)
-		  } else {
-			const match = await this.matchService.makeAmatch(playersInQueue)
-			playersInQueue = await this.matchService.updateQueue(match.players)
-			const playerIdx = playersInQueue.findIndex(player => player.id === currentPlayer.id)
-			if (playerIdx !== -1) {
-				client.join(QUEUE)
-			} else {
-				client.leave(QUEUE)
-				client.emit(START_MATCH, match)
-			}
+			  client.join(QUEUE)
+		  } else if (playersInQueue.length >= 2) {
+        const match = await this.matchService.makeAmatch(playersInQueue)
+        playersInQueue = await this.matchService.updateQueue(match.players)
+        const playerIdx = playersInQueue.findIndex(player => player.id === currentPlayer.id)
+        if (playerIdx !== -1) {
+          client.join(QUEUE)
+        } else {
+          client.leave(QUEUE)
+          client.emit(START_MATCH, match)
+        }
 		  }
 		  this.emitQueueEvent()
 		}
@@ -123,6 +124,7 @@ async handleDisconnect(@ConnectedSocket() client: Socket) {
 	try {
 		if (!client.data.user.id) throw new UnauthorizedException()
 
+		this.logger.debug(JSON.stringify(positionDto))
 		const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
 		if (currentPlayer) {
 			this.matchService.updatePlayerPosition(currentPlayer, parseInt(positionDto.step))
@@ -145,6 +147,5 @@ async handleDisconnect(@ConnectedSocket() client: Socket) {
 		this.server.to(QUEUE).emit(START_MATCH, WAITING_MESSAGE)
 	}
 }
-
 
 

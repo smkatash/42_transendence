@@ -30,12 +30,12 @@ export class PlayerService {
         return this.playerRepo.findOneBy({id})
     }
 
-	async getUserByPlayerId(id: string): Promise<Player> {
+	  async getUserByPlayerId(id: string): Promise<Player> {
         return this.playerRepo.findOne({where: {id},
             relations: ["user"]
         })
     }
-
+  
     async getPlayerByUser(user: User, clientId: string): Promise<Player> {
         const currentPlayer = await this.getPlayerById(user.id)
         if (currentPlayer) {

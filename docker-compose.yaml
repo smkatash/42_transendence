@@ -7,8 +7,8 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     volumes:
-      # - /Users/jmaalouf/42_transendence/frontend/angular:/app-frontend
-      - /Users/ktashbae/Desktop/trans/frontend/angular:/app-frontend
+      - /Users/frmessin/Desktop/pong/frontend/angular:/app-frontend
+      # - /Users/ktashbae/Desktop/trans/frontend/angular:/app-frontend
     ports:
       - 4200:4200
     depends_on:
@@ -21,12 +21,12 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     volumes:
-     # - /Users/jmaalouf/42_transendence/backend/nest/app:/app-backend
-      - /Users/ktashbae/Desktop/trans/backend/nest/app:/app-backend
-    env_file:
-      - ./backend/dev.env
+      - /Users/frmessin/Desktop/pong/backend/nest/app:/app-backend
+      # - /Users/ktashbae/Desktop/trans/backend/nest/app:/app-backend
     ports:
       - 3000:3000
+    env_file:
+      - ./backend/dev.env
     depends_on:
       - postgres
       - redis

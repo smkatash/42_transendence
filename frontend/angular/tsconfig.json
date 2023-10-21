@@ -12,6 +12,7 @@
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
     "declaration": false,
+    "strictPropertyInitialization": false, //<<<<------- IMPORTANT SHIT; I am tyred of the fucking Angular. FUCKING JAD.
     "downlevelIteration": true,
     "experimentalDecorators": true,
     "moduleResolution": "node",

@@ -6,8 +6,9 @@ import { Match } from '../entities/match.entity';
 @Injectable()
 export class GameService {
     private options: Readonly<GameOptions>
-	private MAXPOINTS = 10
-
+	private MAXPOINTS = 1
+    private increment = 1; 
+    
     constructor() {}
 
     public launchGame(match: Match, mode: GameMode): Game {
@@ -56,7 +57,7 @@ export class GameService {
     private calculateVector(): Position {
         const randomAngle = this.getRandomAngle()
         const radian = this.degreesToRadian(randomAngle)
-        return { x: Math.cos(radian), y: Math.sin(radian) }
+        return { x: Math.cos(radian) + this.increment, y: Math.sin(radian) + this.increment }
     }
 
     private getRandomAngle(): number {
@@ -68,7 +69,7 @@ export class GameService {
     }
 
     private launchBall(): Ball {
-        const dir: Position = this.calculateVector()
+        const dir: Position = this.calculateVector() 
         const ball: Ball = {
             position: {
                 x: this.options.table.height / DEFAULT_TABLE_PROPORTION,
@@ -79,7 +80,6 @@ export class GameService {
                 y: dir.y
             }
         }
-
         return ball
     }
 
@@ -103,7 +103,6 @@ export class GameService {
         return paddle
     }
 
-
     throwBall(game: Game): Game {
         game.ball.position.x += game.ball.velocity.x
         game.ball.position.y += game.ball.velocity.y
@@ -112,12 +111,12 @@ export class GameService {
             game.ball.velocity.y *= -1
             game.ball.position.y = this.options.table.height - 0.5
             return game
-        } else if (game.ball.position.y < 0) {
+        } else if (game.ball.position.y < 5) {
             game.ball.velocity.y *= -1
-            game.ball.position.y = 0.5
+            game.ball.position.y = 6
             return game
         }
-        console.log('Throw2')
+        //console.log('Throw2')
         if (game.ball.position.x <= this.options.paddleDistance) {
             if (game.ball.position.y > (game.leftPaddle.position.y - (game.leftPaddle.length / 2)) &&
                     game.ball.position.y < (game.leftPaddle.position.y + (game.leftPaddle.length / 2))) {
@@ -125,7 +124,7 @@ export class GameService {
                     game.ball.position.x = this.options.paddleDistance + 0.5
                     return game
              }
-            console.log('Throw3')
+            // console.log('Throw3')
             return this.resetGame(game, Paddletype.RIGHT)
         } else if (game.ball.position.x > this.options.table.width - this.options.paddleDistance) {
             if (game.ball.position.y > (game.rightPaddle.position.y - (game.rightPaddle.length / 2)) &&
@@ -134,13 +133,11 @@ export class GameService {
                     game.ball.position.x = this.options.table.width - this.options.paddleDistance - 0.5
                     return game
             }
-            console.log('Throw4')
+            // console.log('Throw4')
             return this.resetGame(game, Paddletype.LEFT)
         }
         return game
     }
-    
-
 }
 
 // 1. random value -1 and 1 , to identify the start direction
