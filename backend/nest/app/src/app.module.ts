@@ -22,6 +22,7 @@ import { Message } from './chat/entities/message.entity';
 import { JoinedChannel } from './chat/entities/joinedChannel.entity';
 
 import { ConfigModule } from '@nestjs/config';
+import { Mute } from './chat/entities/mute.entity';
 
 @Module({
   imports: [
@@ -46,7 +47,7 @@ import { ConfigModule } from '@nestjs/config';
       username: DB_USERNAME,
       password: DB_PASSWORD,
       database: DB_NAME,
-      entities: [User, Match, Player, Queue, AuthToken, Channel, ChatUser, Message, JoinedChannel],
+      entities: [User, Match, Player, Queue, AuthToken, Channel, ChatUser, Message, JoinedChannel, Mute],
       synchronize: true
     }),
     GameModule,

@@ -12,6 +12,8 @@ import { ChatUserService } from './service/chat-user.service';
 import { JoinedChannel } from './entities/joinedChannel.entity';
 import { JoinedChannelService } from './service/joined-channel.service';
 import { User } from 'src/user/entities/user.entity';
+import { Mute } from './entities/mute.entity';
+import { MuteService } from './service/mute.service';
 
 @Module({
   imports: [
@@ -20,7 +22,8 @@ import { User } from 'src/user/entities/user.entity';
       Channel,
       ChatUser,
       Message,
-      JoinedChannel
+      JoinedChannel,
+      Mute
     ])
   ],
   providers: [
@@ -29,7 +32,8 @@ import { User } from 'src/user/entities/user.entity';
     ChatGateway,
     MessageService,
     ChatUserService,
-    JoinedChannelService
+    JoinedChannelService,
+    MuteService
   ]
 })
 export class ChatModule {}

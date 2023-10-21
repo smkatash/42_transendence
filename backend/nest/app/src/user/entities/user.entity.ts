@@ -52,14 +52,14 @@ export class User {
     @ManyToMany(() => Channel, channel => channel.users)
     channels: Channel[];
 
-    @ManyToMany(() => Channel, channel => channel.admins)
+    @ManyToMany(() => Channel, channel => channel.admins, {nullable:true})
     adminAt: Channel[]
 
-    @ManyToMany(() => Channel, (channel) => channel.banned)
+    @ManyToMany(() => Channel, (channel) => channel.banned, {nullable:true})
     bannedAt: Channel[]
 
 
-    @OneToMany(() => Channel, (channel) => channel.owner)
+    @OneToMany(() => Channel, (channel) => channel.owner, {nullable:true})
     ownedChannels: Channel[]
 
     @OneToMany(()=> Message, (message) => message.user)

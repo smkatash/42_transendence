@@ -14,10 +14,10 @@ export class Channel    {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @Column({unique: true})
+    @Column({unique: true, nullable: true})
     name: string;
 
-    @Column()
+    @Column({default: true})
     private: boolean;
 
     @ManyToOne(()=> User, (owner)=> owner.channels, {nullable: true})
@@ -46,7 +46,7 @@ export class Channel    {
     )
     messages: Message[];
 
-    @Column({default: false})
+    @Column({default: false, nullable: true})
     protected: boolean;
 
     @OneToMany(() => JoinedChannel, (joinedChannel) => joinedChannel.channel)
@@ -55,8 +55,7 @@ export class Channel    {
     // @JoinTable()
     // invited: User[]
 
-    @ManyToMany(() => User, (user)=> user.bannedAt)
-    // @JoinColumn()
+    @ManyToMany(() => User, (user)=> user.bannedAt, {nullable: true})
     @JoinTable()
     banned: User[]
 
