@@ -22,6 +22,7 @@ export class AuthService {
 
 		try {
 			currentUser = await this.userService.getUserById(authUserDto.id)
+			// TODO enable later
 			// if (currentUser.status === Status.ONLINE) {
 			// 	throw new BadRequestException("User is logged in.")
 			// }

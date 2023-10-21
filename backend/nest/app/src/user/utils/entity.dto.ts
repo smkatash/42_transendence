@@ -38,6 +38,17 @@ export class FriendIdDto {
 	friendId: string;
 }
 
+export class BlockUserDto {
+	@IsString()
+	@IsNotEmpty()
+	blockId: string;
+}
+
+export class UnblockUserDto {
+	@IsString()
+	@IsNotEmpty()
+	unblockId: string;
+}
 
 
 

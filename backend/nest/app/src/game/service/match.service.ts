@@ -130,8 +130,8 @@ export class MatchService {
                 match.match.winner = playerOne
             }
         }
-	}
-
+    }
+	
     async getCurrentMatch(matchId: string): Promise<Match> {
         return this.getMatchById(matchId)
     }

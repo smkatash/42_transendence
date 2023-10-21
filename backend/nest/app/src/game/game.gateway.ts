@@ -38,10 +38,10 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 			throw new UnauthorizedException()
 		}
 		this.logger.log(`Client id: ${client.id} connected`);
-		user = await this.userService.updateUserStatus(user.id, Status.GAME)
-		client.data.user = user
-    await this.playerService.getPlayerByUser(user, client.id)
-		this.emitUserEvent(client, user)
+		await this.userService.updateUserStatus(user.id, Status.GAME)
+		const player = await this.playerService.getPlayerByUser(user, client.id);
+		client.data.user = player
+		this.emitUserEvent(client, player)
 	} catch (error) {
 		this.emitError(client, error)
 	}
@@ -138,8 +138,8 @@ async handleDisconnect(@ConnectedSocket() client: Socket) {
 		client.disconnect()
 	}
 
-	emitUserEvent(client: Socket, user: User) {
-		client.emit(USER, user)
+	emitUserEvent(client: Socket, currentPlayer: Player) {
+		client.emit(USER, currentPlayer)
 	}
 
 	emitQueueEvent() {
