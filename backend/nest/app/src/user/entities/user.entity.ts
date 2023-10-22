@@ -67,4 +67,7 @@ export class User {
 
     @OneToMany(() => JoinedChannel, (joinedChannel) => joinedChannel.user)
     joinedChannels: JoinedChannel[]
+
+    @ManyToMany(() => Channel, (channel) => channel.invitedUsers)
+    invitedTo: Channel[]
 }

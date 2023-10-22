@@ -52,3 +52,19 @@ export class ChannelPasswordDto {
     @IsNotEmpty()
     newPass?: string;
 }
+
+export class uIdDto {
+    @IsString()
+    @IsNotEmpty()
+    uId: string;
+}
+
+export class PrivMsgDto {
+    @IsString()
+    @IsNotEmpty()
+    uId: string;
+
+    @IsString()
+    @IsNotEmpty()
+    text: string; 
+}

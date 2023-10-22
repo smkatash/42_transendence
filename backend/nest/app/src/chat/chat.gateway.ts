@@ -2,7 +2,7 @@ import { BadRequestException, HttpStatus, Logger, OnModuleInit, UnauthorizedExce
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { ChannelService } from './service/channel.service';
-import { ChannelPasswordDto, CreateChannelDto, JoinChannelDto, UpdateChannelDto } from './dto/channel.dto';
+import { ChannelPasswordDto, CreateChannelDto, JoinChannelDto, PrivMsgDto, UpdateChannelDto, uIdDto } from './dto/channel.dto';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { ChatUserService } from './service/chat-user.service';
@@ -11,7 +11,6 @@ import { MessageService } from './service/message.service';
 import { CreateMessageDto } from './dto/createMessage.dto';
 import { JoinedChannel } from './entities/joinedChannel.entity';
 import { MuteService } from './service/mute.service';
-import { error } from 'console';
 
 
 @WebSocketGateway({
@@ -53,27 +52,36 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     // console.log(user)
     // const u = await this.userService.getUserRelations(user.id);
     // console.log(u)
-    // let user = (await this.userService.findAllByUsername('hntest2'))[0];
     if (!user)  {
-      return this.disconect(socket);
+      return this.noAccess(socket);
     }  else  {
       socket.data.user = user;
       try {
         console.log(await this.chatUserService.create(user, socket.id));
+        /*
+        const u = await this.userService.getUserWith(user.id, [
+          'channels'
+        ]);
+        if (u.channels) {
+          for (const channel in u.channels) {
+            // create connections here maybe?
+          }
+        }
+        */
+
+        // update socket 
         const conn = await this.joinedChannelService.findByUser(user);
-        for (let c of conn){
-          c.socketID = socket.id;
-          await this.joinedChannelService.updateSocket(c);
+        for (const c of conn){
+          if (c.socketId !== socket.id) {
+            c.socketId = socket.id;
+            await this.joinedChannelService.updateSocket(c);
+          }
         }
         console.log(conn)
-      // return this.server.to(socket.id).emit('error', 'TEST ERrOR')
-      // const channels = await this.channelService.getUsersChannels(user.id)
-      // this.server.to(socket.id).emit('channels', channels)
-  //  }
       } catch (error) {
         console.log(error);
         this.emitError(socket, error);
-        return this.disconect(socket)
+        return this.noAccess(socket)
       }
     }
   }
@@ -87,8 +95,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
 
   //bye bye
-  private disconect(socket: Socket) {
-    socket.emit('Error', new UnauthorizedException());
+  private noAccess(socket: Socket) {
+    socket.emit('error', new UnauthorizedException());
     socket.disconnect();
   }
 
@@ -100,7 +108,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
     const user = socket.data.user;
     if (!user) {
-      return this.emitError(socket, 'No Access') ;
+      return this.noAccess(socket);
     }
     console.log(socket.data.user)
     console.log('channelCreate chanelInfo:', channelInfo)
@@ -124,8 +132,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   ) {
     const user = socket.data.user;
     if (!user) {
-      this.server.to(socket.id).emit('error', 'No access')
-      return ;
+      return this.emitError(socket, 'No Access');
     }
     console.log(joinInfo);
     try {
@@ -138,6 +145,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       // const messages = await this.messageService.findMessagesByChannel(channel);
       const messages = await this.messageService.findMessagesForChannel(channel);
       await this.joinedChannelService.create(user, socket.id, channel);
+      //TODO filter blocked
       this.server.to(socket.id).emit('messages', messages);
     } catch (error) {
       Logger.error(error)
@@ -150,23 +158,39 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     @ConnectedSocket() socket: Socket,
     @MessageBody() id: number 
   ) {
-    id = Number(id);
     const user = socket.data.user;
     if (!user) {
-      this.server.to(socket.id).emit('error', 'No access')
-      return ;
+      return this.noAccess(socket);
     } 
-    //TODO temp
-    //if admin ->delete channel
-    const channel = await this.channelService.getChannel(id, [
-      'users', 'admins'
-    ])
-    console.log(channel);
-    channel.admins = channel.admins.filter((u)=> u.id !== user.id);
-    channel.users = channel.users.filter((u) => u.id !== user.id);
-    await this.channelService.saveChannel(channel);
-    console.log('afterfilter', channel);
-    await this.joinedChannelService.deleteBySocketId(socket.id, channel);
+    try {
+      const channel = await this.channelService.getChannel(id, [
+        'owner', 'users', 'admins'
+      ])
+      if (!channel) {
+        return this.emitError(socket, new BadRequestException('No such channel'))
+      }
+      console.log(channel);
+    //delete channel if owner leaves
+      if (user.id === channel.owner?.id)  {
+        return this.onDelete(socket, channel.id);
+      }
+      channel.admins = channel.admins.filter((u)=> u.id !== user.id);
+      channel.users = channel.users.filter((u) => u.id !== user.id);
+      const u = await this.userService.getUserWith(user.id, [
+        'channels', 'adminAt'
+      ]);
+      u.channels = u.channels.filter((c) => c.id !== channel.id);
+      u.adminAt = u.adminAt.filter((c) => c.id !== channel.id )
+      await this.channelService.saveChannel(channel);
+      await this.userService.saveUser(u);
+      console.log('afterfilter', channel);
+      await this.joinedChannelService.deleteBySocketId(socket.id, channel);
+      //emit users channels
+      this.getUsersChannels(socket);
+    } catch (error) {
+      console.log(error);
+      this.emitError(socket, error)
+    }
   }
 
   // @SubscribeMessage('typing')
@@ -178,6 +202,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage('getChannelMessages')
   // async onGetChannelMessages(socket: Socket, channel: Channel)  {
   async onGetChannelMessages(socket: Socket, channelId: number)  {
+    const user = socket.data.user;
+    if (!user) {
+      return this.noAccess(socket);
+    }
     const channel = await this.channelService.getChannel(channelId, []);
     if (!channel) {
       return this.emitError(socket, 'no such channel')
@@ -193,7 +221,7 @@ console.log(messages)
   async onMessage(socket: Socket, message: CreateMessageDto) {
     const user = socket.data.user;
     if (!user) {
-      return  this.server.to(socket.id).emit('error', 'No access')
+      return this.noAccess(socket);
     }
     try {
       const channel = await this.channelService.getChannel(message.cId, []);
@@ -225,7 +253,7 @@ console.log(messages)
       console.log(joinedUsers);
       for (const user of joinedUsers)  {
         console.log("Emiting to channel")
-        this.server.to(user.socketID).emit('incMsg', newMsg)
+        this.server.to(user.socketId).emit('incMsg', newMsg)
       }
     } catch (error) {
       console.log(error)
@@ -236,12 +264,12 @@ console.log(messages)
   async onGetAllChannels(@ConnectedSocket() socket: Socket) {
     const user = socket.data.user;
       if (!user) {
-        return  this.server.to(socket.id).emit('error', 'No access')
+        return this.noAccess(socket);
       }
     console.log("get all channels!!")
     try{
       const channels = await  this.channelService.getAllChannels();
-      return this.server.to(socket.id).emit('allChannels', channels);
+      this.server.to(socket.id).emit('allChannels', channels);
     } catch (error) {
       console.log(error);
       return this.emitError(socket, error)
@@ -254,16 +282,16 @@ console.log(messages)
   async getUsersChannels(@ConnectedSocket() socket: Socket) {
     const user = socket.data.user;
       if (!user) {
-        return  this.server.to(socket.id).emit('error', 'No access')
+        return this.noAccess(socket);
       }
       console.log('get user\'s channesl')
       try{
         const channels = await this.channelService.getUsersChannels(user.id)
         console.log(channels);
-        return this.server.to(socket.id).emit('usersChannels', channels);
+        this.server.to(socket.id).emit('usersChannels', channels);
       } catch (error) {
         console.log(error);
-        return this.emitError(socket, error)
+        /*return*/ this.emitError(socket, error)
       }
   }
 
@@ -272,7 +300,7 @@ console.log(messages)
     async onDelete(@ConnectedSocket() socket: Socket, id: number)  {
       const user = socket.data.user;
       if (!user) {
-        return  this.server.to(socket.id).emit('error', 'No access')
+        return this.noAccess(socket);
       }
       //fuck relationships
       try {
@@ -286,15 +314,35 @@ console.log(messages)
         if (channel.owner?.id !== user.id) {
           return this.emitError(socket, new BadRequestException("No rights"))
         }
-        //TODO 
-        // user channel clear
+        //clean messages
         for (const message of channel.messages) {
           message.user.messages = message.user.messages.filter(msg => msg.id !== message.id);
         }
         await Promise.all(channel.messages.map(async (message) => {
           await this.userService.saveUser(message.user)
         }))
+        // 
+        for (const user of channel.users) {
+          const u = await this.userService.getUserWith(user.id, [
+            'channels', 'adminAt', 'joinedChannels'
+          ]);
+          u.channels = u.channels.filter((c) => c.id !== channel.id);
+          u.adminAt = u.adminAt.filter((c) => c.id !== channel.id);
+          u.joinedChannels = u.joinedChannels.filter((jC) => jC.channel.id !== channel.id);
+          await this.userService.saveUser(u);
+          // await this.joinedChannelService.deleteByUserChannel(u, channel);
+          const chatUser = await this.chatUserService.findByUser(user);
+          if (chatUser) {
+            const s = this.server.sockets.sockets[chatUser.socketId];
+            //TODO hopefully user is there 
+            this.getUsersChannels(s);
+          }
+        }
+        await this.muteService.deleteMutesByChannel(channel.id);
+        await this.joinedChannelService.deleteByChannel(channel);
         await this.channelService.delete(channel.id);
+        //emit users channels
+        // this.getUsersChannels(socket)
       } catch (error) {
         Logger.error('fail on delete channel')
         console.log(error)
@@ -315,13 +363,14 @@ console.log(messages)
   async kick(@ConnectedSocket() socket: Socket, @MessageBody() info: UpdateChannelDto)   {
     const user = socket.data.user;
     if (!user) {
-      return  this.server.to(socket.id).emit('error', 'No access')
+        return this.noAccess(socket);
     } 
     try {
       const channel = await this.channelService.getChannel(Number(info.cId), [
-        'owner', 'admins', 'users'
+        'owner', 'admins', 'users', 'joinedUsers'
       ]);
-      const u = await this.userService.getUserWith(info.uId, ['channels']);
+      const u = await this.userService.getUserWith(info.uId, [
+        'channels', 'joinedChannels']);
       if (!channel || !u) {
         return this.emitError(socket, new BadRequestException('No such channel or user')) 
       }
@@ -339,11 +388,18 @@ console.log(messages)
       }
       // channel.admins = channel.admins.filter((admin) => admin.id !== u.id);
       channel.users = channel.users.filter((u) => u.id !== info.uId)
+      channel.joinedUsers = channel.joinedUsers.filter(
+        (jC) => jC.user.id !== u.id
+      );
       u.channels = u.channels.filter((c) => c.id !== channel.id);
+      u.joinedChannels = u.joinedChannels.filter(
+        (jC) => jC.channel.id !== channel.id
+      );
+      await this.joinedChannelService.deleteByUserChannel(u, channel);
       await this.userService.saveUser(u);
       await this.channelService.saveChannel(channel);
       //TODO here
-      console.log(await this.joinedChannelService.deleteByUserChannel(u, channel));
+      // console.log(await this.joinedChannelService.deleteByUserChannel(u, channel));
       this.server.to(socket.id).emit('channel', channel);
     } catch (error) {
       this.emitError(socket, error);
@@ -356,7 +412,7 @@ console.log(messages)
     const user = socket.data.user;
     console.log("ban sender", user)
     if (!user) {
-      return  this.server.to(socket.id).emit('error', 'No access')
+        return this.noAccess(socket);
     } 
     try {
       const channel = await this.channelService.getChannel(info.cId, [
@@ -408,7 +464,7 @@ console.log(messages)
     
     const user = socket.data.user;
     if (!user) {
-      return  this.server.to(socket.id).emit('error', 'No access')
+        return this.noAccess(socket);
     } 
     try {
       const channel = await this.channelService.getChannel(info.cId, [
@@ -448,14 +504,14 @@ console.log(messages)
       this.emitError(socket, error);
     }
   }
-  //TODO
+
   @SubscribeMessage('mute')
   async onMute(@ConnectedSocket() socket: Socket, @MessageBody() info: UpdateChannelDto)   {
     
     const user = socket.data.user;
     console.log("mute sender", user)
     if (!user) {
-      return  this.server.to(socket.id).emit('error', 'No access')
+        return this.noAccess(socket);
     } 
     try {
       const channel = await this.channelService.getChannel(info.cId, [
@@ -482,48 +538,23 @@ console.log(messages)
         return this.emitError(socket, new BadRequestException('Can\'t mute the owner'))
       }
       console.log(await this.muteService.mute(u.id, channel.id));
-      // if (channel?.owner?.id !== user.id)  {
-        // return this.emitError(socket, new BadRequestException('No rights'));
-      // }
-      // if (channel?.owner?.id === user.id)  {
-        // return this.emitError(socket, new BadRequestException('Can\'t remove self'));
-      // }
-
-      // if (channel.banned.some((banned) => banned.id === u.id))  {
-        // return this.emitError(socket, new BadRequestException('Already banned'))
-      // }
-      // channel.admins = channel.admins.filter((admin) => admin.id !== u.id);
-      // channel.users = channel.users.filter((u) => u.id !== info.uId)
-      // channel.admins = channel.admins.filter((admin) => admin.id !== info.uId);
-      // channel.banned.push(u);
-      // u.channels = u.channels.filter((c) => c.id !== channel.id);
-      // u.adminAt = u.adminAt.filter((adminAt) => adminAt.id !== channel.id)
-
-      // console.log(await this.userService.saveUser(u));
-      // console.log(await this.channelService.saveChannel(channel));
-      //TODO here
-      // console.log(await this.joinedChannelService.deleteByUserChannel(u, channel));
-      // this.server.to(socket.id).emit('channel', channel);
       this.success(socket);
     } catch (error) {
       this.emitError(socket, error);
     }
   }
+
   @SubscribeMessage('addAdmin')
   async addAdmin(@ConnectedSocket() socket: Socket, @MessageBody() info: UpdateChannelDto)   {
     const user = socket.data.user;
     console.log('addAdmin', info);
     if (!user) {
-      return  this.server.to(socket.id).emit('error', 'No access')
+      return this.noAccess(socket);
     } 
     try {
       const channel = await this.channelService.getChannel(info.cId, [
         'owner', 'admins'
       ]);
-      // if (channel.admins.some((admin)=> admin.id !== user.id))  {
-        // return this.emitError(socket, new BadRequestException('No rights'))
-      // }
-
       let u = await this.userService.findUserById(info.uId);
       if (!u || !channel) {
         return this.emitError(socket, new BadRequestException('No such channel or user'))
@@ -533,7 +564,6 @@ console.log(messages)
         await this.channelService.saveChannel(channel);
         return this.emitError(socket, new BadRequestException('No rights')) 
       }
-      
       console.log(u)
       if (channel.admins.some((admin)=> admin.id === info.uId)) {
         console.log(`already in`)
@@ -545,6 +575,7 @@ console.log(messages)
       // u = await this.userService.getUserWith(u.id, ['adminAt']);
       console.log(u)
       //TODO add users?
+      //TODO return channelDTO ohne hash!!
       this.server.to(socket.id).emit('channel', channel);
       this.success(socket);
     } catch (error) {
@@ -556,7 +587,7 @@ console.log(messages)
   async onDelAdmin(@ConnectedSocket() socket: Socket, @MessageBody() info: UpdateChannelDto)   {
     const user = socket.data.user;
     if (!user) {
-      return  this.server.to(socket.id).emit('error', 'No access')
+      return this.noAccess(socket);
     } 
     try {
       const channel = await this.channelService.getChannel(info.cId, [
@@ -593,7 +624,7 @@ console.log(messages)
   async onPassword(@ConnectedSocket() socket: Socket, @MessageBody() passInfo: ChannelPasswordDto)   {
     const user = socket.data.user;
     if (!user) {
-      return  this.server.to(socket.id).emit('error', 'No access')
+      return this.noAccess(socket);
     }
     try {
       const channel = await this.channelService.getChannel(passInfo.cId, [
@@ -612,6 +643,27 @@ console.log(messages)
       this.success(socket);
     } catch (error) {
       this.emitError(socket, error)
+    }
+  }
+
+  @SubscribeMessage('privMsg')
+  async onPriv(@ConnectedSocket() socket: Socket, uInfo: PrivMsgDto)  {
+    const user = socket.data.user;
+    if (!user) {
+      return this.noAccess(socket);
+    }
+    try {
+      const u = await this.userService.getUserById(uInfo.uId);
+      if (!u)  {
+        throw new BadRequestException('No such user');
+      }
+      const room =  await this.channelService.createPrivate(user, u);
+      console.log(room);
+      const msg = await this.messageService.newMessage(uInfo.text, user, room);
+    } catch (error) {
+      console.log(error);
+      await this.joinedChannelService.create()
+      // this.emitError(socket, error)
     }
   }
 }

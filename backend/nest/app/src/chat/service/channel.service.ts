@@ -94,7 +94,7 @@ console.log('--------join channels users------')
             throw new BadRequestException('No access(banned)')
         }
         
-        if (channel.users.includes(user)){
+        if (channel.users.some((u) => u.id === user.id)){
             throw new BadRequestException('Already in channel')
         }
         if (channel.private)    {
@@ -174,7 +174,16 @@ console.log('--------join channels users------')
         return (channel);
     }
 
-    async saveChannel(channel: Channel) {
+    async   saveChannel(channel: Channel) {
         return await this.channelRepository.save(channel);
+    }
+
+    async   createPrivate(u1: User, u2: User): Promise<Channel> {
+        const room  = this.channelRepository.create({
+            private: true
+        });
+        room.users = [u1, u2];
+        room.messages = [];
+        return await this.channelRepository.save(room);
     }
 }

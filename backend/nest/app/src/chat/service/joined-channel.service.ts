@@ -12,8 +12,8 @@ export class JoinedChannelService {
         private readonly    joinedChannelRepo: Repository<JoinedChannel>
     ){}
 
-    async create(user: User, socketID: string, channel: Channel): Promise<JoinedChannel>  {
-        const joinedCHannel = this.joinedChannelRepo.create({user, socketID, channel})
+    async create(user: User, socketId: string, channel: Channel): Promise<JoinedChannel>  {
+        const joinedCHannel = this.joinedChannelRepo.create({user, socketId, channel})
         return await this.joinedChannelRepo.save(joinedCHannel)
     }
 
@@ -37,7 +37,7 @@ export class JoinedChannelService {
 
     async deleteBySocketId(socketId: string, channel: Channel)  {
         return await this.joinedChannelRepo.delete({
-            socketID: socketId,
+            socketId: socketId,
             channel: {
                 id: channel.id
             }
@@ -54,6 +54,14 @@ export class JoinedChannelService {
             channel: {
                 id: channel.id
             }
+        })
+    }
+
+    async deleteByChannel(channel: Channel) {
+        return await this.joinedChannelRepo.delete({
+           channel: {
+            id: channel.id
+           } 
         })
     }
 

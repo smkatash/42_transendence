@@ -9,7 +9,7 @@ subscriptions:
 'addAdmin', {UpdateChannelDto}
 'delAdmin', {UpdateChannelDto}
 'kick'/'ban'/'mute' {UpdateChannelDto}
-'privMsg', {uId}
+'privMsg', {uIdDto}
 
 
 events:

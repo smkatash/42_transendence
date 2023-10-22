@@ -51,9 +51,10 @@ export class Channel    {
 
     @OneToMany(() => JoinedChannel, (joinedChannel) => joinedChannel.channel)
     joinedUsers: JoinedChannel[]
-    // @ManyToMany(()=> User)
-    // @JoinTable()
-    // invited: User[]
+    
+    @ManyToMany(()=> User, (user) => user.invitedTo)
+    @JoinTable()
+    invitedUsers: User[]
 
     @ManyToMany(() => User, (user)=> user.bannedAt, {nullable: true})
     @JoinTable()

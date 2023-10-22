@@ -41,6 +41,11 @@ export class MuteService    {
 
         // });
     }
+    async deleteMutesByChannel(cId: number) {
+        return await this.muteRepository.delete({
+           cId 
+        });
+    }
 
     async purge()   {
         await this.muteRepository
