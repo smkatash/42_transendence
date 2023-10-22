@@ -2,10 +2,11 @@ body{
     background-color: aqua;
     position: relative;
 }
+
 #canvas {
     display: flex;
-    justify-content: center; /* Horizontally center */
-    align-items: center; /* Vertically center */
+    /* justify-content: center; */
+    align-items: center;
 }
 .background{
     width: 800px;

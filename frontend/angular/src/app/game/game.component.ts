@@ -21,26 +21,27 @@ export class GameComponent implements AfterViewInit {
 
   yourScore = 0;
   opponentScore = 0;
+
   ballCanMove = true;
   paddleCanMove = true;
 
   ballWidth = 3;
   ballHeight = 3;
 
-  paddleWidth = 3;
+  paddleWidth = 1;
   paddleHeight = 20;
-
   paddleMargin = 3;
   paddleSpeed = 1;
-
+  paddleRightX = 100 - this.paddleMargin - this.paddleWidth + 1.5 ;
+  paddleRightY = 40;
   paddleLeftY = 40;
   paddleLeftX = this.paddleMargin;
 
-  paddleRightX = 100 - this.paddleMargin - this.paddleWidth + 1.5 ;
-  paddleRightY = 40;
+
 
   ballX = 50;
   ballY = 50;
+
   ballRadius = 1.5;
 
   paddleLeftIncrement = 0;
@@ -86,6 +87,7 @@ export class GameComponent implements AfterViewInit {
   onResize(e: any) {
     this.checkSize();
   }
+
   /* 
     Here we need to be sure that the racket don't pass trough the borders:
     .   The smaller beetween 100% - the value in which the racket is
@@ -104,24 +106,41 @@ export class GameComponent implements AfterViewInit {
     // window.requestAnimationFrame(() => this.moveLeftRacket(this.paddleLeftY));
   }
 
+  /* Update score, should I change the value of the color of the ball depending on the game choice? */
+  updateScore(scores: Record <string, number>) {
+    let first = false;
+    for (const score in scores){
+      this.yourScore = scores[score];
+      if(first == true) {
+        this.opponentScore = scores[score];
+        break;
+      }
+      first = true;
+    }
+  }
+
   /*
     the backend send position related to a window 2:1
     in frontend we use % so we need to translate the values
     that's how we do that:
   */
   valueConversion(game: Game) {
-    const maxHeight = this.gameService.height;
-    const maxWidth = this.gameService.width;
-    if( game.ball ){
-      game.ball!.position.x = (100 / maxWidth) * game.ball!.position.x;
-      game.ball!.position.y = ( 100/ maxHeight ) * game.ball!.position.y;
-      game.ball!.velocity.x = (100 / maxWidth) * game.ball!.velocity.x;
-      game.ball!.velocity.y = (100 / maxWidth) * game.ball!.velocity.y;
-    }
-    if (game.leftPaddle)
+    const element =document.getElementById("table");
+    if(element?.offsetHeight && element?.offsetWidth){
+
+      const maxHeight = element?.offsetHeight;
+      const maxWidth = element?.offsetWidth;
+      if( game.ball ){
+        game.ball!.position.x = (100 / maxWidth) * game.ball!.position.x;
+        game.ball!.position.y = ( 100/ maxHeight) * game.ball!.position.y;
+        game.ball!.velocity.x = (100 / maxWidth) * game.ball!.velocity.x;
+        game.ball!.velocity.y = (100 / maxWidth) * game.ball!.velocity.y;
+      }
+      if (game.leftPaddle)
       game.leftPaddle!.position.y  = ( 100/ maxHeight) * game.leftPaddle!.position.y;
     if (game.rightPaddle)
     game.rightPaddle!.position.y  = ( 100/ maxHeight) * game.rightPaddle!.position.y;
+    }
     return game;
   }
 
@@ -195,6 +214,10 @@ export class GameComponent implements AfterViewInit {
         const paddle = this.gameInfo.rightPaddle
         window.requestAnimationFrame(() => this.moveRightPaddle(paddle));
       }
+      if( this.gameInfo.scores) {
+        const scores = this.gameInfo.scores;
+        window.requestAnimationFrame(() => this.updateScore(scores))
+      }
     }
   }
 
@@ -206,18 +229,19 @@ export class GameComponent implements AfterViewInit {
       } else {
         this.isInQueue = false;
         this.isGameOn = true;
-        this.startPlaying();
+        // this.startPlaying();
       }
     })
   }
-
+  
   gameObservableInit(){
     this.gameService.getTestObservable().subscribe((game: Game) => {
       if(game){
         this.gameInfo = this.valueConversion(game);
+        if(this.gameInfo.leftPaddle?.length)
+          this.paddleHeight = this.gameInfo.leftPaddle?.length;
       }
       this.startPlaying();
-      // console.log(game)
     })
   }
 
