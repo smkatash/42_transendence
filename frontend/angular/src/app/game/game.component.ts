@@ -39,13 +39,18 @@ export class GameComponent implements AfterViewInit {
 
 
 
-  ballX = 50;
-  ballY = 50;
+  ballX = 500;
+  ballY = 500;
 
   ballRadius = 1.5;
 
   paddleLeftIncrement = 0;
   paddleRightIncrement = 0;
+
+  maxViewHeight = 1000;
+  maxViewWidth = 1000;
+  maxHeight = 500;
+  maxWidth = 1000;
 
   gameInfo?:Game = {};
 
@@ -125,22 +130,22 @@ export class GameComponent implements AfterViewInit {
     that's how we do that:
   */
   valueConversion(game: Game) {
-    const element =document.getElementById("table");
-    if(element?.offsetHeight && element?.offsetWidth){
+   
 
-      const maxHeight = element?.offsetHeight;
-      const maxWidth = element?.offsetWidth;
       if( game.ball ){
-        game.ball!.position.x = (100 / maxWidth) * game.ball!.position.x;
-        game.ball!.position.y = ( 100/ maxHeight) * game.ball!.position.y;
-        game.ball!.velocity.x = (100 / maxWidth) * game.ball!.velocity.x;
-        game.ball!.velocity.y = (100 / maxWidth) * game.ball!.velocity.y;
+        // game.ball.position.x = (100 / maxWidth) * game.ball.position.x;
+        // game.ball.position.y = (100 / maxHeight) * game.ball.position.y;
+        // game.ball.velocity.x = (100 / maxWidth) * game.ball.velocity.x;
+        // game.ball.velocity.y = (100 / maxWidth) * game.ball.velocity.y;
+        game.ball.position.x = game.ball.position.x/this.maxWidth * this.maxViewWidth;
+        game.ball.position.y = game.ball.position.y/this.maxHeight * this.maxViewHeight;
+        // game.ball.position.x = 0;
       }
       if (game.leftPaddle)
-      game.leftPaddle!.position.y  = ( 100/ maxHeight) * game.leftPaddle!.position.y;
+      game.leftPaddle!.position.y  = ( 100/ this.maxHeight) * game.leftPaddle!.position.y;
     if (game.rightPaddle)
-    game.rightPaddle!.position.y  = ( 100/ maxHeight) * game.rightPaddle!.position.y;
-    }
+    game.rightPaddle!.position.y  = ( 100/ this.maxHeight) * game.rightPaddle!.position.y;
+    console.log 
     return game;
   }
 
@@ -221,6 +226,14 @@ export class GameComponent implements AfterViewInit {
     }
   }
 
+  initViewValue(){
+    let element = document.getElementById("board") as unknown as SVGRectElement;
+    if(element?.height && element?.width){
+        this.maxViewHeight = element?.height.baseVal.value;
+        this.maxViewWidth = element?.width.baseVal.value;
+    }
+  }
+
   isWaitingInQueue(){
     this.gameService.getStatusQueue().subscribe((status: boolean) => {
       if(status == true){
@@ -234,12 +247,18 @@ export class GameComponent implements AfterViewInit {
     })
   }
   
+
+  pause = false;
   gameObservableInit(){
     this.gameService.getTestObservable().subscribe((game: Game) => {
       if(game){
         this.gameInfo = this.valueConversion(game);
         if(this.gameInfo.leftPaddle?.length)
           this.paddleHeight = this.gameInfo.leftPaddle?.length;
+      }
+      if (this.pause == false){
+        this.initViewValue();
+        this.pause = true;
       }
       this.startPlaying();
     })

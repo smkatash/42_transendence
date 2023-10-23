@@ -27,6 +27,7 @@ export class GameService {
   public keyPress: EventEmitter<string> = new EventEmitter();
 
   public started = false;
+  public userInfo : User;
   private difficulty = 0;
 
   // private testSubject = new Subject<number[]>();
@@ -50,8 +51,6 @@ export class GameService {
     return this.inTheQueue.asObservable();
   }
 
-
-
   // utils--------------------------------------------
   createMatchInfo(ID:string, level:number){
     const matchInfo : JoinMatchDto = {
@@ -68,8 +67,6 @@ export class GameService {
     return retValue;
   }
 
-
-  
   padlePositionEmitter(movementValue: string) {
     const toEmit = this.createPaddleDto(movementValue)
     this.socket.emit('key', toEmit);
@@ -106,6 +103,7 @@ export class GameService {
 
   getUser(): void {
     this.socket.on('user', (user: User) => {
+    this.userInfo = user;
       console.log(user)
     })
   }

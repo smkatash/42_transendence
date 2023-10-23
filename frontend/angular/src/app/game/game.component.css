@@ -51,8 +51,11 @@ body {
     stroke: yellow;
   }
   
-  /* .net {
-    position: relative;
+  #net {
+    stroke: pink;
+    stroke-dasharray: 15;
+    stroke-width: 1%;
+    /* position: relative;
     left: 50%;
     top: 0;
     content: "";
@@ -61,8 +64,8 @@ body {
     width: 100px;
     height: 100%; background-color: #E8DAB2;
     stroke: #E8DAB2;
-    stroke-width: 1%;
-   } */
+    stroke-width: 1%; */
+   }
   
   .start_button{
       display: flex;
