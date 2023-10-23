@@ -9,7 +9,7 @@ import { PlayerService } from './service/player.service';
 import { Game} from './utls/game';
 import { User } from 'src/user/entities/user.entity';
 import { ERROR, INVITE_TO_MATCH, JOIN_MATCH, POSITION_CHANGE, QUEUE, START_MATCH, USER, WAITING_MESSAGE } from './utls/rooms';
-import { InvitedUserDto, JoinMatchDto, PositionDto } from './utls/message-dto';
+import { GameModeDto, InvitedUserDto, JoinMatchDto, PositionDto } from './utls/message-dto';
 import { WSValidationPipe } from './ws-validation-pipe';
 
 
@@ -59,28 +59,25 @@ async handleDisconnect(@ConnectedSocket() client: Socket) {
   }
 
   @SubscribeMessage(START_MATCH)
-  async handleStartMatch(@ConnectedSocket() client: Socket) {
+  async handleStartMatch(@ConnectedSocket() client: Socket, @MessageBody() gameMode: GameModeDto) {
 	try {
     if (!client.data.user.id) throw new UnauthorizedException()
 		const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
 		
 		if (currentPlayer) {
-		  let playersInQueue: Player[] = await this.matchService.waitInQueue(currentPlayer)
-		  if (playersInQueue.length < 2) {
+		  let playerIdsFromQueue: string[] = await this.matchService.waitInQueue(currentPlayer, gameMode.mode)
+		  
+		  if (!playerIdsFromQueue) {
 			  client.join(QUEUE)
-		  } else if (playersInQueue.length >= 2) {
-        const match = await this.matchService.makeAmatch(playersInQueue)
-        playersInQueue = await this.matchService.updateQueue(match.players)
-        const playerIdx = playersInQueue.findIndex(player => player.id === currentPlayer.id)
-        if (playerIdx !== -1) {
-          client.join(QUEUE)
-        } else {
-          client.leave(QUEUE)
-          client.emit(START_MATCH, match)
-        }
+		  } else if (playerIdsFromQueue.includes(currentPlayer.id)) {
+			const match = await this.matchService.makeAmatch(currentPlayer.id, playerIdsFromQueue)
+			client.leave(QUEUE)
+			client.emit(START_MATCH, match)
+		  } else {
+			client.join(QUEUE)
 		  }
-		  this.emitQueueEvent()
 		}
+		this.emitQueueEvent()
 	} catch(error) {
 		this.emitError(client, error)
 	}
@@ -90,8 +87,7 @@ async handleDisconnect(@ConnectedSocket() client: Socket) {
   async handleInviteUserToMatch(@ConnectedSocket() client: Socket, @MessageBody() invitedUserDto: InvitedUserDto) {
     try {
 		if (!client.data.user.id) throw new UnauthorizedException()
-		const players = await this.playerService.getInvitedPlayers(client.data.user.id, invitedUserDto.userId )
-		const match = await this.matchService.makeAmatch(players)
+		const match = await this.matchService.makeAmatch(client.data.user.id, [client.data.user.id, invitedUserDto.userId])
 		client.emit(START_MATCH, match)
 	} catch(error) {
 		this.emitError(client, error)

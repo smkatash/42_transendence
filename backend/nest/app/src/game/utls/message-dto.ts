@@ -22,3 +22,9 @@ export class InvitedUserDto {
   	@IsNotEmpty()
     userId: string
 }
+
+export class GameModeDto {
+	@IsNumber()
+  	@IsNotEmpty()
+    mode: GameMode
+}

@@ -11,7 +11,6 @@ import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { GameModule } from './game/game.module';
 import { Match } from './game/entities/match.entity';
 import { Player } from './game/entities/player.entity';
-import { Queue } from './game/entities/queue.entity';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ChannelModule } from './chat/channel/channel.module';
 import { BlockListModule } from './chat/block-list/block-list.module';
@@ -44,7 +43,7 @@ import { ConfigModule } from '@nestjs/config';
       username: DB_USERNAME,
       password: DB_PASSWORD,
       database: DB_NAME,
-      entities: [User, Match, Player, Queue, AuthToken],
+      entities: [User, Match, Player, AuthToken],
       synchronize: true
     }),
     GameModule,

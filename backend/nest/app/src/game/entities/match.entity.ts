@@ -10,12 +10,12 @@ export class Match {
     @Column({default: GameState.READY})
     status: GameState
 
+	@Column()
+	currentPlayerId: string
+
     @ManyToMany(() => Player, (player) => player.matches, {nullable: true})
     @JoinTable()
     players: Player[]
-
-    @ManyToMany(() => Player, (player) => player.matches, {nullable: true})
-    observers: Player[]
     
     @ManyToOne(() => Player, { nullable: true })
     @JoinColumn({ name: 'winnerId' })

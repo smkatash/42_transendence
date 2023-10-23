@@ -7,8 +7,7 @@ import { Game, GameMode, GameState } from '../utls/game';
 import { validate } from 'class-validator';
 import { Player } from '../entities/player.entity';
 import { PlayerService } from './player.service';
-import { QueueService } from './queue.service';
-import { Queue } from '../entities/queue.entity';
+import { PlayerQueueService} from './queue.service';
 import { GameService } from './game.service';
 import { Interval } from '@nestjs/schedule';
 import { Server } from 'socket.io';
@@ -20,40 +19,26 @@ import { Status } from 'src/user/utils/status.enum';
 export class MatchService {
     private matches: Map<string, Game> = new Map()
     private server: Server
+	private currentPlayerId: string
 
     constructor(@InjectRepository(Match) private matchRepo: Repository<Match>,
-                private readonly queueService: QueueService,
                 private readonly gameService: GameService,
-                private readonly playerService: PlayerService
+                private readonly playerService: PlayerService,
+				private readonly queueService: PlayerQueueService
                 ) {}
 
 
-     async waitInQueue(player: Player) {
-        let queue: Queue = await this.queueService.getQueue()
+	async waitInQueue(player: Player, mode: GameMode) {
+		if (!this.queueService.isInQueue(player.id, mode)) {
+			console.log('Adding player to Queue!')
+			this.queueService.enqueue(player.id, mode)
+		}
 
-        let playerIdsInQueue = []
-        if (queue && queue.players) {
-            playerIdsInQueue = queue.players.map((player) => player.id)
-            if (!playerIdsInQueue.includes(player.id)) {
-                console.log('Adding player to Queue')
-                queue = await this.queueService.updatePlayersInQueue(player, queue)
-            }
-        } else {
-            queue = await this.queueService.updatePlayersInQueue(player, queue)
-        }
-        return queue.players
-    }
-
-    async updateQueue(players: Player[]) {
-        let queue: Queue = await this.queueService.getQueue()
-        const playerIdsInQueue = queue.players.map((player) => player.id)
-        for (const player of players) {
-            if (playerIdsInQueue.includes(player.id)) {
-                console.log('Removing from the Queue')
-                queue = await this.queueService.removePlayerFromQueue(player)
-            }
-        }
-        return queue.players
+		if (this.queueService.isQueueReady(mode)) {
+			console.log('Queue is ready!')
+			return this.queueService.dequeue(mode)
+		}
+		return []
     }
 
 
@@ -130,8 +115,8 @@ export class MatchService {
                 match.match.winner = playerOne
             }
         }
-    }
-	
+	}
+
     async getCurrentMatch(matchId: string): Promise<Match> {
         return this.getMatchById(matchId)
     }
@@ -143,24 +128,20 @@ export class MatchService {
         })
     }
 
-    async makeAmatch(players: Player[]): Promise<Match> {
-        const pair = this.getRandomPlayers(players, 2)
-        const newMatch = await this.createMatch(pair)
-        return newMatch
-    }
+    async makeAmatch(currentPlayerId: string, playersId: string[]): Promise<Match> {
+		this.currentPlayerId = currentPlayerId
 
-    private getRandomPlayers(players: Player[], numberOfPlayersToSelect: number): Player[] {
-        if (players.length === 2) {
-            return players
-        }
-        const shuffledPlayers = players.slice().sort(() => Math.random() - 0.5)
-        return shuffledPlayers.slice(0, numberOfPlayersToSelect)
+		const playerPromises = playersId.map(id => this.playerService.getPlayerById(id));
+  		const pair = await Promise.all(playerPromises);
+		const newMatch = await this.createMatch(pair)
+		return newMatch
     }
 
 
     async createMatch(players: Player[]): Promise<Match> {
         const match = this.matchRepo.create({
             id: v4(),
+			currentPlayerId: this.currentPlayerId,
             players: players,
             status: GameState.READY
         })
