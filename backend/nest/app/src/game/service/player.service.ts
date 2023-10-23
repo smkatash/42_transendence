@@ -5,7 +5,6 @@ import { validate } from 'class-validator';
 import { Player } from '../entities/player.entity';
 import { User } from 'src/user/entities/user.entity';
 import { GameState } from '../utls/game';
-import { Queue } from '../entities/queue.entity';
 
 @Injectable()
 export class PlayerService {
@@ -18,7 +17,6 @@ export class PlayerService {
             clientId: clientId,
             score: 0,
             matches: [],
-            queue: null,
             gameState: GameState.START
         }
         
@@ -64,15 +62,6 @@ export class PlayerService {
         }
 
         return this.playerRepo.save(players)
-    }
-
-    async updatePlayerQueue(player: Player, queue?: Queue) {
-        if (!queue) {
-            player.queue = null
-        } else {
-            player.queue = queue
-        }
-        return this.saveValidPlayer(player)
     }
 
     async updatePlayerState(player: Player, state: GameState) {
