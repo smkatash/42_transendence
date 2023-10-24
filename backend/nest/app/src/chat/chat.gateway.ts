@@ -2,7 +2,7 @@ import { BadRequestException, HttpStatus, Logger, OnModuleInit, UnauthorizedExce
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { ChannelService } from './service/channel.service';
-import { ChannelPasswordDto, CreateChannelDto, JoinChannelDto, PrivMsgDto, UpdateChannelDto, cIdDto, uIdDto } from './dto/channel.dto';
+import { ChannelPasswordDto, ChannelToFeDto, CreateChannelDto, JoinChannelDto, PrivMsgDto, UpdateChannelDto, cIdDto, uIdDto } from './dto/channel.dto';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { ChatUserService } from './service/chat-user.service';
@@ -822,6 +822,33 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     } catch (error) {
       console.log(error);
       this.emitError(socket, error);
+    }
+  }
+
+  private channelToFe(channel: Channel): ChannelToFeDto{
+    return {
+      id: channel.id,
+      name: channel.name,
+      private: channel.private,
+      users: channel.users,
+      protected: channel.protected
+     }
+  }
+
+  @SubscribeMessage('getChannel')
+  async onGetChannel(@ConnectedSocket() socket: Socket, @MessageBody() channelInfo: cIdDto) {
+    const user = socket.data.user;
+    if (!user) {
+      return this.noAccess(socket);
+    }
+    try {
+      const channel = await this.channelService.getChannel(channelInfo.cId, [
+        'users'
+      ]);
+      this.server.to(socket.id).emit('channel', this.channelToFe(channel));
+    } catch (error) {
+      console.log(error);
+      this.emitError(socket, error)
     }
   }
 } 

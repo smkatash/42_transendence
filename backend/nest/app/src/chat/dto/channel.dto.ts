@@ -27,7 +27,7 @@ export class ChannelToFeDto    {
 
     // owner: User;
 
-    topic: string;
+    // topic: string;
 
     users: User[];
 
