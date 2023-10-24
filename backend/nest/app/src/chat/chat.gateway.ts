@@ -218,12 +218,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   @SubscribeMessage('getChannelMessages')
   // async onGetChannelMessages(socket: Socket, channel: Channel)  {
-  async onGetChannelMessages(socket: Socket, channelId: number)  {
+  async onGetChannelMessages(@ConnectedSocket() socket: Socket, @MessageBody() channelInfo: cIdDto)  {
     const user = socket.data.user;
     if (!user) {
       return this.noAccess(socket);
     }
-    const channel = await this.channelService.getChannel(channelId, []);
+    const channel = await this.channelService.getChannel(channelInfo.cId, []);
     if (!channel) {
       return this.emitError(socket, 'no such channel')
     }
@@ -235,6 +235,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     let messages = await this.messageService.findMessagesForChannel(channel);
     console.log(messages);
     for (const blockedUser of u.blockedUsers) {
+      console.log(blockedUser);
       messages = messages.filter((msg: Message) => msg.user.id !== blockedUser.id);
     }
     console.log(messages);
@@ -778,7 +779,7 @@ if (channel.owner)  {
       if (!channel)  {
         throw new BadRequestException("No such channel");
       }
-      this.server.to(socket.id).emit('channelUsers', channel.users);
+      this.server.to(socket.id).emit('channelUsers', channel.users)
     } catch (error) {
       console.log(error);
       this.emitError(socket, error);

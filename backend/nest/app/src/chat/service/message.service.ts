@@ -36,14 +36,24 @@ export class MessageService {
     // }
 
     async findMessagesForChannel(channel: Channel)  {
-        const query = this.msgRepo
-            .createQueryBuilder('message')
-            .leftJoin('message.channel', 'channel')
-            .where('channel.id = :channelId', {channelId: channel.id})
-            .leftJoinAndSelect('message.user', 'user')
-            .orderBy('message.createdAt', 'ASC')
-            .execute()
-        return query
+        // const query = this.msgRepo
+        //     .createQueryBuilder('message')
+        //     .leftJoin('message.channel', 'channel')
+        //     .where('channel.id = :channelId', {channelId: channel.id})
+        //     .leftJoinAndSelect('message.user', 'user')
+        //     .orderBy('message.createdAt', 'ASC')
+        //     .execute()
+        // return query
+        return await this.msgRepo.find({
+            where:  {
+                channel: {
+                    id: channel.id
+                }
+            },
+            relations:  [
+                'user'
+            ]
+        })
     }
 
     async purge()   {
