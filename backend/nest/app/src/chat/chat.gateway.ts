@@ -2,7 +2,7 @@ import { BadRequestException, HttpStatus, Logger, OnModuleInit, UnauthorizedExce
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { ChannelService } from './service/channel.service';
-import { ChannelPasswordDto, CreateChannelDto, JoinChannelDto, PrivMsgDto, UpdateChannelDto, uIdDto } from './dto/channel.dto';
+import { ChannelPasswordDto, CreateChannelDto, JoinChannelDto, PrivMsgDto, UpdateChannelDto, cIdDto, uIdDto } from './dto/channel.dto';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { ChatUserService } from './service/chat-user.service';
@@ -765,5 +765,23 @@ if (channel.owner)  {
       this.emitError(socket, error)
     }
   }
-
-}
+  @SubscribeMessage('getChannelUsers')
+  async onGetChannelUsers(@ConnectedSocket() socket: Socket, @MessageBody() channelInfo: cIdDto)  {
+    const user = socket.data.user;
+    if (!user) {
+      return this.noAccess(socket);
+    } 
+    try {
+      const channel = await this.channelService.getChannel(channelInfo.cId, [
+        'users'
+      ]);
+      if (!channel)  {
+        throw new BadRequestException("No such channel");
+      }
+      this.server.to(socket.id).emit('channelUsers', channel.users);
+    } catch (error) {
+      console.log(error);
+      this.emitError(socket, error);
+    }
+  }
+} 

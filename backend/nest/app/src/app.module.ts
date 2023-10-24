@@ -11,7 +11,6 @@ import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { GameModule } from './game/game.module';
 import { Match } from './game/entities/match.entity';
 import { Player } from './game/entities/player.entity';
-import { Queue } from './game/entities/queue.entity';
 import { ScheduleModule } from '@nestjs/schedule';
 import { RankingModule } from './ranking/ranking.module';
 import { ChatModule } from './chat/chat.module';
@@ -47,7 +46,7 @@ import { Mute } from './chat/entities/mute.entity';
       username: DB_USERNAME,
       password: DB_PASSWORD,
       database: DB_NAME,
-      entities: [User, Match, Player, Queue, AuthToken, Channel, ChatUser, Message, JoinedChannel, Mute],
+      entities: [User, Match, Player, AuthToken, Channel, ChatUser, Message, JoinedChannel, Mute],
       synchronize: true
     }),
     GameModule,

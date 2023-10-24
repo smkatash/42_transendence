@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsString, isNumber } from "class-validator";
+import { IsBoolean, IsInt, IsNotEmpty, IsNumber, IsString, isNumber } from "class-validator";
 
 export class CreateChannelDto    {
     @IsString()
@@ -15,11 +15,11 @@ export class CreateChannelDto    {
     topic?: string;
 }
 
-export class PublicChannelDto   {
-    @IsString()
-    @IsNotEmpty()
-    name: string
-}
+// export class PublicChannelDto   {
+//     @IsString()
+//     @IsNotEmpty()
+//     name: string
+// }
 
 export  class JoinChannelDto    {
     @IsNumber()
@@ -57,6 +57,13 @@ export class uIdDto {
     @IsString()
     @IsNotEmpty()
     uId: string;
+}
+
+export class cIdDto {
+    @IsNumber()
+    @IsNotEmpty()
+    @IsInt()
+    cId: number;
 }
 
 export class PrivMsgDto {
