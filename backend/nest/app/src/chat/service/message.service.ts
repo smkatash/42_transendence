@@ -62,4 +62,12 @@ export class MessageService {
             .delete()
             .execute()
     }
+
+    async deleteByChannel(channel: Channel) {
+        return await this.msgRepo.delete({
+            channel: {
+                id: channel.id
+            }
+        })
+    }
 }

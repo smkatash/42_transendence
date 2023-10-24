@@ -62,7 +62,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         console.log(await this.chatUserService.create(user, socket.id));
         /*
           to connect to private messages initilaized while user offline,
-          demit privat messaging history exists
+          damit privat messaging history exists
         */
         const u = await this.userService.getUserWith(user.id, [
           'channels'
@@ -70,6 +70,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         console.log(u)
         if (u.channels) {
           for (const channel of u.channels) {
+            //clear private msgs
             // if (!channel.name)  {
               // await this.onDelete(socket, channel.id)
             // }
@@ -155,10 +156,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     try {
       const channel = await this.channelService.join(user, joinInfo);
       await this.joinedChannelService.create(user, socket.id, channel);
+      
       /**
-       * depends on logic here
+       * depends on logic here,
        */
       // this.onGetChannelMessages(socket, {cId: channel.id})
+      this.onGetUsersChannels(socket);
     } catch (error) {
       Logger.error(error)
       this.emitError(socket, error)
@@ -184,7 +187,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       console.log(channel);
     //delete channel if owner leaves
       if (user.id === channel.owner?.id)  {
-        return this.onDelete(socket, channel.id);
+        return this.onDelete(socket, channelInfo);
       }
       channel.admins = channel.admins.filter((u)=> u.id !== user.id);
       channel.users = channel.users.filter((u) => u.id !== user.id);
@@ -198,7 +201,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       console.log('afterfilter', channel);
       await this.joinedChannelService.deleteBySocketId(socket.id, channel);
       //emit users channels
-      this.getUsersChannels(socket);
+      if (channel.users.length === 0) {
+        this.onDelete(socket, channelInfo);
+      }
+      this.onGetUsersChannels(socket);
     } catch (error) {
       console.log(error);
       this.emitError(socket, error)
@@ -314,7 +320,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
 
   @SubscribeMessage('getUsersChannels')
-  async getUsersChannels(@ConnectedSocket() socket: Socket) {
+  async onGetUsersChannels(@ConnectedSocket() socket: Socket) {
     const user = socket.data.user;
       if (!user) {
         return this.noAccess(socket);
@@ -332,7 +338,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   //TODO ok this is big
   @SubscribeMessage('delete') 
-    async onDelete(@ConnectedSocket() socket: Socket, id: number)  {
+    async onDelete(@ConnectedSocket() socket: Socket, @MessageBody() cId: cIdDto)  {
       const user = socket.data.user;
       if (!user) {
         return this.noAccess(socket);
@@ -340,44 +346,68 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       //fuck relationships
       try {
         //TODO clean relations
-        const channel = await this.channelService.getChannel(id, [
-          'owner', 'users', 'messages.user', 'admins', 'joinedUsers'
+        const channel = await this.channelService.getChannel(cId.cId, [
+          'owner', 'users', 'messages.user', 'admins', 'joinedUsers', 'messages',
+          'messages.user.messages'
         ]);
         if (!channel) {
           return this.emitError(socket, 'No such channel');
         }
+        console.log('CHANNEL TO DELETE', channel);
  //tmp 
-if (channel.owner)  {
+      if (channel.owner)  {
         if (channel.owner?.id !== user.id) {
           return this.emitError(socket, new BadRequestException("No rights"))
         }
-}
+      }
         //clean messages
         for (const message of channel.messages) {
-          message.user.messages = message.user.messages.filter(msg => msg.id !== message.id);
+          
+          console.log(message.user.messages);
+          if (message.user.messages)  {
+            //TODO temp 
+            // if (!message.user)  {
+              // continue ;
+            // }
+            console.log(message.user);
+            message.user.messages = message.user.messages.filter(msg => msg.id !== message.id);
+            console.log('BUBU')
+          }
         }
+       console.log('qqqq', channel.messages); 
         await Promise.all(channel.messages.map(async (message) => {
+          console.log(message.user.messages)
           await this.userService.saveUser(message.user)
         }))
         // 
         for (const user of channel.users) {
           const u = await this.userService.getUserWith(user.id, [
-            'channels', 'adminAt', 'joinedChannels'
+            'channels', 'adminAt', 'joinedChannels', 'joinedChannels.channel', 'ownedChannels'
           ]);
-          u.channels = u.channels.filter((c) => c.id !== channel.id);
-          u.adminAt = u.adminAt.filter((c) => c.id !== channel.id);
-          u.joinedChannels = u.joinedChannels.filter((jC) => jC.channel.id !== channel.id);
+          console.log(u);
+          if (u.channels) {
+            u.channels = u.channels.filter((c) => c.id !== channel.id);
+          }
+          if (u.adminAt)  {
+            u.adminAt = u.adminAt.filter((c) => c.id !== channel.id);
+          }
+          if (u.joinedChannels) {
+            console.log(u.joinedChannels)
+            u.joinedChannels = u.joinedChannels.filter((jC) => jC.channel.id !== channel.id);
+          }
+          if (u.ownedChannels)  {
+            u.ownedChannels = u.ownedChannels.filter((ownedC) => ownedC.id !== channel.id)
+          }
           await this.userService.saveUser(u);
           // await this.joinedChannelService.deleteByUserChannel(u, channel);
-          const chatUser = await this.chatUserService.findByUser(user);
-          if (chatUser) {
-            const s = this.server.sockets.sockets[chatUser.socketId];
-            //TODO hopefully user is there 
-            this.getUsersChannels(s);
-          }
+            //TODO we'll see
+            // this.onGetUsersChannels(socket);
+            // ooo i meant to emmit new channekls here
+          // }
         }
         await this.muteService.deleteMutesByChannel(channel.id);
         await this.joinedChannelService.deleteByChannel(channel);
+        await this.messageService.deleteByChannel(channel);
         await this.channelService.delete(channel.id);
         //emit users channels
         // this.getUsersChannels(socket)
@@ -480,7 +510,6 @@ if (channel.owner)  {
       if (channel.banned.some((banned) => banned.id === u.id))  {
         return this.emitError(socket, new BadRequestException('Already banned'))
       }
-      // channel.admins = channel.admins.filter((admin) => admin.id !== u.id);
       channel.users = channel.users.filter((u) => u.id !== info.uId)
       channel.admins = channel.admins.filter((admin) => admin.id !== info.uId);
       channel.banned.push(u);
@@ -514,15 +543,6 @@ if (channel.owner)  {
       if (!channel || !u) {
         return this.emitError(socket, new BadRequestException('No such channel or user')) 
       }
-      // if (channel.owner?.id === info.uId) {
-        // return this.emitError(socket, new BadRequestException('Can\'t ban the owner'))
-      // }
-      // if (channel?.owner?.id !== user.id)  {
-        // return this.emitError(socket, new BadRequestException('No rights'));
-      // }
-      // if (channel?.owner?.id === user.id)  {
-        // return this.emitError(socket, new BadRequestException('Can\'t remove self'));
-      // }
       if (!(channel.admins.some((admin) => admin.id === user.id))) {
         return this.emitError(socket, new BadRequestException('No rights')); 
       }
@@ -535,8 +555,6 @@ if (channel.owner)  {
 
       await this.userService.saveUser(u);
       await this.channelService.saveChannel(channel);
-      //TODO here
-      // console.log(await this.joinedChannelService.deleteByUserChannel(u, channel));
       this.server.to(socket.id).emit('channel', channel);
     } catch (error) {
       this.emitError(socket, error);
