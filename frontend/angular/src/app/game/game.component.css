@@ -18,6 +18,8 @@ body {
   .table{
     width : 1080px;
     height : 540px;
+    stroke: #E8DAB2;
+    stroke-width: -10%;
   }
 
   .game_menu{

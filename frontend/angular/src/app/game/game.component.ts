@@ -23,7 +23,11 @@ export class GameComponent implements AfterViewInit {
 
   yourScore = 0;
   opponentScore = 0;
-
+  
+  maxViewHeight = 546;
+  maxViewWidth = 1092;
+  maxHeight = 500;
+  maxWidth = 1000;
   ballCanMove = true;
   paddleCanMove = true;
 
@@ -34,10 +38,10 @@ export class GameComponent implements AfterViewInit {
   paddleHeight = 20;
   paddleMargin = 3;
   paddleSpeed = 1;
-  paddleRightX = 100 - this.paddleMargin - this.paddleWidth + 1.5 ;
+  paddleRightX = this.maxViewWidth - 40;
   paddleRightY = 40;
   paddleLeftY = 40;
-  paddleLeftX = this.paddleMargin;
+  paddleLeftX = 40;
 
   ballX = 500;
   ballY = 500;
@@ -47,10 +51,7 @@ export class GameComponent implements AfterViewInit {
   paddleLeftIncrement = 0;
   paddleRightIncrement = 0;
 
-  maxViewHeight = 1000;
-  maxViewWidth = 1000;
-  maxHeight = 500;
-  maxWidth = 1000;
+
 
   gameInfo?:Game = {};
 
@@ -131,19 +132,13 @@ export class GameComponent implements AfterViewInit {
   */
   valueConversion(game: Game) {
     if( game.ball){
-        // game.ball.position.x = (100 / maxWidth) * game.ball.position.x;
-        // game.ball.position.y = (100 / maxHeight) * game.ball.position.y;
-        // game.ball.velocity.x = (100 / maxWidth) * game.ball.velocity.x;
-        // game.ball.velocity.y = (100 / maxWidth) * game.ball.velocity.y;
-        if(this.matchLeftSide == true){
-          game.ball.position.x = game.ball.position.x/this.maxWidth * this.maxViewWidth;
-          game.ball.position.y = game.ball.position.y/this.maxHeight * this.maxViewHeight;
-        } else {
-          game.ball.position.x = this.maxViewWidth - (game.ball.position.x/this.maxWidth * this.maxViewWidth);
-          game.ball.position.y = game.ball.position.y/this.maxHeight * this.maxViewHeight;
-        }
-
-        // game.ball.position.x = 0;
+      if(this.matchLeftSide == true){
+        game.ball.position.x = game.ball.position.x/this.maxWidth * this.maxViewWidth;
+        game.ball.position.y = game.ball.position.y/this.maxHeight * this.maxViewHeight;
+      } else {
+        game.ball.position.x = this.maxViewWidth - (game.ball.position.x/this.maxWidth * this.maxViewWidth);
+        game.ball.position.y = game.ball.position.y/this.maxHeight * this.maxViewHeight;
+      }
     }
     if (game.leftPaddle)
       game.leftPaddle!.position.y  = ( 100/ this.maxHeight) * game.leftPaddle!.position.y;
@@ -152,7 +147,7 @@ export class GameComponent implements AfterViewInit {
     console.log 
     return game;
   }
-
+  
   resetAll(): void {
     // this.score0 = 0;
     // this.score1 = 0;
@@ -224,8 +219,7 @@ export class GameComponent implements AfterViewInit {
           this.paddleHeight = this.gameInfo.leftPaddle?.length;
       }
       if (this.pause == false){
-        this.initViewValue();
-        this.matchLeftSide = this.gameService.matchIsLeftSide();
+        // this.initViewValue();
         this.pause = true;
       }
       this.startPlaying();
@@ -234,6 +228,11 @@ export class GameComponent implements AfterViewInit {
 
   isInQueue: boolean = false;
   isGameOn: boolean = false;
+
+  ngOnInit() {
+    this.initViewValue()
+  };
+
 
   setGame(event: number) {
     this.isInQueue = true;
