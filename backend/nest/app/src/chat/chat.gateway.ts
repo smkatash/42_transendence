@@ -153,17 +153,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     console.log(joinInfo);
     try {
-      // const u = await this.userService.getUserRelations(user.id);
-// 
-      // console.log(u)
       const channel = await this.channelService.join(user, joinInfo);
-      
-
-      // const messages = await this.messageService.findMessagesByChannel(channel);
-      const messages = await this.messageService.findMessagesForChannel(channel);
       await this.joinedChannelService.create(user, socket.id, channel);
-      //TODO filter blocked
-      this.server.to(socket.id).emit('messages', messages);
+      /**
+       * depends on logic here
+       */
+      // this.onGetChannelMessages(socket, {cId: channel.id})
     } catch (error) {
       Logger.error(error)
       this.emitError(socket, error)
@@ -173,14 +168,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage('leave')
   async onLeave(
     @ConnectedSocket() socket: Socket,
-    @MessageBody() id: number 
+    @MessageBody() channelInfo: cIdDto 
   ) {
     const user = socket.data.user;
     if (!user) {
       return this.noAccess(socket);
     } 
     try {
-      const channel = await this.channelService.getChannel(id, [
+      const channel = await this.channelService.getChannel(channelInfo.cId, [
         'owner', 'users', 'admins'
       ])
       if (!channel) {
@@ -217,8 +212,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   // }
 
   @SubscribeMessage('getChannelMessages')
-  // async onGetChannelMessages(socket: Socket, channel: Channel)  {
-  async onGetChannelMessages(@ConnectedSocket() socket: Socket, @MessageBody() channelInfo: cIdDto)  {
+  async onGetChannelMessages(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() channelInfo: cIdDto)  {
+
     const user = socket.data.user;
     if (!user) {
       return this.noAccess(socket);
