@@ -1,4 +1,7 @@
 import { IsBoolean, IsInt, IsNotEmpty, IsNumber, IsString, isNumber } from "class-validator";
+import { User } from "src/user/entities/user.entity";
+import { JoinedChannel } from "../entities/joinedChannel.entity";
+import { Message } from "../entities/message.entity";
 
 export class CreateChannelDto    {
     @IsString()
@@ -15,11 +18,27 @@ export class CreateChannelDto    {
     topic?: string;
 }
 
-// export class PublicChannelDto   {
-//     @IsString()
-//     @IsNotEmpty()
-//     name: string
-// }
+export class ChannelToFeDto    {
+    id: number;
+
+    name: string;
+
+    private: boolean;
+
+    // owner: User;
+
+    topic: string;
+
+    users: User[];
+
+    // admins: User[];
+
+    // messages: Message[];
+
+    protected: boolean;
+
+    // banned: User[]
+}
 
 export  class JoinChannelDto    {
     @IsNumber()

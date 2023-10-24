@@ -154,9 +154,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     console.log(joinInfo);
     try {
+
       const channel = await this.channelService.join(user, joinInfo);
+      if (channel.private)  {
+        const u = await this.userService.getUserWith(user.id, [
+          'invitedTo'
+        ]);
+        u.invitedTo = u.invitedTo.filter((c) => c.id !== channel.id);
+        await this.userService.saveUser(u);
+      }
       await this.joinedChannelService.create(user, socket.id, channel);
-      
       /**
        * depends on logic here,
        */
@@ -345,7 +352,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       }
       //fuck relationships
       try {
-        //TODO clean relations
+        //TODO clean relations CHECK IF CLEAN
         const channel = await this.channelService.getChannel(cId.cId, [
           'owner', 'users', 'messages.user', 'admins', 'joinedUsers', 'messages',
           'messages.user.messages'
@@ -362,19 +369,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       }
         //clean messages
         for (const message of channel.messages) {
-          
-          console.log(message.user.messages);
+          // console.log(message.user.messages);
           if (message.user.messages)  {
-            //TODO temp 
             // if (!message.user)  {
               // continue ;
             // }
-            console.log(message.user);
+            // console.log(message.user);
             message.user.messages = message.user.messages.filter(msg => msg.id !== message.id);
-            console.log('BUBU')
+            // console.log('BUBU')
           }
         }
-       console.log('qqqq', channel.messages); 
+      //  console.log('qqqq', channel.messages); 
         await Promise.all(channel.messages.map(async (message) => {
           console.log(message.user.messages)
           await this.userService.saveUser(message.user)
@@ -398,6 +403,20 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           if (u.ownedChannels)  {
             u.ownedChannels = u.ownedChannels.filter((ownedC) => ownedC.id !== channel.id)
           }
+          for (const banned of channel.banned)  {
+            const user = await this.userService.getUserWith(banned.id, [
+              'bannedAt'
+            ]);
+            user.bannedAt = user.bannedAt.filter((c) => c.id !== channel.id);
+            await this.userService.saveUser(user);
+          }
+          for (const banned of channel.banned)  {
+            const user = await this.userService.getUserWith(banned.id, [
+              'invitedTo'
+            ]);
+            user.invitedTo = user.invitedTo.filter((c) => c.id !== channel.id);
+            await this.userService.saveUser(user);
+          }
           await this.userService.saveUser(u);
           // await this.joinedChannelService.deleteByUserChannel(u, channel);
             //TODO we'll see
@@ -405,6 +424,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
             // ooo i meant to emmit new channekls here
           // }
         }
+        /**
+         * 
+        for (const banned of )
+        invited bannedd
+         */
         await this.muteService.deleteMutesByChannel(channel.id);
         await this.joinedChannelService.deleteByChannel(channel);
         await this.messageService.deleteByChannel(channel);

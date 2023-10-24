@@ -27,6 +27,9 @@ export class ChannelService {
             channel.users = [];
             channel.admins = [];
             channel.banned = [];
+            if (channel.private)    {
+                channel.invitedUsers = [];
+            }
             channel.users.push(owner);
             channel.admins.push(owner);
             if (channelInfo.password?.length)   {
@@ -83,7 +86,7 @@ export class ChannelService {
             where:  {
                 id: joinDto.id
             },
-            relations: ['users', 'banned']
+            relations: ['users', 'banned', 'invitedUsers']
         })
         if (!channel)   {
             throw new BadRequestException('No such channel');
@@ -100,6 +103,11 @@ console.log('--------join channels users------')
         }
         if (channel.private)    {
             //check if invited
+            if (!(channel.invitedUsers.some((invited) => invited.id === user.id)))  {
+                throw new BadRequestException('No access to private channel')
+            }   else    {
+                channel.invitedUsers = channel.invitedUsers.filter((iU) => iU.id !== user.id);
+            }
         }
         //check password
         if (channel.hash)  {
@@ -116,23 +124,6 @@ console.log('--------join channels users------')
         return await this.channelRepository.save(channel);
     }
 
-    async leave(user: User, channelId)  {
- 
-    }
-    
-    async kick(user: User, userId: number, channelId: number)   {
- 
-    }
- 
-    async mute(user: User, userId: number, channelId: number)   {
-       
-    }
-    async addAdmin(user: User, userId: number, channelId: number)   {
-       
-    }
-    async removeAdmin(user: User, userId: number, channelId: number)   {
-       
-    }
     async inviteToGame(user: User, userId: number, channelId: number)   {
        
     }
