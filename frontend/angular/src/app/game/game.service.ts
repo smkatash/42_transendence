@@ -1,5 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { User , Game, GamePlayer, SocketResponse, GameMode, JoinMatchDto, PositionDto } from '../entities.interface';
+import { User , Game, GamePlayer, SocketResponse, GameMode, JoinMatchDto, PositionDto, GameModeDto } from '../entities.interface';
 import { GameSocket } from '../app.module';
 import { Subject } from 'rxjs';
 
@@ -27,9 +27,10 @@ export class GameService {
   public keyPress: EventEmitter<string> = new EventEmitter();
 
   public started = false;
+  
   public userInfo : User;
   private difficulty = 0;
-
+  private matchInfo : SocketResponse;
   // private testSubject = new Subject<number[]>();
   paddlePosition: string = '0';
 
@@ -52,6 +53,13 @@ export class GameService {
   }
 
   // utils--------------------------------------------
+
+  matchIsLeftSide(){
+    if (this!.matchInfo!.id == this!.matchInfo!.players[0].id)
+      return true;
+    else
+      return false;
+  }
   createMatchInfo(ID:string, level:number){
     const matchInfo : JoinMatchDto = {
       matchId: ID,
@@ -65,6 +73,13 @@ export class GameService {
       step: value
     }
     return retValue;
+  }
+
+  createGameDto(level: number){
+    const gameMode: GameModeDto = {
+      mode: level
+    };
+    return gameMode
   }
 
   padlePositionEmitter(movementValue: string) {
@@ -87,18 +102,24 @@ export class GameService {
         waitOneSecond();
       } else {
         this.inTheQueue.next(false);
-        const socketResponse : SocketResponse = msg;
-        const matchID = this.createMatchInfo(socketResponse.id, this.difficulty)
+        this.matchInfo = msg;
+        const matchID = this.createMatchInfo(this.matchInfo.id, this.difficulty)
         this.socket.emit('join', matchID)
         console.log(matchID.matchId);
       }
     })
   }
 
+  queueEmit(){
+    const gameMode = this.createGameDto(this.difficulty);
+    this.socket.emit('start', gameMode);
+  }
+
   startGameService(level:number):void {
     this.difficulty = level;
     this.listenersInit();
-    this.socket.emit('start');
+    const gameMode = this.createGameDto(this.difficulty);
+    this.socket.emit('start', gameMode);
   }
 
   getUser(): void {

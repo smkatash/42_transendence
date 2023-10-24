@@ -14,12 +14,12 @@ export class GameMenuComponent {
     this.newGameEvent.emit(0);
   }
   newGameEasy(){
-    this.newGameEvent.emit(0);
-  }
-  newGameNormal(){
     this.newGameEvent.emit(1);
   }
-  newGameHard(){
+  newGameNormal(){
     this.newGameEvent.emit(2);
+  }
+  newGameHard(){
+    this.newGameEvent.emit(3);
   }
 }

@@ -61,16 +61,20 @@ async handleDisconnect(@ConnectedSocket() client: Socket) {
   @SubscribeMessage(START_MATCH)
   async handleStartMatch(@ConnectedSocket() client: Socket, @MessageBody() gameMode: GameModeDto) {
 	try {
-    if (!client.data.user.id) throw new UnauthorizedException()
+		this.logger.debug(gameMode.mode)
+    	if (!client.data.user.id) throw new UnauthorizedException()
 		const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
 		
 		if (currentPlayer) {
-		  let playerIdsFromQueue: string[] = await this.matchService.waitInQueue(currentPlayer, gameMode.mode)
-		  
-		  if (!playerIdsFromQueue) {
-			  client.join(QUEUE)
-		  } else if (playerIdsFromQueue.includes(currentPlayer.id)) {
-			const match = await this.matchService.makeAmatch(currentPlayer.id, playerIdsFromQueue)
+			this.logger.debug("here")
+			let playerIdsFromQueue: string[] = this.matchService.waitInQueue(currentPlayer, gameMode.mode)
+			this.logger.debug(playerIdsFromQueue)
+			if (!playerIdsFromQueue) {
+				client.join(QUEUE)
+				this.logger.debug("joined queue")
+			} else if (playerIdsFromQueue.includes(currentPlayer.id)) {
+				const match = await this.matchService.makeAmatch(currentPlayer.id, playerIdsFromQueue)
+				this.logger.debug("left queue, getting match")
 			client.leave(QUEUE)
 			client.emit(START_MATCH, match)
 		  } else {
@@ -79,6 +83,7 @@ async handleDisconnect(@ConnectedSocket() client: Socket) {
 		}
 		this.emitQueueEvent()
 	} catch(error) {
+		this.logger.debug(error)
 		this.emitError(client, error)
 	}
   }

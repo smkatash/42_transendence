@@ -28,12 +28,14 @@ export class MatchService {
                 ) {}
 
 
-	async waitInQueue(player: Player, mode: GameMode) {
+	waitInQueue(player: Player, mode: GameMode) {
+        console.log("INSIDE")
+        console.log(this.queueService.isInQueue(player.id, mode))
 		if (!this.queueService.isInQueue(player.id, mode)) {
 			console.log('Adding player to Queue!')
 			this.queueService.enqueue(player.id, mode)
 		}
-
+		console.log('HERE')
 		if (this.queueService.isQueueReady(mode)) {
 			console.log('Queue is ready!')
 			return this.queueService.dequeue(mode)

@@ -19,6 +19,8 @@ export class GameComponent implements AfterViewInit {
     this.gameService.getUser();
   }
 
+  matchLeftSide = true;
+
   yourScore = 0;
   opponentScore = 0;
 
@@ -36,8 +38,6 @@ export class GameComponent implements AfterViewInit {
   paddleRightY = 40;
   paddleLeftY = 40;
   paddleLeftX = this.paddleMargin;
-
-
 
   ballX = 500;
   ballY = 500;
@@ -130,18 +130,22 @@ export class GameComponent implements AfterViewInit {
     that's how we do that:
   */
   valueConversion(game: Game) {
-   
-
-      if( game.ball ){
+    if( game.ball){
         // game.ball.position.x = (100 / maxWidth) * game.ball.position.x;
         // game.ball.position.y = (100 / maxHeight) * game.ball.position.y;
         // game.ball.velocity.x = (100 / maxWidth) * game.ball.velocity.x;
         // game.ball.velocity.y = (100 / maxWidth) * game.ball.velocity.y;
-        game.ball.position.x = game.ball.position.x/this.maxWidth * this.maxViewWidth;
-        game.ball.position.y = game.ball.position.y/this.maxHeight * this.maxViewHeight;
+        if(this.matchLeftSide == true){
+          game.ball.position.x = game.ball.position.x/this.maxWidth * this.maxViewWidth;
+          game.ball.position.y = game.ball.position.y/this.maxHeight * this.maxViewHeight;
+        } else {
+          game.ball.position.x = this.maxViewWidth - (game.ball.position.x/this.maxWidth * this.maxViewWidth);
+          game.ball.position.y = game.ball.position.y/this.maxHeight * this.maxViewHeight;
+        }
+
         // game.ball.position.x = 0;
-      }
-      if (game.leftPaddle)
+    }
+    if (game.leftPaddle)
       game.leftPaddle!.position.y  = ( 100/ this.maxHeight) * game.leftPaddle!.position.y;
     if (game.rightPaddle)
     game.rightPaddle!.position.y  = ( 100/ this.maxHeight) * game.rightPaddle!.position.y;
@@ -156,44 +160,8 @@ export class GameComponent implements AfterViewInit {
   }
 
   async moveBall(ball: Ball): Promise<void> {
-    // if(ball.velocity.x > 0){
-    //   if(ball.velocity.y > 0 && (this.ballY + ball.velocity.y) < 100){
-    //     if(this.ballX <= ball.position.x){
-    //       this.ballX = ball.position.x;
-    //     } else { this.ballX = this.ballX + ball.velocity.x; }
-    //     if(this.ballY <= ball.position.y){
-    //       this.ballY = ball.position.y;
-    //     } else { this.ballY = this.ballY + ball.velocity.y }  
-    //   } else {
-    //     if(this.ballX <= ball.position.x) {
-    //       this.ballX = ball.position.x; 
-    //     } else { this.ballX = this.ballX + ball.velocity.x; }
-    //     if(this.ballY >= ball.position.y) {
-    //       this.ballY = ball.position.y;
-    //     } else { this.ballY = this.ballY - ball.velocity.y }
-    //   }
-    // } else {
-    //   if(ball.velocity.y > 0 && (this.ballY + ball.velocity.y) < 100){
-    //     if(this.ballX >= ball.position.x){
-    //       this.ballX = ball.position.x;
-    //     } else { this.ballX = this.ballX - ball.velocity.x; }
-    //     if(this.ballY <= ball.position.y){
-    //       this.ballY = ball.position.y;
-    //     } else { this.ballY = this.ballY + ball.velocity.y; }  
-    //   } else {
-    //     if(this.ballX >= ball.position.x) {
-    //       this.ballX = ball.position.x; 
-    //     } else { this.ballX = this.ballX - ball.velocity.x; }
-    //     if(this.ballY >= ball.position.y) {
-    //       this.ballY = ball.position.y;
-    //     } else { this.ballY = this.ballY - ball.velocity.y}
-    //   }
-    // }
-      // this.gameInfo = this.valueConversion(this.gameInfo);
       this.ballX = ball.position.x;
       this.ballY = ball.position.y;
-      // window.requestAnimationFrame(() => this.moveBall(ball));
-    // window.requestAnimationFrame(() => this.moveBall(xIncrement, yIncrement));
   }
 
   moveRightPaddle(rightPaddle: Paddle){
@@ -237,18 +205,17 @@ export class GameComponent implements AfterViewInit {
   isWaitingInQueue(){
     this.gameService.getStatusQueue().subscribe((status: boolean) => {
       if(status == true){
-        this.socket.emit('start');
-        // console.log("AM I EMITTING? TWICE AT LEAST?")
+        this.gameService.queueEmit();
       } else {
         this.isInQueue = false;
         this.isGameOn = true;
-        // this.startPlaying();
       }
     })
   }
   
 
   pause = false;
+
   gameObservableInit(){
     this.gameService.getTestObservable().subscribe((game: Game) => {
       if(game){
@@ -258,6 +225,7 @@ export class GameComponent implements AfterViewInit {
       }
       if (this.pause == false){
         this.initViewValue();
+        this.matchLeftSide = this.gameService.matchIsLeftSide();
         this.pause = true;
       }
       this.startPlaying();

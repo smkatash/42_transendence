@@ -141,7 +141,7 @@ export enum GameState {
 }
 
 export enum GameMode {
-  EASY = 0,
+  EASY = 1,
   MEDIUM,
   HARD
 }
@@ -149,6 +149,10 @@ export enum GameMode {
 export class JoinMatchDto {
   matchId?: string
   mode?: GameMode
+}
+
+export class GameModeDto {
+  mode: GameMode;
 }
 
 export class PositionDto {
