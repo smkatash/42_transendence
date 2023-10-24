@@ -1,4 +1,4 @@
-import { BadRequestException, Body, ConflictException, Controller, Delete, Get, HttpException, HttpStatus, Inject, Logger, Param, Patch, Post, Query, Res, UnauthorizedException, UploadedFile, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
+import {  Body, ConflictException, Controller, Delete, Get, Inject, Logger, Param, Patch, Post, Query, Res, UnauthorizedException, UploadedFile, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
 import { UserService } from './service/user.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -9,7 +9,8 @@ import { SessionGuard } from 'src/auth/guard/auth.guard';
 import * as path from 'path';
 import { IMAGE_UPLOADS_PATH, POSTGRES_UNIQUE_VIOLATION } from 'src/Constants';
 import { SessionUserDto } from './utils/user.dto';
-import { FriendIdDto, ParamAvatarDto, ParamUserIdDto, UpdateEmailDto, UpdateTitleDto, UpdateUsernameDto } from './utils/entity.dto';
+import { BlockUserDto, FriendIdDto, ParamAvatarDto, ParamUserIdDto, UnblockUserDto, UpdateEmailDto, UpdateTitleDto, UpdateUsernameDto } from './utils/entity.dto';
+import { use } from 'passport';
 
 
 export const localStorage = {
@@ -211,6 +212,36 @@ export class UserController {
 			throw error
 		}
     }
+
+	@Get('block')
+    @UseGuards(SessionGuard)
+    async handleBlockUser(@Body() blockUserDto: BlockUserDto, @GetUser() currentUser: SessionUserDto) {
+		if (!currentUser) {
+			throw new UnauthorizedException('Access denied');
+		}
+
+		try {
+           return await this.userService.blockUser(currentUser.id, blockUserDto.blockId)
+        } catch(error) {
+			throw error
+		}
+    }
+
+	// TODO to check with frontend
+	@Post('unblock')
+    @UseGuards(SessionGuard)
+    async handleUnblockUser(@Body() unblockUserDto: UnblockUserDto, @GetUser() currentUser: SessionUserDto) {
+		if (!currentUser) {
+			throw new UnauthorizedException('Access denied');
+		}
+
+		try {
+           return await this.userService.unBlockUser(currentUser.id, unblockUserDto.unblockId)
+        } catch(error) {
+			throw error
+		}
+    }
+
 
     @Delete('friend/:id')
     @UseGuards(SessionGuard)

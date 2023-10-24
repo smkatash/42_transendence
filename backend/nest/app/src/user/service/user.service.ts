@@ -145,6 +145,49 @@ export class UserService {
 		return await this.userRepo.save(currentUser)
 	}
 
+	async blockUser(id: string, blockId: string) {
+		const currentUser: User = await this.userRepo.findOne({
+			where: {id}, relations: ['blockedUsers']
+		  })
+
+		const blockUser: User = await this.userRepo.findOne({
+			where: {id: blockId}
+		})
+
+		if (!currentUser || !blockUser) {
+			throw new NotFoundException('User not found')
+		}
+
+		if (currentUser.blockedUsers && currentUser.blockedUsers.some((user) => user.id === blockId)) {
+			throw new BadRequestException('User is blocked');
+		}
+
+		currentUser.blockedUsers.push(blockUser)
+		return await this.userRepo.save(currentUser)
+	}
+
+
+	async unBlockUser(id: string, unblockId: string) {
+		const currentUser: User = await this.userRepo.findOne({
+			where: {id}, relations: ['blockedUsers']
+		  })
+
+		const unBlockUser: User = await this.userRepo.findOne({
+			where: {id: unblockId}
+		})
+
+		if (!currentUser || !unBlockUser) {
+			throw new NotFoundException('User not found')
+		}
+
+		if (currentUser.blockedUsers && currentUser.blockedUsers.some((user) => user.id !== unblockId)) {
+			throw new BadRequestException('User is not blocked');
+		}
+
+		currentUser.blockedUsers = currentUser.blockedUsers.filter(user => user.id !== unblockId)
+		return await this.userRepo.save(currentUser)
+	}
+
     async addUserFriend(id: string, friendId: string) {
         const currentUser: User = await this.userRepo.findOne({
           where: {id}, relations: ['friendOf', 'friends', 'sentFriendRequests', 'pendingFriendRequests']

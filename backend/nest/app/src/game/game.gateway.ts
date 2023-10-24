@@ -1,18 +1,17 @@
-import {  Logger, Req, Session, UseGuards } from '@nestjs/common';
+import {  Logger, UnauthorizedException, UsePipes } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { UserService } from '../user/service/user.service';
-import { User } from 'src/user/entities/user.entity';
 import { Status } from 'src/user/utils/status.enum';
 import { MatchService } from './service/match.service';
 import { Player } from './entities/player.entity';
 import { PlayerService } from './service/player.service';
-import { Game, GameState, MessageMatch} from './utls/game';
-import { SessionGuard } from 'src/auth/guard/auth.guard';
-import { GetUser, GetWsUser } from 'src/auth/utils/get-user.decorator';
-import { IncomingMessage } from 'http';
-import { WsAuthGuard } from 'src/auth/guard/ws-auth.guard';
-import { SessionUserDto } from 'src/user/utils/user.dto';
+import { Game} from './utls/game';
+import { User } from 'src/user/entities/user.entity';
+import { ERROR, INVITE_TO_MATCH, JOIN_MATCH, POSITION_CHANGE, QUEUE, START_MATCH, USER, WAITING_MESSAGE } from './utls/rooms';
+import { InvitedUserDto, JoinMatchDto, PositionDto } from './utls/message-dto';
+import { WSValidationPipe } from './ws-validation-pipe';
+
 
 @WebSocketGateway({
 	namespace: 'game', 
@@ -29,92 +28,124 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
               private readonly matchService: MatchService) {}
 
   afterInit() {
-    this.logger.log("Initialized")
+    this.logger.log("Server is initialized")
   }
 
-  async handleConnection(@ConnectedSocket() client: Socket, @GetWsUser() currentUser: any) {
-	let user = client.request["user"]
-	client.data.user = user
-    this.logger.log(`Client id: ${client.id} connected`);
+  async handleConnection(@ConnectedSocket() client: Socket) {
+	let user = client.request[USER]
+	try {
+		if (!user) {
+			throw new UnauthorizedException()
+		}
+		this.logger.log(`Client id: ${client.id} connected`);
 
-    if (!user) {
-		console.log('disconnecting')
-    	return client.disconnect()
-     }
-    user = await this.userService.updateUserStatus(user.id, Status.GAME)
-    const player = await this.playerService.getPlayerByUser(user, client.id)
-	this.logger.debug(player)
-    client.join(player.id)
-    client.emit('user', { player })
+		await this.userService.updateUserStatus(user.id, Status.GAME)
+		const player = await this.playerService.getPlayerByUser(user, client.id);
+		client.data.user = player
+		this.emitUserEvent(client, player)
+	} catch (error) {
+		this.emitError(client, error)
+	}
+}
+
+async handleDisconnect(@ConnectedSocket() client: Socket) {
+	try {
+		if (!client.data.user.id) throw new UnauthorizedException()
+		this.logger.log(`Cliend id:${client.id} disconnected`)
+		await this.userService.updateUserStatus(client.data.user.id, Status.OFFLINE)
+		return client.disconnect()
+	} catch (error) {
+		this.emitError(client, error)
+	}
   }
 
-  handleDisconnect(@ConnectedSocket() client: Socket) {
-    // this.logger.log(`Cliend id:${client.id} disconnected`)
-    return client.disconnect()
-  }
-
-  @SubscribeMessage('message')
-  handleMessage(@ConnectedSocket() client: Socket, @MessageBody() data: string) {
-    this.logger.debug(`Payload: ${data}`)
-    this.server.emit('message', data)
-  }
-
-  @SubscribeMessage('start')
+  @SubscribeMessage(START_MATCH)
   async handleStartMatch(@ConnectedSocket() client: Socket) {
-	console.log("bonjour putain")
-    if (!client.data.user.id) return
-    this.logger.debug(client.data.user.id)
-    const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
-
-
-    if (currentPlayer) {
-      let playersInQueue: Player[] = await this.matchService.waitInQueue(currentPlayer)
-      // if (playersInQueue.length >= 2) {
-        if (playersInQueue.length <= 2) {
+	try {
+    if (!client.data.user.id) throw new UnauthorizedException()
+		const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
+		
+		if (currentPlayer) {
+		  let playersInQueue: Player[] = await this.matchService.waitInQueue(currentPlayer)
+		  if (playersInQueue.length < 2) {
+			  client.join(QUEUE)
+		  } else if (playersInQueue.length >= 2) {
         const match = await this.matchService.makeAmatch(playersInQueue)
         playersInQueue = await this.matchService.updateQueue(match.players)
-        for (const player of playersInQueue) {
-          if (player.id === currentPlayer.id) {
-            client.emit('start', 'Waiting players to join.')
-          }
+        const playerIdx = playersInQueue.findIndex(player => player.id === currentPlayer.id)
+        if (playerIdx !== -1) {
+          client.join(QUEUE)
+        } else {
+          client.leave(QUEUE)
+          client.emit(START_MATCH, match)
         }
-
-        for (const player of match.players) {
-          if (player.id === currentPlayer.id) {
-            client.join(match.id)
-            client.emit('start', match)
-          }
-        }
-      } else {
-        client.emit('start', 'Waiting players to join2.')
-      }
-      
-    }
+		  }
+		  this.emitQueueEvent()
+		}
+	} catch(error) {
+		this.emitError(client, error)
+	}
   }
 
+  @SubscribeMessage(INVITE_TO_MATCH)
+  async handleInviteUserToMatch(@ConnectedSocket() client: Socket, @MessageBody() invitedUserDto: InvitedUserDto) {
+    try {
+		if (!client.data.user.id) throw new UnauthorizedException()
+		const players = await this.playerService.getInvitedPlayers(client.data.user.id, invitedUserDto.userId )
+		const match = await this.matchService.makeAmatch(players)
+		client.emit(START_MATCH, match)
+	} catch(error) {
+		this.emitError(client, error)
+	}
+} 
 
-  @SubscribeMessage('join')
-  async handleJoinMatch(@ConnectedSocket() client: Socket, @MessageBody() matchId: string) {
-    if (!client.data.user.id) return
-    if (matchId) {
-      // to fix later
-      client.join(matchId)
-      const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
-      if (currentPlayer) {
-        const game: Game = await this.matchService.joinMatch(matchId)
-        this.server.to(matchId).emit('join', game)
-        this.logger.debug(matchId)
-        this.matchService.getServer(this.server)
-        this.matchService.play()
-      }
-    }
-  }
+  @SubscribeMessage(JOIN_MATCH)
+  async handleJoinMatch(@ConnectedSocket() client: Socket, @MessageBody() matchDto: JoinMatchDto) {
+	
+   try {
+	   if (!client.data.user.id) throw new UnauthorizedException()
+	   const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
+	   if (currentPlayer) {
+			client.join(matchDto.matchId)
+			const game: Game = await this.matchService.joinMatch(matchDto.matchId, matchDto.mode)
+			this.server.to(matchDto.matchId).emit(JOIN_MATCH, game)
+			this.matchService.getServer(this.server)
+			this.matchService.play()
+	   }
+   } catch(error) {
+		this.emitError(client, error)
+   }
+}
 
-  @SubscribeMessage('key')
-  async handleKeyPress(@ConnectedSocket() client: Socket, @MessageBody() step: string) {
-    if (!client.data.user.id) return
-    const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
-     this.matchService.updatePlayerPosition(currentPlayer, parseInt(step))
-    }
-  }
+	// Todo check if pipe is working
+  @UsePipes(new WSValidationPipe())
+  @SubscribeMessage(POSITION_CHANGE)
+  async handleKeyPress(@ConnectedSocket() client: Socket, @MessageBody() positionDto: PositionDto) {
+	try {
+		if (!client.data.user.id) throw new UnauthorizedException()
+
+		this.logger.debug(JSON.stringify(positionDto))
+		const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
+		if (currentPlayer) {
+			this.matchService.updatePlayerPosition(currentPlayer, parseInt(positionDto.step))
+		}
+	} catch(error) {
+		this.emitError(client, error)
+	}
+} 
+	
+	emitError(client: Socket, error: Error) {
+		client.emit(ERROR, error)
+		client.disconnect()
+	}
+
+	emitUserEvent(client: Socket, currentPlayer: Player) {
+		client.emit(USER, currentPlayer)
+	}
+
+	emitQueueEvent() {
+		this.server.to(QUEUE).emit(START_MATCH, WAITING_MESSAGE)
+	}
+}
+
 

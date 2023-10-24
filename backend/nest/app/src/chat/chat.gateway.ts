@@ -11,6 +11,8 @@ import { MessageService } from './service/message.service';
 import { CreateMessageDto } from './dto/createMessage.dto';
 import { JoinedChannel } from './entities/joinedChannel.entity';
 import { MuteService } from './service/mute.service';
+import { Channel } from './entities/channel.entity';
+import { Message } from './entities/message.entity';
 
 
 @WebSocketGateway({
@@ -59,25 +61,40 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       try {
         console.log(await this.chatUserService.create(user, socket.id));
         /*
+          to connect to private messages initilaized while user offline,
+          demit privat messaging history exists
+        */
         const u = await this.userService.getUserWith(user.id, [
           'channels'
         ]);
+        console.log(u)
         if (u.channels) {
-          for (const channel in u.channels) {
-            // create connections here maybe?
+          for (const channel of u.channels) {
+            // if (!channel.name)  {
+              // await this.onDelete(socket, channel.id)
+            // }
+            const jC = await this.joinedChannelService.findByChannelUser(channel, u);
+            console.log ('old', jC)
+            if (!jC)  {
+              console.log('new', await this.joinedChannelService.create(user, socket.id, channel));
+            } else  {
+              if (jC.socketId !== socket.id)  {
+                jC.socketId = socket.id;
+                console.log('updated', await this.joinedChannelService.updateSocket(jC));
+              }
+            }
           }
-        }
-        */
-
-        // update socket 
+        // prevoius simple socket update socket 
+        /*
         const conn = await this.joinedChannelService.findByUser(user);
         for (const c of conn){
           if (c.socketId !== socket.id) {
             c.socketId = socket.id;
             await this.joinedChannelService.updateSocket(c);
           }
-        }
         console.log(conn)
+        */
+        }
       } catch (error) {
         console.log(error);
         this.emitError(socket, error);
@@ -211,10 +228,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       return this.emitError(socket, 'no such channel')
     }
     // const messages = await this.messageService.findMessagesByChannel(channel);
+    const u = await this.userService.getUserWith(user.id, [
+      'blockedUsers'
+    ]);
 
-    const messages = await this.messageService.findMessagesForChannel(channel);
-console.log(messages)
-    this.server.to(socket.id).emit('channelMessages', messages)
+    let messages = await this.messageService.findMessagesForChannel(channel);
+    console.log(messages);
+    for (const blockedUser of u.blockedUsers) {
+      messages = messages.filter((msg: Message) => msg.user.id !== blockedUser.id);
+    }
+    console.log(messages);
+    this.server.to(socket.id).emit('channelMessages', messages);
   }
 
   @SubscribeMessage('newMsg')
@@ -251,9 +275,22 @@ console.log(messages)
       );
       const joinedUsers: JoinedChannel[] = await this.joinedChannelService.findByChannel(channel);
       console.log(joinedUsers);
+      
+
+      console.log(newMsg);
+      console.log("Emiting to channel")
       for (const user of joinedUsers)  {
-        console.log("Emiting to channel")
+        console.log(user);
+        const u = await this.userService.getUserWith(user.user.id, [
+          'blockedUsers'
+        ])
+        console.log(u);
+        if (u.blockedUsers.some((blockedUser) => blockedUser.id === newMsg.user.id)) {
+          console.log(`skipping ${user.user.username}`)
+          continue ;
+        }
         this.server.to(user.socketId).emit('incMsg', newMsg)
+        console.log(`emitting to ${user.user.username}`)
       }
     } catch (error) {
       console.log(error)
@@ -311,9 +348,12 @@ console.log(messages)
         if (!channel) {
           return this.emitError(socket, 'No such channel');
         }
+ //tmp 
+if (channel.owner)  {
         if (channel.owner?.id !== user.id) {
           return this.emitError(socket, new BadRequestException("No rights"))
         }
+}
         //clean messages
         for (const message of channel.messages) {
           message.user.messages = message.user.messages.filter(msg => msg.id !== message.id);
@@ -647,23 +687,83 @@ console.log(messages)
   }
 
   @SubscribeMessage('privMsg')
-  async onPriv(@ConnectedSocket() socket: Socket, uInfo: PrivMsgDto)  {
+  async onPriv(@ConnectedSocket() socket: Socket, @MessageBody() uInfo: PrivMsgDto)  {
+    const user = socket.data.user;
+    console.log(uInfo)
+    if (!user) {
+      return this.noAccess(socket);
+    }
+    try {
+      const u = await this.userService.getUserWith(uInfo.uId,[
+        'blockedUsers'
+      ]);
+      if (!u)  {
+        throw new BadRequestException('No such user');
+      }
+      if (user.id === u.id) {
+        throw new BadRequestException("No talking to yourself");
+      }
+      if (u.blockedUsers.some((blocked) => blocked.id === u.id)) {
+        throw new BadRequestException('User has blocked you')
+      }
+      //TODO fix this query
+      // now
+      const exists = await this.channelService.getPrivate(user, u);
+      let room: Channel;
+      console.log(exists);
+      if (!exists.length) {
+        room =  await this.channelService.createPrivate(user, u);
+        console.log(room);
+        await this.joinedChannelService.create(user, socket.id, room);
+        const chatUser = await this.chatUserService.findByUser(u);
+        if (chatUser) {
+          await this.joinedChannelService.create(u, chatUser.socketId, room);
+        }
+      } else  {
+        room = exists[0];
+      }
+      // // const msg = await this.messageService.newMessage(uInfo.text, user, room);
+
+      this.onMessage(socket, {cId: room.id, content: uInfo.text});
+    } catch (error) {
+      console.log(error);
+      this.emitError(socket, error)
+    }
+  }
+
+  @SubscribeMessage('block')
+  async onBlock(@ConnectedSocket() socket: Socket, @MessageBody() userInfo: uIdDto) {
     const user = socket.data.user;
     if (!user) {
       return this.noAccess(socket);
     }
     try {
-      const u = await this.userService.getUserById(uInfo.uId);
-      if (!u)  {
-        throw new BadRequestException('No such user');
+      if (user.id === userInfo.uId) {
+        throw new BadRequestException('Can\'t block self')
       }
-      const room =  await this.channelService.createPrivate(user, u);
-      console.log(room);
-      const msg = await this.messageService.newMessage(uInfo.text, user, room);
+      console.log(await this.userService.blockUser(user.id, userInfo.uId));
+      // or whatever user 
+      this.success(socket);
     } catch (error) {
       console.log(error);
-      await this.joinedChannelService.create()
-      // this.emitError(socket, error)
+      this.emitError(socket, error)
     }
   }
+
+  @SubscribeMessage('unblock')
+  async onUnBlock(@ConnectedSocket() socket: Socket, @MessageBody() userInfo: uIdDto) {
+    const user = socket.data.user;
+    if (!user) {
+      return this.noAccess(socket);
+    }
+    try {
+      await this.userService.unBlockUser(user.id, userInfo.uId);
+      // or whatever user 
+      this.success(socket);
+    } catch (error) {
+      console.log(error);
+      this.emitError(socket, error)
+    }
+  }
+
 }

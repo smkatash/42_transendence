@@ -59,6 +59,7 @@ export class ChannelService {
         const channels = await this.channelRepository
         .createQueryBuilder('channel')
         .leftJoin('channel.users', 'user')
+        // .leftJoinAndSelect('channel.users', 'user')
         .where('user.id = :userId', {userId})
         .getMany();
         return channels;
@@ -115,15 +116,6 @@ console.log('--------join channels users------')
         return await this.channelRepository.save(channel);
     }
 
-    async getChannelsByUser(user: User)  {
-        return await this.channelRepository.find({
-            relations: ['users'],
-            where: {
-                users: {id: user.id}
-            }
-        })
-    }
- 
     async leave(user: User, channelId)  {
  
     }
@@ -180,10 +172,36 @@ console.log('--------join channels users------')
 
     async   createPrivate(u1: User, u2: User): Promise<Channel> {
         const room  = this.channelRepository.create({
-            private: true
+            private: true,
+            // owner: null
         });
         room.users = [u1, u2];
         room.messages = [];
         return await this.channelRepository.save(room);
+    }
+
+    async getPrivate(u1: User, u2: User): Promise<Channel[]>  {
+        // console.log(u1.id, u2.id)
+        const userIds = [u1.id, u2.id].sort();
+        console.log(userIds)
+        const room = await this.channelRepository
+            /*
+            .createQueryBuilder('channel')
+            .leftJoinAndSelect('channel.users', 'users')
+            // .where('users.id = :userId', {userId: u2.id})
+            .where('users.id IN (:userIds)', {userIds)
+            // .andWhere("channel.name IS NULL")
+            // .groupBy('channel.id')
+            // .having('COUNT(channel.id) = 2')
+            .getMany();
+            */
+           .createQueryBuilder('channel')
+           .innerJoin('channel.users', 'users')
+           .where('users.id IN (:...userIds)', {userIds})
+           .andWhere("channel.name IS NULL")
+           .getMany()
+            // .getOne();
+        return room;
+
     }
 }

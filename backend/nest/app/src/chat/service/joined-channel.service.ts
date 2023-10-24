@@ -28,7 +28,9 @@ export class JoinedChannelService {
     async findByChannel(channel: Channel): Promise<JoinedChannel[]>  {
         console.log(channel);
         return await this.joinedChannelRepo.find({
-            relations: ['channel'],
+            relations: [
+                'channel', 'user'
+            ],
             where: {
                 channel: {id: channel.id}
             }
@@ -44,6 +46,18 @@ export class JoinedChannelService {
         });
     }
 
+    async findByChannelUser (channel: Channel, user: User)   {
+        return  await this.joinedChannelRepo.findOne({
+            where:  {
+                channel: {
+                    id: channel.id
+                },
+                user: {
+                    id: user.id
+                }
+            }
+        })
+    }
     async deleteByUserChannel(user: User, channel: Channel)    {
         return await this.joinedChannelRepo.delete({
             // user: user,
@@ -73,6 +87,6 @@ export class JoinedChannelService {
     }
 
     async updateSocket(conn: JoinedChannel)    {
-        await this.joinedChannelRepo.save(conn)
+        return await this.joinedChannelRepo.save(conn)
     }
 }

@@ -30,6 +30,8 @@ services:
       - ./backend/dev.env
     ports:
       - 3000:3000
+    env_file:
+      - ./backend/dev.env
     depends_on:
       - postgres
       - redis

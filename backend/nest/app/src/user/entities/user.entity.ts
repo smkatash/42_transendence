@@ -46,6 +46,10 @@ export class User {
 	@ManyToMany(() => User, (user) => user.sentFriendRequests)
 	pendingFriendRequests: User[]
 
+    @ManyToMany(() => User, (user) => user.blockedUsers)
+	@JoinTable()
+	blockedUsers: User[];
+
     /**
      * kello
      */
@@ -71,3 +75,4 @@ export class User {
     @ManyToMany(() => Channel, (channel) => channel.invitedUsers)
     invitedTo: Channel[]
 }
+	
