@@ -42,4 +42,12 @@ export class ChatUserService {
         .delete()
         .execute()
     }
+
+    async getAll()  {
+        return await this.chatUserRepo.find({
+            relations:  [
+                'user'
+            ]
+        });
+    }
 }

@@ -410,27 +410,39 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           if (u.ownedChannels)  {
             u.ownedChannels = u.ownedChannels.filter((ownedC) => ownedC.id !== channel.id)
           }
-          for (const banned of channel.banned)  {
-            const user = await this.userService.getUserWith(banned.id, [
-              'bannedAt'
-            ]);
-            user.bannedAt = user.bannedAt.filter((c) => c.id !== channel.id);
-            await this.userService.saveUser(user);
-          }
-          for (const banned of channel.banned)  {
-            const user = await this.userService.getUserWith(banned.id, [
-              'invitedTo'
-            ]);
-            user.invitedTo = user.invitedTo.filter((c) => c.id !== channel.id);
-            await this.userService.saveUser(user);
-          }
           await this.userService.saveUser(u);
+        }
+        for (const banned of channel.banned)  {
+          const user = await this.userService.getUserWith(banned.id, [
+           'bannedAt'
+          ]);
+          user.bannedAt = user.bannedAt.filter((c) => c.id !== channel.id);
+          await this.userService.saveUser(user);
+        }
+        for (const banned of channel.banned)  {
+          const user = await this.userService.getUserWith(banned.id, [
+            'invitedTo'
+          ]);
+          user.invitedTo = user.invitedTo.filter((c) => c.id !== channel.id);
+          await this.userService.saveUser(user);
+        }
           // await this.joinedChannelService.deleteByUserChannel(u, channel);
             //TODO we'll see
+        const chatUsers = await this.chatUserService.getAll();
+        const cToFe = ((await this.channelService.getAllChannels()))
+                .map((c) => this.channelToFe(c));
+        for (const chatUser of chatUsers) {
+          this.server.to(chatUser.socketId).emit('allChannels', cToFe);
+          if (channel.users.some((u) => chatUser.user.id === u.id)) {
+              const cToFe = (await this.channelService.getUsersChannels(chatUser.user.id))
+                    .map((c) => this.channelToFe(c));
+              this.server.to(chatUser.socketId).emit('usersChannels')
+            }
+          }
             // this.onGetUsersChannels(socket);
             // ooo i meant to emmit new channekls here
           // }
-        }
+        // }
         /**
          * 
         for (const banned of )
