@@ -308,6 +308,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       this.emitError(socket, error);
     }
   }
+
   @SubscribeMessage('getAllChannels')
   async onGetAllChannels(@ConnectedSocket() socket: Socket) {
     const user = socket.data.user;
@@ -315,8 +316,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         return this.noAccess(socket);
       }
     console.log("get all channels!!")
-    try{
-      const channels = await  this.channelService.getAllChannels();
+    try {
+      let channels = await  this.channelService.getAllChannels();
+      channels = channels.filter((c) => !(c.private))
       this.server.to(socket.id).emit('allChannels', channels);
     } catch (error) {
       console.log(error);
