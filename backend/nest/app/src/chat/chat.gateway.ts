@@ -35,7 +35,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     async onModuleInit() {
       await this.chatUserService.deleteAll();
       await this.muteService.purge();
-      // await this.joinedChannelService.purge()
+      await this.joinedChannelService.purge()
     }
 
   async handleConnection(
@@ -104,7 +104,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
   }
 
-  //TODO set user ofline here or at GameSocket
+  //TODO set user offline here or at GameSocket
   async handleDisconnect(socket: Socket) {
     Logger.log('Client disconnected')
     console.log(socket.id)
@@ -133,8 +133,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     try {
       const channel = await this.channelService.createChannel(channelInfo, user);
       await this.joinedChannelService.create(user, socket.id, channel);
-      const channels = await this.channelService.getAllChannels();
-      this.server.to(socket.id).emit('allChannels', channels)
+      // this.onGetAllChannels(socket);
+      this.onGetUsersChannels(socket);
+      // const channels = await this.channelService.getAllChannels();
+      // this.server.to(socket.id).emit('allChannels', channels)
       this.server.to(socket.id).emit('success', `Created ${channelInfo.name}`)
     } catch  (error)  {
         Logger.error(error);
@@ -317,15 +319,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       }
     console.log("get all channels!!")
     try {
-      let channels = await  this.channelService.getAllChannels();
-      channels = channels.filter((c) => !(c.private))
-      this.server.to(socket.id).emit('allChannels', channels);
+      const channels = await  this.channelService.getAllChannels();
+      //Removing password and dates and stuff
+      const cToFe = channels.filter((c) => !(c.private)).map((c) => this.channelToFe(c));
+      this.server.to(socket.id).emit('allChannels', cToFe);
+      // this.server.to(socket.id).emit('allChannels', channels);
     } catch (error) {
       console.log(error);
       return this.emitError(socket, error)
     }
-
-    
   }
 
   @SubscribeMessage('getUsersChannels')
@@ -338,7 +340,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       try{
         const channels = await this.channelService.getUsersChannels(user.id)
         console.log(channels);
-        this.server.to(socket.id).emit('usersChannels', channels);
+      //Removing password and dates and stuff
+        const cToFe = channels.map((c) => this.channelToFe(c));
+        this.server.to(socket.id).emit('usersChannels', cToFe);
+        // this.server.to(socket.id).emit('usersChannels', channels);
       } catch (error) {
         console.log(error);
         /*return*/ this.emitError(socket, error)
