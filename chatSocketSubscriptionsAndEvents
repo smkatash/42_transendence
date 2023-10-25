@@ -1,22 +1,32 @@
 subscriptions:
 
 'createChannel', {CreateChannelDto}
-'join', {JoinChannelDto}
+'delete', { cIdDto } 
+'join', { JoinChannelDto }
 'getUsersChannels'
 'getAllChannels'
-'getChannelMessages', {cIdDto}
-'leave', channelId
-'addAdmin', {UpdateChannelDto}
-'delAdmin', {UpdateChannelDto}
-'kick'/'ban'/'mute' {UpdateChannelDto}
-'privMsg', {uIdDto}
+'getChannelMessages', { cIdDto }
+'leave', { cIdDto }
+'addAdmin', { UpdateChannelDto }
+'delAdmin', { UpdateChannelDto }
+'kick'/'(un)ban'/'(un)mute' { UpdateChannelDto }
+'privMsg', { uIdDto }
+'getChannel', { cIdDto }
+'newMsg', { CreateMessageDto }
+'password', { ChannelPasswordDto }
+'privMsg', { PrivMsgDto }
+'inviteToPriv', { UpdateChannelDto}
+'declineToPriv', { cIdDto }
+'getPrivInvites'
 
 
 events:
 
 'error', error: any
-'usersChannels', Channel[]
-'allChannels', Channel[]
-'incMgs', {Message}
+'usersChannels', Channel[] -> ChannelToFeDto[]
+'allChannels', Channel[] -> ChannelToFeDto[]
+'incMgs', { Message }
 'channelMessages', Message[]
-'channel', Channel
+'channel', ChannelToFeDto
+'success'
+'invitesToPrivs', ChannelToFeDto[]
