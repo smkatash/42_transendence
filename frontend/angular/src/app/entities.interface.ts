@@ -5,6 +5,16 @@ export interface Channel {
   avatar: string
 }
 
+export interface UserProfile {
+  user: User
+  friends: User[]
+  receivedRequests: User[] // Not used if not current user
+  sentRequests: User[] // Not used if not current user
+  matches: Match[]
+  rank: number
+  stats: Stats
+}
+
 export interface User {
   id: string
   username: string
