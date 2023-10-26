@@ -105,7 +105,6 @@ export class GameService {
     throwBall(game: Game): Game {
         game.ball.position.x += game.ball.velocity.x
         game.ball.position.y += game.ball.velocity.y
-
         if (game.ball.position.y >=  this.options.table.height) {
             game.ball.velocity.y *= -1
             game.ball.position.y = this.options.table.height - 0.5
@@ -115,24 +114,27 @@ export class GameService {
             game.ball.position.y = 6
             return game
         }
-        //console.log('Throw2')
+        console.log("PALLA")
+        console.log(game.ball.position.y);
+        console.log("PADDLE")
+        console.log(game.leftPaddle.position.y);
+        console.log(game.rightPaddle.position.y);
+
         if (game.ball.position.x <= this.options.paddleDistance) {
-            if (game.ball.position.y > (game.leftPaddle.position.y - (game.leftPaddle.length / 2)) &&
-                    game.ball.position.y < (game.leftPaddle.position.y + (game.leftPaddle.length / 2))) {
+            if (game.ball.position.y < (game.leftPaddle.position.y + (game.leftPaddle.length)) &&
+                    game.ball.position.y > (game.leftPaddle.position.y)) {
                     game.ball.velocity.x *= -1
                     game.ball.position.x = this.options.paddleDistance + 0.5
                     return game
-             }
-            // console.log('Throw3')
+            }
             return this.resetGame(game, Paddletype.RIGHT)
         } else if (game.ball.position.x > this.options.table.width - this.options.paddleDistance) {
-            if (game.ball.position.y > (game.rightPaddle.position.y - (game.rightPaddle.length / 2)) &&
-                    game.ball.position.y < (game.rightPaddle.position.y + (game.rightPaddle.length / 2))) {
+            if (game.ball.position.y < (game.rightPaddle.position.y + (game.rightPaddle.length)) &&
+                    game.ball.position.y > (game.rightPaddle.position.y)) {
                     game.ball.velocity.x *= -1
                     game.ball.position.x = this.options.table.width - this.options.paddleDistance - 0.5
                     return game
             }
-            // console.log('Throw4')
             return this.resetGame(game, Paddletype.LEFT)
         }
         return game

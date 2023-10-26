@@ -12,6 +12,7 @@ var matchID : string = "";
 var gameInfo! : Game;
 
 @Injectable({
+
   providedIn: 'root'
 })
 export class GameService {
@@ -22,7 +23,9 @@ export class GameService {
   constructor(private socket: GameSocket) {}
   public test : number[] = [0,0];
 
+  // GAME INFO: Ball position, paddle, id, bla bla
   private gameInfoSubject: Subject <Game> = new Subject<Game>();
+  // QUEUE, player waiting in that.
   private inTheQueue : Subject<boolean> = new Subject<boolean>();
   public keyPress: EventEmitter<string> = new EventEmitter();
 
@@ -31,6 +34,8 @@ export class GameService {
   public userInfo : User;
   private difficulty = 0;
   private matchInfo : SocketResponse;
+  
+  
   // private testSubject = new Subject<number[]>();
   paddlePosition: string = '0';
 
@@ -52,14 +57,15 @@ export class GameService {
     return this.inTheQueue.asObservable();
   }
 
-  // utils--------------------------------------------
+  // utils----------------------------------------------
 
   matchIsLeftSide(){
-    if (this!.matchInfo!.id == this!.matchInfo!.players[0].id)
+    if (this!.userInfo.id == this!.matchInfo!.players[0].id)
       return true;
     else
       return false;
   }
+  // join
   createMatchInfo(ID:string, level:number){
     const matchInfo : JoinMatchDto = {
       matchId: ID,
@@ -67,14 +73,14 @@ export class GameService {
     }
     return matchInfo;
   }
-
+  // emit paddle
   createPaddleDto(value: string){
     const retValue: PositionDto = {
       step: value
     }
     return retValue;
   }
-
+  // play
   createGameDto(level: number){
     const gameMode: GameModeDto = {
       mode: level
@@ -88,8 +94,11 @@ export class GameService {
     console.log(toEmit);
   }
 
+  public gameStartingValue : Game;
   listenersInit(){
-    this.socket.on ('join', (msg: any) => { })
+    this.socket.on ('join', (msg: Game) => { 
+        this.gameStartingValue = msg;
+    })
 
     this.socket.on ('game', (msg: any) => {
       gameInfo = msg;
@@ -99,8 +108,8 @@ export class GameService {
 	console.log(msg)
       if (msg === 'Waiting players to join')
       {
-		this.inTheQueue.next(true);
-        waitOneSecond();
+        this.inTheQueue.next(true);
+        // waitOneSecond();
       } else {
         this.inTheQueue.next(false);
         this.matchInfo = msg;

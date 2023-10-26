@@ -26,8 +26,11 @@ export class GameComponent implements AfterViewInit {
   
   maxViewHeight = 546;
   maxViewWidth = 1092;
+
+  // TODO THIS VALUE SHOULD GO INTO THE ENV
   maxHeight = 500;
   maxWidth = 1000;
+
   ballCanMove = true;
   paddleCanMove = true;
 
@@ -43,8 +46,8 @@ export class GameComponent implements AfterViewInit {
   paddleLeftY = 40;
   paddleLeftX = 40;
 
-  ballX = 500;
-  ballY = 500;
+  ballX = this.maxViewWidth/2;
+  ballY = this.maxViewHeight/2;
 
   ballRadius = 1.5;
 
@@ -114,14 +117,12 @@ export class GameComponent implements AfterViewInit {
 
   /* Update score, should I change the value of the color of the ball depending on the game choice? */
   updateScore(scores: Record <string, number>) {
-    let first = false;
+    let id = this.gameService.userInfo.id;
+    this.yourScore = scores[id];
     for (const score in scores){
-      this.yourScore = scores[score];
-      if(first == true) {
+      if (id != score){
         this.opponentScore = scores[score];
-        break;
       }
-      first = true;
     }
   }
 
@@ -140,11 +141,12 @@ export class GameComponent implements AfterViewInit {
         game.ball.position.y = game.ball.position.y/this.maxHeight * this.maxViewHeight;
       }
     }
-    if (game.leftPaddle)
+    if (game.leftPaddle){
       game.leftPaddle!.position.y  = ( 100/ this.maxHeight) * game.leftPaddle!.position.y;
-    if (game.rightPaddle)
-    game.rightPaddle!.position.y  = ( 100/ this.maxHeight) * game.rightPaddle!.position.y;
-    console.log 
+    }
+    if (game.rightPaddle){
+      game.rightPaddle!.position.y  = ( 100/ this.maxHeight) * game.rightPaddle!.position.y;
+    }
     return game;
   }
   
@@ -160,12 +162,19 @@ export class GameComponent implements AfterViewInit {
   }
 
   moveRightPaddle(rightPaddle: Paddle){
-    this.paddleRightY = rightPaddle!.position.y;
-    // window.requestAnimationFrame(() => this.moveRightPaddle(this.gameInfo!.rightPaddle!));
+    if(this.matchLeftSide == true){
+      this.paddleRightY = rightPaddle!.position.y;
+    } else {
+      this.paddleLeftY = rightPaddle!.position.y;
+    }
   }
+
   moveLeftPaddle(leftPaddle: Paddle){
-    this.paddleLeftY = leftPaddle!.position.y;
-    // window.requestAnimationFrame(() => this.moveRightPaddle(this.gameInfo!.rightPaddle!));
+    if(this.matchLeftSide == true) {
+      this.paddleLeftY = leftPaddle!.position.y;
+    } else {
+      this.paddleRightY = leftPaddle!.position.y;
+    }
   }
 
   startPlaying(){
@@ -207,7 +216,6 @@ export class GameComponent implements AfterViewInit {
       }
     })
   }
-  
 
   pause = false;
 
@@ -215,13 +223,15 @@ export class GameComponent implements AfterViewInit {
     this.gameService.getTestObservable().subscribe((game: Game) => {
       if(game){
         this.gameInfo = this.valueConversion(game);
-        if(this.gameInfo.leftPaddle?.length)
-          this.paddleHeight = this.gameInfo.leftPaddle?.length;
+        if(this.gameInfo.leftPaddle?.length){
+          this.paddleHeight = ( 100/ this.maxHeight) * this.gameInfo.leftPaddle?.length;
+        }
       }
       if (this.pause == false){
         // this.initViewValue();
         this.pause = true;
       }
+      this.matchLeftSide = this.gameService.matchIsLeftSide()
       this.startPlaying();
     })
   }

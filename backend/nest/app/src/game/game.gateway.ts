@@ -140,5 +140,3 @@ async handleDisconnect(@ConnectedSocket() client: Socket) {
 		this.server.to(QUEUE).emit(START_MATCH, WAITING_MESSAGE)
 	}
 }
-
-
