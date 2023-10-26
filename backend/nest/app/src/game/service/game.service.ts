@@ -50,7 +50,6 @@ export class GameService {
         game.match.winner = game.match.players[winner]
         game.match.loser = game.match.players[loser]
         game.status = GameState.END
-
         return game
     }
 

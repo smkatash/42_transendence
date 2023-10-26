@@ -37,9 +37,9 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		if (!user) {
 			throw new UnauthorizedException()
 		}
-		this.logger.log(`Client id: ${client.id} connected`);
+		this.logger.log(`Client id: ${client.id} connected`)
 		await this.userService.updateUserStatus(user.id, Status.GAME)
-		const player = await this.playerService.getPlayerByUser(user, client.id);
+		const player = await this.playerService.getPlayerByUser(user, client.id)
 		client.data.user = player
 		this.emitUserEvent(client, player)
 	} catch (error) {
@@ -52,6 +52,7 @@ async handleDisconnect(@ConnectedSocket() client: Socket) {
 		if (!client.data.user.id) throw new UnauthorizedException()
 		this.logger.log(`Cliend id:${client.id} disconnected`)
 		await this.userService.updateUserStatus(client.data.user.id, Status.OFFLINE)
+		this.matchService.leaveAllQueues(client.data.user.id)
 		return client.disconnect()
 	} catch (error) {
 		this.emitError(client, error)
@@ -61,29 +62,26 @@ async handleDisconnect(@ConnectedSocket() client: Socket) {
   @SubscribeMessage(START_MATCH)
   async handleStartMatch(@ConnectedSocket() client: Socket, @MessageBody() gameMode: GameModeDto) {
 	try {
-		this.logger.debug(gameMode.mode)
     	if (!client.data.user.id) throw new UnauthorizedException()
 		const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
 		
 		if (currentPlayer) {
-			this.logger.debug("here")
-			let playerIdsFromQueue: string[] = this.matchService.waitInQueue(currentPlayer, gameMode.mode)
-			this.logger.debug(playerIdsFromQueue)
-			if (!playerIdsFromQueue) {
+			this.logger.debug("1")
+			const match = await this.matchService.waitInPlayerQueue(currentPlayer, gameMode.mode)
+			if (match) {
+				this.logger.debug("2")
+				this.logger.debug(JSON.stringify(match))
+				client.leave(QUEUE)
+				client.emit(START_MATCH, match)
+				this.logger.debug("3")
+				client.join(match.id)
+			} else {
 				client.join(QUEUE)
-				this.logger.debug("joined queue")
-			} else if (playerIdsFromQueue.includes(currentPlayer.id)) {
-				const match = await this.matchService.makeAmatch(currentPlayer.id, playerIdsFromQueue)
-				this.logger.debug("left queue, getting match")
-			client.leave(QUEUE)
-			client.emit(START_MATCH, match)
-		  } else {
-			client.join(QUEUE)
-		  }
+			}
 		}
 		this.emitQueueEvent()
 	} catch(error) {
-		this.logger.debug(error)
+		this.logger.debug("ERROR " + error)
 		this.emitError(client, error)
 	}
   }
@@ -101,12 +99,11 @@ async handleDisconnect(@ConnectedSocket() client: Socket) {
 
   @SubscribeMessage(JOIN_MATCH)
   async handleJoinMatch(@ConnectedSocket() client: Socket, @MessageBody() matchDto: JoinMatchDto) {
-	
    try {
 	   if (!client.data.user.id) throw new UnauthorizedException()
 	   const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
 	   if (currentPlayer) {
-			client.join(matchDto.matchId)
+			this.logger.debug("MATCH STARTED")
 			const game: Game = await this.matchService.joinMatch(matchDto.matchId, matchDto.mode)
 			this.server.to(matchDto.matchId).emit(JOIN_MATCH, game)
 			this.matchService.getServer(this.server)
@@ -118,21 +115,20 @@ async handleDisconnect(@ConnectedSocket() client: Socket) {
 }
 
 	// Todo check if pipe is working
-  @UsePipes(new WSValidationPipe())
+  //@UsePipes(new WSValidationPipe())
   @SubscribeMessage(POSITION_CHANGE)
   async handleKeyPress(@ConnectedSocket() client: Socket, @MessageBody() positionDto: PositionDto) {
 	try {
 		if (!client.data.user.id) throw new UnauthorizedException()
 
-		this.logger.debug(JSON.stringify(positionDto))
 		const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
 		if (currentPlayer) {
 			this.matchService.updatePlayerPosition(currentPlayer, parseInt(positionDto.step))
 		}
-	} catch(error) {
-		this.emitError(client, error)
-	}
-} 
+		} catch(error) {
+			this.emitError(client, error)
+		}
+	} 
 	
 	emitError(client: Socket, error: Error) {
 		client.emit(ERROR, error)

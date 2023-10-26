@@ -27,27 +27,37 @@ export class MatchService {
 				private readonly queueService: PlayerQueueService
                 ) {}
 
-
-	waitInQueue(player: Player, mode: GameMode) {
-        console.log("INSIDE")
-        console.log(this.queueService.isInQueue(player.id, mode))
-		if (!this.queueService.isInQueue(player.id, mode)) {
-			console.log('Adding player to Queue!')
-			this.queueService.enqueue(player.id, mode)
+	async waitInPlayerQueue(player: Player, mode: GameMode) {
+		const matchId = this.queueService.isEnqueuedInMatch(player.id)
+		if (matchId) {
+			console.log("player has a match")
+			const match = await this.getMatchById(matchId)
+			return match
+		} else {
+			if (!this.queueService.isInQueue(player.id, mode)) {
+				console.log("adding player to queue")
+				this.queueService.enqueue(player.id, mode)
+			}
 		}
-		console.log('HERE')
 		if (this.queueService.isQueueReady(mode)) {
-			console.log('Queue is ready!')
-			return this.queueService.dequeue(mode)
+			console.log("removing player fro, queue")
+			const pair =  this.queueService.dequeue(mode)
+			const newMatch = await this.makeAmatch(player.id, pair)
+			return newMatch
 		}
-		return []
+		return undefined
     }
+
+	leaveAllQueues(playerId: string) {
+		this.queueService.dequeuePlayer(playerId)
+	}
 
 
     async joinMatch(matchId: string, mode: GameMode): Promise<Game> {
-       const match = await this.getCurrentMatch(matchId) 
+       const match = await this.getMatchById(matchId)
         if (!match) throw new NotFoundException()
-
+		
+		this.queueService.dequeueMatch(match.id)
         const newGame = this.gameService.launchGame(match, mode)
         this.matches.set(matchId, newGame)
         return newGame
@@ -65,6 +75,7 @@ export class MatchService {
                 if (updateGame.status === GameState.END) {
 					await this.saveMatchHistory(updateGame)
                     this.server.to(match.match.id).emit(INGAME, updateGame)
+					console.log("END of GAME " + JSON.stringify(updateGame.match))
 					this.server.in(match.match.id).disconnectSockets(true)
                     this.server.socketsLeave(match.match.id)
 					this.matches.delete(match.match.id)
@@ -72,7 +83,6 @@ export class MatchService {
                 this.server.to(match.match.id).emit(INGAME, updateGame)
 				await this.checkDisconnectedPlayers(match)
             } else if (match.status === GameState.PAUSE) {
-				// TODO check the game state
 				await this.saveMatchHistory(match)
                 this.server.to(match.match.id).emit(INGAME, match)
 				this.server.in(match.match.id).disconnectSockets(true)
@@ -119,9 +129,6 @@ export class MatchService {
         }
 	}
 
-    async getCurrentMatch(matchId: string): Promise<Match> {
-        return this.getMatchById(matchId)
-    }
 
     getMatchById(id: string): Promise<Match> {
         return this.matchRepo.findOne({
@@ -136,6 +143,7 @@ export class MatchService {
 		const playerPromises = playersId.map(id => this.playerService.getPlayerById(id));
   		const pair = await Promise.all(playerPromises);
 		const newMatch = await this.createMatch(pair)
+		this.queueService.enqueueMatch(newMatch.id, playersId)
 		return newMatch
     }
 

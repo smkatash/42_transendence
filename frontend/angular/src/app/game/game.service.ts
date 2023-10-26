@@ -96,16 +96,19 @@ export class GameService {
       this.gameInfoSubject.next(msg);
     })
     this.socket.on ('start', (msg: any) => {
-      if (msg == 'Waiting players to join')
+	console.log(msg)
+      if (msg === 'Waiting players to join')
       {
-        this.inTheQueue.next(true);
+		this.inTheQueue.next(true);
         waitOneSecond();
       } else {
         this.inTheQueue.next(false);
         this.matchInfo = msg;
-        const matchID = this.createMatchInfo(this.matchInfo.id, this.difficulty)
-        this.socket.emit('join', matchID)
-        console.log(matchID.matchId);
+		if (this.matchInfo.id) {
+			const matchID = this.createMatchInfo(this.matchInfo.id, this.difficulty)
+			this.socket.emit('join', matchID)
+			console.log(matchID.matchId);
+		}
       }
     })
   }
@@ -113,6 +116,7 @@ export class GameService {
   queueEmit(){
     const gameMode = this.createGameDto(this.difficulty);
     this.socket.emit('start', gameMode);
+	console.log("started");
   }
 
   startGameService(level:number):void {
