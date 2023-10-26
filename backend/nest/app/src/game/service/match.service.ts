@@ -27,25 +27,22 @@ export class MatchService {
 				private readonly queueService: PlayerQueueService
                 ) {}
 
-	async waitInPlayerQueue(player: Player, mode: GameMode) {
+	async waitInPlayerQueue(player: Player, mode: GameMode): Promise<Match | null> {
 		const matchId = this.queueService.isEnqueuedInMatch(player.id)
 		if (matchId) {
-			console.log("player has a match")
 			const match = await this.getMatchById(matchId)
 			return match
 		} else {
 			if (!this.queueService.isInQueue(player.id, mode)) {
-				console.log("adding player to queue")
 				this.queueService.enqueue(player.id, mode)
 			}
 		}
 		if (this.queueService.isQueueReady(mode)) {
-			console.log("removing player fro, queue")
 			const pair =  this.queueService.dequeue(mode)
 			const newMatch = await this.makeAmatch(player.id, pair)
 			return newMatch
 		}
-		return undefined
+		return null
     }
 
 	leaveAllQueues(playerId: string) {

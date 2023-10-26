@@ -56,13 +56,13 @@ export class PlayerQueueService {
 		}
 	}
 
-	isEnqueuedInMatch(playerId: string): string | undefined {
+	isEnqueuedInMatch(playerId: string): string | null {
 		for (const matchId in this.playersMatchQueue) {
 			if (this.playersMatchQueue[matchId].includes(playerId)) {
 				return matchId
 			}
 		}
-		return undefined
+		return null
 	}
 
 }

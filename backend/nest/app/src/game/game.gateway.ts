@@ -66,14 +66,11 @@ async handleDisconnect(@ConnectedSocket() client: Socket) {
 		const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
 		
 		if (currentPlayer) {
-			this.logger.debug("1")
 			const match = await this.matchService.waitInPlayerQueue(currentPlayer, gameMode.mode)
 			if (match) {
-				this.logger.debug("2")
 				this.logger.debug(JSON.stringify(match))
 				client.leave(QUEUE)
 				client.emit(START_MATCH, match)
-				this.logger.debug("3")
 				client.join(match.id)
 			} else {
 				client.join(QUEUE)
