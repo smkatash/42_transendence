@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, HostListener, OnInit, Output, Renderer2 } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, OnInit, Output, Renderer2, RendererFactory2 } from '@angular/core';
 import { GameService } from './game.service';
 import { Ball, Game, Paddle } from '../entities.interface';
 import { GameSocket } from 'src/app/app.module';
@@ -12,11 +12,15 @@ import { NONE_TYPE } from '@angular/compiler';
 
 export class GameComponent implements AfterViewInit {
 
-  constructor(private renderer: Renderer2, 
+  constructor(private renderer: Renderer2,
+              private rendererFactory: RendererFactory2,
+              private elementReference: ElementRef, 
               private gameService: GameService,
               private socket: GameSocket ) 
   {
     this.gameService.getUser();
+    this.renderer = rendererFactory.createRenderer(null, null);
+
   }
 
   matchLeftSide = true;
@@ -58,18 +62,29 @@ export class GameComponent implements AfterViewInit {
 
   gameInfo?:Game = {};
 
-  checkSize() {
-    let board = document.querySelector('.game_board');
-    let widthValue = board!.clientWidth;
-    let heightValue = widthValue / 2;
-    this.renderer.setStyle(board, "height", heightValue + "px");
-    this.renderer.setStyle(board, "background-color", "black");
-    this.gameService.updateSize(widthValue, heightValue);
+  private boardElement: HTMLElement;
+
+  checkBoardSize() {
+    if (this.isGameOn) {
+      this.boardElement = this.elementReference.nativeElement.querySelector('.table');
+      this.maxViewWidth = this.boardElement.clientWidth;
+      this.maxViewHeight = this.boardElement.clientHeight;
+
+      console.log('Board width in pixels: ' + this.maxViewWidth);
+      console.log('Board height in pixels: ' + this.maxViewHeight);
+    }
+    // let board = document.querySelector('.game_board');
+    // let widthValue = board!.clientWidth;
+    // let heightValue = widthValue / 2;
+    // this.renderer.setStyle(board, "height", heightValue + "px");
+    // this.renderer.setStyle(board, "background-color", "black");
+    // this.gameService.updateSize(widthValue, heightValue);
   }
 
   ngAfterViewInit(): void {
-    this.checkSize();
+    this.checkBoardSize();
   }
+
 
   @Output() paddlePositionChange = new EventEmitter<string>();
 
@@ -94,7 +109,7 @@ export class GameComponent implements AfterViewInit {
 
   @HostListener('window:resize', ['$event'])
   onResize(e: any) {
-    this.checkSize();
+    this.checkBoardSize();
   }
 
   /* 
@@ -132,6 +147,7 @@ export class GameComponent implements AfterViewInit {
     that's how we do that:
   */
   valueConversion(game: Game) {
+    this.checkBoardSize();
     if( game.ball){
       if(this.matchLeftSide == true){
         game.ball.position.x = game.ball.position.x/this.maxWidth * this.maxViewWidth;
@@ -197,6 +213,8 @@ export class GameComponent implements AfterViewInit {
       }
     }
   }
+
+  // ------------------------------------------------------------------------------------------------ INIT VALUE 
 
   initViewValue(){
     let element = document.getElementById("board") as unknown as SVGRectElement;

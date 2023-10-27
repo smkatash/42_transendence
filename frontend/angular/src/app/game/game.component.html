@@ -1,7 +1,9 @@
 <body>
     <app-navbar></app-navbar>
     <app-game-menu (newGameEvent)="setGame($event)" *ngIf="!isInQueue && !isGameOn"></app-game-menu>
-    <div class ="waitingQueue" *ngIf="isInQueue && !isGameOn">WARTE</div>
+    <div class ="waitingQueue" *ngIf="isInQueue && !isGameOn">
+        <div class="loadingSpinner"></div>
+    </div>
     <div class = "game_board" *ngIf="isGameOn">
         <h1>{{yourScore | number:"1.0-0"}}</h1>
         <svg  class="table" width="50%" height="50%" fill="#4F6D7A">
