@@ -50,13 +50,13 @@ body {
   
   #ball {
     fill: #4F6D7A;
-    stroke: yellow;
+    stroke: #E8DAB2;
   }
   
   #net {
-    stroke: pink;
+    stroke: #E8DAB2;
     stroke-dasharray: 15;
-    stroke-width: 1%;
+    stroke-width: 0.3%;
     /* position: relative;
     left: 50%;
     top: 0;
