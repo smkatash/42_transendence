@@ -1,13 +1,12 @@
-import { Module } from '@nestjs/common';
+import { Inject, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entities/user.entity';
 import { PassportModule } from '@nestjs/passport';
-import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_TYPE, DB_USERNAME, REDIS_HOST, REDIS_PASSWORD, REDIS_PORT } from './Constants';
+import { DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_TYPE, DB_USERNAME, REDIS_CLIENT, REDIS_HOST, REDIS_PASSWORD, REDIS_PORT, SESSION_SECRET } from './Constants';
 import { UserModule } from './user/user.module';
-import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { GameModule } from './game/game.module';
 import { Match } from './game/entities/match.entity';
 import { Player } from './game/entities/player.entity';
@@ -19,6 +18,10 @@ import { RankingModule } from './ranking/ranking.module';
 import { ChatGateway } from './chat/chat/chat.gateway';
 import { AuthToken } from './auth/entities/auth-token.entity';
 import { ConfigModule } from '@nestjs/config';
+import * as passport from 'passport';
+import RediStore from 'connect-redis'
+import { createClient } from 'redis';
+import * as session from 'express-session';
 
 @Module({
   imports: [
@@ -29,13 +32,6 @@ import { ConfigModule } from '@nestjs/config';
     PassportModule.register({ session: true}),
     AuthModule,
     UserModule,
-    RedisModule.forRoot({
-      config: {
-        host: REDIS_HOST,
-        port: Number(REDIS_PORT),
-        password: REDIS_PASSWORD
-      }
-    }),
     TypeOrmModule.forRoot({
 	  type: DB_TYPE,
       host: DB_HOST,
@@ -57,4 +53,30 @@ import { ConfigModule } from '@nestjs/config';
   providers: [AppService, ChatGateway],
 })
 
-export class AppModule {}
+export class AppModule implements NestModule {
+	constructor() {}
+	async configure(consumer: MiddlewareConsumer) {
+	
+	let redisClient = createClient({url: REDIS_CLIENT})
+	await redisClient.connect().catch(console.error)
+	
+	const sessionMiddleware = session({
+		store: new RediStore({client: redisClient}),
+		name: 'pong.sid',
+		secret: SESSION_SECRET,
+		saveUninitialized: false,
+		resave: false,
+		cookie: {
+			sameSite: true,
+			secure: false,
+			httpOnly: true,
+			maxAge: 3600000,
+			expires: new Date(Date.now() + 3600000) 
+		}
+	  })
+	  consumer.apply(
+		sessionMiddleware,
+		passport.initialize(),
+		passport.session()).forRoutes('*')
+	}
+}

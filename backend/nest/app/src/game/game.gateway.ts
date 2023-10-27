@@ -1,4 +1,4 @@
-import {  Logger, UnauthorizedException, UsePipes } from '@nestjs/common';
+import {  Logger, UnauthorizedException, UseGuards, UsePipes } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { UserService } from '../user/service/user.service';
@@ -11,6 +11,7 @@ import { User } from 'src/user/entities/user.entity';
 import { ERROR, INVITE_TO_MATCH, JOIN_MATCH, POSITION_CHANGE, QUEUE, START_MATCH, USER, WAITING_MESSAGE } from './utls/rooms';
 import { GameModeDto, InvitedUserDto, JoinMatchDto, PositionDto } from './utls/message-dto';
 import { WSValidationPipe } from './ws-validation-pipe';
+import { SessionGuard } from 'src/auth/guard/auth.guard';
 
 
 @WebSocketGateway({
@@ -32,7 +33,9 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   async handleConnection(@ConnectedSocket() client: Socket) {
+	console.log(client.request)
 	let user = client.request[USER]
+	process.exit()
 	try {
 		if (!user) {
 			throw new UnauthorizedException()
@@ -44,6 +47,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		this.emitUserEvent(client, player)
 	} catch (error) {
 		this.emitError(client, error)
+		throw error
 	}
 }
 
