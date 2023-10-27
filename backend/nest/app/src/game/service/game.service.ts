@@ -114,11 +114,6 @@ export class GameService {
             game.ball.position.y = 6
             return game
         }
-        console.log("PALLA")
-        console.log(game.ball.position.y);
-        console.log("PADDLE")
-        console.log(game.leftPaddle.position.y);
-        console.log(game.rightPaddle.position.y);
 
         if (game.ball.position.x <= this.options.paddleDistance) {
             if (game.ball.position.y < (game.leftPaddle.position.y + (game.leftPaddle.length)) &&

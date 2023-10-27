@@ -4,7 +4,6 @@ import * as passport from "passport";
 import { Server, ServerOptions } from "socket.io";
 import { IoAdapter } from '@nestjs/platform-socket.io';
 
-
 export class SessionAdapter extends IoAdapter {
 	private session: RequestHandler;
   

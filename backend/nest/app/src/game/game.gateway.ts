@@ -1,4 +1,4 @@
-import {  Logger, UnauthorizedException, UseGuards, UsePipes } from '@nestjs/common';
+import { Logger, UnauthorizedException, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { UserService } from '../user/service/user.service';
@@ -7,15 +7,13 @@ import { MatchService } from './service/match.service';
 import { Player } from './entities/player.entity';
 import { PlayerService } from './service/player.service';
 import { Game} from './utls/game';
-import { User } from 'src/user/entities/user.entity';
 import { ERROR, INVITE_TO_MATCH, JOIN_MATCH, POSITION_CHANGE, QUEUE, START_MATCH, USER, WAITING_MESSAGE } from './utls/rooms';
 import { GameModeDto, InvitedUserDto, JoinMatchDto, PositionDto } from './utls/message-dto';
-import { WSValidationPipe } from './ws-validation-pipe';
-import { SessionGuard } from 'src/auth/guard/auth.guard';
 import { WsAuthGuard } from 'src/auth/guard/ws-auth.guard';
 import { GetWsUser } from 'src/auth/utils/get-user.decorator';
 
 
+@UsePipes(new ValidationPipe({whitelist: true}))
 @WebSocketGateway({
 	namespace: 'game', 
 	cors: {
@@ -65,11 +63,12 @@ async handleDisconnect(@ConnectedSocket() client: Socket, ) {
 	}
   }
 
+
   @UseGuards(WsAuthGuard)
   @SubscribeMessage(START_MATCH)
   async handleStartMatch(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() gameMode: GameModeDto) {
 	try {
-		this.logger.debug(user)
+		this.logger.debug(JSON.stringify(gameMode))
 		const currentPlayer: Player = await this.playerService.getPlayerById(user.id)
 		
 		if (currentPlayer) {

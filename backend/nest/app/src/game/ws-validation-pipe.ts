@@ -1,5 +1,5 @@
 import {Injectable, ValidationPipe} from '@nestjs/common';
-import {WsException} from "@nestjs/websockets";
+import { WsException } from "@nestjs/websockets";
 
 @Injectable()
 export class WSValidationPipe extends ValidationPipe {

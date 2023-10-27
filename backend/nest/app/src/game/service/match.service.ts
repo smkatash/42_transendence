@@ -96,7 +96,6 @@ export class MatchService {
                 const index = match.match.players.findIndex(matchPlayer => matchPlayer.id === player.id)
                 if (index != -1 ) {
                     if (index === 0 ) {
-                         console.log(match.leftPaddle.position.y)
                         match.leftPaddle.position.y += step;
                         console.log(match.leftPaddle.position.y)
                     } else {
