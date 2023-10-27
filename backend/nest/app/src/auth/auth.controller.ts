@@ -11,6 +11,7 @@ import { UserService } from 'src/user/service/user.service';
 import { MailService } from './service/mail.service';
 import { SessionUserDto } from 'src/user/utils/user.dto';
 import { CodeDto } from './utils/entity.dto';
+import * as session from 'express-session';
 
 @Controller('42auth')
 export class AuthController {
@@ -127,15 +128,19 @@ export class AuthController {
 
     @Get('logout')
     @UseGuards(SessionGuard)
-    async handleLogOut(@GetUser() currentUser: SessionUserDto, @Res() res: Response) {
+    async handleLogOut(@GetUser() currentUser: SessionUserDto,@Req() req, @Res() res: Response) {
 		if (!currentUser) {
 			throw new UnauthorizedException('Access denied');
 		}
 
 		try {
 			await this.userService.logoutUser(currentUser.id)
+			console.log(req.session)
+			req.session.destroy()
+			req.session = null
+			console.log(req.session)
 			res.clearCookie('pong.sid')
-			res.redirect(FRONT_END_CALLBACK_URL)
+			return res.redirect(FRONT_END_CALLBACK_URL)
 		} catch (error) {
 			throw error
 		} 

@@ -1,16 +1,16 @@
 import { INestApplicationContext } from "@nestjs/common";
-import { IoAdapter } from "@nestjs/platform-socket.io";
 import { RequestHandler } from "express";
 import * as passport from "passport";
 import { Server, ServerOptions } from "socket.io";
+import { IoAdapter } from '@nestjs/platform-socket.io';
 
 
 export class SessionAdapter extends IoAdapter {
 	private session: RequestHandler;
   
 	constructor(session: RequestHandler, app: INestApplicationContext) {
-	  super(app);
-	  this.session = session;
+	  super(app)
+	  this.session = session
 	}
   
 	create(port: number, options?: ServerOptions): Server {

@@ -2,7 +2,6 @@ import { Injectable, CanActivate, ExecutionContext, UseGuards } from '@nestjs/co
 import { User } from 'src/user/entities/user.entity';
 import { Status } from 'src/user/utils/status.enum';
 import { MfaStatus } from '../utils/mfa-status';
-import * as request from 'supertest';
 
 @Injectable()
 export class SessionGuard implements CanActivate {
@@ -11,7 +10,6 @@ export class SessionGuard implements CanActivate {
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
 	
-	console.log("Session Guard")
     if (!request.session || !request.sessionID) {
 		return false
     }

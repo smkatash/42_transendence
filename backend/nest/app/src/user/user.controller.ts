@@ -10,7 +10,7 @@ import * as path from 'path';
 import { IMAGE_UPLOADS_PATH, POSTGRES_UNIQUE_VIOLATION } from 'src/Constants';
 import { SessionUserDto } from './utils/user.dto';
 import { BlockUserDto, FriendIdDto, ParamAvatarDto, ParamUserIdDto, UnblockUserDto, UpdateEmailDto, UpdateTitleDto, UpdateUsernameDto } from './utils/entity.dto';
-import { use } from 'passport';
+
 
 
 export const localStorage = {
