@@ -53,30 +53,4 @@ import * as session from 'express-session';
   providers: [AppService, ChatGateway],
 })
 
-export class AppModule implements NestModule {
-	constructor() {}
-	async configure(consumer: MiddlewareConsumer) {
-	
-	let redisClient = createClient({url: REDIS_CLIENT})
-	await redisClient.connect().catch(console.error)
-	
-	const sessionMiddleware = session({
-		store: new RediStore({client: redisClient}),
-		name: 'pong.sid',
-		secret: SESSION_SECRET,
-		saveUninitialized: false,
-		resave: false,
-		cookie: {
-			sameSite: true,
-			secure: false,
-			httpOnly: true,
-			maxAge: 3600000,
-			expires: new Date(Date.now() + 3600000) 
-		}
-	  })
-	  consumer.apply(
-		sessionMiddleware,
-		passport.initialize(),
-		passport.session()).forRoutes('*')
-	}
-}
+export class AppModule {}

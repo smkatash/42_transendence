@@ -12,3 +12,15 @@ export const GetUser = createParamDecorator(
     return request.user
 })
 
+
+
+export const GetWsUser = createParamDecorator(
+    (_data, context: ExecutionContext): User => {
+    const request = context.switchToWs().getClient()
+    if  (!request.data?.user?.id) {
+        throw new UnauthorizedException()
+    }
+
+    return request.data.user
+})
+

@@ -10,6 +10,7 @@ import { SessionAdapter } from './session-adapter';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
+	
 	app.useGlobalPipes(new ValidationPipe({
 		whitelist: true
   	}));
@@ -19,10 +20,28 @@ async function bootstrap() {
 		credentials: true
 	})
 
-	app.useWebSocketAdapter(new SessionAdapter(app));
+	let redisClient = createClient({url: REDIS_CLIENT})
+	await redisClient.connect().catch(console.error)
+	const sessionMiddleware = session({
+		store: new RediStore({client: redisClient}),
+		name: 'pong.sid',
+		secret: SESSION_SECRET,
+		saveUninitialized: true,
+		resave: false,
+		cookie: {
+			secure: false,
+			httpOnly: true,
+			maxAge: 3600000,
+			sameSite: 'lax',
+			expires: new Date(Date.now() + 3600000) 
+		}
+	})
+	app.use(sessionMiddleware)
+	app.use(passport.initialize())
+	app.use(passport.session())
+	app.useWebSocketAdapter(new SessionAdapter(sessionMiddleware, app));
 	await app.listen(3000)
 }
-
 bootstrap()
 
 

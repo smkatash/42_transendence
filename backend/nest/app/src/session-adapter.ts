@@ -1,33 +1,30 @@
-import { INestApplication, INestApplicationContext } from "@nestjs/common";
-import { IoAdapter } from "@nestjs/platform-socket.io";
+import { INestApplicationContext } from "@nestjs/common";
 import { RequestHandler } from "express";
 import * as passport from "passport";
-import { createClient } from "redis";
 import { Server, ServerOptions } from "socket.io";
-import { REDIS_CLIENT } from "./Constants";
-import { createAdapter } from "@socket.io/redis-adapter";
+import { IoAdapter } from '@nestjs/platform-socket.io';
 
 
 export class SessionAdapter extends IoAdapter {
-	protected redisAdapter;
-
-  constructor(app: INestApplication) {
-    super(app);
-
-    const pubClient = createClient({url: REDIS_CLIENT});
-    const subClient = pubClient.duplicate();
-
-    pubClient.connect(); 
-    subClient.connect(); 
-
-    this.redisAdapter = createAdapter(pubClient, subClient);
+	private session: RequestHandler;
+  
+	constructor(session: RequestHandler, app: INestApplicationContext) {
+	  super(app)
+	  this.session = session
+	}
+  
+	create(port: number, options?: ServerOptions): Server {
+	  const server: Server = super.create(port, options);
+  
+	  const wrap = (middleware) => (socket, next) =>
+		middleware(socket.request, {}, next);
+  
+	  server.use((socket, next) => {
+		next();
+	  });
+	  server.use(wrap(this.session));
+	  server.use(wrap(passport.initialize()));
+	  server.use(wrap(passport.session()));
+	  return server;
+	}
   }
-
-  createIOServer(port: number, options?: ServerOptions) {
-    const server = super.createIOServer(port, options) as Server;
-
-    server.adapter(this.redisAdapter);
-
-    return server;
-  }
-}
