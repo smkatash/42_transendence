@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { Ball, Game, GameMode, GameOptions, GameState, Paddle, Paddletype, Position } from '../utls/game';
-import { DEFAULT_PADDLE_GAP, DEFAULT_PADDLE_LENGTH, DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_PROPORTION, BALL_RADIUS } from 'src/Constants';
+import { DEFAULT_PADDLE_GAP, DEFAULT_PADDLE_LENGTH, DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_PROPORTION, BALL_RADIUS, MAXPOINTS } from 'src/Constants';
 import { Match } from '../entities/match.entity';
 
 @Injectable()
 export class GameService {
     private options: Readonly<GameOptions>
-	private MAXPOINTS = 1
-    private increment = 1; 
+    private increment: number
     
     constructor() {}
 
     public launchGame(match: Match, mode: GameMode): Game {
+		this.initMode(mode)
 		this.options = Object.freeze(new GameOptions(DEFAULT_TABLE_HEIGHT, DEFAULT_PADDLE_GAP, mode))
         const ball: Ball = this.launchBall()
         const leftPaddle: Paddle = this.launchPaddle(Paddletype.LEFT) 
@@ -32,9 +32,19 @@ export class GameService {
             }
     }
 
+	private initMode(mode: GameMode) {
+		const modeMap = {
+			[GameMode.EASY]: 2,
+			[GameMode.MEDIUM]: 4,
+			[GameMode.HARD]: 6,
+		  };
+		
+		this.increment = modeMap[mode] || 1;
+	}
+
     private resetGame(game: Game, winner: Paddletype): Game {
         game.scores[game.match.players[winner].id]++
-        if (game.scores[game.match.players[winner].id] >= this.MAXPOINTS) { 
+        if (game.scores[game.match.players[winner].id] >= MAXPOINTS) { 
             game = this.endOfGame(game, winner)
         } else {
             game.ball = this.launchBall()
@@ -70,15 +80,16 @@ export class GameService {
                 randomNumber = Math.random() * 360;
                 if(randomNumber > 0 && randomNumber < 180){
                     return(45);
-                } else return ( 360 - 45);
+                }
+				return (360 - 45);
             } else {
                 randomNumber = Math.random() * 360;
-                if(randomNumber > 0 && randomNumber < 180){
+                if(randomNumber > 0 && randomNumber < 180) {
                     return(90 + 45);
-                } else return ( 180 - 45);
+                }
+				return ( 180 - 45);
             }   
         }
-        return Math.random() * 360
     }
 
     private degreesToRadian(degrees: number): number {
@@ -112,7 +123,7 @@ export class GameService {
         const paddle: Paddle = {
             position: {
                 x: x,
-                y: this.options.table.height / 2,
+                y: this.options.table.height / DEFAULT_TABLE_PROPORTION,
             },
             length: DEFAULT_PADDLE_LENGTH,
         }

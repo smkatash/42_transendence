@@ -8,6 +8,8 @@ body {
   width: 80%;
   height: 77%;
   margin: auto;
+  padding-left: 5%;
+  padding-right: 5%;
   border: .7dvw solid #E8DAB2;
   box-sizing: border-box;
 }
@@ -18,15 +20,20 @@ body {
   }
 
 .no-players {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-content: center;
-	height: 100%;
+	position: absolute;
+	left: 50%;
+	top: 40%;
+	transform: translate(-50%);
 }
 
 .no-players h1 {
 	font-family: 'Bodoni Moda', serif;
-	font-size: 2dvw;
-	color: #E8DAB2;
+	font-size: 3dvw;
+	color: #2f424a;
+}
+
+.no-players h2 {
+	font-family: 'Quattrocento', serif;
+	font-size: 1.2dvw;
+	color: #2f424a;
 }
