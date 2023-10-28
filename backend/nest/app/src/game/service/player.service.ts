@@ -80,4 +80,10 @@ export class PlayerService {
         return this.playerRepo.find()
     }
 
+	getPlayersProfile(): Promise<Player[]> {
+        return this.playerRepo.find({
+			relations: ["user"]
+		})
+    }
+
 }
