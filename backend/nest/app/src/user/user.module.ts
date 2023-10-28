@@ -6,6 +6,8 @@ import { User } from './entities/user.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import { PassportModule } from '@nestjs/passport';
 import { Player } from 'src/game/entities/player.entity';
+import { Channel } from 'src/chat/entities/channel.entity';
+import { ChatModule } from 'src/chat/chat.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Player]),

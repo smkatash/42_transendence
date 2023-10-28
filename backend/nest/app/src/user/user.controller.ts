@@ -1,4 +1,4 @@
-import {  Body, ConflictException, Controller, Delete, Get, Inject, Logger, Param, Patch, Post, Res, UnauthorizedException, UploadedFile, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
+import {  Body, ConflictException, Controller, Delete, Get, Inject, Logger, Param, Patch, Post, Query, Res, UnauthorizedException, UploadedFile, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
 import { UserService } from './service/user.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -301,5 +301,16 @@ export class UserController {
     }
 
 
+	//TODO dto fuer Frau Taschbaeva
+	@Get('find-by-username/:username')
+	@UseGuards(SessionGuard)
+	async getAllByUsername(
+		@GetUser() user: User,
+		@Query('username') username: string)	{
+		if (user?.id)   {
+			return await this.userService.findAllByUsername(username);
+		}   else	{
+			throw new UnauthorizedException('Access denied')
+		}
+	}
 }
-

@@ -1,7 +1,7 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { AuthUserDto } from 'src/auth/utils/auth.user.dto';
 import { validate } from 'class-validator';
 import { Status } from '../utils/status.enum';
@@ -267,10 +267,41 @@ export class UserService {
 		return imageName ?? ''
 	}
 
+	//for updates
+	async saveUser(user: User)	{
+		return this.userRepo.save(user);
+	}
+
+	//tmp
+	async findUserById(id: string)	{
+		return	await this.userRepo.findOne({
+			where: {
+				id
+			}
+		})
+	}
+	async findAllByUsername(username: string): Promise<User[]>	{
+		return	await this.userRepo.find({
+			where: {
+				username: Like(`%${username.toLocaleLowerCase()}%`)
+			}
+		})
+	}
 
 	async getUserRelations(id: string) {
 		return this.userRepo.findOne({
-			where: { id }, relations: ['friends', 'friendOf', 'sentFriendRequests', 'pendingFriendRequests', 'blockedUsers']
+			where: { id }, relations:
+			['channels']
+		// 	['friends', 'friendOf', 'sentFriendRequests', 'pendingFriendRequests',
+		// 	'channels'
+		// ]
+		})
+	}
+
+	async getUserWith(id: string, relations: string[])	{
+		return await this.userRepo.findOne({
+			where: {id},
+			relations: relations
 		})
 	}
 }

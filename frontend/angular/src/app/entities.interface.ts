@@ -1,8 +1,15 @@
 export interface Channel {
-  id: number
-  name: string
-  type: string
-  avatar: string
+  id?: number
+  name?: string
+  type?: string
+  private?: boolean
+  // avatar: string
+  // owner?: string
+  owner?: User
+  users?: User[]
+  admins?: User[]
+  protected?: boolean
+  topic?: string
 }
 
 export interface UserProfile {
@@ -43,10 +50,16 @@ export interface Stats {
 // }
 
 export interface Message {
-  name: string
-  messageContent: string
-  timestamp: number
-  sessionUser: boolean
+  name?: string
+  messageContent?: string
+  timestamp?: number
+  sessionUser?: boolean
+  id?: number;
+  content: string;
+  user?: User;
+  channel?: Channel;
+  createdAt?: Date
+  channelId: number
 }
 
 export interface Match {
@@ -81,6 +94,10 @@ export interface Document {
   doc: string
 }
 
+export  interface JoinChannelInfo {
+  id: number,
+  password?: string
+}
 // ============================================================
 
 export interface GamePlayer {

@@ -1,0 +1,32 @@
+subscriptions:
+
+'createChannel', {CreateChannelDto}
+'delete', { cIdDto } 
+'join', { JoinChannelDto }
+'getUsersChannels'
+'getAllChannels'
+'getChannelMessages', { cIdDto }
+'leave', { cIdDto }
+'addAdmin', { UpdateChannelDto }
+'delAdmin', { UpdateChannelDto }
+'kick'/'(un)ban'/'(un)mute' { UpdateChannelDto }
+'privMsg', { uIdDto }
+'getChannel', { cIdDto }
+'newMsg', { CreateMessageDto }
+'password', { ChannelPasswordDto }
+'privMsg', { PrivMsgDto }
+'inviteToPriv', { UpdateChannelDto}
+'declineToPriv', { cIdDto }
+'getPrivInvites'
+
+
+events:
+
+'error', error: any
+'usersChannels', Channel[] -> ChannelToFeDto[]
+'allChannels', Channel[] -> ChannelToFeDto[]
+'incMgs', { Message }
+'channelMessages', Message[]
+'channel', ChannelToFeDto
+'success'
+'invitesToPrivs', ChannelToFeDto[]
