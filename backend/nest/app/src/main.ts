@@ -32,7 +32,7 @@ async function bootstrap() {
 			secure: false,
 			httpOnly: true,
 			maxAge: 3600000,
-			sameSite: 'lax',
+			sameSite: "none",
 			expires: new Date(Date.now() + 3600000) 
 		}
 	})

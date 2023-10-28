@@ -116,7 +116,6 @@ export class GameService {
 		if (this.matchInfo.id) {
 			const matchID = this.createMatchInfo(this.matchInfo.id, this.difficulty)
 			this.socket.emit('join', matchID)
-			console.log(matchID.matchId);
 		}
       }
     })
