@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DOCUMENT } from '@angular/common';
 import { Observable, map } from 'rxjs';
 
@@ -17,9 +17,9 @@ export class AuthService {
   }
 
   logout(): void {
-    const url = `${this.domain}/42auth/logout`
-    this.http.get(url, { withCredentials: true }).subscribe()
-  }
+	this.document.location.href = `${this.domain}/42auth/logout`
+}
+
 
   isUserLoggedIn(): Observable<boolean> {
     const url = `${this.domain}/42auth/test`

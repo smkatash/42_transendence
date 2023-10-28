@@ -1,3 +1,4 @@
+
 body {
     background-color: #4F6D7A;
     position: relative;
@@ -11,3 +12,21 @@ body {
   box-sizing: border-box;
 }
 
+.players-container {
+	margin: 1dvw 2dvw 2dvw 2dvw;
+	overflow: auto;
+  }
+
+.no-players {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-content: center;
+	height: 100%;
+}
+
+.no-players h1 {
+	font-family: 'Bodoni Moda', serif;
+	font-size: 2dvw;
+	color: #E8DAB2;
+}

@@ -29,6 +29,7 @@ export class UserService {
 		return this.saveValidUser(user)
 	}
 
+
 	async verifyUserMfa(id: string) {
 		const user = await this.getUserById(id)
 		user.status = Status.ONLINE
@@ -266,7 +267,6 @@ export class UserService {
 		});
 		return imageName ?? ''
 	}
-
 
 	async getUserRelations(id: string) {
 		return this.userRepo.findOne({
