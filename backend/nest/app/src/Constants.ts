@@ -22,6 +22,6 @@ export const DEFAULT_PADDLE_LENGTH = 80
 export const DEFAULT_TABLE_PROPORTION = 2
 export const BALL_RADIUS = 7.5
 export const DEFAULT_TABLE_HEIGHT = 500
-export const DEFAULT_PADDLE_GAP = 40
+export const DEFAULT_PADDLE_GAP = 90
 export const POSTGRES_UNIQUE_VIOLATION = '23505'
 export const MAXPOINTS = 1

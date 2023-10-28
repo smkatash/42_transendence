@@ -39,7 +39,7 @@ export class GameService {
 			[GameMode.HARD]: 6,
 		  };
 		
-		this.increment = modeMap[mode] || 1;
+		this.increment = modeMap[mode] || 2;
 	}
 
     private resetGame(game: Game, winner: Paddletype): Game {
@@ -80,12 +80,14 @@ export class GameService {
                 randomNumber = Math.random() * 360;
                 if(randomNumber <= 180){
                     return(90 - 45);
-                } else return ( 270 + 45);
+                } 
+                return ( 270 + 45);
             } else {
                 randomNumber = Math.random() * 360;
                 if(randomNumber <= 180){
                     return(180 - 45);
-                } else return ( 180 + 45);
+                }
+                return ( 180 + 45);
             }   
         }
     }
@@ -130,6 +132,48 @@ export class GameService {
         return paddle
     }
 
+
+
+//     player_interesected_ball = detect_collision(ball, player) #It's a function that just detects if two rectangles collided
+// if player_interesected_ball :
+//     offset = (ball.y + ball.s - player.y) / \
+//              (player.height + ball.s) # ball.s is the ball size like 10px it means that is 10px wide and 10px high
+//     phi = 0.25 * math.pi * (2 * offset - 1)
+
+//     ball.vel_x *= -1 
+//     ball.vel_y = ball.speed * math.sin(phi)
+
+// playerIntersectedBall(game: Game) {
+//     if (game.ball.position.x <= this.options.paddleDistance + BALL_RADIUS) {
+//         if (game.ball.position.y - BALL_RADIUS < (game.leftPaddle.position.y + (game.leftPaddle.length)) &&
+//                 game.ball.position.y + BALL_RADIUS > (game.leftPaddle.position.y)) {
+//                 game.ball.velocity.x *= -1
+//                 game.ball.position.x = this.options.paddleDistance + 0.5 + BALL_RADIUS
+//                 return this.calculateNewVelocity(game);
+//         }
+//         return (this.resetGame(game, Paddletype.RIGHT))
+//     } else if (game.ball.position.x > this.options.table.width - this.options.paddleDistance) {
+//         if (game.ball.position.y < (game.rightPaddle.position.y + (game.rightPaddle.length)) &&
+//                 game.ball.position.y > (game.rightPaddle.position.y)) {
+//                 game.ball.velocity.x *= -1
+//                 game.ball.position.x = this.options.table.width - this.options.paddleDistance - 0.5
+//                 return this.calculateNewVelocity(game);
+//         }
+//         return (this.resetGame(game, Paddletype.LEFT))
+//     }
+// }
+// calculateNewVelocity(game: Game){
+//     let offset : number;
+//     if( game.ball.position.x < DEFAULT_TABLE_HEIGHT ){
+//         offset = (game.ball.position.y + (BALL_RADIUS * 2) - game.leftPaddle.position.y) / ( DEFAULT_PADDLE_LENGTH + (BALL_RADIUS * 2));
+//     } else {
+//         offset = (game.ball.position.y + (BALL_RADIUS * 2) - game.rightPaddle.position.y) / ( DEFAULT_PADDLE_LENGTH + (BALL_RADIUS * 2));
+//     }
+//     const tetha = 0.25 * Math.PI * ((2 * offset) - 1) 
+//     game.ball.velocity.y = game.ball.velocity.y * Math.sin(tetha);
+//     return (game);
+// }
+
     throwBall(game: Game): Game {
         game.ball.position.x += game.ball.velocity.x
         game.ball.position.y += game.ball.velocity.y
@@ -143,23 +187,31 @@ export class GameService {
             return game
         }
 
-        if (game.ball.position.x <= this.options.paddleDistance + BALL_RADIUS) {
-            if (game.ball.position.y < (game.leftPaddle.position.y + (game.leftPaddle.length)) &&
-                    game.ball.position.y > (game.leftPaddle.position.y)) {
+        if (game.ball.position.x - BALL_RADIUS <= this.options.paddleDistance) {
+            if (game.ball.position.y - BALL_RADIUS < (game.leftPaddle.position.y + (game.leftPaddle.length)) &&
+                    game.ball.position.y + BALL_RADIUS > (game.leftPaddle.position.y)) {
                     game.ball.velocity.x *= -1
                     game.ball.position.x = this.options.paddleDistance + 0.5 + BALL_RADIUS
+                    const offset = (game.ball.position.y + (BALL_RADIUS * 2) - game.leftPaddle.position.y + (DEFAULT_PADDLE_LENGTH/2)) / ( DEFAULT_PADDLE_LENGTH + (BALL_RADIUS * 2));
+                    const tetha = 0.25 * Math.PI * ((2 * offset) - 1) 
+                    game.ball.velocity.y = game.ball.velocity.y * Math.sin(tetha);
+                    this.increment = 6;
                     return game
             }
-            return this.resetGame(game, Paddletype.RIGHT)
-        } else if (game.ball.position.x > this.options.table.width - this.options.paddleDistance) {
+        } else if (game.ball.position.x  + BALL_RADIUS > this.options.table.width - this.options.paddleDistance) {
             if (game.ball.position.y < (game.rightPaddle.position.y + (game.rightPaddle.length)) &&
                     game.ball.position.y > (game.rightPaddle.position.y)) {
                     game.ball.velocity.x *= -1
-                    game.ball.position.x = this.options.table.width - this.options.paddleDistance - 0.5
+                    game.ball.position.x = this.options.table.width - this.options.paddleDistance - 0.5;
+                    const offset = (game.ball.position.y + (BALL_RADIUS * 2) - game.rightPaddle.position.y + (DEFAULT_PADDLE_LENGTH/2)) / ( DEFAULT_PADDLE_LENGTH + (BALL_RADIUS * 2));
+                    const tetha = 0.25 * Math.PI * ((2 * offset) - 1) 
+                    game.ball.velocity.y = game.ball.velocity.y * Math.sin(tetha);
+                    this.increment = 6;
                     return game
             }
-            return this.resetGame(game, Paddletype.LEFT)
         }
+        if(game.ball.position.x <= 0 || game.ball.position.x >= (DEFAULT_TABLE_PROPORTION * DEFAULT_TABLE_HEIGHT))
+            return this.resetGame(game, Paddletype.LEFT);
         return game
     }
 }
