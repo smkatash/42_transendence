@@ -50,8 +50,8 @@ export class GameComponent implements AfterViewInit {
   paddleLeftY = 40;
   paddleLeftX = 40;
 
-  ballX = this.maxViewWidth/2;
-  ballY = this.maxViewHeight/2;
+  ballX = 500;
+  ballY = 250;
 
   ballRadius = 1.5;
 
@@ -91,12 +91,12 @@ export class GameComponent implements AfterViewInit {
   @HostListener('window:keydown', ['$event'])
   onKeyDown(e: any) {
     if (e.code === 'KeyW') {
-      this.gameService.padlePositionEmitter("-10")
+      this.gameService.padlePositionEmitter("-40")
       console.log("movedPaddleUp")
     }
     if (e.code === 'KeyS') {
       console.log("movedPaddleDown")
-      this.gameService.padlePositionEmitter("+10")
+      this.gameService.padlePositionEmitter("+40")
     }
   }
 

@@ -62,20 +62,20 @@ export class GameService {
 
     private getRandomAngle(): number {
         let randomNumber = Math.random() * 360;
-        if( randomNumber <= 45 || randomNumber > (360 - 45) ||
-            (randomNumber > 180 - 45 && randomNumber < (180 + 45)) ){
+        if( (randomNumber <= 45 || randomNumber >= (360 - 45)) ||
+            (randomNumber >= 180 - 45 && randomNumber <= (180 + 45)) ){
             return (randomNumber);
         } else {
-            if(randomNumber < 90 && randomNumber > 270){
+            if(randomNumber <= 90 || randomNumber >= 270){
                 randomNumber = Math.random() * 360;
-                if(randomNumber > 0 && randomNumber < 180){
-                    return(45);
-                } else return ( 360 - 45);
+                if(randomNumber <= 180){
+                    return(90 - 45);
+                } else return ( 270 + 45);
             } else {
                 randomNumber = Math.random() * 360;
-                if(randomNumber > 0 && randomNumber < 180){
-                    return(90 + 45);
-                } else return ( 180 - 45);
+                if(randomNumber <= 180){
+                    return(180 - 45);
+                } else return ( 180 + 45);
             }   
         }
         return Math.random() * 360
@@ -89,14 +89,15 @@ export class GameService {
         const dir: Position = this.calculateVector() 
         const ball: Ball = {
             position: {
-                x: this.options.table.height / DEFAULT_TABLE_PROPORTION,
-                y: this.options.table.width / DEFAULT_TABLE_PROPORTION,
+                x: this.options.table.width / DEFAULT_TABLE_PROPORTION,
+                y: this.options.table.height / DEFAULT_TABLE_PROPORTION,
             },
             velocity: {
                 x: dir.x,
                 y: dir.y
             }
         }
+        console.log(ball, "**@#()$(@#)($)@(#$)(@#$(");
         return ball
     }
 
