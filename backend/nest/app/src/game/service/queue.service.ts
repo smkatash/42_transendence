@@ -1,59 +1,68 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { Queue } from '../entities/queue.entity';
-import { PlayerService } from "./player.service";
-import { validate } from "class-validator";
-import { Player } from '../entities/player.entity';
+import { Injectable } from "@nestjs/common";
+import { GameMode } from "../utls/game";
 
 @Injectable()
-export class QueueService {
-    private readonly queueName = 'fifo'
-    
+export class PlayerQueueService {
+	private MIN_NUMBER = 2
+	private queues: Record<GameMode, string[]> = {
+		[GameMode.EASY]: [],
+		[GameMode.MEDIUM]: [],
+		[GameMode.HARD]: [],
+	}
+	private playersMatchQueue: Record<string, string[]> = {}
 
-    constructor(@InjectRepository(Queue) private queueRepo: Repository<Queue>,
-                private readonly playerService: PlayerService) {}
+	enqueue(playerId: string, mode: GameMode): void {
+	  if (!this.queues[mode]) {
+		this.queues[mode] = [];
+	  }
+	  this.queues[mode].push(playerId);
+	}
 
-    createQueue(): Promise<Queue> {
-        const params: Queue = {
-            id: this.queueName,
-            count: 0,
-            players: [],
-        }
+	dequeue(mode: GameMode): string[] {
+		let selectedIds = []
+		const playersId = this.queues[mode]
+		if (playersId.length < this.MIN_NUMBER) {
+		  return selectedIds
+		}
+	
+		const shuffledIds = playersId.slice().sort(() => Math.random() - 0.5)
+		selectedIds = shuffledIds.slice(0, this.MIN_NUMBER);
+		this.queues[mode] = this.queues[mode].filter((id) => !selectedIds.includes(id));
+	
+		return selectedIds;
+	}
 
-        const queue = this.queueRepo.create(params)
-        return this.saveValidQueue(queue)
-    }
+	dequeuePlayer(playerId: string) {
+		this.queues[GameMode.EASY] = this.queues[GameMode.EASY].filter(id => id !== playerId)
+		this.queues[GameMode.MEDIUM] = this.queues[GameMode.MEDIUM].filter(id => id !== playerId)
+		this.queues[GameMode.HARD] = this.queues[GameMode.HARD].filter(id => id !== playerId)
+	}
 
+	isQueueReady(mode: GameMode): boolean {
+		return this.queues[mode].length >= this.MIN_NUMBER
+	}
 
-    async getQueue(): Promise<Queue> {
-        let queue = await this.queueRepo.findOne({
-            where: {
-                id: this.queueName,
-            }, relations: ['players']
-        })
-        if (!queue) {
-            return this.createQueue()
-        }
-        return queue
-    }
+	isInQueue(playerId: string, mode: GameMode) {
+		return this.queues[mode].includes(playerId)
+	}
 
-    async updatePlayersInQueue(player: Player, queue: Queue) {
-        player = await this.playerService.updatePlayerQueue(player, queue)
-        return await this.getQueue()
-    }
+	enqueueMatch(matchId: string, playersId: string[]) {
+		this.playersMatchQueue[matchId] = playersId
+	}
 
-    async removePlayerFromQueue(player: Player) {
-        player = await this.playerService.updatePlayerQueue(player, null)
-        return await this.getQueue()
-    }
+	dequeueMatch(matchId: string) {
+		if (this.playersMatchQueue[matchId]) {
+			delete this.playersMatchQueue[matchId]
+		}
+	}
 
-    async saveValidQueue(queue: Queue): Promise<Queue> {
-        const validate_error = await validate(queue);
-        if (validate_error.length > 0) {
-          throw new BadRequestException();
-        }
-        return this.queueRepo.save(queue);
-      }
+	isEnqueuedInMatch(playerId: string): string | null {
+		for (const matchId in this.playersMatchQueue) {
+			if (this.playersMatchQueue[matchId].includes(playerId)) {
+				return matchId
+			}
+		}
+		return null
+	}
 
 }

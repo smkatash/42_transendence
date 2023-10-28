@@ -1,124 +1,144 @@
-import {  Logger, Req, UseGuards } from '@nestjs/common';
+import { Logger, UnauthorizedException, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { UserService } from '../user/user.service';
-import { User } from 'src/user/entities/user.entity';
-import { Status } from 'src/user/utils/status.dto';
+import { UserService } from '../user/service/user.service';
+import { Status } from 'src/user/utils/status.enum';
 import { MatchService } from './service/match.service';
 import { Player } from './entities/player.entity';
 import { PlayerService } from './service/player.service';
-import { Game, GameState, MessageMatch} from './utls/game';
-import { SessionGuard } from 'src/auth/guard/auth.guard';
-import { GetUser } from 'src/auth/utils/get-user.decorator';
+import { Game} from './utls/game';
+import { ERROR, INVITE_TO_MATCH, JOIN_MATCH, POSITION_CHANGE, QUEUE, START_MATCH, USER, WAITING_MESSAGE } from './utls/rooms';
+import { GameModeDto, InvitedUserDto, JoinMatchDto, PositionDto } from './utls/message-dto';
+import { WsAuthGuard } from 'src/auth/guard/ws-auth.guard';
+import { GetWsUser } from 'src/auth/utils/get-user.decorator';
 
-@WebSocketGateway({ namespace: 'game', cors: true })
+
+@UsePipes(new ValidationPipe({whitelist: true}))
+@WebSocketGateway({
+	namespace: 'game', 
+	cors: {
+		origin: '*'
+	}})
 export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger = new Logger(GameGateway.name)
   @WebSocketServer()
   server: Server
 
   constructor(private readonly userService: UserService,
-              private readonly playerService: PlayerService,
-              private readonly matchService: MatchService) {}
+			  private readonly playerService: PlayerService,
+			  private readonly matchService: MatchService) {}
 
   afterInit() {
-    this.logger.log("Initialized")
+	this.logger.log("Server is initialized")
   }
 
-  @UseGuards(SessionGuard)
-  async handleConnection(@ConnectedSocket() client: Socket, @GetUser() user: User, @Req() req: Request) {
-    this.logger.log(`Client id: ${client.id} connected`);
-      //const userId = await this.authService.getUserSession(client)
-    //  user =  {"id":"99637","username":"ktashbae","status": 1, "avatar" : "test", "title": "test@email.com", "friends": [], "friendOf": []}
-    // console.log(client)
-    // console.log(client.data.user) 
-    if (!user) {
-        console.log('disconnecting')
-        return client.disconnect()
-      }
-      user = await this.userService.updateUserStatus(user.id, Status.GAME)
-      let player = await this.playerService.getPlayerByUser(user, client.id)
-	  if (!player) {
-		player = await this.playerService.createPlayer(user, client.id)
-	  }
-      if (player.clientId !== client.id) {
-        player = await this.playerService.updatePlayerClient(player, client.id)
-      }
-      client.join(player.id)
-      client.data.user = player
-      client.emit('user', { player })
-  }
+  async handleConnection(@ConnectedSocket() client: Socket) {
+	let user = client.request[USER]
+	try {
+		if (!user) {
+			throw new UnauthorizedException()
+		}
 
-  handleDisconnect(@ConnectedSocket() client: Socket) {
-    this.logger.log(`Cliend id:${client.id} disconnected`)
-    return client.disconnect()
-  }
+		this.logger.log(`Client id: ${client.id} connected`)
+		await this.userService.updateUserStatus(user.id, Status.GAME)
+		const player = await this.playerService.getPlayerByUser(user, client.id)
+		client.data.user = player
+		this.emitUserEvent(client, player)
+		this.logger.log(`Client id: ${client.id} connected successfully`)
+	} catch (error) {
+		this.emitError(client, error)
+		throw error
+	}
+}
 
-  @SubscribeMessage('message')
-  handleMessage(@ConnectedSocket() client: Socket, @MessageBody() data: string) {
-    this.logger.debug(`Payload: ${data}`)
-    this.server.emit('message', data)
-  }
-
-  @SubscribeMessage('start')
-  async handleStartMatch(@ConnectedSocket() client: Socket) {
-    client.handshake.headers.cookie
-    console.log("bonjour putain")
-    if (!client.data.user.id) return
-    this.logger.debug(client.data.user.id)
-    const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
-
-
-    if (currentPlayer) {
-      let playersInQueue: Player[] = await this.matchService.waitInQueue(currentPlayer)
-      // if (playersInQueue.length >= 2) {
-        if (playersInQueue.length <= 2) {
-        const match = await this.matchService.makeAmatch(playersInQueue)
-        playersInQueue = await this.matchService.updateQueue(match.players)
-        for (const player of playersInQueue) {
-          if (player.id === currentPlayer.id) {
-            client.emit('start', 'Waiting players to join.')
-          }
-        }
-
-        for (const player of match.players) {
-          if (player.id === currentPlayer.id) {
-            client.join(match.id)
-            client.emit('start', match)
-          }
-        }
-      } else {
-        client.emit('start', 'Waiting players to join2.')
-      }
-      
-    }
+async handleDisconnect(@ConnectedSocket() client: Socket, ) {
+	try {
+		if (!client.data?.user?.id) throw new UnauthorizedException()
+		this.logger.log(`Cliend id:${client.id} disconnected`)
+		await this.userService.updateUserStatus(client.data.user.id, Status.OFFLINE)
+		this.matchService.leaveAllQueues(client.data.user.id)
+		return client.disconnect()
+	} catch (error) {
+		this.emitError(client, error)
+	}
   }
 
 
-  @SubscribeMessage('join')
-  async handleJoinMatch(@ConnectedSocket() client: Socket, @MessageBody() matchId: string) {
-    if (!client.data.user.id) return
-    if (matchId) {
-      // to fix later
-      client.join(matchId)
-      const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
-      if (currentPlayer) {
-        const game: Game = await this.matchService.joinMatch(matchId)
-        this.server.to(matchId).emit('join', game)
-        this.logger.debug(matchId)
-        this.matchService.getServer(this.server)
-        this.matchService.play()
-      }
-    }
+  @UseGuards(WsAuthGuard)
+  @SubscribeMessage(START_MATCH)
+  async handleStartMatch(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() gameMode: GameModeDto) {
+	try {
+		this.logger.debug(JSON.stringify(gameMode))
+		const currentPlayer: Player = await this.playerService.getPlayerById(user.id)
+		
+		if (currentPlayer) {
+			const match = await this.matchService.waitInPlayerQueue(currentPlayer, gameMode.mode)
+			if (match) {
+				this.logger.debug(JSON.stringify(match))
+				client.leave(QUEUE)
+				client.emit(START_MATCH, match)
+				client.join(match.id)
+			} else {
+				client.join(QUEUE)
+			}
+		}
+		this.emitQueueEvent()
+	} catch(error) {
+		this.logger.debug("ERROR " + error)
+		this.emitError(client, error)
+	}
   }
 
-  @SubscribeMessage('key')
-  async handleKeyPress(@ConnectedSocket() client: Socket, @MessageBody() step: string) {
-    if (!client.data.user.id) return
-    const currentPlayer: Player = await this.playerService.getPlayerById(client.data.user.id)
-     this.matchService.updatePlayerPosition(currentPlayer, parseInt(step))
-    }
-  }
+  @UseGuards(WsAuthGuard)
+  @SubscribeMessage(INVITE_TO_MATCH)
+  async handleInviteUserToMatch(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() invitedUserDto: InvitedUserDto) {
+	try {
+		const match = await this.matchService.makeAmatch(user.id, [user.id, invitedUserDto.userId])
+		client.emit(START_MATCH, match)
+	} catch(error) {
+		this.emitError(client, error)
+	}
+	} 
 
+	@UseGuards(WsAuthGuard)
+	@SubscribeMessage(JOIN_MATCH)
+	async handleJoinMatch(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() matchDto: JoinMatchDto) {
+	try {
+		const currentPlayer: Player = await this.playerService.getPlayerById(user.id)
+		if (currentPlayer) {
+			const game: Game = await this.matchService.joinMatch(matchDto.matchId, matchDto.mode)
+			this.server.to(matchDto.matchId).emit(JOIN_MATCH, game)
+			this.matchService.getServer(this.server)
+			this.matchService.play()
+	   }
+   } catch(error) {
+		this.emitError(client, error)
+   }
+}
 
+	@UseGuards(WsAuthGuard)
+	@SubscribeMessage(POSITION_CHANGE)
+	async handleKeyPress(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() positionDto: PositionDto) {
+	try {
+		const currentPlayer: Player = await this.playerService.getPlayerById(user.id)
+		if (currentPlayer) {
+			this.matchService.updatePlayerPosition(currentPlayer, parseInt(positionDto.step))
+		}
+		} catch(error) {
+			this.emitError(client, error)
+		}
+	} 
+	
+	emitError(client: Socket, error: Error) {
+		client.emit(ERROR, error)
+		client.disconnect()
+	}
 
+	emitUserEvent(client: Socket, currentPlayer: Player) {
+		client.emit(USER, currentPlayer)
+	}
+
+	emitQueueEvent() {
+		this.server.to(QUEUE).emit(START_MATCH, WAITING_MESSAGE)
+	}
+}

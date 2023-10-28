@@ -15,4 +15,4 @@ fclean: clean
 	rm -rf ./frontend/angular/node_modules
 
 docker-prune:
-	docker system prune -a
+	docker system prune -a --volumes

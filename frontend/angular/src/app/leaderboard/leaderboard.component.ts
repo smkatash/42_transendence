@@ -1,15 +1,32 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NavbarComponent } from '../shared/navbar/navbar.component';
 import { Player } from '../entities.interface';
+import { LeaderboardService } from './leaderboard.service';
 
 @Component({
   selector: 'app-leaderboard',
   templateUrl: './leaderboard.component.html',
   styleUrls: ['./leaderboard.component.css']
 })
-export class LeaderboardComponent {
-  players?: Player[] = [
-    { id: 1, clientId: 'random', score: 10, gameState: 12 },
-    { id: 2, clientId: 'random', score: 10, gameState: 12 },
-  ]
+
+export class LeaderboardComponent implements OnInit {
+	players: Player[]
+	constructor(
+		private leaderboardService: LeaderboardService
+		) {}
+
+
+	ngOnInit() {
+		this.getPlayersStats();
+	  }
+	
+	  getPlayersStats() {
+		this.leaderboardService.getAllPlayersStats().subscribe(
+			(data) => {
+				this.players = data;
+			},
+			(error) => {
+				console.error('Error fetching player stats', error);
+			}
+		)}
 }

@@ -27,11 +27,12 @@ export enum GameState {
   READY = 0,
   START,
   INPROGRESS,
+  PAUSE,
   END
 }
 
 export enum GameMode {
-  EASY = 0,
+  EASY = 1,
   MEDIUM,
   HARD
 }

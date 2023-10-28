@@ -1,4 +1,24 @@
-<div class="start_button">
-    <button (click)="newGame()">New Game</button>
-</div>
+<!-- <svg id="canvas" width="50%" height="50%">
+    <rect class="background" width="100%" height="100%" style="stroke-width:1.4%;stroke:#E8DAB2"> </rect> -->
+        <!-- <div id="button-easy" (click)="newGame()">Easy</div>
+        <div id="button-medium" (click)="newGame()">Medium</div>
+        <div id="button-hard" (click)="newGame()">Hard</div>  -->
+        <!-- <rect id="button-easy" x="10" y ="10" width = "200" height="200" fill="#77b8fd" onclick="newGame()">Medium</rect>
+        <rect id="button-medium" x ="210" y = "10" width = "200" height="200" fill="#d2fe4f" (click)="newGame()">Medium</rect>
+        <rect id="button-hard" x = "420" y = "10" width = "200" height="200" fill="#fe4f4f"(click)="newGame()">Hard</rect> -->
+    <!-- </rect> -->
 
+
+<!-- <rect class="background" style="stroke-width: 1.4%; stroke: #E8DAB2;" width="100%" height="100%"></rect>
+<rect id="button-easy" x="10" y="10" width="80" height="40" fill="blue" onclick="newGame()"></rect>
+<rect id="button-medium" x="10" y="60" width="80" height="40" fill="green" onclick="newGame()"></rect>
+<rect id="button-hard" x="10" y="110" width="80" height="40" fill="red" onclick="newGame()"></rect> -->
+
+<!-- </svg> -->
+
+<div id="canvas" style="width: 100%; height: 100%;">
+    <div class="background" style="border: 1.4% solid #E8DAB2; "></div>
+    <div id="button-easy" style="margin: 10px; background-color: blue;" (click)="newGameEasy()">Easy</div>
+    <div id="button-medium" style="margin: 10px; background-color: green;" (click)="newGameNormal()">Medium</div>
+    <div id="button-hard" style="margin: 10px; background-color: red;" (click)="newGameHard()">Hard</div>
+</div>

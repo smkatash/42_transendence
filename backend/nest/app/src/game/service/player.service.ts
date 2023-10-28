@@ -1,11 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { validate } from 'class-validator';
 import { Player } from '../entities/player.entity';
 import { User } from 'src/user/entities/user.entity';
 import { GameState } from '../utls/game';
-import { Queue } from '../entities/queue.entity';
 
 @Injectable()
 export class PlayerService {
@@ -18,7 +17,6 @@ export class PlayerService {
             clientId: clientId,
             score: 0,
             matches: [],
-            queue: null,
             gameState: GameState.START
         }
         
@@ -30,7 +28,12 @@ export class PlayerService {
         return this.playerRepo.findOneBy({id})
     }
 
-
+	  async getUserByPlayerId(id: string): Promise<Player> {
+        return this.playerRepo.findOne({where: {id},
+            relations: ["user"]
+        })
+    }
+  
     async getPlayerByUser(user: User, clientId: string): Promise<Player> {
         const currentPlayer = await this.getPlayerById(user.id)
         if (currentPlayer) {
@@ -43,7 +46,7 @@ export class PlayerService {
     async saveValidPlayer(player: Player) {
         const validate_error = await validate(player);
         if (validate_error.length > 0) {
-          throw new BadRequestException();
+            throw new UnprocessableEntityException('Invalid player format');
         }
         return this.playerRepo.save(player);
       }
@@ -61,23 +64,26 @@ export class PlayerService {
         return this.playerRepo.save(players)
     }
 
-
-    async updatePlayerQueue(player: Player, queue?: Queue) {
-        if (!queue) {
-            player.queue = null
-        } else {
-            player.queue = queue
-        }
-        return this.saveValidPlayer(player)
-    }
-
     async updatePlayerState(player: Player, state: GameState) {
         player.gameState = state
         return this.saveValidPlayer(player)
     }
 
+	async getInvitedPlayers(currentPlayerId: string, invitedPlayerId: string): Promise<Player[]> {
+		const playerOne: Player = await this.getPlayerById(currentPlayerId)
+		const playerTwo: Player = await this.getPlayerById(invitedPlayerId)
+
+		return [playerOne, playerTwo]
+	}
+
     getPlayers(): Promise<Player[]> {
         return this.playerRepo.find()
+    }
+
+	getPlayersProfile(): Promise<Player[]> {
+        return this.playerRepo.find({
+			relations: ["user"]
+		})
     }
 
 }

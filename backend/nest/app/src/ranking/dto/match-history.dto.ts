@@ -1,6 +1,5 @@
 import { IsNumber, IsObject, IsString } from "class-validator";
 import { Match } from "src/game/entities/match.entity";
-import { Player } from "src/game/entities/player.entity";
 import { User } from "src/user/entities/user.entity";
 
 
@@ -23,7 +22,6 @@ export class MatchHistoryDto {
     opponentUserScore: number
 
     constructor(match: Match, userId: string) {
-        console.log(match)
         this.matchId = match.id
         if (userId === match.loser.id) {
             this.currentUser = match.loser.user

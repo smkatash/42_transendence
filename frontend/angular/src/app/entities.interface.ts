@@ -63,13 +63,14 @@ export interface Match {
 // }
 
 
-// leaderboard interface shit --------------------------------
+// game interface --------------------------------
 
-export interface Player{
+export interface Player {
   id: number
   clientId :string
   score: number
   gameState: number
+  user?: User
 }
 
 
@@ -80,19 +81,100 @@ export interface Document {
   doc: string
 }
 
-// leaderboard interface shit --------------------------------
+// ============================================================
 
-export interface Player{
-  id: number
-  clientId :string
-  score: number
-  gameState: number
+export interface GamePlayer {
+  id: string;
+  clientId: string;
+  score: number;
+  gameState: number;
+  queue: any;
 }
 
+export interface SocketResponse {
+  id: string;
+  status: number;
+  players: GamePlayer[];
+  scores: any;
+}
 
-// -----------------------------------------------------------
+export interface Position {
+  x: number
+  y: number
+}
 
-export interface Document {
-  id: string
-  doc: string
+export interface Ball {
+position: Position
+velocity: Position
+}
+
+export interface Game {
+ball?: Ball
+leftPaddle?: Paddle
+rightPaddle?: Paddle
+match?: Match
+status?: GameState
+scores?: Record<string, number>
+}
+
+export interface Match {
+  id: string;
+  status : GameState;
+  players: GamePlayer[];
+  observers: GamePlayer[];
+  winner: GamePlayer[];
+  loser: GamePlayer[];
+  scores: Record <string,number>;
+}
+
+export enum GameState {
+  READY = 0,
+  START,
+  INPROGRESS,
+  END
+}
+
+export enum GameMode {
+  EASY = 1,
+  MEDIUM,
+  HARD
+}
+
+export class JoinMatchDto {
+  matchId?: string
+  mode?: GameMode
+}
+
+export class GameModeDto {
+  mode: GameMode;
+}
+
+export class PositionDto {
+    step: string
+}
+
+export interface TableDimensions {
+  height: number
+  width: number
+}
+
+export interface Paddle {
+  position: Position,
+  length: number
+}
+
+export enum Paddletype {
+  LEFT = 0,
+  RIGHT
+}
+
+export interface MessageMatch {
+  message: string
+  matchId: string | undefined
+  player: Player | undefined
+}
+
+export enum PlayerType {
+  OBSERVER = 0,
+  GAMER
 }

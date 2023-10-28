@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { User } from 'src/user/entities/user.entity';
 import { AuthUserDto } from 'src/auth/utils/auth.user.dto';
 import { v4 } from 'uuid';
-import { UserService } from '../../user/user.service';
-import { Status } from 'src/user/utils/status.dto';
+import { UserService } from '../../user/service/user.service';
+import { Status } from 'src/user/utils/status.enum';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthToken } from '../entities/auth-token.entity';
 import { Repository } from 'typeorm';
@@ -18,28 +18,35 @@ export class AuthService {
 		@InjectRepository(AuthToken) private tokenRepo: Repository<AuthToken>) {}
 
     async validateUser(authUserDto: AuthUserDto): Promise<User> {
-        console.log('validate User')
-        const currentUser = await this.userService.getUserById(authUserDto.id)
+		let currentUser: User
 
-        if (currentUser) {
-            console.log('User found')
-            return currentUser
-        }
-		authUserDto.avatar = await this.userService.getIntraProfile(authUserDto.avatar)
-        return await this.userService.createUser(authUserDto)
+		try {
+			currentUser = await this.userService.getUserById(authUserDto.id)
+			// TODO enable later
+			// if (currentUser.status === Status.ONLINE) {
+			// 	throw new BadRequestException("User is logged in.")
+			// }
+		} catch (error) {
+			if (error instanceof NotFoundException) {
+				authUserDto.avatar = await this.userService.getIntraProfile(authUserDto.avatar)
+				return this.userService.createUser(authUserDto)
+			} else {
+				throw error
+			}
+ 		}
+		return currentUser
     }
 
     async findUser(id: string): Promise<User> {
-        return await this.userService.getUserById(id)
+        return this.userService.getUserById(id)
     }
 
     async updateUserStatus(id: string, status: Status) {
-        return await this.userService.updateUserStatus(id, status)
+        return this.userService.updateUserStatus(id, status)
     }
 
 	async createAuthToken(userId: string) {
 		const newToken = this.generateToken(userId)
-		
 		const token = this.tokenRepo.create(newToken)
 		return this.tokenRepo.save(token)
 	}
@@ -58,7 +65,7 @@ export class AuthService {
 	}
 
 	async removeToken(value: string) {
-		return this.tokenRepo.delete(value)
+		return await this.tokenRepo.delete(value)
 	}
 
 	generateToken(userId: string) {

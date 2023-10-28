@@ -1,0 +1,49 @@
+body{
+    background-color: aqua;
+    position: relative;
+}
+
+#canvas {
+    display: flex;
+    /* justify-content: center; */
+    align-items: center;
+}
+.background{
+    width: 800px;
+    height: 300px;
+}
+
+button-easy {
+    padding: 0%;
+    background-color: #77b8fd;
+    content: "Easy";
+    width: 200px;
+    height: 200px;
+}
+
+button-medium {
+   fill: #d2fe4f;
+    content:"Medium";
+    width: 200px;
+    height: 200px;
+}
+
+button-hard{
+    fill: #fe4f4f;
+    content:"Hard";
+    width: 200px;
+    height: 200px;
+}
+
+#custom-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: center; /* Horizontally center */
+    align-items: center; /* Vertically center */
+  }
