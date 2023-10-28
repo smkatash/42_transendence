@@ -150,18 +150,20 @@ export class GameComponent implements AfterViewInit {
     this.checkBoardSize();
     if( game.ball){
       if(this.matchLeftSide == true){
-        game.ball.position.x = game.ball.position.x/this.maxWidth * this.maxViewWidth;
-        game.ball.position.y = game.ball.position.y/this.maxHeight * this.maxViewHeight;
+        game.ball.position.x = (this.maxViewWidth / this.maxWidth) * game.ball.position.x;  // | - p     |
+        game.ball.position.y = (this.maxViewHeight /this.maxHeight) * game.ball.position.y;
       } else {
-        game.ball.position.x = this.maxViewWidth - (game.ball.position.x/this.maxWidth * this.maxViewWidth);
-        game.ball.position.y = game.ball.position.y/this.maxHeight * this.maxViewHeight;
+        game.ball.position.x = this.maxViewWidth -  (this.maxViewWidth / this.maxWidth) * game.ball.position.x; // |      p - |
+        game.ball.position.y = (this.maxViewHeight / this.maxHeight) * game.ball.position.y;
       }
     }
     if (game.leftPaddle){
-      game.leftPaddle!.position.y  = ( 100/ this.maxHeight) * game.leftPaddle!.position.y;
+      game.leftPaddle!.position.x = ( this.maxViewWidth / this.maxWidth ) * game.leftPaddle!.position.x;
+      game.leftPaddle!.position.y = ( this.maxViewHeight / this.maxHeight ) * game.leftPaddle!.position.y;
     }
     if (game.rightPaddle){
-      game.rightPaddle!.position.y  = ( 100/ this.maxHeight) * game.rightPaddle!.position.y;
+      game.rightPaddle!.position.x = ( this.maxViewWidth / this.maxWidth ) * game.rightPaddle!.position.x;
+      game.rightPaddle!.position.y = ( this.maxViewHeight / this.maxHeight ) * game.rightPaddle!.position.y
     }
     return game;
   }
@@ -177,19 +179,32 @@ export class GameComponent implements AfterViewInit {
       this.ballY = ball.position.y;
   }
 
+  /* 
+    since the values comes from backend this function move the 
+    rightPaddle or the leftPaddle depending if the game is Leftside or not
+    if yes: then this move the Right Paddle;
+    if not: it moves the left;
+  */
   moveRightPaddle(rightPaddle: Paddle){
-    if(this.matchLeftSide == true){
+    if(this.matchLeftSide === true){
       this.paddleRightY = rightPaddle!.position.y;
+      this.paddleRightX = rightPaddle!.position.x
     } else {
       this.paddleLeftY = rightPaddle!.position.y;
+      this.paddleRightX = rightPaddle!. position.x;
     }
   }
 
+  /* 
+    same as the one upstairs
+  */
   moveLeftPaddle(leftPaddle: Paddle){
-    if(this.matchLeftSide == true) {
+    if(this.matchLeftSide === true) {
       this.paddleLeftY = leftPaddle!.position.y;
+      this.paddleLeftX = leftPaddle!.position.x;
     } else {
       this.paddleRightY = leftPaddle!.position.y;
+      this.paddleLeftX = leftPaddle!.position.x;
     }
   }
 

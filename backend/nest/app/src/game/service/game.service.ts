@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Ball, Game, GameMode, GameOptions, GameState, Paddle, Paddletype, Position } from '../utls/game';
-import { DEFAULT_PADDLE_GAP, DEFAULT_PADDLE_LENGTH, DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_PROPORTION } from 'src/Constants';
+import { DEFAULT_PADDLE_GAP, DEFAULT_PADDLE_LENGTH, DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_PROPORTION, BALL_RADIUS } from 'src/Constants';
 import { Match } from '../entities/match.entity';
 
 @Injectable()
@@ -55,11 +55,29 @@ export class GameService {
 
     private calculateVector(): Position {
         const randomAngle = this.getRandomAngle()
+        console.log(randomAngle, " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         const radian = this.degreesToRadian(randomAngle)
         return { x: Math.cos(radian) + this.increment, y: Math.sin(radian) + this.increment }
     }
 
     private getRandomAngle(): number {
+        let randomNumber = Math.random() * 360;
+        if( randomNumber <= 45 || randomNumber > (360 - 45) ||
+            (randomNumber > 180 - 45 && randomNumber < (180 + 45)) ){
+            return (randomNumber);
+        } else {
+            if(randomNumber < 90 && randomNumber > 270){
+                randomNumber = Math.random() * 360;
+                if(randomNumber > 0 && randomNumber < 180){
+                    return(45);
+                } else return ( 360 - 45);
+            } else {
+                randomNumber = Math.random() * 360;
+                if(randomNumber > 0 && randomNumber < 180){
+                    return(90 + 45);
+                } else return ( 180 - 45);
+            }   
+        }
         return Math.random() * 360
     }
 
@@ -105,21 +123,21 @@ export class GameService {
     throwBall(game: Game): Game {
         game.ball.position.x += game.ball.velocity.x
         game.ball.position.y += game.ball.velocity.y
-        if (game.ball.position.y >=  this.options.table.height) {
+        if (game.ball.position.y >=  this.options.table.height - BALL_RADIUS) {
             game.ball.velocity.y *= -1
-            game.ball.position.y = this.options.table.height - 0.5
+            game.ball.position.y = this.options.table.height - 0.5 - BALL_RADIUS
             return game
-        } else if (game.ball.position.y < 5) {
+        } else if (game.ball.position.y < 0.5 + BALL_RADIUS) {
             game.ball.velocity.y *= -1
-            game.ball.position.y = 6
+            game.ball.position.y = 0.6 + BALL_RADIUS
             return game
         }
 
-        if (game.ball.position.x <= this.options.paddleDistance) {
+        if (game.ball.position.x <= this.options.paddleDistance + BALL_RADIUS) {
             if (game.ball.position.y < (game.leftPaddle.position.y + (game.leftPaddle.length)) &&
                     game.ball.position.y > (game.leftPaddle.position.y)) {
                     game.ball.velocity.x *= -1
-                    game.ball.position.x = this.options.paddleDistance + 0.5
+                    game.ball.position.x = this.options.paddleDistance + 0.5 + BALL_RADIUS
                     return game
             }
             return this.resetGame(game, Paddletype.RIGHT)

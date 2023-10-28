@@ -13,6 +13,7 @@ import { Interval } from '@nestjs/schedule';
 import { Server } from 'socket.io';
 import { INGAME } from '../utls/rooms';
 import { Status } from 'src/user/utils/status.enum';
+import { DEFAULT_PADDLE_LENGTH } from 'src/Constants';
 
 
 @Injectable()
@@ -96,10 +97,13 @@ export class MatchService {
                 const index = match.match.players.findIndex(matchPlayer => matchPlayer.id === player.id)
                 if (index != -1 ) {
                     if (index === 0 ) {
-                        match.leftPaddle.position.y += step;
-                        console.log(match.leftPaddle.position.y)
+                        if(match.leftPaddle.position.y + step >= 0 && 
+                           match.leftPaddle.position.y + step <= 500 - DEFAULT_PADDLE_LENGTH)
+                            match.leftPaddle.position.y += step;
                     } else {
-                        match.rightPaddle.position.y += step
+                        if(match.rightPaddle.position.y + step >= 0 && 
+                            match.rightPaddle.position.y + step <= 500 - DEFAULT_PADDLE_LENGTH)
+                            match.rightPaddle.position.y += step;
                     }
                     return
                 }
