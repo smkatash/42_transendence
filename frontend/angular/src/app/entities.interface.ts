@@ -1,15 +1,25 @@
 export interface Channel {
-  id?: number
+  id: number
   name?: string
-  type?: string
-  private?: boolean
-  // avatar: string
-  // owner?: string
+  type: string
+  protected: boolean
+  private: boolean
+  avatar?: string
+  updatedAt: Date
   owner?: User
-  users?: User[]
+  users: User[]
   admins?: User[]
-  protected?: boolean
-  topic?: string
+}
+
+export interface JoinChannelInfo {
+  id: number,
+  password?: string
+}
+
+export interface CreateChannelInfo {
+  name: string
+  private: boolean
+  password?: string
 }
 
 export interface UserProfile {
@@ -94,10 +104,6 @@ export interface Document {
   doc: string
 }
 
-export  interface JoinChannelInfo {
-  id: number,
-  password?: string
-}
 // ============================================================
 
 export interface GamePlayer {

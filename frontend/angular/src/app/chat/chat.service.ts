@@ -1,10 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
-import { Channel, JoinChannelInfo, Message, User } from '../entities.interface';
+import { Observable } from 'rxjs';
+import { Channel, CreateChannelInfo, JoinChannelInfo, Message, User } from '../entities.interface';
 import { ChatSocket } from '../app.module';
-// import  { MatSnackBar} from '@angular/material/snack-bar'
 
 @Injectable({
   providedIn: 'root'
@@ -13,140 +11,77 @@ export class ChatService {
   constructor(
     private http: HttpClient,
     private socket: ChatSocket,
-    // private snackBar: MatSnackBar
   ) { }
-  
+
   domain: string = 'http://127.0.0.1:3000';
 
-  //all existing channels
-  getChannels(): Observable<Channel[]> {
-    // const url = 'api/channels';
-    const url = 'http://127.0.0.1:3000/chat/all'
-    return this.http.get<Channel[]>(url, {
-      withCredentials: true
-    })
-      .pipe(
-        catchError(this.handleError<Channel[]>('getChannels', []))
-        )
-      }
-
-    //channels, that user is on
-    getUsersChannels(): Observable<Channel[]> {
-    // const url = 'api/channels';
-    const url = 'http://127.0.0.1:3000/chat'
-    return this.http.get<Channel[]>(url, {
-      withCredentials: true
-    })
-      .pipe(
-        catchError(this.handleError<Channel[]>('getChannels', []))
-        )
-      }
-    
-    //tmp gonna
-    //TODO kill jad
-    createPublicChannel(name: string) {
-      console.log(name)
-      // const url =`${this.domain}/chat/create-public`
-      // console.log(url)
-      const channelInfo = {
-        name: name,
-        private: false
-      }
-      this.createChannel(channelInfo)
-      // this.http.post<Channel>(url, {name: name, private: false}, { withCredentials: true }).subscribe()
-    }
-
-    bubu(){
-      console.log("bubu clicked")
-      
-    }
-
-  // getChannelMessages(channelId: number): Observable<Message[]> {
-  //   const url = `api/messages/${channelId}`;
-  //   return this.http.get<ChannelMessages>(url)
-  //     .pipe(
-  //       catchError(this.handleError<ChannelMessages>('getChannelMessages', {id: 0, messages: []})),
-  //       map((channelMessages: ChannelMessages) => channelMessages.messages)
-  //       )
-  // }
-
-  // getChannelUsers(channelId: number): Observable<User[]> {
-  //   const url = `api/channelUsers/${channelId}`;
-  //   return this.http.get<ChannelUsers>(url)
-  //     .pipe(
-  //       catchError(this.handleError<ChannelUsers>('getChannelUsers', {id: 0, users: []})),
-  //       map((channelUsers: ChannelUsers) => channelUsers.users)
-  //       )
-  // }
-
-  /* Handle HTTP operation that failed and let the app continue. */
-  private handleError<T>(operation = 'operation', result?:T) {
-    return (error: any): Observable<T> => {
-      console.error(`${operation} failed: ${error.message}`);
-      // TODO: find a way to display the error to user. Or not. dk yet.
-      return of(result as T);
-    }
+  createPublicChannel(name: string) {
+    console.log(name)
+    this.createChannel({ name: name, private: false })
   }
 
-    /**
-     * messing up with Jad's ocds
-     **/
-    connectSocket() {
-      this.socket.connect();
-    }
+  findUser(username: string): Observable<User[]>  {
+    return this.http.get<User[]>(`${this.domain}/user/find-by-username?username=${username}`)
+  }
 
-    getMessage()  {
-      return this.socket.fromEvent('message')
-    }
 
-    getUsersChannelsS()  {
-      return this.socket.fromEvent<Channel[]>('getUsersChannels')
-    }
+  /* <---------- Socket emits ----------> */
 
-    askForChannels()  {
-      this.socket.emit('getAllChannels');
-    }
-    getChannelsS() {
-      return this.socket.fromEvent<Channel[]>('allChannels')
-    }
+  requestChannels() {
+    this.socket.emit('getAllChannels');
+  }
 
-    createChannel(chanelInfo: Channel) {
-      this.socket.emit('createChannel', chanelInfo)
-    }
+  requestUsersChannels() {
+    this.socket.emit('getUsersChannels')
+  }
 
-    onError() {
-      this.socket.on('error', (error: any) => {
-        console.error('WebSocket Error:', error);
-      });
-      
-    }
+  createChannel(channelInfo: CreateChannelInfo) {
+    this.socket.emit('createChannel', channelInfo)
+  }
 
-    onSuccess() {
-      this.socket.on('success', (msg: any) => {
-        console.log(msg)
-      })
-    }
+  joinChannel(joinInfo:  JoinChannelInfo) {
+    this.socket.emit('join', joinInfo);
+  }
 
-    findUser(username: string): Observable<User[]>  {
-      return this.http.get<User[]>(`${this.domain}/user/find-by-username?username=${username}`)
-    }
+  leaveChannel(joinInfo: JoinChannelInfo)  {
+    this.socket.emit('leave', joinInfo)
+  }
 
-    joinChannel(joinInfo:  JoinChannelInfo) {
-      this.socket.emit('join', joinInfo);
-    }
+  sendMessage(message: Message) {
+    this.socket.emit('message', message);
+  }
 
-    leaveChannel(joinInfo: JoinChannelInfo)  {
-      this.socket.emit('leave', joinInfo)
-    }
+  requestChannelMessages(channel: Channel) {
+    this.socket.emit('getChannelMessages', channel);
+  }
 
-    sendMessage(message: Message) {
-      this.socket.emit('message', message);
-    }
+  /* <---------- Events to listen to ----------> */
 
-    askForChannelMessages(channel: Channel) {
-      this.socket.emit('getChannelMessages', channel);
-    }
-    getChannelMessages(): Observable<Message[]>  {
-      return this.socket.fromEvent<Message[]>('channelMessages')
-    }
+  onError() {
+    this.socket.on('error', (error: any) => {
+      console.error('WebSocket Error:', error);
+    });
+  }
+
+  onSuccess() {
+    this.socket.on('success', (msg: any) => {
+      console.log(msg)
+    })
+  }
+
+  getMessage(): Observable<Message> {
+    return this.socket.fromEvent<Message>('incMsg')
+  }
+
+  getUsersChannels(): Observable<Channel[]> {
+    return this.socket.fromEvent<Channel[]>('usersChannels')
+  }
+
+  getChannels(): Observable<Channel[]> {
+    return this.socket.fromEvent<Channel[]>('allChannels')
+  }
+
+  getChannelMessages(): Observable<Message[]> {
+    return this.socket.fromEvent<Message[]>('channelMessages')
+  }
 }

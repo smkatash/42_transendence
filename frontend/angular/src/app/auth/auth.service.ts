@@ -9,8 +9,7 @@ import { ChatSocket } from '../app.module';
 })
 export class AuthService {
 
-  constructor(private http: HttpClient, @Inject(DOCUMENT) private document: Document,
-              private chatSocket: ChatSocket) { };
+  constructor(private http: HttpClient, @Inject(DOCUMENT) private document: Document) { };
 
   domain: string = 'http://127.0.0.1:3000'
 
@@ -20,8 +19,6 @@ export class AuthService {
 
   logout(): void {
     const url = `${this.domain}/42auth/logout`
-    /** dc chat socket*/
-    this.chatSocket.disconnect();
     this.http.get(url, { withCredentials: true }).subscribe()
   }
 

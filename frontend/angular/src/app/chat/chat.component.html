@@ -2,13 +2,29 @@
   <app-navbar></app-navbar>
   <div class="chat-interface">
     <div class="channel-container-border">
+
+      <div class="channel-tabs">
+        <div [class.selected]="selectedTab === 'my-chats'" (click)="selectTab('my-chats')"><h1>My Chats:</h1></div>
+        <div [class.selected]="selectedTab === 'all-chats'" (click)="selectTab('all-chats')"><h1>All Chats:</h1></div>
+      </div>
       <div class="channel-container">
-        <div *ngFor="let channel of channels$ | async">
-          <!-- {{test | async }} -->
-          <app-sidebar-channel [isSelected]="channel === selectedChannel"
-                               [channel]="channel"
-                               (click)="onChannelSelect(channel)"></app-sidebar-channel>
+
+        <div class="channel-list" *ngIf="selectedTab === 'my-chats'">
+          <div *ngFor="let channel of myChannels$ | async">
+            <app-sidebar-channel [isSelected]="channel === selectedChannel"
+                                 [channel]="channel"
+                                 (click)="onChannelSelect(channel)"></app-sidebar-channel>
+          </div>
         </div>
+
+        <div class="channel-list" *ngIf="selectedTab === 'all-chats'">
+          <div *ngFor="let channel of allChannels$ | async">
+            <app-sidebar-channel [isSelected]="channel === selectedChannel"
+                                 [channel]="channel"
+                                 (click)="onChannelSelect(channel)"></app-sidebar-channel>
+          </div>
+        </div>
+
       </div>
       <app-create-channel-button (createChannelEvent)="createNewChannel($event)"></app-create-channel-button>
     </div>
@@ -16,7 +32,6 @@
       <app-channel-creation-menu [channelType]="channelToCreate"
                                  [(isOpen)]="isChannelToCreateActive"
                                  (publicChannelInfoEmitter)="publicChannelNameEmitted($event)">
-
       </app-channel-creation-menu>
 
       <app-channel-messages-content *ngIf="selectedChannel">
@@ -29,7 +44,7 @@
   </div>
 </body>
 
-<!-- 
+<!--
 <body>
   <app-navbar></app-navbar>
   <div class="chat-interface">

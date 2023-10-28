@@ -25,7 +25,7 @@ export class ChannelMessagesContentComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['channel'] && this.channel) {
         // if (this.channel) {
-          this.chatService.askForChannelMessages(this.channel)
+          this.chatService.requestChannelMessages(this.channel)
         // } else  {
           this.loading = true;
         // }

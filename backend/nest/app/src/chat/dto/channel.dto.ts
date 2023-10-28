@@ -1,7 +1,5 @@
-import { IsBoolean, IsInt, IsNotEmpty, IsNumber, IsString, isNumber } from "class-validator";
+import { IsBoolean, IsInt, IsNotEmpty, IsNumber, IsString } from "class-validator";
 import { User } from "src/user/entities/user.entity";
-import { JoinedChannel } from "../entities/joinedChannel.entity";
-import { Message } from "../entities/message.entity";
 
 export class CreateChannelDto    {
     @IsString()

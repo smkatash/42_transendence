@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-
 import { ChatService } from './chat.service';
-
 import { ChannelCreateType } from './chat.enum';
-import { Channel, Message } from '../entities.interface';
+import { Channel } from '../entities.interface';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -16,48 +14,43 @@ export class ChatComponent implements OnInit {
 
   constructor(private chatService: ChatService){ }
 
-  test = this.chatService.getMessage();
-  // channels: Channel[] = [];
-  // messages$: Observable<Message[]> = []
-  channels$: Observable<Channel[]> = this.chatService.getChannelsS();
-  selectedChannel?: Channel;
-  channelToCreate?: ChannelCreateType;
-  isChannelToCreateActive: boolean = false;
+  selectedTab: string = 'my-chats'
+
+  myChannels$: Observable<Channel[]> = this.chatService.getUsersChannels()
+  allChannels$: Observable<Channel[]> = this.chatService.getChannels()
+  selectedChannel?: Channel
+  channelToCreate?: ChannelCreateType
+  isChannelToCreateActive: boolean = false
 
   ngOnInit(): void {
-    this.chatService.connectSocket();
-    this.chatService.askForChannels();
-    // this.channels$ = this.chatService.getChannelsS();
-    //
-    // this.chatService.sendMessage();
-    // this.chatService.createChannel()
+    this.chatService.requestUsersChannels()
+    this.chatService.requestChannels()
   }
 
-  // getChannels(): void {
-  //   this.chatService.getChannels()
-  //   // this.chatService.getUsersChannels()
-  //       .subscribe((channels: Channel[]) => this.channels = channels);
-  // }
-
   onChannelSelect(channel: Channel) {
-    this.selectedChannel = channel;
+    this.selectedChannel = channel
   }
 
   createNewChannel(channelType: ChannelCreateType) {
-    this.channelToCreate = channelType;
-    this.isChannelToCreateActive = true;
+    this.channelToCreate = channelType
+    this.isChannelToCreateActive = true
   }
 
   publicChannelNameEmitted(channelName: string) {
-    this.chatService.createPublicChannel(channelName);
-  }
-  bubuEmitted(bubu: string){
-    console.log(bubu)
+    this.chatService.createPublicChannel(channelName)
   }
 
-  onError() {
-    this.chatService.onError()
+  selectTab(tab: string) {
+    if (tab === 'my-chats') {
+      this.selectedTab= 'my-chats'
+    } else {
+      this.selectedTab= 'all-chats'
+    }
   }
+
+  // onError() {
+  //   this.chatService.onError()
+  // }
 
   // getMessage()  {
   //   return this.chatService.getMessage()
