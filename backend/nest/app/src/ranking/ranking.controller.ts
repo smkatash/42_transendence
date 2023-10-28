@@ -60,7 +60,7 @@ export class RankingController {
 		}
 
         try {
-            return this.rankingService.getAllUserStats()
+            return await this.rankingService.getAllUserStats()
         } catch(error) {
             throw error
         }	

@@ -15,19 +15,27 @@ export class RankingService {
         return this.matchService.getMatchesByPlayerId(userId)
     }
 
-    async getAllUserStats() {
+    async getUserStats() {
         const users = await this.playerService.getPlayers()
 		if (!users) {
 			return []
 		}
 
-		users.sort((a, b) => a.score - b.score)
+		users.sort((a, b) => b.score - a.score)
 		return users
-	
+    }
+
+	async getAllUserStats() {
+        const users = await this.playerService.getPlayersProfile()
+		if (!users) {
+			return []
+		}
+		users.sort((a, b) => b.score - a.score)
+		return users
     }
 
     async getUserPosition(id: string) {
-		const users = await this.getAllUserStats() 
+		const users = await this.getUserStats() 
 		if (users) {
 			const position = users.findIndex(user => user.id === id)
 			if (position === -1) {

@@ -1,8 +1,13 @@
 <body>
     <app-navbar></app-navbar>
     <div class="board-interface">
+		<div class="players-container" *ngIf="players.length"></div>
         <div *ngFor="let player of players">
             <app-player [player]="player"></app-player>
-        </div>
+        </div> 
+		<div class="no-players" *ngIf="!players.length">
+			<h1>Le leaderboard</h1>
+			<h2>No matches played, thus nothing to display...</h2>
+		</div>
     </div>
 </body>

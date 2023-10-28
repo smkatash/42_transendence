@@ -3,15 +3,13 @@ import { OauthGuard } from './guard/oauth.guard';
 import { Response } from 'express';
 import { AuthService } from './service/auth.service';
 import { GetUser } from './utils/get-user.decorator';
-import { User } from 'src/user/entities/user.entity';
 import { SessionGuard } from './guard/auth.guard';
 import { Status } from 'src/user/utils/status.enum';
-import { FRONT_END_2FA_CALLBACK_URL, FRONT_END_CALLBACK_URL } from 'src/Constants';
+import { FRONT_END_2FA_CALLBACK_URL, FRONT_END_CALLBACK_URL, FRONT_END_URL } from 'src/Constants';
 import { UserService } from 'src/user/service/user.service';
 import { MailService } from './service/mail.service';
 import { SessionUserDto } from 'src/user/utils/user.dto';
 import { CodeDto } from './utils/entity.dto';
-import * as session from 'express-session';
 
 @Controller('42auth')
 export class AuthController {
@@ -32,7 +30,6 @@ export class AuthController {
 		if (!currentUser) {
 			throw new UnauthorizedException('Access denied');
 		}
-
 
 		try {
 			if (currentUser.mfaEnabled === true && currentUser.email) {
@@ -71,7 +68,7 @@ export class AuthController {
 			if (currentUser.mfaEnabled === true && currentUser.email) {
 				const token = await this.authService.createAuthToken(currentUser.id)
 				if (token && token.value) {
-					await this.mailService.send(currentUser.email, `Your Auth Code is: ${token.value}`)
+					await this.mailService.send(currentUser.email, token.value)
 					return currentUser
 				} else {
 					throw new InternalServerErrorException('Failed to send token')
@@ -123,8 +120,6 @@ export class AuthController {
 		}
 		throw new UnauthorizedException('Invalid token')
     }
-	
-	
 
     @Get('logout')
     @UseGuards(SessionGuard)
@@ -135,15 +130,12 @@ export class AuthController {
 
 		try {
 			await this.userService.logoutUser(currentUser.id)
-			console.log(req.session)
 			req.session.destroy()
-			req.session = null
-			console.log(req.session)
 			res.clearCookie('pong.sid')
-			return res.redirect(FRONT_END_CALLBACK_URL)
+			res.status(302).redirect(FRONT_END_CALLBACK_URL)
 		} catch (error) {
 			throw error
 		} 
-    }
+	}
 
 }

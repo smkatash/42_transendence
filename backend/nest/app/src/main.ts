@@ -26,13 +26,13 @@ async function bootstrap() {
 		store: new RediStore({client: redisClient}),
 		name: 'pong.sid',
 		secret: SESSION_SECRET,
-		saveUninitialized: true,
+		saveUninitialized: false,
 		resave: false,
 		cookie: {
 			secure: false,
 			httpOnly: true,
 			maxAge: 3600000,
-			sameSite: 'lax',
+			sameSite: "none",
 			expires: new Date(Date.now() + 3600000) 
 		}
 	})
