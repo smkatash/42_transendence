@@ -36,6 +36,16 @@
     text-overflow: ellipsis;
     overflow: hidden;
   }
+
+  .title {
+    padding-left: 0dvw;
+    width: 75%;
+    font-family: 'Quattrocento', serif;
+    font-size: 1dvw;
+    color: #E8DAB2;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
   
   .status {
     width: 25%;

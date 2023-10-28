@@ -53,30 +53,14 @@ export interface Match {
 // }
 
 
-// leaderboard interface shit --------------------------------
+// game interface --------------------------------
 
-export interface Player{
+export interface Player {
   id: number
   clientId :string
   score: number
   gameState: number
-}
-
-
-// -----------------------------------------------------------
-
-export interface Document {
-  id: string
-  doc: string
-}
-
-// leaderboard interface shit --------------------------------
-
-export interface Player{
-  id: number
-  clientId :string
-  score: number
-  gameState: number
+  user?: User
 }
 
 
