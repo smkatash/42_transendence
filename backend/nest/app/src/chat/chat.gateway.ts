@@ -313,10 +313,26 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       // console.log('get user\'s channesl')
       try{
         const channels = await this.channelService.getUsersChannels(user.id)
-        console.log(channels);
       //Removing password and dates and stuff
-        const cToFe = channels.map((c) => this.channelToFe(c))
-          .sort((c1, c2) => c1.updatedAt.getDate() - c2.updatedAt.getDate());
+        const cToFe = channels
+          .sort((c1, c2) => c1.updatedAt.getDate() - c2.updatedAt.getDate())
+          .map((c) => this.channelToFe(c))
+          .map((c) => {
+            if (c.name) {
+              return c
+            } else  {
+              for (const u of c.users)  {
+                if (u.id !== user.id) {
+                  c.name = u.username;
+                  c.avatar = u.avatar
+                }
+              }
+              return c
+            }
+          })
+          
+          ;
+
         this.server.to(socket.id).emit('usersChannels', cToFe);
         // this.server.to(socket.id).emit('usersChannels', channels);
       } catch (error) {

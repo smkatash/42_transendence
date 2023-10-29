@@ -14,6 +14,10 @@ export class CreateChannelDto    {
 
     @IsString()
     topic?: string;
+
+    @IsString()
+    @IsNotEmpty()
+    type: 'private' | 'protected' | 'public' | 'direct';
 }
 
 export class ChannelToFeDto    {
@@ -38,6 +42,8 @@ export class ChannelToFeDto    {
     // messages: Message[];
 
     protected: boolean;
+
+    avatar?: string;
 
     // banned: User[]
 }
