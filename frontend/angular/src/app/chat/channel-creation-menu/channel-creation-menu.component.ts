@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ChannelCreateType } from '../chat.enum';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { ChatService } from '../chat.service';
 
 @Component({
   selector: 'app-channel-creation-menu',
@@ -23,42 +24,27 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
   ],
 })
 export class ChannelCreationMenuComponent {
+
+  constructor(private chatService: ChatService){}
+
   ChannelCreateType: typeof ChannelCreateType = ChannelCreateType;
   @Input() channelType?: ChannelCreateType;
   @Input() isOpen?: boolean;
   @Output() isOpenChange = new EventEmitter<boolean>;
 
-  channelName: string = '';
+  channelName: string = ''
+  channelPassword?: string
 
   toggle(): void {
     this.isOpen = !this.isOpen;
     this.isOpenChange.emit(this.isOpen);
   }
 
-  @Output() publicChannelInfoEmitter = new EventEmitter<string>()
-  createPublicChannel(channelName: string): void  {
-    // console.log(channelName);
-    // console.log('bubu')
-    this.publicChannelInfoEmitter.emit(channelName);
-  }
-
-  @Output() privateChannelInfoEmitter = new EventEmitter<string>()
-  createPrivateChannel(channelName: string): void  {
-    // console.log(channelName);
-    // console.log('bubu')
-    this.publicChannelInfoEmitter.emit(channelName);
-  }
-
-  @Output() protectedChannelInfoEmitter = new EventEmitter<string>()
-  createProtecctedChannel(channelName: string): void  {
-    // console.log(channelName);
-    // console.log('bubu')
-    this.publicChannelInfoEmitter.emit(channelName);
-  }
-
-  @Output() bubuEmitter = new EventEmitter<string>()
-  bubu(name: string){
-    const bubu = "Bubu"; //fu jad
-    this.bubuEmitter.emit(name);
+  createChannel(): void {
+    this.chatService.createChannel({
+       name: this.channelName,
+       private: this.channelType === ChannelCreateType.privateChannel,
+       password: this.channelPassword
+    })
   }
 }

@@ -15,11 +15,6 @@ export class ChatService {
 
   domain: string = 'http://127.0.0.1:3000';
 
-  createPublicChannel(name: string) {
-    console.log(name)
-    this.createChannel({ name: name, private: false })
-  }
-
   findUser(username: string): Observable<User[]>  {
     return this.http.get<User[]>(`${this.domain}/user/find-by-username?username=${username}`)
   }
@@ -47,12 +42,12 @@ export class ChatService {
     this.socket.emit('leave', joinInfo)
   }
 
-  sendMessage(message: Message) {
-    this.socket.emit('message', message);
+  sendMessage(channelID: number, message: string) {
+    this.socket.emit('newMsg', { cId: channelID, content: message });
   }
 
-  requestChannelMessages(channel: Channel) {
-    this.socket.emit('getChannelMessages', channel);
+  requestChannelMessages(channelID: number) {
+    this.socket.emit('getChannelMessages', { cId: channelID });
   }
 
   /* <---------- Events to listen to ----------> */
