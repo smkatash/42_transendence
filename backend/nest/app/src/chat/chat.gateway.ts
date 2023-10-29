@@ -906,7 +906,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       name: channel.name,
       private: channel.private,
       users: channel.users,
-      protected: channel.protected
+      protected: channel.protected,
+      type: channel.type,
+      updatedAt: channel.updatedAt
      }
   }
 

@@ -23,6 +23,10 @@ export class ChannelToFeDto    {
 
     private: boolean;
 
+    type: string;
+
+    updatedAt: Date;
+
     // owner: User;
 
     // topic: string;
