@@ -315,7 +315,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         const channels = await this.channelService.getUsersChannels(user.id)
       //Removing password and dates and stuff
         const cToFe = channels
-          .sort((c1, c2) => c1.updatedAt.getDate() - c2.updatedAt.getDate())
+          .sort((c1, c2) => c2.updatedAt.getTime() - c1.updatedAt.getTime())
           .map((c) => this.channelToFe(c))
           .map((c) => {
             if (c.name) {
