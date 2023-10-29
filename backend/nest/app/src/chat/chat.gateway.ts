@@ -293,7 +293,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     try {
       const channels = await  this.channelService.getAllChannels();
       //Removing password and dates and stuff
-      const cToFe = channels.filter((c) => !(c.private)).map((c) => this.channelToFe(c));
+      const cToFe = channels.filter((c) => !(c.private)).map((c) => this.channelToFe(c))
+        .sort((c1, c2) => c1.updatedAt.getDate() - c2.updatedAt.getDate())
       this.server.to(socket.id).emit('allChannels', cToFe);
       // this.server.to(socket.id).emit('allChannels', channels);
     } catch (error) {
@@ -314,7 +315,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         const channels = await this.channelService.getUsersChannels(user.id)
         console.log(channels);
       //Removing password and dates and stuff
-        const cToFe = channels.map((c) => this.channelToFe(c));
+        const cToFe = channels.map((c) => this.channelToFe(c))
+          .sort((c1, c2) => c1.updatedAt.getDate() - c2.updatedAt.getDate());
         this.server.to(socket.id).emit('usersChannels', cToFe);
         // this.server.to(socket.id).emit('usersChannels', channels);
       } catch (error) {
