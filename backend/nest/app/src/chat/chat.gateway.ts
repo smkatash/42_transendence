@@ -16,7 +16,7 @@ import { Message } from './entities/message.entity';
 import { ADD_ADMIN, BAN, BLOCK, CHANNEL, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DELETE, DIRECT, ERROR, INVITE_TO_PRIVATE, JOIN, KICK, LEAVE, MESSAGE, MUTE, PASSWORD, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, USER_CHANNELS } from './subscriptions-events-constants';
 
 
-// @UsePipes(new ValidationPipe({whitelist: true}))
+@UsePipes(new ValidationPipe({whitelist: true}))
 @WebSocketGateway({
   namespace: 'chat',
   cors: '*'
