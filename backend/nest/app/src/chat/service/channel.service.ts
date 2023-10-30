@@ -5,6 +5,7 @@ import { Channel } from '../entities/channel.entity';
 import { JoinChannelDto, CreateChannelDto, ChannelPasswordDto } from '../dto/channel.dto';
 import { User } from 'src/user/entities/user.entity';
 import * as bcrypt from 'bcrypt'
+import { POSTGRES_UNIQUE_VIOLATION } from 'src/Constants';
 
 const   saltRounds = 10;
 
@@ -16,7 +17,7 @@ export class ChannelService {
         ){}
 
     async createChannel(channelInfo: CreateChannelDto, owner: User): Promise<Channel>{
-        // const exists = await this.channelRepository.findOneBy({name: CreateChannelDto.name})
+
         try {
             // console.log(channel)
             
@@ -45,9 +46,8 @@ export class ChannelService {
             return c
             
         } catch (error) {
-            console.log("this is caught")
             Logger.error(error);
-            if (error.code === 23505)   {
+            if (error.code === POSTGRES_UNIQUE_VIOLATION)   {
                 throw new HttpException('Channel already exists', HttpStatus.BAD_REQUEST)
             }   else    {
                 throw error;
@@ -184,7 +184,6 @@ console.log('--------join channels users------')
         const room  = this.channelRepository.create({
             private: true,
             type: 'direct'
-            // owner: null
         });
         room.users = [u1, u2];
         room.messages = [];

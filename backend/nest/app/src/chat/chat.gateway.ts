@@ -13,8 +13,7 @@ import { JoinedChannel } from './entities/joinedChannel.entity';
 import { MuteService } from './service/mute.service';
 import { Channel } from './entities/channel.entity';
 import { Message } from './entities/message.entity';
-import { ADD_ADMIN, BAN, BLOCK, CHANNEL, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DELETE, DIRECT, ERROR, INVITE_TO_PRIVATE, JOIN, KICK, LEAVE, MESSAGE, MUTE, PASSWORD, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, USER_CHANNELS } from './subscribtions-events';
-import { measureMemory } from 'vm';
+import { ADD_ADMIN, BAN, BLOCK, CHANNEL, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DELETE, DIRECT, ERROR, INVITE_TO_PRIVATE, JOIN, KICK, LEAVE, MESSAGE, MUTE, PASSWORD, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, USER_CHANNELS } from './subscriptions-events';
 
 
 @UsePipes(new ValidationPipe({whitelist: true}))
@@ -246,6 +245,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       } else  {
         m['sessionUser'] = false
       }
+      return m;
     })
     this.server.to(socket.id).emit(CHANNEL_MESSAGES, msgsToFe);
   }
@@ -311,13 +311,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       if (!user) {
         return this.noAccess(socket);
       }
-    // console.log("get all channels!!")
+    console.log("get all channels!!")
     try {
       const channels = await  this.channelService.getAllChannels();
       //Removing password and dates and stuff
       const cToFe = channels.filter((c) => !(c.private)).map((c) => this.channelToFe(c))
         .sort((c1, c2) => c1.updatedAt.getDate() - c2.updatedAt.getDate())
-      this.server.to(socket.id).emit('allChannels', cToFe);
+      this.server.to(socket.id).emit(CHANNELS, cToFe);
       // this.server.to(socket.id).emit('allChannels', channels);
     } catch (error) {
       console.log(error);

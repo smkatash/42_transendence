@@ -1,4 +1,4 @@
-import { IsBoolean, IsInt, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsBoolean, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { User } from "src/user/entities/user.entity";
 
 export class CreateChannelDto    {
@@ -10,12 +10,13 @@ export class CreateChannelDto    {
     private: boolean;
 
     @IsString()
-    password?: string;
+    @IsOptional()
+    password: string;
 
     @IsString()
     topic?: string;
 
-    @IsString()
+    // @IsString()
     @IsNotEmpty()
     type: 'private' | 'protected' | 'public' | 'direct';
 }
@@ -54,7 +55,8 @@ export  class JoinChannelDto    {
     id: number;
 
     @IsString()
-    password?: string;
+    @IsOptional()
+    password: string;
 }
 export class    UpdateChannelDto    {
     @IsNumber()
@@ -73,11 +75,13 @@ export class ChannelPasswordDto {
 
     @IsString()
     @IsNotEmpty()
-    oldPass?: string;
+    @IsOptional()
+    oldPass: string;
     
     @IsString()
     @IsNotEmpty()
-    newPass?: string;
+    @IsOptional()
+    newPass: string;
 }
 
 export class uIdDto {

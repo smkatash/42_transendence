@@ -93,7 +93,6 @@ export const DIRECT = 'privMsg'
  * Send direct message to user. Creates a channel between the two users
  * expects: PrivMsgDto
  * on success emits: 
- *  //TODO USER_CHANNLES for both
  *  - broadcasts the message: MESSAGE, Message
  * 
  */
