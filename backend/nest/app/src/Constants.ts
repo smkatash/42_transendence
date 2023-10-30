@@ -18,10 +18,10 @@ export const REDIS_PASSWORD = process.env.REDIS_PASSWORD
 export const REDIS_CLIENT = process.env.REDIS_CLIENT
 export const FRONT_END_URL = process.env.FRONT_END_URL
 
-export const DEFAULT_PADDLE_LENGTH = 50
+export const DEFAULT_PADDLE_LENGTH = 80
 export const DEFAULT_TABLE_PROPORTION = 2
 export const BALL_RADIUS = 7.5
 export const DEFAULT_TABLE_HEIGHT = 500
-export const DEFAULT_PADDLE_GAP = 40
+export const DEFAULT_PADDLE_GAP = 90
 export const POSTGRES_UNIQUE_VIOLATION = '23505'
 export const MAXPOINTS = 1

@@ -50,8 +50,8 @@ export class GameComponent implements AfterViewInit {
   paddleLeftY = 40;
   paddleLeftX = 40;
 
-  ballX = this.maxViewWidth/2;
-  ballY = this.maxViewHeight/2;
+  ballX = 500;
+  ballY = 250;
 
   ballRadius = 1.5;
 
