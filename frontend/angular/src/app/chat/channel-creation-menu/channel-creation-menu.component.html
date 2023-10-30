@@ -4,17 +4,15 @@
       <h1 class="title">Private Channel Setup.</h1>
       <p>This type of channel is invite-only and it's not visible for the public in the list of channels.</p>
       <label for="channel-name">Choose a channel name:</label>
-      <input type="text" id="channel-name">
-      <label for="channel-password">Choose a password for your channel:</label>
-      <input type="password" id="channel-password">
+      <input type="text" id="channel-name" [(ngModel)]="channelName">
     </div>
     <div *ngIf="channelType === ChannelCreateType.protectedChannel">
       <h1 class="title">Protected Channel Setup.</h1>
       <p>This type of channel is visible for the public in the list of channels, but only users who enter the correct password are permitted to access it.</p>
       <label for="channel-name">Choose a channel name:</label>
-      <input type="text" id="channel-name">
+      <input type="text" id="channel-name" [(ngModel)]="channelName">
       <label for="channel-password">Choose a password for your channel:</label>
-      <input type="password" id="channel-password">
+      <input type="password" id="channel-password" [(ngModel)]="channelPassword">
     </div>
     <div *ngIf="channelType === ChannelCreateType.publicChannel">
       <h1 class="title">Public Channel Setup.</h1>
@@ -23,6 +21,6 @@
       <input type="text" id="channel-name" [(ngModel)]="channelName">
     </div>
     <button class="close" (click)="toggle()">Close</button>
-    <button class="create" (click)="createPublicChannel(channelName)">Create</button>
+    <button class="create" (click)="createChannel()">Create</button>
   </div>
 </div>

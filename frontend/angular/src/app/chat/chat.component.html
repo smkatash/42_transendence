@@ -30,13 +30,11 @@
     </div>
     <div class="content-container">
       <app-channel-creation-menu [channelType]="channelToCreate"
-                                 [(isOpen)]="isChannelToCreateActive"
-                                 (publicChannelInfoEmitter)="publicChannelNameEmitted($event)">
+                                 [(isOpen)]="isChannelToCreateActive">
       </app-channel-creation-menu>
 
-      <app-channel-messages-content *ngIf="selectedChannel">
-                                    <!-- [channelId]="selectedChannel.id"> -->
-                                    [channel]="selectedChannel">
+      <app-channel-messages-content *ngIf="selectedChannel"
+                                    [channelID]="selectedChannel.id">
       </app-channel-messages-content>
 
       <app-default-content *ngIf="selectedChannel === undefined"></app-default-content>

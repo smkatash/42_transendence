@@ -29,6 +29,7 @@ export class ChatComponent implements OnInit {
 
   onChannelSelect(channel: Channel) {
     this.selectedChannel = channel
+    this.chatService.requestChannelMessages(channel.id)
   }
 
   createNewChannel(channelType: ChannelCreateType) {
@@ -36,15 +37,15 @@ export class ChatComponent implements OnInit {
     this.isChannelToCreateActive = true
   }
 
-  publicChannelNameEmitted(channelName: string) {
-    this.chatService.createPublicChannel(channelName)
-  }
-
   selectTab(tab: string) {
     if (tab === 'my-chats') {
       this.selectedTab= 'my-chats'
+      this.selectedChannel = undefined
+      this.chatService.requestUsersChannels()
     } else {
       this.selectedTab= 'all-chats'
+      this.selectedChannel = undefined
+      this.chatService.requestChannels()
     }
   }
 
