@@ -301,16 +301,21 @@ export class UserController {
     }
 
 
-	//TODO dto fuer Frau Taschbaeva
-	@Get('find-by-username/:username')
+	@Get('find-by-username')
 	@UseGuards(SessionGuard)
 	async getAllByUsername(
 		@GetUser() user: User,
 		@Query('username') username: string)	{
 		if (user?.id)   {
-			return await this.userService.findAllByUsername(username);
+			const u = await this.userService.getUserWith(user.id, [
+				'blockedUsers'
+			]);
+			const users: User[] = await this.userService.findAllByUsername(username);
+			return users.filter((us) => !us.blockedUsers.some((uu) => uu.id === u.id))
+				.filter((us) => !u.blockedUsers.some((uu) => uu.id === us.id))
 		}   else	{
 			throw new UnauthorizedException('Access denied')
 		}
-	}
+	}	
+
 }
