@@ -13,7 +13,8 @@
           <div *ngFor="let channel of myChannels$ | async">
             <app-sidebar-channel [isSelected]="channel === selectedChannel"
                                  [channel]="channel"
-                                 (click)="onChannelSelect(channel)"></app-sidebar-channel>
+                                 (click)="onChannelSelect(channel)">
+            </app-sidebar-channel>
           </div>
         </div>
 
@@ -21,7 +22,8 @@
           <div *ngFor="let channel of allChannels$ | async">
             <app-sidebar-channel [isSelected]="channel === selectedChannel"
                                  [channel]="channel"
-                                 (click)="onChannelSelect(channel)"></app-sidebar-channel>
+                                 (click)="onChannelSelect(channel)">
+            </app-sidebar-channel>
           </div>
         </div>
 

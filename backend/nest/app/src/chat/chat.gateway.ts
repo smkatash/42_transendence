@@ -13,10 +13,10 @@ import { JoinedChannel } from './entities/joinedChannel.entity';
 import { MuteService } from './service/mute.service';
 import { Channel } from './entities/channel.entity';
 import { Message } from './entities/message.entity';
-import { ADD_ADMIN, BAN, BLOCK, CHANNEL, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DELETE, DIRECT, ERROR, INVITE_TO_PRIVATE, JOIN, KICK, LEAVE, MESSAGE, MUTE, PASSWORD, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, USER_CHANNELS } from './subscriptions-events';
+import { ADD_ADMIN, BAN, BLOCK, CHANNEL, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DELETE, DIRECT, ERROR, INVITE_TO_PRIVATE, JOIN, KICK, LEAVE, MESSAGE, MUTE, PASSWORD, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, USER_CHANNELS } from './subscriptions-events-constants';
 
 
-@UsePipes(new ValidationPipe({whitelist: true}))
+// @UsePipes(new ValidationPipe({whitelist: true}))
 @WebSocketGateway({
   namespace: 'chat',
   cors: '*'
@@ -239,6 +239,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     console.log(messages);
     messages.sort((m1, m2) => m1.createdAt.getTime() - m2.createdAt.getTime());
+
     const msgsToFe = messages.map((m) =>  {
       if (user.id === m.user.id)  {
         m['sessionUser'] = true
@@ -295,6 +296,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         } else  {
           newMsg['sessionUser'] = false
         }
+        console.log('sessionUser should be there', newMsg);
         this.server.to(user.socketId).emit(MESSAGE, newMsg)
         console.log(`emitting to ${user.user.username}`)
       }

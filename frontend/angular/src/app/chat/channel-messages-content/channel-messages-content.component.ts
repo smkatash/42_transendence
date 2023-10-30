@@ -1,44 +1,60 @@
-import { Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { ChatService } from '../chat.service';
 import { Message } from 'src/app/entities.interface';
-import { Observable } from 'rxjs';
+import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-channel-messages-content',
   templateUrl: './channel-messages-content.component.html',
   styleUrls: ['./channel-messages-content.component.css']
 })
-export class ChannelMessagesContentComponent {
+export class ChannelMessagesContentComponent implements OnInit {
 
   constructor(private chatService: ChatService){}
+
 
   @ViewChild('messageContainer') messageContainer!: ElementRef;
 
   @Input() channelID?: number;
-  messages$: Observable<Message[]> = this.chatService.getChannelMessages();
-  message?: string;
+  fetchedMessages: Message[] = []
+  incomingMessages: Message[] = []
+  messageToSend?: string;
   loading: boolean = false;
   isSettingsOpen: boolean = false;
 
+  ngOnInit(): void {
+    this.chatService.getChannelMessages()
+      .subscribe(messages => this.fetchedMessages = messages)
+
+    this.chatService.getIncomingMessages()
+      .subscribe(message => this.incomingMessages.push(message))
+  }
+
+  // ngOnChanges(changes: SimpleChanges): void {
+  //   if (changes['channelID']) {
+
+  //   }
+  // }
+
   sendMessage(): void {
 
-    if (this.message === undefined || this.channelID === undefined) return
+    if (this.messageToSend === undefined || this.channelID === undefined) return
 
-    this.message = this.message.trim();
+    this.messageToSend = this.messageToSend.trim();
 
-    if (!this.message) return;
+    if (!this.messageToSend) return;
 
-    this.chatService.sendMessage(this.channelID, this.message)
+    this.chatService.sendMessage(this.channelID, this.messageToSend)
 
     this.scrollToBottom();
-    this.message = '';
+    this.messageToSend = '';
   }
 
-    scrollToBottom() {
-      this.messageContainer.nativeElement.scrollTop = this.messageContainer.nativeElement.scrollHeight;
-    }
-
-    openSettings(): void {
-      this.isSettingsOpen = true;
-    }
+  scrollToBottom() {
+    this.messageContainer.nativeElement.scrollTop = this.messageContainer.nativeElement.scrollHeight;
   }
+
+  openSettings(): void {
+    this.isSettingsOpen = true;
+  }
+}

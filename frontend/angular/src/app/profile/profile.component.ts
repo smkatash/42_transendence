@@ -17,7 +17,6 @@ enum ProfileType {
 })
 export class ProfileComponent implements OnInit {
 
-
   constructor(
     private profileService: ProfileService,
     private route: ActivatedRoute,
