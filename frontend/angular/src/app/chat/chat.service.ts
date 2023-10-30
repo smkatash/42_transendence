@@ -79,4 +79,8 @@ export class ChatService {
   getChannelMessages(): Observable<Message[]> {
     return this.socket.fromEvent<Message[]>('channelMessages')
   }
+
+  getIncomingMessages(): Observable<Message> {
+    return this.socket.fromEvent<Message>('incMsg')
+  }
 }

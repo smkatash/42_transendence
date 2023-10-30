@@ -60,16 +60,12 @@ export interface Stats {
 // }
 
 export interface Message {
-  name?: string
-  messageContent?: string
-  timestamp?: number
-  sessionUser?: boolean
-  id?: number;
-  content: string;
-  user?: User;
-  channel?: Channel;
-  createdAt?: Date
-  channelId: number
+  id: number
+  user: User
+  content: string
+  channel: Channel
+  createdAt: Date
+  sessionUser: boolean
 }
 
 export interface Match {
