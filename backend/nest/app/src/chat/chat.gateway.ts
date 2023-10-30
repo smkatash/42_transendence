@@ -1,4 +1,4 @@
-import { BadRequestException, HttpStatus, Logger, OnModuleInit, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Logger, OnModuleInit, UnauthorizedException, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { ChannelService } from './service/channel.service';
@@ -13,9 +13,9 @@ import { JoinedChannel } from './entities/joinedChannel.entity';
 import { MuteService } from './service/mute.service';
 import { Channel } from './entities/channel.entity';
 import { Message } from './entities/message.entity';
-import { Cipher } from 'crypto';
 
 
+@UsePipes(new ValidationPipe({whitelist: true}))
 @WebSocketGateway({
   namespace: 'chat',
   cors: '*'
@@ -55,7 +55,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }  else  {
       socket.data.user = user;
       try {
-        console.log(await this.chatUserService.create(user, socket.id));
+        /*console.log*/(await this.chatUserService.create(user, socket.id));
         /*
           to connect to private messages initilaized while user offline,
           damit privat messaging history exists
@@ -63,7 +63,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         const u = await this.userService.getUserWith(user.id, [
           'channels'
         ]);
-        console.log(u)
+        // console.log(u)
         if (u.channels) {
           for (const channel of u.channels) {
             const jC = await this.joinedChannelService.findByChannelUser(channel, u);
