@@ -27,6 +27,7 @@ export class ChannelService {
             channel.users = [];
             channel.admins = [];
             channel.banned = [];
+            channel.type = channelInfo.type;
             if (channel.private)    {
                 channel.invitedUsers = [];
             }
@@ -59,13 +60,31 @@ export class ChannelService {
     }
 
     async getUsersChannels(userId: string): Promise<Channel[]>  {
-        const channels = await this.channelRepository
-        .createQueryBuilder('channel')
-        .leftJoin('channel.users', 'user')
-        // .leftJoinAndSelect('channel.users', 'user')
-        .where('user.id = :userId', {userId})
-        .getMany();
-        return channels;
+        // const channels = await this.channelRepository
+        // .createQueryBuilder('channel')
+        // .leftJoin('channel.users', 'user')
+//        // .leftJoinAndSelect('channel.users', 'user')
+        // .where('user.id = :userId', {userId})
+        // .getMany();
+        // return channels;
+        // return await this.channelRepository.find({
+        //     where: {
+        //         users: {
+        //            id: userId 
+        //         }
+        //     },
+        //     relations: [
+        //         'users'
+        //     ]
+        // })
+        const channels = (await this.channelRepository.find({
+            relations: [
+                'users'
+            ]
+        }))
+        return channels.filter((c) => c.users.some((user) => user.id === userId));
+         
+
     }
 
     async getAllChannels(): Promise<Channel[]>  {
@@ -164,6 +183,7 @@ console.log('--------join channels users------')
     async   createPrivate(u1: User, u2: User): Promise<Channel> {
         const room  = this.channelRepository.create({
             private: true,
+            type: 'direct'
             // owner: null
         });
         room.users = [u1, u2];

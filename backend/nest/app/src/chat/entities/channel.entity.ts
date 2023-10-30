@@ -60,5 +60,6 @@ export class Channel    {
     @JoinTable()
     banned: User[]
 
-
+    @Column({default: 'public', nullable: true})
+    type: 'private' | 'protected' | 'public' | 'direct';
 }

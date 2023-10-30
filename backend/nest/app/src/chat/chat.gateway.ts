@@ -1,4 +1,4 @@
-import { BadRequestException, HttpStatus, Logger, OnModuleInit, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Logger, OnModuleInit, UnauthorizedException, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { ChannelService } from './service/channel.service';
@@ -13,9 +13,11 @@ import { JoinedChannel } from './entities/joinedChannel.entity';
 import { MuteService } from './service/mute.service';
 import { Channel } from './entities/channel.entity';
 import { Message } from './entities/message.entity';
-import { Cipher } from 'crypto';
+import { ADD_ADMIN, BAN, BLOCK, CHANNEL, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DELETE, DIRECT, ERROR, INVITE_TO_PRIVATE, JOIN, KICK, LEAVE, MESSAGE, MUTE, PASSWORD, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, USER_CHANNELS } from './subscribtions-events';
+import { measureMemory } from 'vm';
 
 
+@UsePipes(new ValidationPipe({whitelist: true}))
 @WebSocketGateway({
   namespace: 'chat',
   cors: '*'
@@ -55,7 +57,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }  else  {
       socket.data.user = user;
       try {
-        console.log(await this.chatUserService.create(user, socket.id));
+        /*console.log*/(await this.chatUserService.create(user, socket.id));
         /*
           to connect to private messages initilaized while user offline,
           damit privat messaging history exists
@@ -63,7 +65,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         const u = await this.userService.getUserWith(user.id, [
           'channels'
         ]);
-        console.log(u)
+        // console.log(u)
         if (u.channels) {
           for (const channel of u.channels) {
             const jC = await this.joinedChannelService.findByChannelUser(channel, u);
@@ -102,8 +104,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     socket.disconnect();
   }
 
-  //TODO validation pipe?
-  @SubscribeMessage('createChannel')
+  @SubscribeMessage(CREATE)
   async onCreateChannel(@ConnectedSocket() socket: Socket,
     @MessageBody() channelInfo: CreateChannelDto) {
 
@@ -118,14 +119,26 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       await this.joinedChannelService.create(user, socket.id, channel);
       this.onGetUsersChannels(socket);
       this.server.to(socket.id).emit('success', `Created ${channelInfo.name}`)
+      this.newPublic();
     } catch  (error)  {
         Logger.error(error);
         this.server.to(socket.id).emit('error', error)
         return ;
     }
   }
+
+  private async newPublic() {
+
+    const publicChannels: ChannelToFeDto[] = (await this.channelService.getAllChannels())
+          .filter((c) => !c.private)
+          .map((c) => this.channelToFe(c));
+    const onlineUsers = await this.chatUserService.getAll();
+    for (const onlineUser of onlineUsers) {
+      this.server.to(onlineUser.socketId).emit(CHANNELS, publicChannels)
+    }
+  }
   
-  @SubscribeMessage('join')
+  @SubscribeMessage(JOIN)
   async onJoin(@ConnectedSocket() socket: Socket,
     @MessageBody() joinInfo: JoinChannelDto) {
 
@@ -155,7 +168,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
   }
 
-  @SubscribeMessage('leave')
+  @SubscribeMessage(LEAVE)
   async onLeave(@ConnectedSocket() socket: Socket,
     @MessageBody() channelInfo: cIdDto) {
 
@@ -203,7 +216,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   // }
 
-  @SubscribeMessage('getChannelMessages')
+  @SubscribeMessage(CHANNEL_MESSAGES)
   async onGetChannelMessages(@ConnectedSocket() socket: Socket,
     @MessageBody() channelInfo: cIdDto)  {
 
@@ -213,7 +226,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     const channel = await this.channelService.getChannel(channelInfo.cId, []);
     if (!channel) {
-      return this.emitError(socket, 'no such channel')
+      return this.emitError(socket, 'No such channel')
     }
     // const messages = await this.messageService.findMessagesByChannel(channel);
     const u = await this.userService.getUserWith(user.id, [
@@ -226,10 +239,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       messages = messages.filter((msg: Message) => msg.user.id !== blockedUser.id);
     }
     console.log(messages);
-    this.server.to(socket.id).emit('channelMessages', messages);
+    messages.sort((m1, m2) => m1.createdAt.getTime() - m2.createdAt.getTime());
+    const msgsToFe = messages.map((m) =>  {
+      if (user.id === m.user.id)  {
+        m['sessionUser'] = true
+      } else  {
+        m['sessionUser'] = false
+      }
+    })
+    this.server.to(socket.id).emit(CHANNEL_MESSAGES, msgsToFe);
   }
 
-  @SubscribeMessage('newMsg')
+  @SubscribeMessage(MESSAGE)
   async onMessage(socket: Socket, message: CreateMessageDto) {
 
     const user = socket.data.user;
@@ -242,10 +263,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         console.log('no channel')
         return this.emitError(socket, "No such channel")
       }
-    // const user = await this.userService.findUserById(socket.data.user['id'])
-    // if (!user)  {
-    //   //bla bla
-    // }
       console.log('----message-----')
       console.log(message)
       const isMuted = await this.muteService.getMute(user.id, channel.id);
@@ -273,7 +290,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           console.log(`skipping ${user.user.username}`)
           continue ;
         }
-        this.server.to(user.socketId).emit('incMsg', newMsg)
+        if (u.id === newMsg.user.id)  {
+          newMsg['sessionUser'] = true
+        } else  {
+          newMsg['sessionUser'] = false
+        }
+        this.server.to(user.socketId).emit(MESSAGE, newMsg)
         console.log(`emitting to ${user.user.username}`)
       }
     } catch (error) {
@@ -282,7 +304,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
   }
 
-  @SubscribeMessage('getAllChannels')
+  @SubscribeMessage(CHANNELS)
   async onGetAllChannels(@ConnectedSocket() socket: Socket) {
     
     const user = socket.data.user;
@@ -293,7 +315,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     try {
       const channels = await  this.channelService.getAllChannels();
       //Removing password and dates and stuff
-      const cToFe = channels.filter((c) => !(c.private)).map((c) => this.channelToFe(c));
+      const cToFe = channels.filter((c) => !(c.private)).map((c) => this.channelToFe(c))
+        .sort((c1, c2) => c1.updatedAt.getDate() - c2.updatedAt.getDate())
       this.server.to(socket.id).emit('allChannels', cToFe);
       // this.server.to(socket.id).emit('allChannels', channels);
     } catch (error) {
@@ -302,7 +325,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
   }
 
-  @SubscribeMessage('getUsersChannels')
+  @SubscribeMessage(USER_CHANNELS)
   async onGetUsersChannels(@ConnectedSocket() socket: Socket) {
 
     const user = socket.data.user;
@@ -312,10 +335,25 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       // console.log('get user\'s channesl')
       try{
         const channels = await this.channelService.getUsersChannels(user.id)
-        console.log(channels);
       //Removing password and dates and stuff
-        const cToFe = channels.map((c) => this.channelToFe(c));
-        this.server.to(socket.id).emit('usersChannels', cToFe);
+        const cToFe = channels
+          .sort((c1, c2) => c2.updatedAt.getTime() - c1.updatedAt.getTime())
+          .map((c) => this.channelToFe(c))
+          .map((c) => {
+            if (c.name) {
+              return c
+            } else  {
+              for (const u of c.users)  {
+                if (u.id !== user.id) {
+                  c.name = u.username;
+                  c.avatar = u.avatar
+                }
+              }
+              return c
+            }
+          }
+        );
+        this.server.to(socket.id).emit(USER_CHANNELS, cToFe);
         // this.server.to(socket.id).emit('usersChannels', channels);
       } catch (error) {
         console.log(error);
@@ -324,7 +362,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
 
   //TODO ok this is big, still needs doubletriplecheck
-  @SubscribeMessage('delete') 
+  @SubscribeMessage(DELETE) 
   async onDelete(@ConnectedSocket() socket: Socket,
     @MessageBody() cId: cIdDto)  {
 
@@ -399,32 +437,25 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         await this.userService.saveUser(user);
       }
             //TODO we'll see some emtiting here, not sure if needed
+      
+      //DAMN thats not nice
+      //Updating channel lists for FE
       const chatUsers = await this.chatUserService.getAll();
       const cToFe = ((await this.channelService.getAllChannels()))
-            .map((c) => this.channelToFe(c));
+            .map((c) => this.channelToFe(c))
+            .filter((c) => !c.private);
       for (const chatUser of chatUsers) {
-        this.server.to(chatUser.socketId).emit('allChannels', cToFe);
+        this.server.to(chatUser.socketId).emit(CHANNELS, cToFe);
         if (channel.users.some((u) => chatUser.user.id === u.id)) {
           const cToFe = (await this.channelService.getUsersChannels(chatUser.user.id))
                 .map((c) => this.channelToFe(c));
-          this.server.to(chatUser.socketId).emit('usersChannels')
+          this.server.to(chatUser.socketId).emit(USER_CHANNELS, cToFe);
         }
       }
-            // this.onGetUsersChannels(socket);
-            // ooo i meant to emmit new channekls here
-          // }
-        // }
-        /**
-         * 
-        for (const banned of )
-        invited bannedd
-         */
       await this.muteService.deleteMutesByChannel(channel.id);
       await this.joinedChannelService.deleteByChannel(channel);
       await this.messageService.deleteByChannel(channel);
       await this.channelService.delete(channel.id);
-        //emit users channels
-        // this.getUsersChannels(socket)
     } catch (error) {
       Logger.error('fail on delete channel')
       console.log(error)
@@ -433,14 +464,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
 
   private emitError(socket: Socket, error: any) {
-    this.server.to(socket.id).emit('error', error)
+    this.server.to(socket.id).emit(ERROR, error)
   }
 
   private success(socket: Socket ) {
-    this.server.to(socket.id).emit('success', HttpStatus.OK)
+    this.server.to(socket.id).emit(SUCCESS, HttpStatus.OK)
   }
 
-  @SubscribeMessage('kick')
+  @SubscribeMessage(KICK)
   async onKick(@ConnectedSocket() socket: Socket,
     @MessageBody() info: UpdateChannelDto)   {
     
@@ -449,7 +480,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         return this.noAccess(socket);
     } 
     try {
-      const channel = await this.channelService.getChannel(Number(info.cId), [
+      const channel = await this.channelService.getChannel(info.cId, [
         'owner', 'admins', 'users', 'joinedUsers'
       ]);
       const u = await this.userService.getUserWith(info.uId, [
@@ -475,15 +506,20 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       await this.joinedChannelService.deleteByUserChannel(u, channel);
       await this.userService.saveUser(u);
       await this.channelService.saveChannel(channel);
-      //TODO here
-      // console.log(await this.joinedChannelService.deleteByUserChannel(u, channel));
-      this.server.to(socket.id).emit('channel', channel);
+      this.server.to(socket.id).emit(CHANNEL, this,this.channelToFe(channel));
+      //Update kicked user's channels?
+      const kicked = await this.chatUserService.findByUser(u);
+      if (kicked) {
+        const channels = (await this.channelService.getUsersChannels(u.id))
+          .map((c) => this.channelToFe(c));
+        this.server.to(kicked.socketId).emit(USER_CHANNELS, channels)
+      }
     } catch (error) {
       this.emitError(socket, error);
     }
   }
 
-  @SubscribeMessage('ban')
+  @SubscribeMessage(BAN)
   async onBan(@ConnectedSocket() socket: Socket,
     @MessageBody() info: UpdateChannelDto)   {
     
@@ -524,13 +560,19 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       // console.log(await this.channelService.saveChannel(channel));
       //TODO here
       console.log(await this.joinedChannelService.deleteByUserChannel(u, channel));
-      this.server.to(socket.id).emit('channel', channel);
+      this.server.to(socket.id).emit(CHANNEL, this.channelToFe(channel));
+      const banned = await this.chatUserService.findByUser(u);
+      if (banned) {
+        const channels = (await this.channelService.getUsersChannels(u.id))
+          .map((c) => this.channelToFe(c));
+        this.server.to(banned.socketId).emit(USER_CHANNELS, channels)
+      }
     } catch (error) {
       this.emitError(socket, error);
     }
   }
 
-  @SubscribeMessage('unban')
+  @SubscribeMessage(UNBAN)
   async onUnban(@ConnectedSocket() socket: Socket,
     @MessageBody() info: UpdateChannelDto)   {
     
@@ -559,13 +601,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       u.bannedAt = u.bannedAt.filter((c) => c.id !== info.cId)
       await this.userService.saveUser(u);
       await this.channelService.saveChannel(channel);
-      this.server.to(socket.id).emit('channel', channel);
+      this.server.to(socket.id).emit(CHANNEL, this.channelToFe(channel));
     } catch (error) {
       this.emitError(socket, error);
     }
   }
 
-  @SubscribeMessage('mute')
+  @SubscribeMessage(MUTE)
   async onMute(@ConnectedSocket() socket: Socket,
     @MessageBody() info: UpdateChannelDto)   {
     
@@ -605,7 +647,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
   }
 
-  @SubscribeMessage('addAdmin')
+  @SubscribeMessage(ADD_ADMIN)
   async onAddAdmin(@ConnectedSocket() socket: Socket,
     @MessageBody() info: UpdateChannelDto)   {
 
@@ -637,14 +679,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       console.log(channel)
       // u = await this.userService.getUserWith(u.id, ['adminAt']);
       console.log(u)
-      this.server.to(socket.id).emit('channel', this.channelToFe(channel));
+      this.server.to(socket.id).emit(CHANNEL, this.channelToFe(channel));
       this.success(socket);
     } catch (error) {
         console.log('catch error', error)
         return this.emitError(socket, error)
     }
   }
-  @SubscribeMessage('delAdmin')
+  @SubscribeMessage(REM_ADMIN)
   async onDelAdmin(@ConnectedSocket() socket: Socket,
     @MessageBody() info: UpdateChannelDto)   {
 
@@ -670,16 +712,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       u.adminAt = u.adminAt.filter((c) => c.id !== channel.id);
       await this.userService.saveUser(u);
       await this.channelService.saveChannel(channel);
-      this.server.to(socket.id).emit('channel', channel);
+      this.server.to(socket.id).emit(CHANNEL, this.channelToFe(channel));
     } catch (error) {
       this.emitError(socket, error);
     }
   }
+  //TODO 
   async inviteToGame(user: User, userId: number, channelId: number)   {
      
   }
 
-  @SubscribeMessage('inviteToPriv')
+  @SubscribeMessage(INVITE_TO_PRIVATE)
   async onInviteToPriv(@ConnectedSocket() socket: Socket,
     @MessageBody() info: UpdateChannelDto)   {
 
@@ -709,6 +752,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       await this.channelService.saveChannel(channel);
       this.success(socket);
       const chatUser = await this.chatUserService.findByUser(u);
+      //TODO logic cnages later to invite being sent through direct
       if (chatUser) {
         const invitedTo = u.invitedTo.map((c) => this.channelToFe(c));
         this.server.to(socket.id).emit('invitesToPrivs', invitedTo);
@@ -718,7 +762,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       this.emitError(socket, error);
     }
   }
-  @SubscribeMessage('declineToPriv')
+  @SubscribeMessage(DECLINE_PRIVATE_INVITE)
   async onDeclinePriv(@ConnectedSocket() socket: Socket,
     @MessageBody() info: cIdDto)   {
 
@@ -743,6 +787,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       u.invitedTo = u.invitedTo.filter((c) => c.id !== channel.id);
       await this.userService.saveUser(u);
       await this.channelService.saveChannel(channel);
+      //SAME with changing logic
       this.onGetPrivInvites(socket);
     } catch (error) {
       console.log(error);
@@ -750,6 +795,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
   }
 
+  // might not be used
   @SubscribeMessage('getPrivInvites')
   async onGetPrivInvites(@ConnectedSocket() socket: Socket) {
 
@@ -769,7 +815,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
   }
 
-  @SubscribeMessage('password')
+  @SubscribeMessage(PASSWORD)
   async onPassword(@ConnectedSocket() socket: Socket,
     @MessageBody() passInfo: ChannelPasswordDto)   {
 
@@ -790,14 +836,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       }
 
       const c = await this.channelService.passwordService(passInfo);
-      //TODO c => channelDTO 
+      //to update 'protected' property
+      this.newPublic();
       this.success(socket);
     } catch (error) {
       this.emitError(socket, error)
     }
   }
 
-  @SubscribeMessage('privMsg')
+  @SubscribeMessage(DIRECT)
   async onPriv(@ConnectedSocket() socket: Socket,
   @MessageBody() uInfo: PrivMsgDto)  {
     
@@ -833,6 +880,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       } else  {
         room = exists[0];
       }
+      //emit user channels to both
+      this.onGetUsersChannels(socket);
+      const adresant = await this.chatUserService.findByUser(u);
+      if (adresant) {
+        const hisChannels = (await this.channelService.getUsersChannels(u.id))
+          .map((c) => this.channelToFe(c));
+          this.server.to(adresant.socketId).emit(USER_CHANNELS, hisChannels)
+      }
+
       this.onMessage(socket, {cId: room.id, content: uInfo.text});
     } catch (error) {
       console.log(error);
@@ -840,7 +896,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
   }
 
-  @SubscribeMessage('block')
+  @SubscribeMessage(BLOCK)
   async onBlock(@ConnectedSocket() socket: Socket,
     @MessageBody() userInfo: uIdDto) {
 
@@ -861,7 +917,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
   }
 
-  @SubscribeMessage('unblock')
+  @SubscribeMessage(UNBLOCK)
   async onUnBlock(@ConnectedSocket() socket: Socket,
     @MessageBody() userInfo: uIdDto) {
     const user = socket.data.user;
@@ -878,7 +934,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
   }
 
-  @SubscribeMessage('getChannelUsers')
+  @SubscribeMessage(CHANNEL_USERS)
   async onGetChannelUsers(@ConnectedSocket() socket: Socket,
     @MessageBody() channelInfo: cIdDto)  {
 
@@ -893,7 +949,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       if (!channel)  {
         throw new BadRequestException("No such channel");
       }
-      this.server.to(socket.id).emit('channelUsers', channel.users)
+      this.server.to(socket.id).emit(CHANNEL_USERS, channel.users)
     } catch (error) {
       console.log(error);
       this.emitError(socket, error);
@@ -906,11 +962,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       name: channel.name,
       private: channel.private,
       users: channel.users,
-      protected: channel.protected
+      protected: channel.protected,
+      type: channel.type,
+      updatedAt: channel.updatedAt
      }
   }
 
-  @SubscribeMessage('getChannel')
+  @SubscribeMessage(CHANNEL)
   async onGetChannel(@ConnectedSocket() socket: Socket,
     @MessageBody() channelInfo: cIdDto) {
 
@@ -922,7 +980,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       const channel = await this.channelService.getChannel(channelInfo.cId, [
         'users'
       ]);
-      this.server.to(socket.id).emit('channel', this.channelToFe(channel));
+      this.server.to(socket.id).emit(CHANNEL, this.channelToFe(channel));
     } catch (error) {
       console.log(error);
       this.emitError(socket, error)
