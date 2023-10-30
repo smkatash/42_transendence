@@ -238,6 +238,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       messages = messages.filter((msg: Message) => msg.user.id !== blockedUser.id);
     }
     console.log(messages);
+    messages.sort((m1, m2) => m1.createdAt.getTime() - m2.createdAt.getTime());
     this.server.to(socket.id).emit(CHANNEL_MESSAGES, messages);
   }
 
