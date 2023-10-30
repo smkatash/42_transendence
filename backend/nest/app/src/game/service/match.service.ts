@@ -10,8 +10,8 @@ import { PlayerService } from './player.service';
 import { PlayerQueueService} from './queue.service';
 import { GameService } from './game.service';
 import { Interval } from '@nestjs/schedule';
-import { Server } from 'socket.io';
-import { INGAME } from '../utls/rooms';
+import { Server, Socket } from 'socket.io';
+import { INGAME, QUEUE, START_MATCH } from '../utls/rooms';
 import { Status } from 'src/user/utils/status.enum';
 import { DEFAULT_PADDLE_LENGTH } from 'src/Constants';
 
@@ -28,22 +28,35 @@ export class MatchService {
 				private readonly queueService: PlayerQueueService
                 ) {}
 
-	async waitInPlayerQueue(player: Player, mode: GameMode): Promise<Match | null> {
+	async waitInPlayerQueue(player: Player, client: Socket, mode: GameMode): Promise<void> {
 		const matchId = this.queueService.isEnqueuedInMatch(player.id)
 		if (matchId) {
+			client.leave(QUEUE)
 			const match = await this.getMatchById(matchId)
-			return match
+			client.emit(START_MATCH, match)
+			client.join(match.id)
 		} else {
 			if (!this.queueService.isInQueue(player.id, mode)) {
-				this.queueService.enqueue(player.id, mode)
+				this.queueService.enqueue(player.id, client, mode)
 			}
 		}
 		if (this.queueService.isQueueReady(mode)) {
-			const pair =  this.queueService.dequeue(mode)
-			const newMatch = await this.makeAmatch(player.id, pair)
-			return newMatch
+			const pair: Array<Map<string, Socket>> =  this.queueService.dequeue(mode)
+			const players: string[] = []
+			pair.forEach( pp => {
+				for (let [key, value] of pp) {
+					players.push(key)
+				}
+			})
+			const newMatch = await this.makeAmatch(player.id, players)
+			pair.forEach( pp => {
+				for (let [key, value] of pp) {
+					value.leave(QUEUE)
+					value.emit(START_MATCH,newMatch)
+					value.join(newMatch.id)
+				}
+			})
 		}
-		return null
     }
 
 	leaveAllQueues(playerId: string) {

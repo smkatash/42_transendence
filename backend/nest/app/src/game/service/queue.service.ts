@@ -1,49 +1,84 @@
 import { Injectable } from "@nestjs/common";
 import { GameMode } from "../utls/game";
+import { Socket } from "socket.io";
 
 @Injectable()
 export class PlayerQueueService {
 	private MIN_NUMBER = 2
-	private queues: Record<GameMode, string[]> = {
-		[GameMode.EASY]: [],
-		[GameMode.MEDIUM]: [],
-		[GameMode.HARD]: [],
-	}
 	private playersMatchQueue: Record<string, string[]> = {}
+	private queues: Map<GameMode, Array<Map<string, Socket>>>
 
-	enqueue(playerId: string, mode: GameMode): void {
-	  if (!this.queues[mode]) {
-		this.queues[mode] = [];
-	  }
-	  this.queues[mode].push(playerId);
+	constructor() {
+		this.queues = new Map()
 	}
 
-	dequeue(mode: GameMode): string[] {
-		let selectedIds = []
-		const playersId = this.queues[mode]
-		if (playersId.length < this.MIN_NUMBER) {
-		  return selectedIds
+	enqueue(playerId: string, client: Socket, mode: GameMode): void {
+		if (!this.queues.has(mode)) {
+			this.queues.set(mode,[])
 		}
-	
-		const shuffledIds = playersId.slice().sort(() => Math.random() - 0.5)
-		selectedIds = shuffledIds.slice(0, this.MIN_NUMBER);
-		this.queues[mode] = this.queues[mode].filter((id) => !selectedIds.includes(id));
-	
+
+		const playerSocketMap = new Map<string, Socket>()
+  		playerSocketMap.set(playerId, client);
+		this.queues.get(mode).push(playerSocketMap);
+	}
+
+	dequeue(mode: GameMode): Array<Map<string, Socket>> {
+		const playersInQueue: Array<Map<string, Socket>> = this.queues.get(mode)
+		if (!playersInQueue || playersInQueue.length < 2) {
+			return [];
+		}
+
+		if (playersInQueue.length === 2) {
+			this.queues.set(mode, [])
+			return playersInQueue
+		}
+
+		const selectedIds: Array<Map<string, Socket>> = [];
+		const selectedPlayerIds = new Set<string>();
+
+		for (let i = 0; i < this.MIN_NUMBER && i < playersInQueue.length; i++) {
+			const randomIndex = Math.floor(Math.random() * playersInQueue.length);
+			const selectedMap = playersInQueue[randomIndex];
+
+			for (const playerId of selectedMap.keys()) {
+				if (!selectedPlayerIds.has(playerId)) {
+					selectedPlayerIds.add(playerId);
+					selectedIds.push(selectedMap);
+				}
+			}
+
+			playersInQueue.splice(randomIndex, 1);
+		}
+
+		this.queues.set(mode, playersInQueue);
 		return selectedIds;
 	}
 
 	dequeuePlayer(playerId: string) {
-		this.queues[GameMode.EASY] = this.queues[GameMode.EASY].filter(id => id !== playerId)
-		this.queues[GameMode.MEDIUM] = this.queues[GameMode.MEDIUM].filter(id => id !== playerId)
-		this.queues[GameMode.HARD] = this.queues[GameMode.HARD].filter(id => id !== playerId)
+		const easyQueue = this.queues.get(GameMode.EASY);
+		this.queues.set(GameMode.EASY, this.removePlayerFromQueue(easyQueue, playerId));
+
+		const mediumQueue = this.queues.get(GameMode.MEDIUM);
+		this.queues.set(GameMode.MEDIUM, this.removePlayerFromQueue(mediumQueue, playerId));
+
+		const hardQueue = this.queues.get(GameMode.HARD);
+		this.queues.set(GameMode.HARD, this.removePlayerFromQueue(hardQueue, playerId));
+	}
+
+	private removePlayerFromQueue(queue: Array<Map<string, Socket>>, playerId: string): Array<Map<string, Socket>> {
+		return queue.filter(playerMap => !playerMap.has(playerId));
 	}
 
 	isQueueReady(mode: GameMode): boolean {
-		return this.queues[mode].length >= this.MIN_NUMBER
+		return this.queues.get(mode).length >= this.MIN_NUMBER
 	}
 
-	isInQueue(playerId: string, mode: GameMode) {
-		return this.queues[mode].includes(playerId)
+	isInQueue(playerId: string, mode: GameMode): boolean {
+		const playersInQueue = this.queues.get(mode)
+		if (!playersInQueue) {
+			return false;
+		}
+		return playersInQueue.some(playerMap => playerMap.has(playerId));
 	}
 
 	enqueueMatch(matchId: string, playersId: string[]) {
