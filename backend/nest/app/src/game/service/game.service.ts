@@ -7,6 +7,10 @@ import { Match } from '../entities/match.entity';
 export class GameService {
     private options: Readonly<GameOptions>
     private increment: number
+    private hookeyMode: boolean = false;
+
+
+    private maxBounceAngle: number = 80;
     
     constructor() {}
 
@@ -100,8 +104,8 @@ export class GameService {
         const dir: Position = this.calculateVector() 
         const ball: Ball = {
             position: {
-                x: this.options.table.height / DEFAULT_TABLE_PROPORTION,
-                y: this.options.table.width / DEFAULT_TABLE_PROPORTION,
+                x: this.options.table.width / DEFAULT_TABLE_PROPORTION,
+                y: this.options.table.height / DEFAULT_TABLE_PROPORTION,
             },
             velocity: {
                 x: dir.x,
@@ -131,6 +135,20 @@ export class GameService {
         return paddle
     }
 
+    calculatePaddleBounce(game:Game, paddle:Paddle, ball:Ball) {
+        let relativeIntersect = paddle.position.y + paddle.length/2 - ball.position.y
+        let relativeIntersectNormalized = relativeIntersect/ (paddle.length/2);
+        let maximumBounceAngle : number;
+        let bounceAngle : number;
+        if( this.increment === 2){
+            maximumBounceAngle = 60;
+        } else { maximumBounceAngle = 80;}
+            bounceAngle = relativeIntersectNormalized * maximumBounceAngle ;
+        game.ball.velocity.x = ball.velocity.x * Math.cos(bounceAngle) + 1;
+        game.ball.velocity.y = ball.velocity.y * Math.cos(bounceAngle);
+        return game;
+    }
+
     throwBall(game: Game): Game {
         game.ball.position.x += game.ball.velocity.x
         game.ball.position.y += game.ball.velocity.y
@@ -143,24 +161,28 @@ export class GameService {
             game.ball.position.y = 0.6 + BALL_RADIUS
             return game
         }
-
-        if (game.ball.position.x <= this.options.paddleDistance + BALL_RADIUS) {
-            if (game.ball.position.y < (game.leftPaddle.position.y + (game.leftPaddle.length)) &&
-                    game.ball.position.y > (game.leftPaddle.position.y)) {
+        if(this.hookeyMode === false){
+            if (game.ball.position.x <= this.options.paddleDistance + BALL_RADIUS) {
+                if (game.ball.position.y < (game.leftPaddle.position.y + (game.leftPaddle.length)) &&
+                        game.ball.position.y > (game.leftPaddle.position.y)) {
                     game.ball.velocity.x *= -1
+                    game = this.calculatePaddleBounce(game, game.leftPaddle, game.ball);
                     game.ball.position.x = this.options.paddleDistance + 0.5 + BALL_RADIUS
                     return game
-            }
-            return this.resetGame(game, Paddletype.RIGHT)
-        } else if (game.ball.position.x > this.options.table.width - this.options.paddleDistance) {
-            if (game.ball.position.y < (game.rightPaddle.position.y + (game.rightPaddle.length)) &&
-                    game.ball.position.y > (game.rightPaddle.position.y)) {
+                }
+                return this.resetGame(game, Paddletype.RIGHT)
+            } else if (game.ball.position.x > this.options.table.width - this.options.paddleDistance) {
+                if (game.ball.position.y < (game.rightPaddle.position.y + (game.rightPaddle.length)) &&
+                        game.ball.position.y > (game.rightPaddle.position.y)) {
                     game.ball.velocity.x *= -1
+                    game = this.calculatePaddleBounce(game, game.leftPaddle, game.ball);
                     game.ball.position.x = this.options.table.width - this.options.paddleDistance - 0.5
                     return game
+                }
+                return this.resetGame(game, Paddletype.LEFT)
             }
-            return this.resetGame(game, Paddletype.LEFT)
         }
+
         return game
     }
 }
