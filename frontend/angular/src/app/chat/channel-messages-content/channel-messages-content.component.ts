@@ -1,6 +1,7 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { ChatService } from '../chat.service';
 import { Message } from 'src/app/entities.interface';
+import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-channel-messages-content',

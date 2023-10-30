@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, from } from 'rxjs';
 import { Channel, CreateChannelInfo, JoinChannelInfo, Message, User } from '../entities.interface';
 import { ChatSocket } from '../app.module';
+import { CHANNELS, CHANNEL_MESSAGES, CREATE, ERROR, JOIN, LEAVE, MESSAGE, SUCCESS, USER_CHANNELS } from './subscriptions-events-constants'
 
 @Injectable({
   providedIn: 'root'
@@ -23,64 +24,60 @@ export class ChatService {
   /* <---------- Socket emits ----------> */
 
   requestChannels() {
-    this.socket.emit('getAllChannels');
+    this.socket.emit(CHANNELS)
   }
 
   requestUsersChannels() {
-    this.socket.emit('getUsersChannels')
+    this.socket.emit(USER_CHANNELS)
   }
 
   createChannel(channelInfo: CreateChannelInfo) {
-    this.socket.emit('createChannel', channelInfo)
+    this.socket.emit(CREATE, channelInfo)
   }
 
   joinChannel(joinInfo:  JoinChannelInfo) {
-    this.socket.emit('join', joinInfo);
+    this.socket.emit(JOIN, joinInfo)
   }
 
   leaveChannel(joinInfo: JoinChannelInfo)  {
-    this.socket.emit('leave', joinInfo)
+    this.socket.emit(LEAVE, joinInfo)
   }
 
   sendMessage(channelID: number, message: string) {
-    this.socket.emit('newMsg', { cId: channelID, content: message });
+    this.socket.emit(MESSAGE, { cId: channelID, content: message })
   }
 
   requestChannelMessages(channelID: number) {
-    this.socket.emit('getChannelMessages', { cId: channelID });
+    this.socket.emit(CHANNEL_MESSAGES, { cId: channelID })
   }
 
   /* <---------- Events to listen to ----------> */
 
   onError() {
-    this.socket.on('error', (error: any) => {
+    this.socket.on(ERROR, (error: any) => {
       console.error('WebSocket Error:', error);
     });
   }
 
   onSuccess() {
-    this.socket.on('success', (msg: any) => {
+    this.socket.on(SUCCESS, (msg: any) => {
       console.log(msg)
     })
   }
 
-  getMessage(): Observable<Message> {
-    return this.socket.fromEvent<Message>('incMsg')
-  }
-
   getUsersChannels(): Observable<Channel[]> {
-    return this.socket.fromEvent<Channel[]>('usersChannels')
+    return this.socket.fromEvent<Channel[]>(USER_CHANNELS)
   }
 
   getChannels(): Observable<Channel[]> {
-    return this.socket.fromEvent<Channel[]>('allChannels')
+    return this.socket.fromEvent<Channel[]>(CHANNELS)
   }
 
   getChannelMessages(): Observable<Message[]> {
-    return this.socket.fromEvent<Message[]>('channelMessages')
+    return this.socket.fromEvent<Message[]>(CHANNEL_MESSAGES)
   }
 
   getIncomingMessages(): Observable<Message> {
-    return this.socket.fromEvent<Message>('incMsg')
+    return this.socket.fromEvent<Message>(MESSAGE)
   }
 }

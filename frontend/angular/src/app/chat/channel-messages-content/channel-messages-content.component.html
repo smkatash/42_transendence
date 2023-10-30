@@ -11,13 +11,13 @@
   <div *ngFor="let message of fetchedMessages; let i = index">
     <app-message [msg]="message"
                  [sameSender]="true ? i > 0 && fetchedMessages[i - 1].user === message.user : false">
-                 {{ scrollToBottom() }}
+      {{ scrollToBottom() }}
     </app-message>
   </div>
   <div *ngFor="let message of incomingMessages; let i = index">
     <app-message [msg]="message"
                  [sameSender]="true ? i > 0 && incomingMessages[i - 1].user === message.user : false">
-                 {{ scrollToBottom() }}
+      {{ scrollToBottom() }}
     </app-message>
   </div>
 </div>
