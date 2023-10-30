@@ -20,7 +20,6 @@ import { DEFAULT_PADDLE_LENGTH } from 'src/Constants';
 export class MatchService {
     private matches: Map<string, Game> = new Map()
     private server: Server
-	private currentPlayerId: string
 
     constructor(@InjectRepository(Match) private matchRepo: Repository<Match>,
                 private readonly gameService: GameService,
@@ -151,20 +150,18 @@ export class MatchService {
     }
 
     async makeAmatch(currentPlayerId: string, playersId: string[]): Promise<Match> {
-		this.currentPlayerId = currentPlayerId
-
 		const playerPromises = playersId.map(id => this.playerService.getPlayerById(id));
   		const pair = await Promise.all(playerPromises);
-		const newMatch = await this.createMatch(pair)
+		const newMatch = await this.createMatch(currentPlayerId, pair)
 		this.queueService.enqueueMatch(newMatch.id, playersId)
 		return newMatch
     }
 
 
-    async createMatch(players: Player[]): Promise<Match> {
+    async createMatch(currentPlayerId: string, players: Player[]): Promise<Match> {
         const match = this.matchRepo.create({
             id: v4(),
-			currentPlayerId: this.currentPlayerId,
+			currentPlayerId: currentPlayerId,
             players: players,
             status: GameState.READY
         })

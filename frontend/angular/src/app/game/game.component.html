@@ -1,6 +1,6 @@
 <body>
     <app-navbar></app-navbar>
-    <app-game-menu (newGameEvent)="setGame($event)" *ngIf="!isInQueue && !isGameOn"></app-game-menu>
+    <app-game-menu [statusValue]="status"  (newGameEvent)="setGame($event)" *ngIf="!isInQueue && !isGameOn"></app-game-menu>
     <div class ="waitingQueue" *ngIf="isInQueue && !isGameOn">
         <div class="loadingSpinner"></div>
     </div>

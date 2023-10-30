@@ -105,7 +105,7 @@ export class GameService {
       this.gameInfoSubject.next(msg);
     })
     this.socket.on ('start', (msg: any) => {
-	console.log(msg)
+	    // console.log(msg);
       if (msg === 'Waiting players to join')
       {
         this.inTheQueue.next(true);
@@ -124,7 +124,6 @@ export class GameService {
   queueEmit(){
     const gameMode = this.createGameDto(this.difficulty);
     this.socket.emit('start', gameMode);
-	console.log("started");
   }
 
   startGameService(level:number):void {
@@ -137,7 +136,7 @@ export class GameService {
   getUser(): void {
     this.socket.on('user', (user: User) => {
     this.userInfo = user;
-      console.log(user)
+      // console.log(user)
     })
   }
 }

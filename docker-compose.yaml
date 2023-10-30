@@ -8,8 +8,8 @@ services:
       dockerfile: Dockerfile
     volumes:
       #- /Users/francesco/Desktop/pong/frontend/angular:/app-frontend
-      # - /Users/frmessin/Desktop/pong/frontend/angular:/app-frontend
-      - /Users/ktashbae/Desktop/trans/frontend/angular:/app-frontend
+      - /Users/frmessin/Desktop/pong/frontend/angular:/app-frontend
+      # - /Users/ktashbae/Desktop/trans/frontend/angular:/app-frontend
     ports:
       - 4200:4200
     depends_on:
@@ -23,9 +23,8 @@ services:
       dockerfile: Dockerfile
     volumes:
      # - /Users/francesco/Desktop/pong/backend/nest/app:/app-backend
-     # - /Users/frmessin/Desktop/pong/backend/nest/app:/app-backend
-
-    - /Users/ktashbae/Desktop/trans/backend/nest/app:/app-backend
+     - /Users/frmessin/Desktop/pong/backend/nest/app:/app-backend
+    # - /Users/ktashbae/Desktop/trans/backend/nest/app:/app-backend
     ports:
       - 3000:3000
     env_file:

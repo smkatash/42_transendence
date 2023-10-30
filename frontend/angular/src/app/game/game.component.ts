@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, OnInit, Output, Renderer2, RendererFactory2 } from '@angular/core';
 import { GameService } from './game.service';
-import { Ball, Game, Paddle } from '../entities.interface';
+import { Ball, Game, Paddle, GameState } from '../entities.interface';
 import { GameSocket } from 'src/app/app.module';
 import { NONE_TYPE } from '@angular/compiler';
 
@@ -58,7 +58,7 @@ export class GameComponent implements AfterViewInit {
   paddleLeftIncrement = 0;
   paddleRightIncrement = 0;
 
-
+  status = "";
 
   gameInfo?:Game = {};
 
@@ -70,8 +70,8 @@ export class GameComponent implements AfterViewInit {
       this.maxViewWidth = this.boardElement.clientWidth;
       this.maxViewHeight = this.boardElement.clientHeight;
 
-      console.log('Board width in pixels: ' + this.maxViewWidth);
-      console.log('Board height in pixels: ' + this.maxViewHeight);
+      // console.log('Board width in pixels: ' + this.maxViewWidth);
+      // console.log('Board height in pixels: ' + this.maxViewHeight);
     }
     // let board = document.querySelector('.game_board');
     // let widthValue = board!.clientWidth;
@@ -242,7 +242,8 @@ export class GameComponent implements AfterViewInit {
   isWaitingInQueue(){
     this.gameService.getStatusQueue().subscribe((status: boolean) => {
       if(status == true){
-        this.gameService.queueEmit();
+        // this.gameService.queueEmit();
+        ;
       } else {
         this.isInQueue = false;
         this.isGameOn = true;
@@ -254,6 +255,22 @@ export class GameComponent implements AfterViewInit {
 
   gameObservableInit(){
     this.gameService.getTestObservable().subscribe((game: Game) => {
+      console.log(game.status);
+      if(game.status === GameState.END){
+          if(game.match && game.match.winner.id === this.gameService.userInfo.id){
+            this.status = "WIN";
+            this.isGameOn = false;
+            console.log("WIN");
+            console.log(game.match.winner.id)
+            return;
+          } else {
+            this.status = "LOS";
+            console.log("LOS");
+            this.isGameOn = false;
+            console.log(game.match?.loser.id)
+            return;
+          }
+        }
       if(game){
         this.gameInfo = this.valueConversion(game);
         if(this.gameInfo.leftPaddle?.length){
@@ -274,6 +291,7 @@ export class GameComponent implements AfterViewInit {
 
   ngOnInit() {
     this.initViewValue()
+    this.status = "";
   };
 
 
