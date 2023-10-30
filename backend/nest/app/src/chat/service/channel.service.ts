@@ -82,7 +82,7 @@ export class ChannelService {
                 'users'
             ]
         }))
-         return channels.filter((c) => c.users.some((user) => user.id === userId));
+        return channels.filter((c) => c.users.some((user) => user.id === userId));
          
 
     }
