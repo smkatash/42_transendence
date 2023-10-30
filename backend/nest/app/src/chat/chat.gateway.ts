@@ -14,6 +14,7 @@ import { MuteService } from './service/mute.service';
 import { Channel } from './entities/channel.entity';
 import { Message } from './entities/message.entity';
 import { ADD_ADMIN, BAN, BLOCK, CHANNEL, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DELETE, DIRECT, ERROR, INVITE_TO_PRIVATE, JOIN, KICK, LEAVE, MESSAGE, MUTE, PASSWORD, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, USER_CHANNELS } from './subscribtions-events';
+import { measureMemory } from 'vm';
 
 
 @UsePipes(new ValidationPipe({whitelist: true}))
@@ -239,7 +240,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     console.log(messages);
     messages.sort((m1, m2) => m1.createdAt.getTime() - m2.createdAt.getTime());
-    this.server.to(socket.id).emit(CHANNEL_MESSAGES, messages);
+    const msgsToFe = messages.map((m) =>  {
+      if (user.id === m.user.id)  {
+        m['sessionUser'] = true
+      } else  {
+        m['sessionUser'] = false
+      }
+    })
+    this.server.to(socket.id).emit(CHANNEL_MESSAGES, msgsToFe);
   }
 
   @SubscribeMessage(MESSAGE)
@@ -281,6 +289,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         if (u.blockedUsers.some((blockedUser) => blockedUser.id === newMsg.user.id)) {
           console.log(`skipping ${user.user.username}`)
           continue ;
+        }
+        if (u.id === newMsg.user.id)  {
+          newMsg['sessionUser'] = true
+        } else  {
+          newMsg['sessionUser'] = false
         }
         this.server.to(user.socketId).emit(MESSAGE, newMsg)
         console.log(`emitting to ${user.user.username}`)
