@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ChatService } from '../../chat.service';
-import { User } from 'src/app/entities.interface';
+import { Channel, User } from 'src/app/entities.interface';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-channel-messages-settings',
@@ -23,26 +24,29 @@ import { User } from 'src/app/entities.interface';
     ]),
   ],
 })
-export class ChannelMessagesSettingsComponent implements OnChanges{
+export class ChannelMessagesSettingsComponent implements OnChanges {
 
   constructor(private chatService: ChatService){ };
 
-  @Input() isOpen?: boolean;
-  @Output() isOpenChange = new EventEmitter<boolean>;
-  @Input() channelId?: number;
-  users: User[] = [];
+  @Input() isOpen?: boolean
+  @Output() isOpenChange = new EventEmitter<boolean>
+  @Input() channel?: Channel
+  @Output() channelChangeEvent = new EventEmitter<Channel>
+  users$: Observable<User[]> = this.chatService.getChannelUsers()
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['channelId'] && this.channelId) {
-      this.getChannelUsers(this.channelId);
+    if (changes['channel'] && this.channel) {
+      this.chatService.requestChannelUsers(this.channel.id)
     }
   }
 
-  getChannelUsers(id: number): void{
-    // this.chatService.getChannelUsers(id)
-    //   .subscribe((users) => {
-    //     this.users = users;
-    //   })
+  exitChannel(): void {
+    if (!this.channel) return // A check for typescript
+
+    this.chatService.exitChannel(this.channel.id)
+    this.toggle()
+    this.channel = undefined
+    this.channelChangeEvent.emit(this.channel)
   }
 
   toggle(): void {

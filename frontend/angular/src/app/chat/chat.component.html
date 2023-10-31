@@ -5,7 +5,7 @@
 
       <div class="channel-tabs">
         <div [class.selected]="selectedTab === 'my-chats'" (click)="selectTab('my-chats')"><h1>My Chats:</h1></div>
-        <div [class.selected]="selectedTab === 'all-chats'" (click)="selectTab('all-chats')"><h1>All Chats:</h1></div>
+        <div [class.selected]="selectedTab === 'available-chats'" (click)="selectTab('available-chats')"><h1>Available Chats:</h1></div>
       </div>
       <div class="channel-container">
 
@@ -18,7 +18,7 @@
           </div>
         </div>
 
-        <div class="channel-list" *ngIf="selectedTab === 'all-chats'">
+        <div class="channel-list" *ngIf="selectedTab === 'available-chats'">
           <div *ngFor="let channel of allChannels$ | async">
             <app-sidebar-channel [isSelected]="channel === selectedChannel"
                                  [channel]="channel"
@@ -36,7 +36,7 @@
       </app-channel-creation-menu>
 
       <app-channel-messages-content *ngIf="selectedChannel"
-                                    [channelID]="selectedChannel.id">
+                                    [(channel)]="selectedChannel">
       </app-channel-messages-content>
 
       <app-default-content *ngIf="selectedChannel === undefined"></app-default-content>

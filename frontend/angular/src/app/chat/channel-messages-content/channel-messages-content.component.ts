@@ -1,7 +1,6 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ChatService } from '../chat.service';
-import { Message } from 'src/app/entities.interface';
-import { tap } from 'rxjs';
+import { Channel, Message } from 'src/app/entities.interface';
 
 @Component({
   selector: 'app-channel-messages-content',
@@ -15,7 +14,8 @@ export class ChannelMessagesContentComponent implements OnInit {
 
   @ViewChild('messageContainer') messageContainer!: ElementRef;
 
-  @Input() channelID?: number;
+  @Input() channel?: Channel
+  @Output() channelChange = new EventEmitter<Channel>
   fetchedMessages: Message[] = []
   incomingMessages: Message[] = []
   messageToSend?: string;
@@ -38,13 +38,13 @@ export class ChannelMessagesContentComponent implements OnInit {
 
   sendMessage(): void {
 
-    if (this.messageToSend === undefined || this.channelID === undefined) return
+    if (this.messageToSend === undefined || this.channel === undefined) return
 
     this.messageToSend = this.messageToSend.trim();
 
     if (!this.messageToSend) return;
 
-    this.chatService.sendMessage(this.channelID, this.messageToSend)
+    this.chatService.sendMessage(this.channel?.id, this.messageToSend)
 
     this.scrollToBottom();
     this.messageToSend = '';

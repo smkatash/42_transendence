@@ -7,13 +7,13 @@
       <input type="password" id="change-password">
       <button class="change-btn">Change</button>
     </div>
-    <div class="users-container" *ngIf="users">
+    <div class="users-container" *ngIf="users$ | async as users">
       <div *ngFor="let user of users">
         <app-channel-user [user]="user"></app-channel-user>
       </div>
     </div>
     <div class="footer">
-      <button class="exit">Exit channel</button>
+      <button class="exit" (click)="exitChannel()">Exit channel</button>
       <button class="close" (click)="toggle()">Close</button>
     </div>
   </div>

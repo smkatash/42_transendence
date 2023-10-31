@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, from } from 'rxjs';
 import { Channel, CreateChannelInfo, JoinChannelInfo, Message, User } from '../entities.interface';
 import { ChatSocket } from '../app.module';
-import { CHANNELS, CHANNEL_MESSAGES, CREATE, ERROR, JOIN, LEAVE, MESSAGE, SUCCESS, USER_CHANNELS } from './subscriptions-events-constants'
+import { CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, ERROR, JOIN, LEAVE, MESSAGE, SUCCESS, USER_CHANNELS } from './subscriptions-events-constants'
 
 @Injectable({
   providedIn: 'root'
@@ -31,11 +31,15 @@ export class ChatService {
     this.socket.emit(USER_CHANNELS)
   }
 
+  requestChannelUsers(channelID: number) {
+    this.socket.emit(CHANNEL_USERS, { cId: channelID })
+  }
+
   createChannel(channelInfo: CreateChannelInfo) {
     this.socket.emit(CREATE, channelInfo)
   }
 
-  joinChannel(joinInfo:  JoinChannelInfo) {
+  joinChannel(joinInfo: JoinChannelInfo) {
     this.socket.emit(JOIN, joinInfo)
   }
 
@@ -49,6 +53,10 @@ export class ChatService {
 
   requestChannelMessages(channelID: number) {
     this.socket.emit(CHANNEL_MESSAGES, { cId: channelID })
+  }
+
+  exitChannel(channelID: number) {
+    this.socket.emit(LEAVE, { cId: channelID })
   }
 
   /* <---------- Events to listen to ----------> */
@@ -71,6 +79,10 @@ export class ChatService {
 
   getChannels(): Observable<Channel[]> {
     return this.socket.fromEvent<Channel[]>(CHANNELS)
+  }
+
+  getChannelUsers(): Observable<User[]> {
+    return this.socket.fromEvent<User[]>(CHANNEL_USERS)
   }
 
   getChannelMessages(): Observable<Message[]> {
