@@ -5,9 +5,7 @@ import { Channel } from '../entities/channel.entity';
 import { JoinChannelDto, CreateChannelDto, ChannelPasswordDto } from '../dto/channel.dto';
 import { User } from 'src/user/entities/user.entity';
 import * as bcrypt from 'bcrypt'
-import { POSTGRES_UNIQUE_VIOLATION } from 'src/Constants';
-
-const   saltRounds = 10;
+import { POSTGRES_UNIQUE_VIOLATION, SALT_ROUNDS } from 'src/Constants';
 
 @Injectable()
 export class ChannelService {
@@ -35,7 +33,7 @@ export class ChannelService {
             channel.users.push(owner);
             channel.admins.push(owner);
             if (channelInfo.password?.length)   {
-                const hash = await bcrypt.hash(channelInfo.password, saltRounds);
+                const hash = await bcrypt.hash(channelInfo.password, SALT_ROUNDS);
                 channel.hash = hash;
                 channel.protected = true;
             }
@@ -167,7 +165,7 @@ console.log('--------join channels users------')
             channel.protected = false;
             channel.hash = null;
         }   else    {
-            const hash = await bcrypt.hash(passInfo.newPass, saltRounds);
+            const hash = await bcrypt.hash(passInfo.newPass, SALT_ROUNDS);
             channel.hash = hash;
             channel.protected = true;
         }

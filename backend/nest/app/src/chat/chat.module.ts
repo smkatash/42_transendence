@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-// import { ChatService } from './service/chat.service';
 import { ChatGateway } from './chat.gateway';
 import { UserModule } from 'src/user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -28,7 +27,6 @@ import { MuteService } from './service/mute.service';
   ],
   providers: [
     ChannelService,
-    // ChatService,
     ChatGateway,
     MessageService,
     ChatUserService,

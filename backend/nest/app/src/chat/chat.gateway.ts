@@ -223,9 +223,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!user) {
       return this.noAccess(socket);
     }
-    const channel = await this.channelService.getChannel(channelInfo.cId, []);
+    const channel = await this.channelService.getChannel(channelInfo.cId, [
+      'users'
+    ]);
     if (!channel) {
       return this.emitError(socket, 'No such channel')
+    }
+    if (!(channel.users.some((u) => u.id === user.id))) {
+      throw new BadRequestException('User not on the channel')
     }
     // const messages = await this.messageService.findMessagesByChannel(channel);
     const u = await this.userService.getUserWith(user.id, [
@@ -259,10 +264,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       return this.noAccess(socket);
     }
     try {
-      const channel = await this.channelService.getChannel(message.cId, []);
+      const channel = await this.channelService.getChannel(message.cId, [
+        'users'
+      ]);
       if (!channel) {
         console.log('no channel')
         return this.emitError(socket, "No such channel")
+      }
+      if (!(channel.users.some((u) => u.id === user.id))) {
+        throw new BadRequestException('User not on the channel')
       }
       console.log('----message-----')
       console.log(message)
