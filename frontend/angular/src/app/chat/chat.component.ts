@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ChatService } from './chat.service';
-import { ChannelCreateType } from './chat.enum';
 import { Channel } from '../entities.interface';
 import { Observable } from 'rxjs';
 
@@ -19,8 +18,10 @@ export class ChatComponent implements OnInit {
   myChannels$: Observable<Channel[]> = this.chatService.getUsersChannels()
   allChannels$: Observable<Channel[]> = this.chatService.getChannels()
   selectedChannel?: Channel
-  channelToCreate?: ChannelCreateType
+  channelToCreate?: string // type of channel to create
   isChannelToCreateActive: boolean = false
+
+  passwordToJoinChannel?: string
 
   ngOnInit(): void {
     this.chatService.requestUsersChannels()
@@ -29,11 +30,21 @@ export class ChatComponent implements OnInit {
 
   onChannelSelect(channel: Channel) {
     this.selectedChannel = channel
+    if (this.selectedTab === 'available-chats') {
+      if (this.selectedChannel.protected) {
+        // Get the password
+      }
+      this.chatService.joinChannel({
+        id: this.selectedChannel.id,
+        password: this.passwordToJoinChannel
+      })
+    }
     this.chatService.requestChannelMessages(channel.id)
   }
 
-  createNewChannel(channelType: ChannelCreateType) {
+  createNewChannel(channelType: string) {
     this.channelToCreate = channelType
+    console.log(channelType)
     this.isChannelToCreateActive = true
   }
 
@@ -43,7 +54,7 @@ export class ChatComponent implements OnInit {
       this.selectedChannel = undefined
       this.chatService.requestUsersChannels()
     } else {
-      this.selectedTab= 'all-chats'
+      this.selectedTab= 'available-chats'
       this.selectedChannel = undefined
       this.chatService.requestChannels()
     }

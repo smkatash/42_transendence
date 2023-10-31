@@ -13,9 +13,6 @@ export class CreateChannelDto    {
     @IsOptional()
     password: string;
 
-    @IsString()
-    topic?: string;
-
     // @IsString()
     @IsNotEmpty()
     type: 'private' | 'protected' | 'public' | 'direct';

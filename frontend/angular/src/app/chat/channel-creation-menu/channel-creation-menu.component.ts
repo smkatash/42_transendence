@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ChannelCreateType } from '../chat.enum';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ChatService } from '../chat.service';
 
@@ -27,8 +26,7 @@ export class ChannelCreationMenuComponent {
 
   constructor(private chatService: ChatService){}
 
-  ChannelCreateType: typeof ChannelCreateType = ChannelCreateType;
-  @Input() channelType?: ChannelCreateType;
+  @Input() channelType?: string;
   @Input() isOpen?: boolean;
   @Output() isOpenChange = new EventEmitter<boolean>;
 
@@ -41,9 +39,12 @@ export class ChannelCreationMenuComponent {
   }
 
   createChannel(): void {
+    if (!this.channelType) return // Just for typescript
+
     this.chatService.createChannel({
        name: this.channelName,
-       private: this.channelType === ChannelCreateType.privateChannel,
+       type: this.channelType,
+       private: this.channelType === 'private',
        password: this.channelPassword
     })
   }

@@ -1,12 +1,12 @@
 <div class="channel-creation-menu-border" [@openClose]="isOpen ? 'open' : 'closed'">
   <div class="channel-creation-menu">
-    <div *ngIf="channelType === ChannelCreateType.privateChannel">
+    <div *ngIf="channelType === 'private'">
       <h1 class="title">Private Channel Setup.</h1>
       <p>This type of channel is invite-only and it's not visible for the public in the list of channels.</p>
       <label for="channel-name">Choose a channel name:</label>
       <input type="text" id="channel-name" [(ngModel)]="channelName">
     </div>
-    <div *ngIf="channelType === ChannelCreateType.protectedChannel">
+    <div *ngIf="channelType === 'protected'">
       <h1 class="title">Protected Channel Setup.</h1>
       <p>This type of channel is visible for the public in the list of channels, but only users who enter the correct password are permitted to access it.</p>
       <label for="channel-name">Choose a channel name:</label>
@@ -14,7 +14,7 @@
       <label for="channel-password">Choose a password for your channel:</label>
       <input type="password" id="channel-password" [(ngModel)]="channelPassword">
     </div>
-    <div *ngIf="channelType === ChannelCreateType.publicChannel">
+    <div *ngIf="channelType === 'public'">
       <h1 class="title">Public Channel Setup.</h1>
       <p>This type of channel is visible for the public in the list of channels, anyone can access it.</p>
       <label for="channel-name">Choose a channel name:</label>

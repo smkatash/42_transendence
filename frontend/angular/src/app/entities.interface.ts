@@ -18,6 +18,7 @@ export interface JoinChannelInfo {
 
 export interface CreateChannelInfo {
   name: string
+  type: string
   private: boolean
   password?: string
 }
