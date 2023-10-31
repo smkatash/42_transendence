@@ -471,11 +471,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       //DAMN thats not nice
       //Updating channel lists for FE
       const chatUsers = await this.chatUserService.getAll();
-      const cToFe = ((await this.channelService.getAllChannels()))
+/*      const cToFe = ((await this.channelService.getAllChannels()))
             .map((c) => this.channelToFe(c))
-            .filter((c) => !c.private);
+            .filter((c) => !c.private);*/
       for (const chatUser of chatUsers) {
-        this.server.to(chatUser.socketId).emit(CHANNELS, cToFe);
+        // this.server.to(chatUser.socketId).emit(CHANNELS, cToFe);
         if (channel.users.some((u) => chatUser.user.id === u.id)) {
           const cToFe = (await this.channelService.getUsersChannels(chatUser.user.id))
                 .map((c) => this.channelToFe(c));
@@ -487,6 +487,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       await this.joinedChannelService.deleteByChannel(channel);
       await this.messageService.deleteByChannel(channel);
       await this.channelService.delete(channel.id);
+      this.newPublic();
     } catch (error) {
       Logger.error('fail on delete channel')
       console.log(error)
