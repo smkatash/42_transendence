@@ -104,7 +104,7 @@ export class GameService {
       gameInfo = msg;
       this.gameInfoSubject.next(msg);
     })
-    this.socket.on ('start', (msg: any) => {
+    this.socket.on ('start', (msg: any)  => {
 	    // console.log(msg);
       if (msg === 'Waiting players to join')
       {
