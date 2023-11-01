@@ -10,7 +10,7 @@ import { LeaderboardService } from './leaderboard.service';
 })
 
 export class LeaderboardComponent implements OnInit {
-	players: Player[]
+	players: Player[] = []
 	constructor(
 		private leaderboardService: LeaderboardService
 		) {}
@@ -23,7 +23,9 @@ export class LeaderboardComponent implements OnInit {
 	  getPlayersStats() {
 		this.leaderboardService.getAllPlayersStats().subscribe(
 			(data) => {
-				this.players = data;
+				if (data) {
+					this.players = data;
+				}
 			},
 			(error) => {
 				console.error('Error fetching player stats', error);

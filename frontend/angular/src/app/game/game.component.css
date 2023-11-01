@@ -29,7 +29,31 @@ body {
     align-items: center;
     /* justify-content: center; */
   }
+
+  .waitingQueue {
+    display: flex;
+    /* flex-direction: column; */
+    align-items: center;
+    justify-content: center;
+	width: 100%;
+	height: 60%;
+	flex-direction: column;
+  }
   
+  .loadingSpinner {
+    border: 10px solid  #E8DAB2;
+    border-top: 4px solid #4F6D7A;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
   app-game-menu {
     display: flex;
     justify-content: center;

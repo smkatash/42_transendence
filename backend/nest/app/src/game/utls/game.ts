@@ -1,7 +1,5 @@
-import { Socket } from 'socket.io';
-import { User } from 'src/user/entities/user.entity';
 import { Player } from '../entities/player.entity';
-import { DEFAULT_PADDLE_GAP, DEFAULT_TABLE_PROPORTION } from 'src/Constants';
+import {  DEFAULT_TABLE_PROPORTION } from 'src/Constants';
 import { Match } from '../entities/match.entity';
 
 export interface Position {

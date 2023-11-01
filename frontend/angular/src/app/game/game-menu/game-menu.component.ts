@@ -11,7 +11,7 @@ export class GameMenuComponent {
 
   @Output() newGameEvent = new EventEmitter<number>;
   newGame() {
-    this.newGameEvent.emit(0);
+    this.newGameEvent.emit(1);
   }
   newGameEasy(){
     this.newGameEvent.emit(1);

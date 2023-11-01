@@ -102,4 +102,7 @@ export class PrivMsgDto {
     @IsString()
     @IsNotEmpty()
     text: string; 
+
+/*     inviteType?: string // 'game' || 'channel'
+    inviteID?: string | number // 'gameID' || 'channelID' */
 }

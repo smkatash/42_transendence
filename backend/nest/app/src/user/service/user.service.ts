@@ -29,6 +29,7 @@ export class UserService {
 		return this.saveValidUser(user)
 	}
 
+
 	async verifyUserMfa(id: string) {
 		const user = await this.getUserById(id)
 		user.status = Status.ONLINE
@@ -284,7 +285,10 @@ export class UserService {
 		return	await this.userRepo.find({
 			where: {
 				username: Like(`%${username.toLocaleLowerCase()}%`)
-			}
+			},
+			relations:	[
+				'blockedUsers'
+			]
 		})
 	}
 

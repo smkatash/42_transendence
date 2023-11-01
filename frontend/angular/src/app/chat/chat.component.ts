@@ -24,7 +24,7 @@ export class ChatComponent implements OnInit {
   passwordToJoinChannel?: string
 
   ngOnInit(): void {
-    this.chatService.requestUsersChannels()
+    this.chatService.requestUserChannels()
     this.chatService.requestChannels()
   }
 
@@ -54,7 +54,7 @@ export class ChatComponent implements OnInit {
     if (tab === 'my-chats') {
       this.selectedTab= 'my-chats'
       this.selectedChannel = undefined
-      this.chatService.requestUsersChannels()
+      this.chatService.requestUserChannels()
     } else {
       this.selectedTab= 'available-chats'
       this.selectedChannel = undefined
