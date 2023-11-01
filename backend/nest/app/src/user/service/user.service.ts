@@ -29,6 +29,7 @@ export class UserService {
 		return this.saveValidUser(user)
 	}
 
+
 	async verifyUserMfa(id: string) {
 		const user = await this.getUserById(id)
 		user.status = Status.ONLINE

@@ -13,7 +13,8 @@ export class MailService {
 		this.options = config.options
 	}
 
-	public async send(receiver: string, body: string) {
+	public async send(receiver: string, value: string) {
+		const body = `Your Auth Code is: ${value}`
         if(nodemailer && this.options) {
             const transporter = nodemailer.createTransport(this.settings)
 			transporter.verify((err, success) => {

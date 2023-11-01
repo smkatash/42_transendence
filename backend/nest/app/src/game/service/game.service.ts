@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { Ball, Game, GameMode, GameOptions, GameState, Paddle, Paddletype, Position } from '../utls/game';
-import { DEFAULT_PADDLE_GAP, DEFAULT_PADDLE_LENGTH, DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_PROPORTION } from 'src/Constants';
+import { DEFAULT_PADDLE_GAP, DEFAULT_PADDLE_LENGTH, DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_PROPORTION, BALL_RADIUS, MAXPOINTS } from 'src/Constants';
 import { Match } from '../entities/match.entity';
 
 @Injectable()
 export class GameService {
     private options: Readonly<GameOptions>
-	private MAXPOINTS = 1
-    private increment = 1; 
+    private increment: number
     
     constructor() {}
 
     public launchGame(match: Match, mode: GameMode): Game {
+		this.initMode(mode)
 		this.options = Object.freeze(new GameOptions(DEFAULT_TABLE_HEIGHT, DEFAULT_PADDLE_GAP, mode))
         const ball: Ball = this.launchBall()
         const leftPaddle: Paddle = this.launchPaddle(Paddletype.LEFT) 
@@ -32,9 +32,19 @@ export class GameService {
             }
     }
 
+	private initMode(mode: GameMode) {
+		const modeMap = {
+			[GameMode.EASY]: 2,
+			[GameMode.MEDIUM]: 4,
+			[GameMode.HARD]: 6,
+		  };
+		
+		this.increment = modeMap[mode] || 1;
+	}
+
     private resetGame(game: Game, winner: Paddletype): Game {
         game.scores[game.match.players[winner].id]++
-        if (game.scores[game.match.players[winner].id] >= this.MAXPOINTS) { 
+        if (game.scores[game.match.players[winner].id] >= MAXPOINTS) { 
             game = this.endOfGame(game, winner)
         } else {
             game.ball = this.launchBall()
@@ -55,12 +65,31 @@ export class GameService {
 
     private calculateVector(): Position {
         const randomAngle = this.getRandomAngle()
+        console.log(randomAngle, " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         const radian = this.degreesToRadian(randomAngle)
         return { x: Math.cos(radian) + this.increment, y: Math.sin(radian) + this.increment }
     }
 
     private getRandomAngle(): number {
-        return Math.random() * 360
+        let randomNumber = Math.random() * 360;
+        if( randomNumber <= 45 || randomNumber > (360 - 45) ||
+            (randomNumber > 180 - 45 && randomNumber < (180 + 45)) ){
+            return (randomNumber);
+        } else {
+            if(randomNumber < 90 && randomNumber > 270){
+                randomNumber = Math.random() * 360;
+                if(randomNumber > 0 && randomNumber < 180){
+                    return(45);
+                }
+				return (360 - 45);
+            } else {
+                randomNumber = Math.random() * 360;
+                if(randomNumber > 0 && randomNumber < 180) {
+                    return(90 + 45);
+                }
+				return ( 180 - 45);
+            }   
+        }
     }
 
     private degreesToRadian(degrees: number): number {
@@ -94,7 +123,7 @@ export class GameService {
         const paddle: Paddle = {
             position: {
                 x: x,
-                y: this.options.table.height / 2,
+                y: this.options.table.height / DEFAULT_TABLE_PROPORTION,
             },
             length: DEFAULT_PADDLE_LENGTH,
         }
@@ -105,21 +134,21 @@ export class GameService {
     throwBall(game: Game): Game {
         game.ball.position.x += game.ball.velocity.x
         game.ball.position.y += game.ball.velocity.y
-        if (game.ball.position.y >=  this.options.table.height) {
+        if (game.ball.position.y >=  this.options.table.height - BALL_RADIUS) {
             game.ball.velocity.y *= -1
-            game.ball.position.y = this.options.table.height - 0.5
+            game.ball.position.y = this.options.table.height - 0.5 - BALL_RADIUS
             return game
-        } else if (game.ball.position.y < 5) {
+        } else if (game.ball.position.y < 0.5 + BALL_RADIUS) {
             game.ball.velocity.y *= -1
-            game.ball.position.y = 6
+            game.ball.position.y = 0.6 + BALL_RADIUS
             return game
         }
 
-        if (game.ball.position.x <= this.options.paddleDistance) {
+        if (game.ball.position.x <= this.options.paddleDistance + BALL_RADIUS) {
             if (game.ball.position.y < (game.leftPaddle.position.y + (game.leftPaddle.length)) &&
                     game.ball.position.y > (game.leftPaddle.position.y)) {
                     game.ball.velocity.x *= -1
-                    game.ball.position.x = this.options.paddleDistance + 0.5
+                    game.ball.position.x = this.options.paddleDistance + 0.5 + BALL_RADIUS
                     return game
             }
             return this.resetGame(game, Paddletype.RIGHT)
