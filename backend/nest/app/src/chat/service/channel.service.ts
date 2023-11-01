@@ -87,7 +87,7 @@ export class ChannelService {
 
     async getAllChannels(): Promise<Channel[]>  {
         return await this.channelRepository.find({
-            relations: ['users']
+            relations: ['users', 'owner', 'admins']
         });
     }
 

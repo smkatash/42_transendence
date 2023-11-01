@@ -1016,6 +1016,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
      if (channel.admins)  {
       chanToFe.admins = channel.admins
      }
+     console.log(channel)
+     console.log('see if owner there')
+     console.log(chanToFe);
      return chanToFe;
   }
 
