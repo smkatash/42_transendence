@@ -738,27 +738,34 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     const user = socket.data.user;
     if (!user) {
       return this.noAccess(socket);
-    } 
+    }
+    // console.log('DELETE ADMIN QQ')
+    // console.log(user, info)
     try {
       const channel = await this.channelService.getChannel(info.cId, [
         'owner', 'admins'
       ]);
+      // console.log(channel)
       const u = await this.userService.getUserWith(info.uId, ['adminAt']);
+      // console.log(u);
       if (!channel || !u) {
         return this.emitError(socket, new BadRequestException('No such channel or user')) 
       }
+
       if (channel?.owner?.id !== user.id)  {
         return this.emitError(socket, new BadRequestException('No rights'));
       }
-      if (channel?.owner?.id === user.id)  {
+      if (channel?.owner?.id === u.id)  {
         return this.emitError(socket, new BadRequestException('Can\'t remove self'));
       }
+      console.log('#############################################')
       channel.admins = channel.admins.filter((admin) => admin.id !== u.id);
       u.adminAt = u.adminAt.filter((c) => c.id !== channel.id);
       await this.userService.saveUser(u);
-      await this.channelService.saveChannel(channel);
+      console.log(await this.channelService.saveChannel(channel));
       this.server.to(socket.id).emit(CHANNEL, this.channelToFe(channel));
     } catch (error) {
+      console.log(error)
       this.emitError(socket, error);
     }
   }

@@ -26,6 +26,7 @@ export class ChatComponent implements OnInit {
   ngOnInit(): void {
     this.chatService.requestUserChannels()
     this.chatService.requestChannels()
+    this.chatService.onError()
   }
 
   onChannelSelect(channel: Channel) {
