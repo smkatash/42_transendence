@@ -358,7 +358,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
             return c;
           }
         });
-      console.log(cToFe)
+      // console.log(cToFe)
       this.server.to(socket.id).emit(CHANNELS, cToFe);
       // this.server.to(socket.id).emit('allChannels', channels);
     } catch (error) {
@@ -395,6 +395,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
             }
           }
         );
+        // console.log('owner und stf should be there', cToFe)
         this.server.to(socket.id).emit(USER_CHANNELS, cToFe);
         // this.server.to(socket.id).emit('usersChannels', channels);
       } catch (error) {
