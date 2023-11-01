@@ -92,7 +92,7 @@ export class GameComponent implements AfterViewInit {
   onKeyDown(e: any) {
     if (e.code === 'KeyW') {
       this.gameService.padlePositionEmitter("-10")
-      console.log("movedPaddleUp")
+    //   console.log("movedPaddleUp")
     }
     if (e.code === 'KeyS') {
       console.log("movedPaddleDown")
@@ -255,19 +255,17 @@ export class GameComponent implements AfterViewInit {
 
   gameObservableInit(){
     this.gameService.getTestObservable().subscribe((game: Game) => {
-      console.log(game.status);
-      if(game.status === GameState.END){
-          if(game.match && game.match.winner.id === this.gameService.userInfo.id){
+      if(game.status === GameState.END && game.match){
+			console.log(JSON.stringify(this.gameService.userInfo.id))
+          if(game.match.winner.id === this.gameService.userInfo.id){
             this.status = "WIN";
             this.isGameOn = false;
-            console.log("WIN");
-            console.log(game.match.winner.id)
+            console.log("WINNER " + game.match.winner.id);
             return;
           } else {
             this.status = "LOS";
-            console.log("LOS");
             this.isGameOn = false;
-            console.log(game.match?.loser.id)
+            console.log("LOSER " + game.match.loser.id);
             return;
           }
         }

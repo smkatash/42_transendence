@@ -39,7 +39,7 @@ export class GameService {
 			[GameMode.HARD]: 6,
 		  };
 		
-		this.increment = modeMap[mode] || 1;
+		this.increment = modeMap[mode] || 2;
 	}
 
     private resetGame(game: Game, winner: Paddletype): Game {

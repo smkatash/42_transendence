@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { JsonContains, Repository } from 'typeorm';
 import { Match } from '../entities/match.entity';
 import { v4 } from 'uuid';
 import { Game, GameMode, GameState } from '../utls/game';
@@ -13,13 +13,14 @@ import { Interval } from '@nestjs/schedule';
 import { Server, Socket } from 'socket.io';
 import { INGAME, QUEUE, START_MATCH } from '../utls/rooms';
 import { Status } from 'src/user/utils/status.enum';
-import { DEFAULT_PADDLE_LENGTH } from 'src/Constants';
+import { DEFAULT_PADDLE_LENGTH, DEFAULT_TABLE_HEIGHT } from 'src/Constants';
 
 
 @Injectable()
 export class MatchService {
     private matches: Map<string, Game> = new Map()
     private server: Server
+	private currentPlayerId: string
 
     constructor(@InjectRepository(Match) private matchRepo: Repository<Match>,
                 private readonly gameService: GameService,
@@ -47,7 +48,7 @@ export class MatchService {
 					players.push(key)
 				}
 			})
-			const newMatch = await this.makeAmatch(player.id, players)
+			const newMatch = await this.makeAmatch(players)
 			pair.forEach( pp => {
 				for (let [key, value] of pp) {
 					value.leave(QUEUE)
@@ -63,58 +64,56 @@ export class MatchService {
 	}
 
 
-    async joinMatch(matchId: string, mode: GameMode): Promise<Game> {
+    async joinMatch(currentPlayerId: string, matchId: string, mode: GameMode): Promise<Game> {
        const match = await this.getMatchById(matchId)
-        if (!match) throw new NotFoundException()
-		
+	   if (!match) throw new NotFoundException()
+	   
 		this.queueService.dequeueMatch(match.id)
-        const newGame = this.gameService.launchGame(match, mode)
-        this.matches.set(matchId, newGame)
-        return newGame
-    }
+		const newGame = this.gameService.launchGame(match, mode)
+		this.matches.set(matchId, newGame)
+		return newGame
+	}
 
-    getServer(server: Server) {
-        this.server = server
-    }
+	getServer(server: Server) {
+		this.server = server
+	}
 
-    @Interval(1000 / 60)
-    async play() {
-        for (const match of this.matches.values()) {
-			if (match.status === GameState.INPROGRESS) { 
+	@Interval(1000 / 60)
+	async play() {
+		for (const match of this.matches.values()) {
+			if (match.status === GameState.INPROGRESS) {
 				const updateGame = this.gameService.throwBall(match)
-                if (updateGame.status === GameState.END) {
+			if (updateGame.status === GameState.END) {
 					await this.saveMatchHistory(updateGame)
-                    this.server.to(match.match.id).emit(INGAME, updateGame)
-					console.log("END of GAME " + JSON.stringify(updateGame.match))
+					this.server.to(match.match.id).emit(INGAME, updateGame)
+					this.server.socketsLeave(match.match.id)
 					this.server.in(match.match.id).disconnectSockets(true)
-                    this.server.socketsLeave(match.match.id)
 					this.matches.delete(match.match.id)
-                }
-                this.server.to(match.match.id).emit(INGAME, updateGame)
+				}
+				this.server.to(match.match.id).emit(INGAME, updateGame)
 				await this.checkDisconnectedPlayers(match)
-            } else if (match.status === GameState.PAUSE) {
+			} else if (match.status === GameState.PAUSE) {
 				await this.saveMatchHistory(match)
-                this.server.to(match.match.id).emit(INGAME, match)
+				this.server.to(match.match.id).emit(INGAME, match)
 				this.server.in(match.match.id).disconnectSockets(true)
-                this.server.socketsLeave(match.match.id)
+				this.server.socketsLeave(match.match.id)
 				this.matches.delete(match.match.id)
 			}
-        }
-    }
+		}
+	}
 
-    updatePlayerPosition(player: Player, step: number) {
-       for (const match of this.matches.values()) {
-            if (match.status === GameState.INPROGRESS) {
-                console.log(step);
+	updatePlayerPosition(player: Player, step: number) {
+		for (const match of this.matches.values()) {
+			if (match.status === GameState.INPROGRESS) {
                 const index = match.match.players.findIndex(matchPlayer => matchPlayer.id === player.id)
                 if (index != -1 ) {
                     if (index === 0 ) {
                         if(match.leftPaddle.position.y + step >= 0 && 
-                           match.leftPaddle.position.y + step <= 500 - DEFAULT_PADDLE_LENGTH)
+                           match.leftPaddle.position.y + step <= DEFAULT_TABLE_HEIGHT - DEFAULT_PADDLE_LENGTH)
                             match.leftPaddle.position.y += step;
                     } else {
                         if(match.rightPaddle.position.y + step >= 0 && 
-                            match.rightPaddle.position.y + step <= 500 - DEFAULT_PADDLE_LENGTH)
+                            match.rightPaddle.position.y + step <= DEFAULT_TABLE_HEIGHT - DEFAULT_PADDLE_LENGTH)
                             match.rightPaddle.position.y += step;
                     }
                     return
@@ -149,19 +148,18 @@ export class MatchService {
         })
     }
 
-    async makeAmatch(currentPlayerId: string, playersId: string[]): Promise<Match> {
+    async makeAmatch(playersId: string[]): Promise<Match> {
 		const playerPromises = playersId.map(id => this.playerService.getPlayerById(id));
   		const pair = await Promise.all(playerPromises);
-		const newMatch = await this.createMatch(currentPlayerId, pair)
+		const newMatch = await this.createMatch(pair)
 		this.queueService.enqueueMatch(newMatch.id, playersId)
 		return newMatch
     }
 
 
-    async createMatch(currentPlayerId: string, players: Player[]): Promise<Match> {
+    async createMatch(players: Player[]): Promise<Match> {
         const match = this.matchRepo.create({
             id: v4(),
-			currentPlayerId: currentPlayerId,
             players: players,
             status: GameState.READY
         })

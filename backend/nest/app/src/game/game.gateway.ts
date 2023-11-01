@@ -7,8 +7,8 @@ import { MatchService } from './service/match.service';
 import { Player } from './entities/player.entity';
 import { PlayerService } from './service/player.service';
 import { Game} from './utls/game';
-import { ERROR, INVITE_TO_MATCH, JOIN_MATCH, POSITION_CHANGE, QUEUE, START_MATCH, USER, WAITING_MESSAGE } from './utls/rooms';
-import { GameModeDto, InvitedUserDto, JoinMatchDto, PositionDto } from './utls/message-dto';
+import { ERROR, JOIN_MATCH, POSITION_CHANGE, QUEUE, START_MATCH, USER, WAITING_MESSAGE } from './utls/rooms';
+import { GameModeDto, JoinMatchDto, PositionDto } from './utls/message-dto';
 import { WsAuthGuard } from 'src/auth/guard/ws-auth.guard';
 import { GetWsUser } from 'src/auth/utils/get-user.decorator';
 
@@ -41,13 +41,12 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
 		this.logger.log(`Client id: ${client.id} connected`)
 		await this.userService.updateUserStatus(user.id, Status.GAME)
-		const player = await this.playerService.getPlayerByUser(user, client.id)
+		const player = await this.playerService.getPlayerByUser(user)
 		client.data.user = player
 		this.emitUserEvent(client, player)
 		this.logger.log(`Client id: ${client.id} connected successfully`)
 	} catch (error) {
 		this.emitError(client, error)
-		throw error
 	}
 }
 
@@ -76,21 +75,20 @@ async handleDisconnect(@ConnectedSocket() client: Socket, ) {
 		}
 		this.emitQueueEvent()
 	} catch(error) {
-		this.logger.debug("ERROR " + error)
 		this.emitError(client, error)
 	}
   }
 
-  @UseGuards(WsAuthGuard)
-  @SubscribeMessage(INVITE_TO_MATCH)
-  async handleInviteUserToMatch(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() invitedUserDto: InvitedUserDto) {
-	try {
-		const match = await this.matchService.makeAmatch(user.id, [user.id, invitedUserDto.userId])
-		client.emit(START_MATCH, match)
-	} catch(error) {
-		this.emitError(client, error)
-	}
-	} 
+//   @UseGuards(WsAuthGuard)
+//   @SubscribeMessage(INVITE_TO_MATCH)
+//   async handleInviteUserToMatch(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() invitedUserDto: InvitedUserDto) {
+// 	try {
+// 		//const match = await this.matchService.makeAmatch(user.id, [user.id, invitedUserDto.userId])
+// 		client.emit(START_MATCH, match)
+// 	} catch(error) {
+// 		this.emitError(client, error)
+// 	}
+// 	} 
 
 	@UseGuards(WsAuthGuard)
 	@SubscribeMessage(JOIN_MATCH)
@@ -98,7 +96,7 @@ async handleDisconnect(@ConnectedSocket() client: Socket, ) {
 	try {
 		const currentPlayer: Player = await this.playerService.getPlayerById(user.id)
 		if (currentPlayer) {
-			const game: Game = await this.matchService.joinMatch(matchDto.matchId, matchDto.mode)
+			const game: Game = await this.matchService.joinMatch(currentPlayer.id, matchDto.matchId, matchDto.mode)
 			this.server.to(matchDto.matchId).emit(JOIN_MATCH, game)
 			this.matchService.getServer(this.server)
 			this.matchService.play()
