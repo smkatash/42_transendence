@@ -25,11 +25,11 @@
   top: 20%;
 }
 
-.channel .type-public {
+.channel .type-public, .channel .type-private {
   width: 13%;
 }
 
-.channel .type-public img{
+.channel .type-public img, .channel .type-private img{
   width: 1.5dvw;
 }
 
@@ -55,11 +55,7 @@
   background-color: #2f424a;
 }
 
-.selected-channel .type-protected img {
-  filter: brightness(0) saturate(100%) invert(83%) sepia(14%) saturate(475%) hue-rotate(7deg) brightness(104%) contrast(92%);
-}
-
-.selected-channel .type-public img {
+.selected-channel .type-protected img, .selected-channel .type-public img, .selected-channel .type-private img {
   filter: brightness(0) saturate(100%) invert(83%) sepia(14%) saturate(475%) hue-rotate(7deg) brightness(104%) contrast(92%);
 }
 

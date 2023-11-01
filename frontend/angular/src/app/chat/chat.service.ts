@@ -17,7 +17,7 @@ export class ChatService {
   domain: string = 'http://127.0.0.1:3000';
 
   findUser(username: string): Observable<User[]>  {
-    return this.http.get<User[]>(`${this.domain}/user/find-by-username?username=${username}`)
+    return this.http.get<User[]>(`${this.domain}/user/find-by-username?username=${username}`, { withCredentials: true })
   }
 
 
@@ -27,7 +27,7 @@ export class ChatService {
     this.socket.emit(CHANNELS)
   }
 
-  requestUsersChannels() {
+  requestUserChannels() {
     this.socket.emit(USER_CHANNELS)
   }
 
