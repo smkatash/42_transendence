@@ -10,11 +10,10 @@ import { GameState } from '../utls/game';
 export class PlayerService {
     constructor(@InjectRepository(Player) private playerRepo: Repository<Player>) {}
 
-    createPlayer(user: User, clientId: string): Promise<Player> {
+    createPlayer(user: User): Promise<Player> {
         const newPlayer: Player = {
             id: user.id,
             user: user,
-            clientId: clientId,
             score: 0,
             matches: [],
             gameState: GameState.START
@@ -34,13 +33,13 @@ export class PlayerService {
         })
     }
   
-    async getPlayerByUser(user: User, clientId: string): Promise<Player> {
+    async getPlayerByUser(user: User): Promise<Player> {
         const currentPlayer = await this.getPlayerById(user.id)
         if (currentPlayer) {
             return currentPlayer
         }
 
-        return this.createPlayer(user, clientId)
+        return this.createPlayer(user)
     }
 
     async saveValidPlayer(player: Player) {
@@ -50,11 +49,6 @@ export class PlayerService {
         }
         return this.playerRepo.save(player);
       }
-
-    async updatePlayerClient(player: Player, clientId: string) {
-        player.clientId = clientId
-        return this.saveValidPlayer(player)
-    }
 
     async updatePlayerScore(players: Player[], score: Record<string, number>) {
         for (const player of players) {

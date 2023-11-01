@@ -12,9 +12,6 @@ export class Player {
     @JoinColumn()
     user: User
 
-    @Column()
-    clientId: string
-
     @Column({default: 0})
     score: number
 
