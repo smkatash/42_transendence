@@ -15,6 +15,7 @@ backend/nest/app/node_modules
 
 # Logs
 backend/nest/app/logs
+backend/nest/app/uploads
 backend/nest/app/*.log
 backend/nest/app/npm-debug.log*
 backend/nest/app/pnpm-debug.log*
