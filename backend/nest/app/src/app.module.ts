@@ -11,17 +11,20 @@ import { GameModule } from './game/game.module';
 import { Match } from './game/entities/match.entity';
 import { Player } from './game/entities/player.entity';
 import { ScheduleModule } from '@nestjs/schedule';
-import { ChannelModule } from './chat/channel/channel.module';
-import { BlockListModule } from './chat/block-list/block-list.module';
-import { ChannelMessageModule } from './chat/channel-message/channel-message.module';
 import { RankingModule } from './ranking/ranking.module';
-import { ChatGateway } from './chat/chat/chat.gateway';
+import { ChatModule } from './chat/chat.module';
 import { AuthToken } from './auth/entities/auth-token.entity';
+import { Channel } from './chat/entities/channel.entity';
+import { ChatUser } from './chat/entities/chatUser.entity';
+import { Message } from './chat/entities/message.entity';
+import { JoinedChannel } from './chat/entities/joinedChannel.entity';
+
 import { ConfigModule } from '@nestjs/config';
 import * as passport from 'passport';
 import RediStore from 'connect-redis'
 import { createClient } from 'redis';
 import * as session from 'express-session';
+import { Mute } from './chat/entities/mute.entity';
 
 @Module({
   imports: [
@@ -39,18 +42,17 @@ import * as session from 'express-session';
       username: DB_USERNAME,
       password: DB_PASSWORD,
       database: DB_NAME,
-      entities: [User, Match, Player, AuthToken],
+      entities: [User, Match, Player, AuthToken, Channel, ChatUser, Message, JoinedChannel, Mute],
       synchronize: true
     }),
     GameModule,
     ScheduleModule.forRoot(),
-    ChannelModule,
-    ChannelMessageModule,
-    BlockListModule,
+    // FriendListModule,
     RankingModule,
+    ChatModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ChatGateway],
+  providers: [AppService],
 })
 
 export class AppModule {}

@@ -1,47 +1,134 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
-import { Channel, Message, User } from '../entities.interface';
+import { Observable, from } from 'rxjs';
+import { Channel, CreateChannelInfo, JoinChannelInfo, Message, User } from '../entities.interface';
+import { ChatSocket } from '../app.module';
+import { ADD_ADMIN, BAN, BLOCK, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, ERROR, JOIN, KICK, LEAVE, MESSAGE, MUTE, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, UNMUTE, USER_CHANNELS } from './subscriptions-events-constants'
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private socket: ChatSocket,
+  ) { }
+
+  domain: string = 'http://127.0.0.1:3000';
+
+  findUser(username: string): Observable<User[]>  {
+    return this.http.get<User[]>(`${this.domain}/user/find-by-username?username=${username}`, { withCredentials: true })
+  }
+
+
+  /* <---------- Socket emits ----------> */
+
+  requestChannels() {
+    this.socket.emit(CHANNELS)
+  }
+
+  requestUserChannels() {
+    this.socket.emit(USER_CHANNELS)
+  }
+
+  requestChannelUsers(channelID: number) {
+    this.socket.emit(CHANNEL_USERS, { cId: channelID })
+  }
+
+  createChannel(channelInfo: CreateChannelInfo) {
+    this.socket.emit(CREATE, channelInfo)
+  }
+
+  joinChannel(joinInfo: JoinChannelInfo) {
+    this.socket.emit(JOIN, joinInfo)
+  }
+
+  leaveChannel(joinInfo: JoinChannelInfo)  {
+    this.socket.emit(LEAVE, joinInfo)
+  }
+
+  sendMessage(channelID: number, message: string) {
+    this.socket.emit(MESSAGE, { cId: channelID, content: message })
+  }
+
+  requestChannelMessages(channelID: number) {
+    this.socket.emit(CHANNEL_MESSAGES, { cId: channelID })
+  }
+
+  exitChannel(channelID: number) {
+    this.socket.emit(LEAVE, { cId: channelID })
+  }
+
+  manageUserModeration(action: string, userID: string, channelID: number) {
+    switch(action) {
+      case BLOCK:
+        this.socket.emit(BLOCK, userID)
+        break
+
+      case UNBLOCK:
+        this.socket.emit(UNBLOCK, userID)
+        break
+
+      case MUTE:
+        this.socket.emit(MUTE, { cId: channelID, uId: userID })
+        break
+
+      case BAN:
+        this.socket.emit(BAN, { cId: channelID, uId: userID })
+        break
+
+      case UNBAN:
+        this.socket.emit(UNBAN, { cId: channelID, uId: userID })
+        break
+
+      case KICK:
+        this.socket.emit(KICK, { cId: channelID, uId: userID })
+        break
+
+      case ADD_ADMIN:
+        this.socket.emit(ADD_ADMIN, { cId: channelID, uId: userID })
+        break
+
+      case REM_ADMIN:
+        this.socket.emit(REM_ADMIN, { cId: channelID, uId: userID })
+        break
+
+      default:
+        break
+    }
+  }
+
+  /* <---------- Events to listen to ----------> */
+
+  onError() {
+    this.socket.on(ERROR, (error: any) => {
+      console.error('WebSocket Error:', error);
+    });
+  }
+
+  onSuccess() {
+    this.socket.on(SUCCESS, (msg: any) => {
+      console.log(msg)
+    })
+  }
+
+  getUsersChannels(): Observable<Channel[]> {
+    return this.socket.fromEvent<Channel[]>(USER_CHANNELS)
+  }
 
   getChannels(): Observable<Channel[]> {
-    const url = 'api/channels';
-    return this.http.get<Channel[]>(url)
-      .pipe(
-        catchError(this.handleError<Channel[]>('getChannels', []))
-        )
-      }
+    return this.socket.fromEvent<Channel[]>(CHANNELS)
+  }
 
-  // getChannelMessages(channelId: number): Observable<Message[]> {
-  //   const url = `api/messages/${channelId}`;
-  //   return this.http.get<ChannelMessages>(url)
-  //     .pipe(
-  //       catchError(this.handleError<ChannelMessages>('getChannelMessages', {id: 0, messages: []})),
-  //       map((channelMessages: ChannelMessages) => channelMessages.messages)
-  //       )
-  // }
+  getChannelUsers(): Observable<User[]> {
+    return this.socket.fromEvent<User[]>(CHANNEL_USERS)
+  }
 
-  // getChannelUsers(channelId: number): Observable<User[]> {
-  //   const url = `api/channelUsers/${channelId}`;
-  //   return this.http.get<ChannelUsers>(url)
-  //     .pipe(
-  //       catchError(this.handleError<ChannelUsers>('getChannelUsers', {id: 0, users: []})),
-  //       map((channelUsers: ChannelUsers) => channelUsers.users)
-  //       )
-  // }
+  getChannelMessages(): Observable<Message[]> {
+    return this.socket.fromEvent<Message[]>(CHANNEL_MESSAGES)
+  }
 
-  /* Handle HTTP operation that failed and let the app continue. */
-  private handleError<T>(operation = 'operation', result?:T) {
-    return (error: any): Observable<T> => {
-      console.error(`${operation} failed: ${error.message}`);
-      // TODO: find a way to display the error to user. Or not. dk yet.
-      return of(result as T);
-    }
+  getIncomingMessages(): Observable<Message> {
+    return this.socket.fromEvent<Message>(MESSAGE)
   }
 }

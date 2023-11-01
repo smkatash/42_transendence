@@ -1,9 +1,7 @@
-import { Component } from '@angular/core';
-
+import { Component, OnInit } from '@angular/core';
 import { ChatService } from './chat.service';
-
-import { ChannelCreateType } from './chat.enum';
 import { Channel } from '../entities.interface';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-chat',
@@ -11,30 +9,64 @@ import { Channel } from '../entities.interface';
   styleUrls: ['./chat.component.css'],
 })
 
-export class ChatComponent {
+export class ChatComponent implements OnInit {
 
   constructor(private chatService: ChatService){ }
 
-  channels: Channel[] = [];
-  selectedChannel?: Channel;
-  channelToCreate?: ChannelCreateType;
-  isChannelToCreateActive: boolean = false;
+  selectedTab: string = 'my-chats'
+
+  myChannels$: Observable<Channel[]> = this.chatService.getUsersChannels()
+  allChannels$: Observable<Channel[]> = this.chatService.getChannels()
+  selectedChannel?: Channel
+  channelToCreate?: string // type of channel to create
+  isChannelToCreateActive: boolean = false
+
+  passwordToJoinChannel?: string
 
   ngOnInit(): void {
-    this.getChannels();
-  }
-
-  getChannels(): void {
-    this.chatService.getChannels()
-        .subscribe((channels: Channel[]) => this.channels = channels);
+    this.chatService.requestUserChannels()
+    this.chatService.requestChannels()
   }
 
   onChannelSelect(channel: Channel) {
-    this.selectedChannel = channel;
+    this.selectedChannel = channel
+    if (this.selectedTab === 'available-chats') {
+      if (this.selectedChannel.protected) {
+        // Get the password
+      }
+      this.chatService.joinChannel({
+        id: this.selectedChannel.id,
+        password: this.passwordToJoinChannel
+      })
+      this.selectTab('my-chats')
+      this.selectedChannel = channel
+    }
+    this.chatService.requestChannelMessages(channel.id)
   }
 
-  createNewChannel(channelType: ChannelCreateType) {
-    this.channelToCreate = channelType;
-    this.isChannelToCreateActive = true;
+  createNewChannel(channelType: string) {
+    this.channelToCreate = channelType
+    console.log(channelType)
+    this.isChannelToCreateActive = true
   }
+
+  selectTab(tab: string) {
+    if (tab === 'my-chats') {
+      this.selectedTab= 'my-chats'
+      this.selectedChannel = undefined
+      this.chatService.requestUserChannels()
+    } else {
+      this.selectedTab= 'available-chats'
+      this.selectedChannel = undefined
+      this.chatService.requestChannels()
+    }
+  }
+
+  // onError() {
+  //   this.chatService.onError()
+  // }
+
+  // getMessage()  {
+  //   return this.chatService.getMessage()
+  // }
 }

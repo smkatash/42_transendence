@@ -12,6 +12,7 @@ export class FriendComponent {
   constructor(private profileService: ProfileService) { }
 
   @Input() user?: User
+  // @Output() userChange = new EventEmitter<User>
   @Input() type?: string
 
   acceptRequest(userID: string) {
