@@ -64,7 +64,7 @@ export class MatchService {
 	}
 
 
-    async joinMatch(currentPlayerId: string, matchId: string, mode: GameMode): Promise<Game> {
+    async joinMatch(matchId: string, mode: GameMode): Promise<Game> {
        const match = await this.getMatchById(matchId)
 	   if (!match) throw new NotFoundException()
 	   
@@ -82,22 +82,25 @@ export class MatchService {
 	async play() {
 		for (const match of this.matches.values()) {
 			if (match.status === GameState.INPROGRESS) {
-				const updateGame = this.gameService.throwBall(match)
-			if (updateGame.status === GameState.END) {
+				let updateGame = this.gameService.throwBall(match)
+				if (updateGame.status === GameState.END) {
+					console.log("END OF THE GAME")
 					await this.saveMatchHistory(updateGame)
 					this.server.to(match.match.id).emit(INGAME, updateGame)
 					this.server.socketsLeave(match.match.id)
-					this.server.in(match.match.id).disconnectSockets(true)
+					//this.server.in(match.match.id).disconnectSockets(true)
 					this.matches.delete(match.match.id)
 				}
 				this.server.to(match.match.id).emit(INGAME, updateGame)
-				await this.checkDisconnectedPlayers(match)
-			} else if (match.status === GameState.PAUSE) {
-				await this.saveMatchHistory(match)
-				this.server.to(match.match.id).emit(INGAME, match)
-				this.server.in(match.match.id).disconnectSockets(true)
-				this.server.socketsLeave(match.match.id)
-				this.matches.delete(match.match.id)
+				updateGame = await this.checkDisconnectedPlayers(updateGame)
+				if (updateGame.match.status === GameState.PAUSE) {
+					console.log("PAUSE OF THE GAME")
+					await this.saveMatchHistory(updateGame)
+					this.server.to(match.match.id).emit(INGAME, updateGame)
+					this.server.socketsLeave(match.match.id)
+					//this.server.in(match.match.id).disconnectSockets(true)
+					this.matches.delete(match.match.id)
+				}
 			}
 		}
 	}
@@ -122,7 +125,7 @@ export class MatchService {
        }
     }   
 
-	async checkDisconnectedPlayers(match: Game){
+	async checkDisconnectedPlayers(match: Game) {
         if (match.match.players.length === 2) {
             const players = match.match.players
             const playerOne = await this.playerService.getUserByPlayerId(players[0].id)
@@ -138,6 +141,7 @@ export class MatchService {
                 match.match.winner = playerOne
             }
         }
+		return match
 	}
 
 

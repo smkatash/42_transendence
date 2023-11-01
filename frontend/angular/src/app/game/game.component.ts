@@ -254,9 +254,10 @@ export class GameComponent implements AfterViewInit {
   pause = false;
 
   gameObservableInit(){
+	// TODO FRANCESCO FIX!
     this.gameService.getTestObservable().subscribe((game: Game) => {
+		console.log(JSON.stringify(game.status))
       if(game.status === GameState.END && game.match){
-			console.log(JSON.stringify(this.gameService.userInfo.id))
           if(game.match.winner.id === this.gameService.userInfo.id){
             this.status = "WIN";
             this.isGameOn = false;
@@ -268,7 +269,13 @@ export class GameComponent implements AfterViewInit {
             console.log("LOSER " + game.match.loser.id);
             return;
           }
-        }
+    	}
+		if (game.status === GameState.PAUSE && game.match) {
+			console.log("PAUSE")
+			this.status = "WIN";
+			this.isGameOn = false;
+			return
+		}
       if(game){
         this.gameInfo = this.valueConversion(game);
         if(this.gameInfo.leftPaddle?.length){
