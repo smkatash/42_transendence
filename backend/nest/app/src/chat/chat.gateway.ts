@@ -930,7 +930,21 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       const adresant = await this.chatUserService.findByUser(u);
       if (adresant) {
         const hisChannels = (await this.channelService.getUsersChannels(u.id))
-          .map((c) => this.channelToFe(c));
+          .map((c) => this.channelToFe(c))
+          .map((c) => {
+            if (c.name) {
+              return c
+            } else  {
+              for (const u of c.users)  {
+                if (u.id !== user.id) {
+                  c.name = u.username;
+                  c.avatar = u.avatar
+                }
+              }
+              return c
+            }
+          }
+        );
           this.server.to(adresant.socketId).emit(USER_CHANNELS, hisChannels)
       }
 
