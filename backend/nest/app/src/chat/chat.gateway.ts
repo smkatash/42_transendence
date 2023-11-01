@@ -138,7 +138,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
   
   
-  private async emitTOChatUsers(event: string, criteria: User[], info: User[] | Channel[]) {
+  private async emitToChatUsers(event: string, criteria: User[], info: User[] | Channel[]) {
     const chatUsers = await this.chatUserService.getAll();
     for (const chatUser of chatUsers)  {
       if (criteria.some((u) => u.id === chatUser.user.id))  {
@@ -172,6 +172,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       // this.onGetChannelMessages(socket, {cId: channel.id})
       this.onGetUsersChannels(socket);
       this.onGetAllChannels(socket);
+
+      this.emitToChatUsers(CHANNEL_USERS, channel.users, channel.users);
     } catch (error) {
       Logger.error(error)
       this.emitError(socket, error)
