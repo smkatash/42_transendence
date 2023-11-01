@@ -38,8 +38,8 @@
 
       <!-- It's only one of three options: add friend, remove, or display request sent -->
       <button *ngIf="canSendRequest()" (click)="sendRequest()">Add friend</button>
-      <button *ngIf="isFriendsWithCurrentUser()" (click)="removeFriend()">Remove friend</button>
-      <h2 *ngIf="isRequestSent()">Request sent</h2>
+      <button class="removeFriend" *ngIf="isFriendsWithCurrentUser()" (click)="removeFriend()">Remove friend</button>
+      <button *ngIf="isRequestSent()">Request Pending</button>
 
       <button *ngIf="id === null" (click)="enable2FA()">Enable 2FA</button>
       <!-- <button *ngIf="id === null && !profile?.mfaEnable" (click)="disable2FA()">Disable 2FA</button> -->

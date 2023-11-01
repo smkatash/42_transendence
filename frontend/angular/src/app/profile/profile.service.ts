@@ -57,6 +57,7 @@ export class ProfileService {
     this.http.patch(url, {title: title}, { withCredentials: true }).subscribe()
   }
 
+  // TODO user requested
   sendRequest(friendID: string): Observable<User> {
     const url =`${this.domain}/user/request-friend`
     return this.http.post<User>(url, { friendId: friendID}, { withCredentials: true }) // Post with ID in the body

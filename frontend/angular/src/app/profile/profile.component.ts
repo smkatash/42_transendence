@@ -162,7 +162,7 @@ export class ProfileComponent implements OnInit {
 
   removeFriend(): void {
     if (this.id) {
-      this.profileService.removeFriend(this.id)
+      this.profileService.removeFriend(this.id).subscribe()
     }
   }
 
