@@ -23,3 +23,5 @@ export const DEFAULT_TABLE_PROPORTION = 2
 export const DEFAULT_TABLE_HEIGHT = 500
 export const DEFAULT_PADDLE_GAP = 40
 export const POSTGRES_UNIQUE_VIOLATION = '23505'
+
+export const SALT_ROUNDS = 10

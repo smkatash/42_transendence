@@ -14,10 +14,9 @@ import { MuteService } from './service/mute.service';
 import { Channel } from './entities/channel.entity';
 import { Message } from './entities/message.entity';
 import { ADD_ADMIN, BAN, BLOCK, CHANNEL, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DELETE, DIRECT, ERROR, INVITE_TO_PRIVATE, JOIN, KICK, LEAVE, MESSAGE, MUTE, PASSWORD, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, USER_CHANNELS } from './subscriptions-events-constants';
-import { measureMemory } from 'vm';
 
 
-// @UsePipes(new ValidationPipe({whitelist: true}))
+@UsePipes(new ValidationPipe({whitelist: true}))
 @WebSocketGateway({
   namespace: 'chat',
   cors: '*'
@@ -134,10 +133,26 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           .map((c) => this.channelToFe(c));
     const onlineUsers = await this.chatUserService.getAll();
     for (const onlineUser of onlineUsers) {
-      this.server.to(onlineUser.socketId).emit(CHANNELS, publicChannels)
+      this.server.to(onlineUser.socketId).emit(
+        CHANNELS, publicChannels
+        .filter((c) => {
+          if (!(c.users.some((u) => u.id === onlineUser.user.id))) {
+            return c;
+          }
+        })
+      )
+  }
+}
+  
+  private async emitToChatUsers(event: string, criteria: User[], info: User[] | Channel[]) {
+    const chatUsers = await this.chatUserService.getAll();
+    for (const chatUser of chatUsers)  {
+      if (criteria.some((u) => u.id === chatUser.user.id))  {
+        this.server.to(chatUser.socketId).emit(event, info)
+      }
     }
   }
-  
+
   @SubscribeMessage(JOIN)
   async onJoin(@ConnectedSocket() socket: Socket,
     @MessageBody() joinInfo: JoinChannelDto) {
@@ -162,6 +177,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
        */
       // this.onGetChannelMessages(socket, {cId: channel.id})
       this.onGetUsersChannels(socket);
+      this.onGetAllChannels(socket);
+
+      this.emitToChatUsers(CHANNEL_USERS, channel.users, channel.users);
     } catch (error) {
       Logger.error(error)
       this.emitError(socket, error)
@@ -224,9 +242,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!user) {
       return this.noAccess(socket);
     }
-    const channel = await this.channelService.getChannel(channelInfo.cId, []);
+    const channel = await this.channelService.getChannel(channelInfo.cId, [
+      'users'
+    ]);
     if (!channel) {
       return this.emitError(socket, 'No such channel')
+    }
+    if (!(channel.users.some((u) => u.id === user.id))) {
+      throw new BadRequestException('User not on the channel')
     }
     // const messages = await this.messageService.findMessagesByChannel(channel);
     const u = await this.userService.getUserWith(user.id, [
@@ -260,10 +283,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       return this.noAccess(socket);
     }
     try {
-      const channel = await this.channelService.getChannel(message.cId, []);
+      const channel = await this.channelService.getChannel(message.cId, [
+        'users'
+      ]);
       if (!channel) {
         console.log('no channel')
         return this.emitError(socket, "No such channel")
+      }
+      if (!(channel.users.some((u) => u.id === user.id))) {
+        throw new BadRequestException('User not on the channel')
       }
       console.log('----message-----')
       console.log(message)
@@ -297,7 +325,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         } else  {
           newMsg['sessionUser'] = false
         }
-        console.log('sessionUser should be there', newMsg);
+        // console.log('sessionUser should be there', newMsg);
         this.server.to(user.socketId).emit(MESSAGE, newMsg)
         console.log(`emitting to ${user.user.username}`)
       }
@@ -314,12 +342,19 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       if (!user) {
         return this.noAccess(socket);
       }
-    console.log("get all channels!!")
+    // console.log("get all channels!!")
     try {
       const channels = await  this.channelService.getAllChannels();
+      // console.log(channels)
       //Removing password and dates and stuff
       const cToFe = channels.filter((c) => !(c.private)).map((c) => this.channelToFe(c))
         .sort((c1, c2) => c1.updatedAt.getDate() - c2.updatedAt.getDate())
+        .filter((c) => {
+          if (!(c.users.some((u) => u.id === user.id))) {
+            return c;
+          }
+        });
+      console.log(cToFe)
       this.server.to(socket.id).emit(CHANNELS, cToFe);
       // this.server.to(socket.id).emit('allChannels', channels);
     } catch (error) {
@@ -378,7 +413,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       //TODO clean relations CHECK IF CLEAN
       const channel = await this.channelService.getChannel(cId.cId, [
         'owner', 'users', 'messages.user', 'admins', 'joinedUsers', 'messages',
-        'messages.user.messages'
+        'messages.user.messages', 'banned'
       ]);
       if (!channel) {
         return this.emitError(socket, 'No such channel');
@@ -394,7 +429,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         //clean messages
       for (const message of channel.messages) {
         // console.log(message.user.messages);
-        if (message.user.messages)  {
+        if (message?.user?.messages)  {
           message.user.messages = message.user.messages.filter(msg => msg.id !== message.id);
             // console.log('BUBU')
           }
@@ -444,14 +479,15 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       //DAMN thats not nice
       //Updating channel lists for FE
       const chatUsers = await this.chatUserService.getAll();
-      const cToFe = ((await this.channelService.getAllChannels()))
+/*      const cToFe = ((await this.channelService.getAllChannels()))
             .map((c) => this.channelToFe(c))
-            .filter((c) => !c.private);
+            .filter((c) => !c.private);*/
       for (const chatUser of chatUsers) {
-        this.server.to(chatUser.socketId).emit(CHANNELS, cToFe);
+        // this.server.to(chatUser.socketId).emit(CHANNELS, cToFe);
         if (channel.users.some((u) => chatUser.user.id === u.id)) {
           const cToFe = (await this.channelService.getUsersChannels(chatUser.user.id))
                 .map((c) => this.channelToFe(c));
+          // console.log("UPDATING DELETED CHANNEL USERS CHANNEL LIST")
           this.server.to(chatUser.socketId).emit(USER_CHANNELS, cToFe);
         }
       }
@@ -459,6 +495,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       await this.joinedChannelService.deleteByChannel(channel);
       await this.messageService.deleteByChannel(channel);
       await this.channelService.delete(channel.id);
+      this.newPublic();
     } catch (error) {
       Logger.error('fail on delete channel')
       console.log(error)
@@ -960,15 +997,22 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
 
   private channelToFe(channel: Channel): ChannelToFeDto{
-    return {
+    const chanToFe: ChannelToFeDto = {
       id: channel.id,
       name: channel.name,
       private: channel.private,
       users: channel.users,
       protected: channel.protected,
       type: channel.type,
-      updatedAt: channel.updatedAt
+      updatedAt: channel.updatedAt,
      }
+     if (channel.owner) {
+      chanToFe.owner = channel.owner
+     }
+     if (channel.admins)  {
+      chanToFe.admins = channel.admins
+     }
+     return chanToFe;
   }
 
   @SubscribeMessage(CHANNEL)

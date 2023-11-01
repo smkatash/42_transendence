@@ -1,5 +1,5 @@
 import { Logger, UnauthorizedException, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
-import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer, WsException } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { UserService } from '../user/service/user.service';
 import { Status } from 'src/user/utils/status.enum';
@@ -37,6 +37,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	try {
 		if (!user) {
 			throw new UnauthorizedException()
+			// throw new WsException('Pls work')
 		}
 
 		this.logger.log(`Client id: ${client.id} connected`)
@@ -47,7 +48,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		this.logger.log(`Client id: ${client.id} connected successfully`)
 	} catch (error) {
 		this.emitError(client, error)
-		throw error
+		// throw error
 	}
 }
 

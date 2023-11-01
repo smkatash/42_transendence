@@ -5,8 +5,7 @@ import { Channel } from '../entities/channel.entity';
 import { JoinChannelDto, CreateChannelDto, ChannelPasswordDto } from '../dto/channel.dto';
 import { User } from 'src/user/entities/user.entity';
 import * as bcrypt from 'bcrypt'
-
-const   saltRounds = 10;
+import { POSTGRES_UNIQUE_VIOLATION, SALT_ROUNDS } from 'src/Constants';
 
 @Injectable()
 export class ChannelService {
@@ -16,7 +15,7 @@ export class ChannelService {
         ){}
 
     async createChannel(channelInfo: CreateChannelDto, owner: User): Promise<Channel>{
-        // const exists = await this.channelRepository.findOneBy({name: CreateChannelDto.name})
+
         try {
             // console.log(channel)
             
@@ -34,7 +33,7 @@ export class ChannelService {
             channel.users.push(owner);
             channel.admins.push(owner);
             if (channelInfo.password?.length)   {
-                const hash = await bcrypt.hash(channelInfo.password, saltRounds);
+                const hash = await bcrypt.hash(channelInfo.password, SALT_ROUNDS);
                 channel.hash = hash;
                 channel.protected = true;
             }
@@ -45,9 +44,8 @@ export class ChannelService {
             return c
             
         } catch (error) {
-            console.log("this is caught")
             Logger.error(error);
-            if (error.code === 23505)   {
+            if (error.code === POSTGRES_UNIQUE_VIOLATION)   {
                 throw new HttpException('Channel already exists', HttpStatus.BAD_REQUEST)
             }   else    {
                 throw error;
@@ -167,7 +165,7 @@ console.log('--------join channels users------')
             channel.protected = false;
             channel.hash = null;
         }   else    {
-            const hash = await bcrypt.hash(passInfo.newPass, saltRounds);
+            const hash = await bcrypt.hash(passInfo.newPass, SALT_ROUNDS);
             channel.hash = hash;
             channel.protected = true;
         }
@@ -184,7 +182,6 @@ console.log('--------join channels users------')
         const room  = this.channelRepository.create({
             private: true,
             type: 'direct'
-            // owner: null
         });
         room.users = [u1, u2];
         room.messages = [];
