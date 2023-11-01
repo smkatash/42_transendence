@@ -945,7 +945,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
             }
           }
         );
-          this.server.to(adresant.socketId).emit(USER_CHANNELS, hisChannels)
+        this.server.to(adresant.socketId).emit(USER_CHANNELS, hisChannels)
       }
 
       this.onMessage(socket, {cId: room.id, content: uInfo.text});
