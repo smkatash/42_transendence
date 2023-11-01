@@ -7,6 +7,16 @@
       <input type="password" id="change-password">
       <button class="change-btn">Change</button>
     </div>
+
+    <!-- <div class="invite-to-channel" *ngIf="channel?.private && channel?.owner?.id === currentUser?.id"> -->
+      <label for="user-search" *ngIf="channel?.private">Search for user to invite:</label>
+      <div class="invite-to-channel" *ngIf="channel?.private">
+        <input type="text" id="user-search" [formControl]="privateUserSearch">
+        <div *ngFor="let user of searchedUsers">
+          <span (click)="sendInviteToChannel(user.id)">{{ user.username }}</span>
+        </div>
+      </div>
+
     <div class="users-container" *ngIf="users$ | async as users">
       <div *ngFor="let user of users">
         <app-channel-user [user]="user"

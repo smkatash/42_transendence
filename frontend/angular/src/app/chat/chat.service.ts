@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, from } from 'rxjs';
 import { Channel, CreateChannelInfo, JoinChannelInfo, Message, User } from '../entities.interface';
 import { ChatSocket } from '../app.module';
-import { ADD_ADMIN, BAN, BLOCK, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, ERROR, JOIN, KICK, LEAVE, MESSAGE, MUTE, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, UNMUTE, USER_CHANNELS } from './subscriptions-events-constants'
+import { ADD_ADMIN, BAN, BLOCK, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DIRECT, ERROR, JOIN, KICK, LEAVE, MESSAGE, MUTE, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, UNMUTE, USER_CHANNELS } from './subscriptions-events-constants'
 
 @Injectable({
   providedIn: 'root'
@@ -57,6 +57,14 @@ export class ChatService {
 
   exitChannel(channelID: number) {
     this.socket.emit(LEAVE, { cId: channelID })
+  }
+
+  sendDM(userID: string, message: string, inviteType?: string, inviteID?: string | number) {
+    this.socket.emit(DIRECT, { uId: userID, text: message, inviteType: inviteType, inviteID: inviteID })
+  }
+
+  declineChannelInvite(channelID: number) {
+    this.socket.emit(DECLINE_PRIVATE_INVITE, { cId: channelID })
   }
 
   manageUserModeration(action: string, userID: string, channelID: number) {

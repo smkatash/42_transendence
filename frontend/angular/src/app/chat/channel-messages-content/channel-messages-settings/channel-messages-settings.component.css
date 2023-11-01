@@ -53,12 +53,16 @@ label {
   color: #E8DAB2;
 }
 
-.password-field-container {
+.password-field-container, .invite-to-channel {
   margin-left: 10%;
   margin-right: 10%;
   margin-top: 3%;
   margin-bottom: 3%;
   display: flex;
+}
+
+.invite-to-channel {
+  flex-direction: column;
 }
 
 input {
@@ -73,6 +77,11 @@ input {
   background-color: #425c68;
   color: #E8DAB2;
   outline: none;
+}
+
+.invite-to-channel input {
+  width: 100%;
+  height: 1.5dvw;
 }
 
 .change-btn {

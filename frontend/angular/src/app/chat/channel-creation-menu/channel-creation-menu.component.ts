@@ -47,5 +47,8 @@ export class ChannelCreationMenuComponent {
        private: this.channelType === 'private',
        password: this.channelPassword
     })
+    this.channelName = ''
+    this.channelPassword = ''
+    this.toggle()
   }
 }
