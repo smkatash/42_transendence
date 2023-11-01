@@ -29,13 +29,13 @@ export class ChannelToFeDto    {
 
     updatedAt: Date;
 
-    // owner: User;
+    owner?: User;
 
     // topic: string;
 
     users: User[];
 
-    // admins: User[];
+    admins?: User[];
 
     // messages: Message[];
 

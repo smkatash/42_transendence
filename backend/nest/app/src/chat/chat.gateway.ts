@@ -989,15 +989,22 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
 
   private channelToFe(channel: Channel): ChannelToFeDto{
-    return {
+    const chanToFe: ChannelToFeDto = {
       id: channel.id,
       name: channel.name,
       private: channel.private,
       users: channel.users,
       protected: channel.protected,
       type: channel.type,
-      updatedAt: channel.updatedAt
+      updatedAt: channel.updatedAt,
      }
+     if (channel.owner) {
+      chanToFe.owner = channel.owner
+     }
+     if (channel.admins)  {
+      chanToFe.admins = channel.admins
+     }
+     return chanToFe;
   }
 
   @SubscribeMessage(CHANNEL)
