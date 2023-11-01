@@ -10,7 +10,7 @@ import { NONE_TYPE } from '@angular/compiler';
   styleUrls: ['./game.component.css']
 })
 
-export class GameComponent implements AfterViewInit {
+export class GameComponent implements AfterViewInit, OnInit {
 
   constructor(private renderer: Renderer2,
               private rendererFactory: RendererFactory2,
@@ -58,7 +58,8 @@ export class GameComponent implements AfterViewInit {
   paddleLeftIncrement = 0;
   paddleRightIncrement = 0;
 
-  status = "";
+  status: number;
+  statusStr = "";
 
   gameInfo?:Game = {};
 
@@ -95,7 +96,7 @@ export class GameComponent implements AfterViewInit {
     //   console.log("movedPaddleUp")
     }
     if (e.code === 'KeyS') {
-      console.log("movedPaddleDown")
+      // console.log("movedPaddleDown")
       this.gameService.padlePositionEmitter("+10")
     }
   }
@@ -150,9 +151,13 @@ export class GameComponent implements AfterViewInit {
     this.checkBoardSize();
     if( game.ball){
       if(this.matchLeftSide == true){
+        // console.log('BALLX: ' +  game.ball.position.x);
+        // console.log('BALLY: ' +  game.ball.position.y);
         game.ball.position.x = (this.maxViewWidth / this.maxWidth) * game.ball.position.x;  // | - p     |
         game.ball.position.y = (this.maxViewHeight /this.maxHeight) * game.ball.position.y;
       } else {
+        // console.log('BALLX: ' +  game.ball.position.x);
+        // console.log('BALLY: ' +  game.ball.position.y);
         game.ball.position.x = this.maxViewWidth -  (this.maxViewWidth / this.maxWidth) * game.ball.position.x; // |      p - |
         game.ball.position.y = (this.maxViewHeight / this.maxHeight) * game.ball.position.y;
       }
@@ -255,39 +260,35 @@ export class GameComponent implements AfterViewInit {
 
   gameObservableInit(){
 	// TODO FRANCESCO FIX!
-    this.gameService.getTestObservable().subscribe((game: Game) => {
-		console.log(JSON.stringify(game.status))
-      if(game.status === GameState.END && game.match){
-          if(game.match.winner.id === this.gameService.userInfo.id){
-            this.status = "WIN";
-            this.isGameOn = false;
-            console.log("WINNER " + game.match.winner.id);
-            return;
-          } else {
-            this.status = "LOS";
-            this.isGameOn = false;
-            console.log("LOSER " + game.match.loser.id);
-            return;
-          }
-    	}
-		if (game.status === GameState.PAUSE && game.match) {
-			console.log("PAUSE")
-			this.status = "WIN";
-			this.isGameOn = false;
-			return
-		}
+    this.gameService.getGameObservable().subscribe((game: Game) => {
+      this.matchLeftSide = this.gameService.matchIsLeftSide();
+      console.log(game.match?.id);
       if(game){
         this.gameInfo = this.valueConversion(game);
         if(this.gameInfo.leftPaddle?.length){
           this.paddleHeight = ( 100/ this.maxHeight) * this.gameInfo.leftPaddle?.length;
         }
       }
-      if (this.pause == false){
-        // this.initViewValue();
-        this.pause = true;
-      }
-      this.matchLeftSide = this.gameService.matchIsLeftSide()
       this.startPlaying();
+    //   if(game.status === GameState.END && game.match){
+    //     if(game.match.winner.id === this.gameService.userInfo.id){
+    //       this.statusStr = "WIN";
+    //       this.isGameOn = false;
+    //       // console.log("WINNER " + game.match.winner.id);
+    //       return;
+    //     } else {
+    //       this.statusStr = "LOS";
+    //       this.isGameOn = false;
+    //       // console.log("LOSER " + game.match.loser.id);
+    //       return;
+    //     }
+    //     // if (game.status === GameState.PAUSE && game.match) {
+    //     //   console.log("PAUSE")
+    //     //   this.status = "WIN";
+    //     //   this.isGameOn = false;
+    //     //   return
+    //     // }
+    // }
     })
   }
 
@@ -296,13 +297,60 @@ export class GameComponent implements AfterViewInit {
 
   ngOnInit() {
     this.initViewValue()
-    this.status = "";
+    this.gameService.getGameStatus().subscribe(data => {
+      this.status = data;
+      if (this.status == GameState.READY)
+        this.readyFunc();
+      else if (this.status == GameState.START)
+        this.startFunc();
+      else if (this.status == GameState.INPROGRESS)
+        this.progressFunc();
+      else if (this.status == GameState.PAUSE)
+        this.pauseFunc();
+      else if (this.status == GameState.END)
+        this.endFunc();
+    })
   };
 
+  readyFunc() {
+    console.log("READY")
+    this.gameObservableInit();
+  }
+  startFunc(){
+    console.log("START")
+  }
+
+  progressFunc(){
+    // console.log("PROGRESS")
+  }
+  pauseFunc(){
+    console.log("PAUSE")
+
+  }
+  endFunc(){
+    console.log("END")
+      if(this.gameInfo?.match?.winner.id === this.gameService.userInfo.id){
+        this.statusStr = "WIN";
+        this.isGameOn = false;
+        // console.log("WINNER " + game.match.winner.id);
+        return;
+      } else {
+        this.statusStr = "LOS";
+        this.isGameOn = false;
+        // console.log("LOSER " + game.match.loser.id);
+        return;
+      }
+      this.gameService.setGameStatus(GameState.READY);
+      // if (game.status === GameState.PAUSE && game.match) {
+      //   console.log("PAUSE")
+      //   this.status = "WIN";
+      //   this.isGameOn = false;
+      //   return
+      // }
+  }
 
   setGame(event: number) {
     this.isInQueue = true;
-    this.gameObservableInit();
     this.gameService.startGameService(event);
     this.isWaitingInQueue();
   }

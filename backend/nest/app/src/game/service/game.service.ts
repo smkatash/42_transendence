@@ -21,9 +21,9 @@ export class GameService {
         const leftPaddle: Paddle = this.launchPaddle(Paddletype.LEFT) 
         const rightPaddle: Paddle = this.launchPaddle(Paddletype.RIGHT)
         const scores: Record<string, number> = {}
-
+        
         match.players.forEach((player) => {
-          scores[player.id] = 0
+            scores[player.id] = 0
         })
 
         return {

@@ -88,9 +88,12 @@ export class MatchService {
 					await this.saveMatchHistory(updateGame)
 					this.server.to(match.match.id).emit(INGAME, updateGame)
 					this.server.socketsLeave(match.match.id)
-					//this.server.in(match.match.id).disconnectSockets(true)
+					// this.server.in(match.match.id).disconnectSockets(true)
 					this.matches.delete(match.match.id)
 				}
+                console.log("-------------------------------------------")
+                console.log(JSON.stringify(updateGame))
+                console.log("-------------------------------------------")
 				this.server.to(match.match.id).emit(INGAME, updateGame)
 				updateGame = await this.checkDisconnectedPlayers(updateGame)
 				if (updateGame.match.status === GameState.PAUSE) {
@@ -98,7 +101,7 @@ export class MatchService {
 					await this.saveMatchHistory(updateGame)
 					this.server.to(match.match.id).emit(INGAME, updateGame)
 					this.server.socketsLeave(match.match.id)
-					//this.server.in(match.match.id).disconnectSockets(true)
+					// this.server.in(match.match.id).disconnectSockets(true)
 					this.matches.delete(match.match.id)
 				}
 			}
