@@ -133,10 +133,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           .map((c) => this.channelToFe(c));
     const onlineUsers = await this.chatUserService.getAll();
     for (const onlineUser of onlineUsers) {
-      this.server.to(onlineUser.socketId).emit(CHANNELS, publicChannels)
-    }
+      this.server.to(onlineUser.socketId).emit(
+        CHANNELS, publicChannels
+        .filter((c) => {
+          if (!(c.users.some((u) => u.id === onlineUser.user.id))) {
+            return c;
+          }
+        })
+      )
   }
-  
+}
   
   private async emitToChatUsers(event: string, criteria: User[], info: User[] | Channel[]) {
     const chatUsers = await this.chatUserService.getAll();
@@ -348,7 +354,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
             return c;
           }
         });
-      // console.log(cToFe)
+      console.log(cToFe)
       this.server.to(socket.id).emit(CHANNELS, cToFe);
       // this.server.to(socket.id).emit('allChannels', channels);
     } catch (error) {
