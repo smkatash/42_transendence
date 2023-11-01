@@ -26,7 +26,7 @@ button {
   align-self: center;
   justify-self: center;
   height: 4dvh;
-  width: 8dvw;
+  width: 10dvw;
 }
 
 button:hover {
@@ -181,6 +181,10 @@ input {
 
 .logout {
   color: #b04343;
+}
+
+.removeFriend {
+	color: #b04343;
 }
 
 /************************* Stats *************************/

@@ -67,7 +67,7 @@ export class UserController {
 
 	@Patch('title')
 	@UseGuards(SessionGuard)
-	async updateTitle(@Body('title') updateTitleDto: UpdateTitleDto, @GetUser() currentUser: SessionUserDto) {
+	async updateTitle(@Body() updateTitleDto: UpdateTitleDto, @GetUser() currentUser: SessionUserDto) {
 		if (!currentUser) {
 			throw new UnauthorizedException('Access denied');
 		}
@@ -179,7 +179,7 @@ export class UserController {
 		}
 
 		try {
-            return await this.userService.addUserFriend(currentUser.id, friendIdDto.friendId)
+			return await this.userService.addUserFriend(currentUser.id, friendIdDto.friendId)
 		} catch (error) {
 			throw error
 		}
@@ -192,6 +192,7 @@ export class UserController {
 			throw new UnauthorizedException('Access denied');
 		}
 		
+		console.log("HERE")
 		try {
 			return await this.userService.declineUserFriend(currentUser.id, friendIdDto.friendId)
         } catch(error) {
@@ -243,7 +244,7 @@ export class UserController {
     }
 
 
-    @Delete('friend/:id')
+    @Delete('friend/:friendId')
     @UseGuards(SessionGuard)
     async deleteUserFriend(@Param() friendIdDto: FriendIdDto, 
                             @GetUser() currentUser: SessionUserDto) {
