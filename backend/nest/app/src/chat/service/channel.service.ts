@@ -77,7 +77,7 @@ export class ChannelService {
         // })
         const channels = (await this.channelRepository.find({
             relations: [
-                'users'
+                'users', 'owner', 'admins'
             ]
         }))
         return channels.filter((c) => c.users.some((user) => user.id === userId));
@@ -87,7 +87,7 @@ export class ChannelService {
 
     async getAllChannels(): Promise<Channel[]>  {
         return await this.channelRepository.find({
-            relations: ['users']
+            relations: ['users', 'owner', 'admins']
         });
     }
 
