@@ -3,6 +3,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { ChatService } from '../../chat.service';
 import { Channel, User } from 'src/app/entities.interface';
 import { Observable } from 'rxjs';
+import { ProfileService } from 'src/app/profile/profile.service';
 
 @Component({
   selector: 'app-channel-messages-settings',
@@ -26,13 +27,22 @@ import { Observable } from 'rxjs';
 })
 export class ChannelMessagesSettingsComponent implements OnChanges {
 
-  constructor(private chatService: ChatService){ };
+  constructor(
+    private chatService: ChatService,
+    private profileService: ProfileService
+  ){ };
 
   @Input() isOpen?: boolean
   @Output() isOpenChange = new EventEmitter<boolean>
   @Input() channel?: Channel
-  @Output() channelChangeEvent = new EventEmitter<Channel>
+  @Output() channelChangeEvent = new EventEmitter<Channel | undefined>
   users$: Observable<User[]> = this.chatService.getChannelUsers()
+  currentUser?: User
+
+  ngOnInit() {
+    this.profileService.getCurrentUser()
+      .subscribe(user => this.currentUser = user)
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['channel'] && this.channel) {

@@ -43,29 +43,3 @@
     </div>
   </div>
 </body>
-
-<!--
-<body>
-  <app-navbar></app-navbar>
-  <div class="chat-interface">
-    <div class="channel-container-border">
-      <div class="channel-container">
-        <div *ngFor="let channel of channels">
-          <app-sidebar-channel [isSelected]="channel === selectedChannel"
-                               [channel]="channel"
-                               (click)="onChannelSelect(channel)"></app-sidebar-channel>
-        </div>
-      </div>
-      <app-create-channel-button (createChannelEvent)="createNewChannel($event)"></app-create-channel-button>
-    </div>
-    <div class="content-container">
-      <app-channel-creation-menu [channelType]="channelToCreate"
-                                 [(isOpen)]="isChannelToCreateActive"></app-channel-creation-menu>
-
-      <app-channel-messages-content *ngIf="selectedChannel"
-                                    [channelId]="selectedChannel.id"></app-channel-messages-content>
-
-      <app-default-content *ngIf="selectedChannel === undefined"></app-default-content>
-    </div>
-  </div>
-</body> -->

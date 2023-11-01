@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, from } from 'rxjs';
 import { Channel, CreateChannelInfo, JoinChannelInfo, Message, User } from '../entities.interface';
 import { ChatSocket } from '../app.module';
-import { CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, ERROR, JOIN, LEAVE, MESSAGE, SUCCESS, USER_CHANNELS } from './subscriptions-events-constants'
+import { ADD_ADMIN, BAN, BLOCK, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, ERROR, JOIN, KICK, LEAVE, MESSAGE, MUTE, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, UNMUTE, USER_CHANNELS } from './subscriptions-events-constants'
 
 @Injectable({
   providedIn: 'root'
@@ -57,6 +57,45 @@ export class ChatService {
 
   exitChannel(channelID: number) {
     this.socket.emit(LEAVE, { cId: channelID })
+  }
+
+  manageUserModeration(action: string, userID: string, channelID: number) {
+    switch(action) {
+      case BLOCK:
+        this.socket.emit(BLOCK, userID)
+        break
+
+      case UNBLOCK:
+        this.socket.emit(UNBLOCK, userID)
+        break
+
+      case MUTE:
+        this.socket.emit(MUTE, { cId: channelID, uId: userID })
+        break
+
+      case BAN:
+        this.socket.emit(BAN, { cId: channelID, uId: userID })
+        break
+
+      case UNBAN:
+        this.socket.emit(UNBAN, { cId: channelID, uId: userID })
+        break
+
+      case KICK:
+        this.socket.emit(KICK, { cId: channelID, uId: userID })
+        break
+
+      case ADD_ADMIN:
+        this.socket.emit(ADD_ADMIN, { cId: channelID, uId: userID })
+        break
+
+      case REM_ADMIN:
+        this.socket.emit(REM_ADMIN, { cId: channelID, uId: userID })
+        break
+
+      default:
+        break
+    }
   }
 
   /* <---------- Events to listen to ----------> */

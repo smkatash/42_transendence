@@ -20,7 +20,7 @@ export class CreateChannelDto    {
     type: 'private' | 'protected' | 'public' | 'direct';
 }
 
-export class ChannelToFeDto    {
+export class ChannelToFeDto {
     id: number;
 
     name: string;

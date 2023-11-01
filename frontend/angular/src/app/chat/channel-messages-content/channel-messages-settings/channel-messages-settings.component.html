@@ -2,14 +2,17 @@
   <div class="channel-messages-settings">
     <h1 class="title">Channel Settings.</h1>
     <p>To access the different options, hover over a user's name and click the dropdown menu.</p>
-    <label for="change-password">Change your channel's password:</label>
-    <div class="password-field-container">
+    <label for="change-password" *ngIf="channel?.owner === currentUser">Change your channel's password:</label>
+    <div class="password-field-container" *ngIf="channel?.owner === currentUser">
       <input type="password" id="change-password">
       <button class="change-btn">Change</button>
     </div>
     <div class="users-container" *ngIf="users$ | async as users">
       <div *ngFor="let user of users">
-        <app-channel-user [user]="user"></app-channel-user>
+        <app-channel-user [user]="user"
+                          [currentUser]="currentUser"
+                          [channel]="channel">
+        </app-channel-user>
       </div>
     </div>
     <div class="footer">

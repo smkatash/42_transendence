@@ -2,7 +2,7 @@
 
 <app-channel-messages-settings [(isOpen)]="isSettingsOpen"
                                [channel]="channel"
-                               (channelChangeEvent)="channelChange.emit($event)">
+                               (channelChangeEvent)="channelChangeEvent($event)">
 </app-channel-messages-settings>
 
 <div class="loading-screen" *ngIf="loading">

@@ -1,6 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ChatService } from '../chat.service';
-import { Channel, Message } from 'src/app/entities.interface';
+import { Channel, Message, User } from 'src/app/entities.interface';
+import { ProfileService } from 'src/app/profile/profile.service';
 
 @Component({
   selector: 'app-channel-messages-content',
@@ -15,7 +16,7 @@ export class ChannelMessagesContentComponent implements OnInit {
   @ViewChild('messageContainer') messageContainer!: ElementRef;
 
   @Input() channel?: Channel
-  @Output() channelChange = new EventEmitter<Channel>
+  @Output() channelChange = new EventEmitter<Channel | undefined>
   fetchedMessages: Message[] = []
   incomingMessages: Message[] = []
   messageToSend?: string;
@@ -46,8 +47,8 @@ export class ChannelMessagesContentComponent implements OnInit {
 
     this.chatService.sendMessage(this.channel?.id, this.messageToSend)
 
-    this.scrollToBottom();
-    this.messageToSend = '';
+    this.scrollToBottom()
+    this.messageToSend = ''
   }
 
   scrollToBottom() {
@@ -56,5 +57,9 @@ export class ChannelMessagesContentComponent implements OnInit {
 
   openSettings(): void {
     this.isSettingsOpen = true;
+  }
+
+  channelChangeEvent(channel: Channel | undefined) {
+    this.channelChange.emit(channel)
   }
 }

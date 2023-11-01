@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { User } from 'src/app/entities.interface';
 import { ProfileService } from '../profile.service';
 
