@@ -370,15 +370,32 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage(USER_CHANNELS)
   async onGetUsersChannels(@ConnectedSocket() socket: Socket) {
 
-    const user = socket.data.user;
+     let user: User = socket.data.user;
       if (!user) {
         return this.noAccess(socket);
       }
       // console.log('get user\'s channesl')
-      try{
+      try {
         const channels = await this.channelService.getUsersChannels(user.id)
       //Removing password and dates and stuff
+        user = await this.userService.getUserWith(user.id, [
+          'blockedUsers'
+        ]);
+        console.log(user)
         const cToFe = channels
+          .filter((c) => {
+            if (c.type === 'direct')  {
+              for (const u of c.users)  {
+                if (u.id !== user.id) {
+                  if (!(user.blockedUsers.some((blocked) => blocked.id === u.id)))  {
+                    return c;
+                  }
+                }
+              }
+            } else  {
+              return c;
+            }
+          })
           .sort((c1, c2) => c2.updatedAt.getTime() - c1.updatedAt.getTime())
           .map((c) => this.channelToFe(c))
           .map((c) => {
@@ -393,8 +410,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
               }
               return c
             }
-          }
-        );
+          })
+          
+        ;
         // console.log('owner und stf should be there', cToFe)
         this.server.to(socket.id).emit(USER_CHANNELS, cToFe);
         // this.server.to(socket.id).emit('usersChannels', channels);
@@ -1031,9 +1049,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
      if (channel.admins)  {
       chanToFe.admins = channel.admins
      }
-     console.log(channel)
-     console.log('see if owner there')
-     console.log(chanToFe);
+    //  console.log(channel)
+    //  console.log('see if owner there')
+    //  console.log(chanToFe);
      return chanToFe;
   }
 
