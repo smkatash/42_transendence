@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Ball, Game, GameMode, GameOptions, GameState, Paddle, Paddletype, Position } from '../utls/game';
-import { DEFAULT_PADDLE_GAP, DEFAULT_PADDLE_LENGTH, DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_PROPORTION, BALL_RADIUS, MAXPOINTS } from 'src/Constants';
+import { DEFAULT_PADDLE_GAP, DEFAULT_PADDLE_LENGTH, DEFAULT_PADDLE_WIDTH, DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_PROPORTION, BALL_RADIUS, MAXPOINTS } from 'src/Constants';
 import { Match } from '../entities/match.entity';
 
 @Injectable()
@@ -8,7 +8,7 @@ export class GameService {
     private options: Readonly<GameOptions>
     private increment: number
     private hookeyMode: boolean = false;
-
+    private tmpIncrement: number = 0;
 
     private maxBounceAngle: number = 80;
     
@@ -16,6 +16,7 @@ export class GameService {
 
     public launchGame(match: Match, mode: GameMode): Game {
 		this.initMode(mode)
+        this.tmpIncrement = 0;
 		this.options = Object.freeze(new GameOptions(DEFAULT_TABLE_HEIGHT, DEFAULT_PADDLE_GAP, mode))
         const ball: Ball = this.launchBall()
         const leftPaddle: Paddle = this.launchPaddle(Paddletype.LEFT) 
@@ -69,9 +70,8 @@ export class GameService {
 
     private calculateVector(): Position {
         const randomAngle = this.getRandomAngle()
-        console.log(randomAngle, " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         const radian = this.degreesToRadian(randomAngle)
-        return { x: Math.cos(radian) + this.increment, y: Math.sin(radian) + this.increment }
+        return { x: Math.cos(radian) + this.increment + this.tmpIncrement, y: Math.sin(radian) + this.increment + this.tmpIncrement}
     }
 
     private getRandomAngle(): number {
@@ -112,7 +112,6 @@ export class GameService {
                 y: dir.y
             }
         }
-        console.log(ball, "**@#()$(@#)($)@(#$)(@#$(");
         return ball
     }
 
@@ -142,11 +141,12 @@ export class GameService {
         let maximumBounceAngle : number;
         let bounceAngle : number;
         if( this.increment === 2){
-            maximumBounceAngle = 60;
-        } else { maximumBounceAngle = 80;}
+            maximumBounceAngle = 45;
+        } else { maximumBounceAngle = 60;}
             bounceAngle = relativeIntersectNormalized * maximumBounceAngle ;
-        game.ball.velocity.x = ball.velocity.x * Math.cos(bounceAngle) + 1;
-        game.ball.velocity.y = ball.velocity.y * Math.cos(bounceAngle);
+        game.ball.velocity.x = 1 + ball.velocity.x * Math.cos(bounceAngle);
+        game.ball.velocity.y = 1 + ball.velocity.y * Math.cos(bounceAngle);
+        this.tmpIncrement = (game.ball.velocity.y + game.ball.velocity.y)/2;
         return game;
     }
 
@@ -163,28 +163,37 @@ export class GameService {
             return game
         }
         if(this.hookeyMode === false){
-            if (game.ball.position.x - BALL_RADIUS <= this.options.paddleDistance) {
+            if (game.ball.position.x - BALL_RADIUS <= this.options.paddleDistance + 2 && 
+                game.ball.position.x - BALL_RADIUS >= this.options.paddleDistance -2) {
                 if (game.ball.position.y - BALL_RADIUS< (game.leftPaddle.position.y + (game.leftPaddle.length)) &&
                      game.ball.position.y + BALL_RADIUS > (game.leftPaddle.position.y)) {
                     game.ball.velocity.x *= -1
                     game = this.calculatePaddleBounce(game, game.leftPaddle, game.ball);
-                    game.ball.position.x = this.options.paddleDistance + 0.5 + BALL_RADIUS
+                    game.ball.position.x = this.options.paddleDistance + 2 + BALL_RADIUS
                     const offset = (game.ball.position.y + (BALL_RADIUS * 2) - game.leftPaddle.position.y + (DEFAULT_PADDLE_LENGTH/2)) / ( DEFAULT_PADDLE_LENGTH + (BALL_RADIUS * 2));
                     const tetha = 0.25 * Math.PI * ((2 * offset) - 1) 
                     game.ball.velocity.y = game.ball.velocity.y * Math.sin(tetha);
                     this.increment = 6;
                     return game
                 }
-                return this.resetGame(game, Paddletype.RIGHT)
-            } else if (game.ball.position.x + BALL_RADIUS > this.options.table.width - this.options.paddleDistance) {
+                // return this.resetGame(game, Paddletype.RIGHT)
+            } else if (game.ball.position.x + BALL_RADIUS >= this.options.table.width - this.options.paddleDistance - 2 &&
+                       game.ball.position.x + BALL_RADIUS <= this.options.table.width - this.options.paddleDistance + 2) {
                 if (game.ball.position.y < (game.rightPaddle.position.y + (game.rightPaddle.length)) &&
                         game.ball.position.y > (game.rightPaddle.position.y)) {
                     game.ball.velocity.x *= -1
                     game = this.calculatePaddleBounce(game, game.leftPaddle, game.ball);
-                    game.ball.position.x = this.options.table.width - this.options.paddleDistance - 0.5
+                    game.ball.position.x = this.options.table.width - this.options.paddleDistance - 2 -BALL_RADIUS;
                     return game
                 }
-                return this.resetGame(game, Paddletype.LEFT)
+                // return this.resetGame(game, Paddletype.LEFT)
+            }
+            if(game.ball.position.x <= BALL_RADIUS || game.ball.position.x >= DEFAULT_TABLE_HEIGHT * DEFAULT_TABLE_PROPORTION - BALL_RADIUS){
+                if(game.ball.position.x <= DEFAULT_TABLE_PROPORTION){
+                    return this.resetGame(game, Paddletype.RIGHT)
+                } else {
+                    return this.resetGame(game, Paddletype.LEFT)
+                }
             }
         }
         return game

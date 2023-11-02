@@ -38,7 +38,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		if (!user) {
 			throw new UnauthorizedException()
 		}
-
 		this.logger.log(`Client id: ${client.id} connected`)
 		await this.userService.updateUserStatus(user.id, Status.GAME)
 		const player = await this.playerService.getPlayerByUser(user)
@@ -67,7 +66,6 @@ async handleDisconnect(@ConnectedSocket() client: Socket, ) {
   @SubscribeMessage(START_MATCH)
   async handleStartMatch(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() gameMode: GameModeDto) {
 	try {
-		console.log("START OF THE MATCH")
 		const currentPlayer: Player = await this.playerService.getPlayerById(user.id)
 		
 		if (currentPlayer) {

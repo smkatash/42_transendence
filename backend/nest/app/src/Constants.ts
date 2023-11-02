@@ -19,6 +19,7 @@ export const REDIS_CLIENT = process.env.REDIS_CLIENT
 export const FRONT_END_URL = process.env.FRONT_END_URL
 
 export const DEFAULT_PADDLE_LENGTH = 80
+export const DEFAULT_PADDLE_WIDTH = 1
 export const DEFAULT_TABLE_PROPORTION = 2
 export const BALL_RADIUS = 7.5
 export const DEFAULT_TABLE_HEIGHT = 500
