@@ -111,7 +111,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!user) {
       return this.noAccess(socket);
     }
-    console.log(socket.data.user)
+    console.log('at CREATE', socket.data.user)
     console.log('channelCreate chanelInfo:', channelInfo)
     try {
       const channel = await this.channelService.createChannel(channelInfo, user);
@@ -122,7 +122,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     } catch  (error)  {
         Logger.error(error);
         this.server.to(socket.id).emit('error', error)
-        return ;
     }
   }
 
@@ -222,6 +221,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       console.log('afterfilter', channel);
       await this.joinedChannelService.deleteBySocketId(socket.id, channel);
       //emit user's channels
+      //TODO temp what to do with direct?? 
       if (channel.users.length === 0) {
         this.onDelete(socket, channelInfo);
       }
@@ -260,12 +260,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       'blockedUsers'
     ]);
     let messages = await this.messageService.findMessagesForChannel(channel);
-    console.log(messages);
+    // console.log('ALL channel msgs', messages);
     for (const blockedUser of u.blockedUsers) {
       console.log(blockedUser);
       messages = messages.filter((msg: Message) => msg.user.id !== blockedUser.id);
     }
-    console.log(messages);
+    // console.log('messages with blocked user messages filtered', messages);
     messages.sort((m1, m2) => m1.createdAt.getTime() - m2.createdAt.getTime());
 
     const msgsToFe = messages.map((m) =>  {
