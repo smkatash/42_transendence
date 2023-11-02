@@ -747,10 +747,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       if (!channel || !u) {
         return this.emitError(socket, new BadRequestException('No such channel or user')) 
       }
-      if (channel?.owner?.id !== user.id)  {
+      if (channel.owner?.id !== user.id)  {
         return this.emitError(socket, new BadRequestException('No rights'));
       }
-      if (channel?.owner?.id === user.id)  {
+      if (channel.owner?.id === u.id)  {
         return this.emitError(socket, new BadRequestException('Can\'t remove self'));
       }
       channel.admins = channel.admins.filter((admin) => admin.id !== u.id);

@@ -313,6 +313,7 @@ export class UserController {
 			const users: User[] = await this.userService.findAllByUsername(username);
 			return users.filter((us) => !us.blockedUsers.some((uu) => uu.id === u.id))
 				.filter((us) => !u.blockedUsers.some((uu) => uu.id === us.id))
+				.filter((us) => us.id !== user.id);
 		}   else	{
 			throw new UnauthorizedException('Access denied')
 		}
