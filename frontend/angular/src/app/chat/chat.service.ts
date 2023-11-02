@@ -70,11 +70,11 @@ export class ChatService {
   manageUserModeration(action: string, userID: string, channelID: number) {
     switch(action) {
       case BLOCK:
-        this.socket.emit(BLOCK, userID)
+        this.socket.emit(BLOCK, {uId: userID})
         break
 
       case UNBLOCK:
-        this.socket.emit(UNBLOCK, userID)
+        this.socket.emit(UNBLOCK, {uId: userID})
         break
 
       case MUTE:
