@@ -109,11 +109,8 @@ export class ChatService {
   /* <---------- Events to listen to ----------> */
 
   onError() {
-    this.socket.on(ERROR, (error: any) => {
-      console.error('WebSocket Error:', error);
-    });
+    return this.socket.fromEvent<any>(ERROR)
   }
-
   onSuccess() {
     this.socket.on(SUCCESS, (msg: any) => {
       console.log(msg)

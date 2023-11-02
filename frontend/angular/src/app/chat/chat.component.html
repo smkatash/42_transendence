@@ -11,7 +11,7 @@
 
         <div class="channel-list" *ngIf="selectedTab === 'my-chats'">
           <div *ngFor="let channel of myChannels$ | async">
-            <app-sidebar-channel [isSelected]="channel === selectedChannel"
+            <app-sidebar-channel [isSelected]="channel.id === selectedChannel?.id"
                                  [channel]="channel"
                                  (click)="onChannelSelect(channel)">
             </app-sidebar-channel>
@@ -20,7 +20,7 @@
 
         <div class="channel-list" *ngIf="selectedTab === 'available-chats'">
           <div *ngFor="let channel of allChannels$ | async">
-            <app-sidebar-channel [isSelected]="channel === selectedChannel"
+            <app-sidebar-channel [isSelected]="channel.id === selectedChannel?.id"
                                  [channel]="channel"
                                  (click)="onChannelSelect(channel)">
             </app-sidebar-channel>

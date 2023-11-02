@@ -27,6 +27,10 @@ export class ChatComponent implements OnInit {
     this.chatService.requestUserChannels()
     this.chatService.requestChannels()
     this.chatService.onError()
+      .subscribe(error => {
+        alert(`WebSocket Error: ${error.message}. Check logs for more details`)
+        console.error(error)
+      })
   }
 
   onChannelSelect(channel: Channel) {
@@ -47,7 +51,7 @@ export class ChatComponent implements OnInit {
 
   createNewChannel(channelType: string) {
     this.channelToCreate = channelType
-    console.log(channelType)
+    this.selectTab('my-chats')
     this.isChannelToCreateActive = true
   }
 
@@ -62,10 +66,6 @@ export class ChatComponent implements OnInit {
       this.chatService.requestChannels()
     }
   }
-
-  // onError() {
-  //   this.chatService.onError()
-  // }
 
   // getMessage()  {
   //   return this.chatService.getMessage()
