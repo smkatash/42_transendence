@@ -38,11 +38,19 @@ export class ChatComponent implements OnInit {
     if (this.selectedTab === 'available-chats') {
       if (this.selectedChannel.protected) {
         // Get the password
+        this.chatService.joinChannel({
+          id: this.selectedChannel.id,
+          password: 'abc'//tmp. need to call the request here
+        })
       }
-      this.chatService.joinChannel({
-        id: this.selectedChannel.id,
-        password: this.passwordToJoinChannel
-      })
+      else
+      {
+        
+        this.chatService.joinChannel({
+          id: this.selectedChannel.id,
+          password: this.passwordToJoinChannel
+        })
+      }
       this.selectTab('my-chats')
       this.selectedChannel = channel
     }
