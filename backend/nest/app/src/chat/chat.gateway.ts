@@ -683,6 +683,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       //TODO here
       console.log(await this.joinedChannelService.deleteByUserChannel(u, channel));
       this.server.to(socket.id).emit(CHANNEL, this.channelToFe(channel));
+      this.onGetChannelUsers(socket, {cId: channel.id});
       const banned = await this.chatUserService.findByUser(u);
       if (banned) {
         const channels = (await this.channelService.getUsersChannels(u.id))
