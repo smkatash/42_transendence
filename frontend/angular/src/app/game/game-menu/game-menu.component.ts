@@ -8,14 +8,13 @@ import { Socket } from 'ngx-socket-io';
   styleUrls: ['./game-menu.component.css']
 })
 export class GameMenuComponent {
+
   newGame: boolean = false;
 
   @Input() statusValue: string;
 
   @Output() newGameEvent = new EventEmitter<number>;
-  // newGame() {
-  //   this.newGameEvent.emit(1);
-  // }
+
   newGameEasy(){
     this.newGameEvent.emit(1);
   }
