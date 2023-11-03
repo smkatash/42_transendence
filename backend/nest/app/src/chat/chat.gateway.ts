@@ -118,9 +118,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     try {
       const channel = await this.channelService.createChannel(channelInfo, user);
       await this.joinedChannelService.create(user, socket.id, channel);
+      this.success(socket, `${channel.name} created`)
       this.onGetUsersChannels(socket);
       // this.server.to(socket.id).emit('success', `Created ${channelInfo.name}`)
-      this.success(socket, `${channel.name} created`)
       this.newPublic();
     } catch  (error)  {
         Logger.error(error);
@@ -424,7 +424,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         user = await this.userService.getUserWith(user.id, [
           'blockedUsers', 'bannedAt'
         ]);
-        console.log(user)
+        // console.log(user)
         const cToFe = this.userChannelsToFe(user, channels);  
         // console.log('owner und stf should be there', cToFe)
         this.server.to(socket.id).emit(USER_CHANNELS, cToFe);
