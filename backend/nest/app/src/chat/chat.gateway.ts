@@ -39,8 +39,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       await this.chatUserService.deleteAll();
       await this.muteService.purge();
       await this.joinedChannelService.purge()
-      // await this.messageService.purge();
-      // await this.channelService.purge();
+      await this.messageService.purge();
+      await this.channelService.purge();
     }
 
   async handleConnection(@ConnectedSocket() socket: Socket) {
@@ -200,6 +200,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!user) {
       return this.noAccess(socket);
     } 
+    console.log('at LEAVE', channelInfo)
     try {
       const channel = await this.channelService.getChannel(channelInfo.cId, [
         'owner', 'users', 'admins'
@@ -210,7 +211,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       console.log(channel);
     //delete channel if owner leaves
       if (channel.type === 'direct')  {
-        new BadRequestException('NO LEAVING FOR DIRECT MESSAGING!')
+        throw new BadRequestException('NO LEAVING FOR DIRECT MESSAGING!')
       }
       if (user.id === channel.owner?.id)  {
         return this.onDelete(socket, channelInfo);
@@ -977,7 +978,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   async onPriv(@ConnectedSocket() socket: Socket,
   @MessageBody() uInfo: PrivMsgDto)  {
     
-    const user = socket.data.user;
+    let user = socket.data.user;
     console.log(uInfo)
     if (!user) {
       return this.noAccess(socket);
@@ -992,8 +993,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       if (user.id === u.id) {
         throw new BadRequestException("No talking to yourself");
       }
-      if (u.blockedUsers.some((blocked) => blocked.id === u.id)) {
+      if (u.blockedUsers.some((blocked) => blocked.id === user.id)) {
         throw new BadRequestException('User has blocked you')
+      }
+      user = await this.userService.getUserWith(user.id, [
+        'blockedUsers'
+      ]); 
+      if (user.blockedUsers.some((blocked: User) => blocked.id === u.id )) {
+        throw new BadRequestException('You\'re blocking the user')
       }
       const exists = await this.channelService.getPrivate(user, u);
       let room: Channel;
@@ -1095,6 +1102,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       if (!channel)  {
         throw new BadRequestException("No such channel");
       }
+      // console.log('$$$$$$$##########***********')
+      // console.log(channel.users);
+      // const use
+      // for (const u of channel.users)  {
+// 
+      // }
       this.server.to(socket.id).emit(CHANNEL_USERS, channel.users)
     } catch (error) {
       console.log(error);
