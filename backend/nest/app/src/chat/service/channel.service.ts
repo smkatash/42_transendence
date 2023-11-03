@@ -212,4 +212,10 @@ console.log('--------join channels users------')
         return room;
 
     }
+    async purge()   {
+        return await this.channelRepository
+            .createQueryBuilder()
+            .delete()
+            .execute()
+    }
 }

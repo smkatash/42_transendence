@@ -39,6 +39,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       await this.chatUserService.deleteAll();
       await this.muteService.purge();
       await this.joinedChannelService.purge()
+      // await this.messageService.purge();
+      // await this.channelService.purge();
     }
 
   async handleConnection(@ConnectedSocket() socket: Socket) {
@@ -163,7 +165,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!user) {
       return this.emitError(socket, 'No Access');
     }
-    console.log(joinInfo);
+    console.log('at JOIN', joinInfo);
     try {
       const channel = await this.channelService.join(user, joinInfo);
       if (channel.private)  {
@@ -206,6 +208,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       }
       console.log(channel);
     //delete channel if owner leaves
+      if (channel.type === 'direct')  {
+        new BadRequestException('NO LEAVING FOR DIRECT MESSAGING!')
+      }
       if (user.id === channel.owner?.id)  {
         return this.onDelete(socket, channelInfo);
       }
@@ -249,13 +254,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     const channel = await this.channelService.getChannel(channelInfo.cId, [
       'users'
     ]);
+    console.log('CHANNEL_MESSAGES', cIdDto);
     if (!channel) {
       return this.emitError(socket, 'No such channel')
     }
-    if (!(channel.users.some((u) => u.id === user.id))) {
-      throw new BadRequestException('User not on the channel')
-    }
+    
+    try {
     // const messages = await this.messageService.findMessagesByChannel(channel);
+      if (!(channel.users.some((u) => u.id === user.id))) {
+        throw new BadRequestException('User not on the channel')
+      }
     const u = await this.userService.getUserWith(user.id, [
       'blockedUsers'
     ]);
@@ -266,9 +274,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       messages = messages.filter((msg: Message) => msg.user.id !== blockedUser.id);
     }
     // console.log('messages with blocked user messages filtered', messages);
-    messages.sort((m1, m2) => m1.createdAt.getTime() - m2.createdAt.getTime());
+    messages = messages.sort((m1, m2) => m1.createdAt.getTime() - m2.createdAt.getTime())
+      // .filter((msg) => msg.user !== null);
 
+    // console.log(messages);
+    // console.log("$$$$$$$$$$$$$$$$$$$$$$$")
+    // for (const msg of messages) {
+    //   if (!msg.user)
+    //   console.log(msg);
+    // }
+    // console.log("$$$$$$$$$$$$$$$$$$$$$$$")
     const msgsToFe = messages.map((m) =>  {
+      // console.log(user, m.user);
       if (user.id === m.user.id)  {
         m['sessionUser'] = true
       } else  {
@@ -277,6 +294,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       return m;
     })
     this.server.to(socket.id).emit(CHANNEL_MESSAGES, msgsToFe);
+    } catch (error) {
+      console.log(error);
+      this.emitError(socket, error);
+    }
+
   }
 
   @SubscribeMessage(MESSAGE)
@@ -312,7 +334,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
             }
           }
         }
-
       }
       console.log('----message-----')
       console.log(message)
@@ -361,7 +382,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage(CHANNELS)
   async onGetAllChannels(@ConnectedSocket() socket: Socket) {
     
-    const user = socket.data.user;
+      let user = socket.data.user;
       if (!user) {
         return this.noAccess(socket);
       }
@@ -369,8 +390,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     try {
       const channels = await  this.channelService.getAllChannels();
       // console.log(channels)
-      //Removing password and dates and stuff
+      user = await this.userService.getUserWith(user.id, [
+        'bannedAt'
+      ])
       const cToFe = channels.filter((c) => !(c.private)).map((c) => this.channelToFe(c))
+        .filter((c) => !(user.bannedAt.some((bannedAt: Channel) => bannedAt.id === c.id)))
         .sort((c1, c2) => c1.updatedAt.getDate() - c2.updatedAt.getDate())
         .filter((c) => {
           if (!(c.users.some((u) => u.id === user.id))) {
@@ -379,7 +403,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         });
       // console.log(cToFe)
       this.server.to(socket.id).emit(CHANNELS, cToFe);
-      // this.server.to(socket.id).emit('allChannels', channels);
     } catch (error) {
       console.log(error);
       return this.emitError(socket, error)
@@ -396,40 +419,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       // console.log('get user\'s channesl')
       try {
         const channels = await this.channelService.getUsersChannels(user.id)
-      //Removing password and dates and stuff
         user = await this.userService.getUserWith(user.id, [
-          'blockedUsers'
+          'blockedUsers', 'bannedAt'
         ]);
         console.log(user)
-        /*const cToFe = channels
-          .filter((c) => {
-            if (c.type === 'direct')  {
-              for (const u of c.users)  {
-                if (u.id !== user.id) {
-                  if (!(user.blockedUsers.some((blocked) => blocked.id === u.id)))  {
-                    return c;
-                  }
-                }
-              }
-            } else  {
-              return c;
-            }
-          })
-          .sort((c1, c2) => c2.updatedAt.getTime() - c1.updatedAt.getTime())
-          .map((c) => this.channelToFe(c))
-          .map((c) => {
-            if (c.name) {
-              return c
-            } else  {
-              for (const u of c.users)  {
-                if (u.id !== user.id) {
-                  c.name = u.username;
-                  c.avatar = u.avatar
-                }
-              }
-              return c
-            }
-          })*/
         const cToFe = this.userChannelsToFe(user, channels);  
         // console.log('owner und stf should be there', cToFe)
         this.server.to(socket.id).emit(USER_CHANNELS, cToFe);
@@ -453,6 +446,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
               return c;
             }
           })
+          // .filter((c) => !(user.bannedAt.some((bannedAt) => bannedAt.id === c.id)))
           .sort((c1, c2) => c2.updatedAt.getTime() - c1.updatedAt.getTime())
           .map((c) => this.channelToFe(c))
           .map((c) => {
@@ -641,7 +635,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         'owner', 'users', 'admins', 'banned'
       ]);
       // console.log(channel);
-      const u = await this.userService.getUserWith(info.uId, [
+      let u = await this.userService.getUserWith(info.uId, [
         'channels', 'adminAt', 'bannedAt'
       ]);
     //  console.log(u, channel); 
@@ -664,16 +658,20 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       u.channels = u.channels.filter((c) => c.id !== channel.id);
       u.adminAt = u.adminAt.filter((adminAt) => adminAt.id !== channel.id)
 
-      // console.log(await this.userService.saveUser(u));
-      // console.log(await this.channelService.saveChannel(channel));
+      await this.userService.saveUser(u);
+      u = await this.userService.getUserWith(u.id, [
+        'bannedAt'
+      ])
+      console.log(u);
+      console.log(await this.channelService.saveChannel(channel));
       //TODO here
       console.log(await this.joinedChannelService.deleteByUserChannel(u, channel));
       this.server.to(socket.id).emit(CHANNEL, this.channelToFe(channel));
       const banned = await this.chatUserService.findByUser(u);
       if (banned) {
         const channels = (await this.channelService.getUsersChannels(u.id))
-          .map((c) => this.channelToFe(c));
-        this.server.to(banned.socketId).emit(USER_CHANNELS, channels)
+          // .map((c) => this.channelToFe(c));
+        this.server.to(banned.socketId).emit(USER_CHANNELS, this.userChannelsToFe(u, channels));
       }
     } catch (error) {
       this.emitError(socket, error);
