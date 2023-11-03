@@ -2,8 +2,9 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Mute } from "../entities/mute.entity";
 import { Repository } from "typeorm";
+import { TIME_TO_MUTE } from "src/Constants";
 
-const timeToMute = 30000;//30sec
+// const timeToMute = 30000;//30sec
 
 @Injectable()
 export class MuteService    {
@@ -17,7 +18,7 @@ export class MuteService    {
         if (alreadyMuted)   {
             throw new BadRequestException('Already muted')
         }
-        const time = new Date(new Date().getTime() + timeToMute);
+        const time = new Date(new Date().getTime() + TIME_TO_MUTE);
         const mute = this.muteRepository.create({
         cId, uId, mutedUntil: time
        })
