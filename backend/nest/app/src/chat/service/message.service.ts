@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Message } from '../entities/message.entity';
 import { Repository } from 'typeorm';
-import { CreateMessageDto } from '../dto/createMessage.dto';
+import { CreateMessageDto } from '../dto/channel.dto';
 import { Channel } from '../entities/channel.entity';
 import { User } from 'src/user/entities/user.entity';
 
@@ -13,12 +13,8 @@ export class MessageService {
         private readonly msgRepo: Repository<Message>
     ){}
 
-    async   newMessage(content: string, user: User, channel: Channel): Promise<Message>   {
-        const msg = this.msgRepo.create({
-            content,
-            user,
-            channel
-        });
+    async   newMessage(info: CreateMessageDto): Promise<Message>   {
+        const msg = this.msgRepo.create(info);
         return await this.msgRepo.save(msg);
     }
 

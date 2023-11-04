@@ -104,8 +104,23 @@ export class PrivMsgDto {
     text: string; 
 
     @IsOptional()
-    inviteType: 'game' | 'channel';
+    inviteType?: 'game' | 'channel';
 
     @IsOptional()
-    inviteId: string | number // 'gameID' || 'channelID'
+    inviteId?: string | number // 'gameID' || 'channelID'
+}
+export  class CreateMessageDto  {
+    @IsNotEmpty()
+    @IsNumber()
+    cId: number;
+
+    @IsString()
+    @IsNotEmpty()
+    content: string;
+    
+    @IsOptional()
+    inviteType?: 'game' | 'channel';
+
+    @IsOptional()
+    inviteId?: string// 'gameID' || 'channelID'
 }
