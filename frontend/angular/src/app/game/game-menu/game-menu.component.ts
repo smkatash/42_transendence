@@ -9,10 +9,12 @@ import { Socket } from 'ngx-socket-io';
 })
 export class GameMenuComponent {
 
+  newGame: boolean = false;
+
+  @Input() statusValue: string;
+
   @Output() newGameEvent = new EventEmitter<number>;
-  newGame() {
-    this.newGameEvent.emit(1);
-  }
+
   newGameEasy(){
     this.newGameEvent.emit(1);
   }
@@ -21,5 +23,9 @@ export class GameMenuComponent {
   }
   newGameHard(){
     this.newGameEvent.emit(3);
+  }
+  play(){
+    this.newGame = true;
+    this.statusValue = "";
   }
 }

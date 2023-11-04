@@ -1,25 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { Ball, Game, GameMode, GameOptions, GameState, Paddle, Paddletype, Position } from '../utls/game';
-import { DEFAULT_PADDLE_GAP, DEFAULT_PADDLE_LENGTH, DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_PROPORTION, BALL_RADIUS, MAXPOINTS } from 'src/Constants';
+import { DEFAULT_PADDLE_GAP, DEFAULT_PADDLE_LENGTH, DEFAULT_PADDLE_WIDTH, DEFAULT_TABLE_HEIGHT, DEFAULT_TABLE_PROPORTION, BALL_RADIUS, MAXPOINTS } from 'src/Constants';
 import { Match } from '../entities/match.entity';
 
 @Injectable()
 export class GameService {
     private options: Readonly<GameOptions>
     private increment: number
+    private hookeyMode: boolean = false;
+    private tmpIncrement: number = 0;
+
+    private maxBounceAngle: number = 80;
     
     constructor() {}
 
     public launchGame(match: Match, mode: GameMode): Game {
 		this.initMode(mode)
+        this.tmpIncrement = 0;
 		this.options = Object.freeze(new GameOptions(DEFAULT_TABLE_HEIGHT, DEFAULT_PADDLE_GAP, mode))
         const ball: Ball = this.launchBall()
         const leftPaddle: Paddle = this.launchPaddle(Paddletype.LEFT) 
         const rightPaddle: Paddle = this.launchPaddle(Paddletype.RIGHT)
         const scores: Record<string, number> = {}
-
+        
         match.players.forEach((player) => {
-          scores[player.id] = 0
+            scores[player.id] = 0
         })
 
         return {
@@ -39,7 +44,7 @@ export class GameService {
 			[GameMode.HARD]: 6,
 		  };
 		
-		this.increment = modeMap[mode] || 1;
+		this.increment = modeMap[mode] || 2;
 	}
 
     private resetGame(game: Game, winner: Paddletype): Game {
@@ -65,29 +70,28 @@ export class GameService {
 
     private calculateVector(): Position {
         const randomAngle = this.getRandomAngle()
-        console.log(randomAngle, " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         const radian = this.degreesToRadian(randomAngle)
-        return { x: Math.cos(radian) + this.increment, y: Math.sin(radian) + this.increment }
+        return { x: Math.cos(radian) + this.increment + this.tmpIncrement, y: Math.sin(radian) + this.increment + this.tmpIncrement}
     }
 
     private getRandomAngle(): number {
         let randomNumber = Math.random() * 360;
-        if( randomNumber <= 45 || randomNumber > (360 - 45) ||
-            (randomNumber > 180 - 45 && randomNumber < (180 + 45)) ){
+        if( (randomNumber <= 45 || randomNumber >= (360 - 45)) ||
+            (randomNumber >= 180 - 45 && randomNumber <= (180 + 45)) ){
             return (randomNumber);
         } else {
-            if(randomNumber < 90 && randomNumber > 270){
+            if(randomNumber <= 90 || randomNumber >= 270){
                 randomNumber = Math.random() * 360;
-                if(randomNumber > 0 && randomNumber < 180){
-                    return(45);
-                }
-				return (360 - 45);
+                if(randomNumber <= 180){
+                    return(90 - 45);
+                } 
+                return ( 270 + 45);
             } else {
                 randomNumber = Math.random() * 360;
-                if(randomNumber > 0 && randomNumber < 180) {
-                    return(90 + 45);
+                if(randomNumber <= 180){
+                    return(180 - 45);
                 }
-				return ( 180 - 45);
+                return ( 180 + 45);
             }   
         }
     }
@@ -100,8 +104,8 @@ export class GameService {
         const dir: Position = this.calculateVector() 
         const ball: Ball = {
             position: {
-                x: this.options.table.height / DEFAULT_TABLE_PROPORTION,
-                y: this.options.table.width / DEFAULT_TABLE_PROPORTION,
+                x: this.options.table.width / DEFAULT_TABLE_PROPORTION,
+                y: this.options.table.height / DEFAULT_TABLE_PROPORTION,
             },
             velocity: {
                 x: dir.x,
@@ -131,6 +135,21 @@ export class GameService {
         return paddle
     }
 
+    calculatePaddleBounce(game:Game, paddle:Paddle, ball:Ball) {
+        let relativeIntersect = paddle.position.y + paddle.length/2 - ball.position.y
+        let relativeIntersectNormalized = relativeIntersect/ (paddle.length/2);
+        let maximumBounceAngle : number;
+        let bounceAngle : number;
+        if( this.increment === 2){
+            maximumBounceAngle = 45;
+        } else { maximumBounceAngle = 60;}
+            bounceAngle = relativeIntersectNormalized * maximumBounceAngle ;
+        game.ball.velocity.x = 1 + ball.velocity.x * Math.cos(bounceAngle);
+        game.ball.velocity.y = 1 + ball.velocity.y * Math.cos(bounceAngle);
+        this.tmpIncrement = (game.ball.velocity.y + game.ball.velocity.y)/2;
+        return game;
+    }
+
     throwBall(game: Game): Game {
         game.ball.position.x += game.ball.velocity.x
         game.ball.position.y += game.ball.velocity.y
@@ -143,23 +162,39 @@ export class GameService {
             game.ball.position.y = 0.6 + BALL_RADIUS
             return game
         }
-
-        if (game.ball.position.x <= this.options.paddleDistance + BALL_RADIUS) {
-            if (game.ball.position.y < (game.leftPaddle.position.y + (game.leftPaddle.length)) &&
-                    game.ball.position.y > (game.leftPaddle.position.y)) {
+        if(this.hookeyMode === false){
+            if (game.ball.position.x - BALL_RADIUS <= this.options.paddleDistance + 2 && 
+                game.ball.position.x - BALL_RADIUS >= this.options.paddleDistance -2) {
+                if (game.ball.position.y - BALL_RADIUS< (game.leftPaddle.position.y + (game.leftPaddle.length)) &&
+                     game.ball.position.y + BALL_RADIUS > (game.leftPaddle.position.y)) {
                     game.ball.velocity.x *= -1
-                    game.ball.position.x = this.options.paddleDistance + 0.5 + BALL_RADIUS
+                    game = this.calculatePaddleBounce(game, game.leftPaddle, game.ball);
+                    game.ball.position.x = this.options.paddleDistance + 2 + BALL_RADIUS
+                    const offset = (game.ball.position.y + (BALL_RADIUS * 2) - game.leftPaddle.position.y + (DEFAULT_PADDLE_LENGTH/2)) / ( DEFAULT_PADDLE_LENGTH + (BALL_RADIUS * 2));
+                    const tetha = 0.25 * Math.PI * ((2 * offset) - 1) 
+                    game.ball.velocity.y = game.ball.velocity.y * Math.sin(tetha);
+                    this.increment = 6;
                     return game
-            }
-            return this.resetGame(game, Paddletype.RIGHT)
-        } else if (game.ball.position.x > this.options.table.width - this.options.paddleDistance) {
-            if (game.ball.position.y < (game.rightPaddle.position.y + (game.rightPaddle.length)) &&
-                    game.ball.position.y > (game.rightPaddle.position.y)) {
+                }
+                // return this.resetGame(game, Paddletype.RIGHT)
+            } else if (game.ball.position.x + BALL_RADIUS >= this.options.table.width - this.options.paddleDistance - 2 &&
+                       game.ball.position.x + BALL_RADIUS <= this.options.table.width - this.options.paddleDistance + 2) {
+                if (game.ball.position.y < (game.rightPaddle.position.y + (game.rightPaddle.length)) &&
+                        game.ball.position.y > (game.rightPaddle.position.y)) {
                     game.ball.velocity.x *= -1
-                    game.ball.position.x = this.options.table.width - this.options.paddleDistance - 0.5
+                    game = this.calculatePaddleBounce(game, game.leftPaddle, game.ball);
+                    game.ball.position.x = this.options.table.width - this.options.paddleDistance - 2 -BALL_RADIUS;
                     return game
+                }
+                // return this.resetGame(game, Paddletype.LEFT)
             }
-            return this.resetGame(game, Paddletype.LEFT)
+            if(game.ball.position.x <= BALL_RADIUS || game.ball.position.x >= DEFAULT_TABLE_HEIGHT * DEFAULT_TABLE_PROPORTION - BALL_RADIUS){
+                if(game.ball.position.x <= DEFAULT_TABLE_PROPORTION){
+                    return this.resetGame(game, Paddletype.RIGHT)
+                } else {
+                    return this.resetGame(game, Paddletype.LEFT)
+                }
+            }
         }
         return game
     }

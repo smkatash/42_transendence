@@ -143,9 +143,8 @@ export interface Match {
   id: string;
   status : GameState;
   players: GamePlayer[];
-  observers: GamePlayer[];
-  winner: GamePlayer[];
-  loser: GamePlayer[];
+  winner: GamePlayer;
+  loser: GamePlayer;
   scores: Record <string,number>;
 }
 
@@ -153,6 +152,7 @@ export enum GameState {
   READY = 0,
   START,
   INPROGRESS,
+  PAUSE,
   END
 }
 
