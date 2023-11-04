@@ -32,7 +32,7 @@
         <h2 *ngIf="profile?.status === 0">Offline</h2>
         <div class="dot-online" *ngIf="profile?.status === 1"></div>
         <h2 *ngIf="profile?.status === 1">Online</h2>
-        <div class="dot-ingame" *ngIf="profile?.status === 2"></div>
+        <div class="dot-playing" *ngIf="profile?.status === 2"></div>
         <h2 *ngIf="profile?.status === 2">Playing</h2>
       </div>
 

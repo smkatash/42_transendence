@@ -39,7 +39,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 			throw new UnauthorizedException()
 		}
 		this.logger.log(`Client id: ${client.id} connected`)
-		await this.userService.updateUserStatus(user.id, Status.GAME)
+		await this.userService.updateUserStatus(user.id, Status.ONLINE)
 		const player = await this.playerService.getPlayerByUser(user)
 		client.data.user = player
 		this.emitUserEvent(client, player)
@@ -70,6 +70,7 @@ async handleDisconnect(@ConnectedSocket() client: Socket, ) {
 		
 		if (currentPlayer) {
 			client.join(QUEUE)
+			await this.userService.updateUserStatus(user.id, Status.GAME)
 			await this.matchService.waitInPlayerQueue(currentPlayer, client, gameMode.mode)
 		}
 		this.emitQueueEvent()
@@ -93,11 +94,9 @@ async handleDisconnect(@ConnectedSocket() client: Socket, ) {
 	@SubscribeMessage(JOIN_MATCH)
 	async handleJoinMatch(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() matchDto: JoinMatchDto) {
 	try {
-		console.log("THIS IS JOIN")
 		const currentPlayer: Player = await this.playerService.getPlayerById(user.id)
 		if (currentPlayer) {
 			const game: Game = await this.matchService.joinMatch(matchDto.matchId, matchDto.mode)
-			this.logger.debug(JSON.stringify(game))
 			this.server.to(matchDto.matchId).emit(JOIN_MATCH, game)
 			this.matchService.getServer(this.server)
 			this.matchService.play()

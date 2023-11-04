@@ -67,6 +67,7 @@ export class MatchService {
     async joinMatch(matchId: string, mode: GameMode): Promise<Game> {
        const match = await this.getMatchById(matchId)
 	   if (!match) throw new NotFoundException()
+	   if (match && match.status === GameState.END) throw new NotFoundException()
 	   
 		this.queueService.dequeueMatch(match.id)
 		const newGame = this.gameService.launchGame(match, mode)
@@ -88,7 +89,6 @@ export class MatchService {
 					await this.saveMatchHistory(updateGame)
 					this.server.to(match.match.id).emit(INGAME, updateGame)
 					this.server.socketsLeave(match.match.id)
-					// this.server.in(match.match.id).disconnectSockets(true)
 					this.matches.delete(match.match.id)
 				}
                 console.log("-------------------------------------------")
@@ -101,7 +101,6 @@ export class MatchService {
 					await this.saveMatchHistory(updateGame)
 					this.server.to(match.match.id).emit(INGAME, updateGame)
 					this.server.socketsLeave(match.match.id)
-					// this.server.in(match.match.id).disconnectSockets(true)
 					this.matches.delete(match.match.id)
 				}
 			}
@@ -176,6 +175,7 @@ export class MatchService {
     async saveMatchHistory(game: Game) {
         const match = game.match
         match.scores = game.scores
+		match.status = GameState.END
         await this.playerService.updatePlayerScore(game.match.players, game.scores)
         return this.saveValidMatch(match)
     } 
