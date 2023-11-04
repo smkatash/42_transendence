@@ -7,6 +7,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     volumes:
+      # - /Users/jmaalouf/Documents/42_transendence/frontend/angular:/app-frontend
       #- /Users/francesco/Desktop/pong/frontend/angular:/app-frontend
       # - /Users/frmessin/Desktop/pong/frontend/angular:/app-frontend
        - /Users/ktashbae/Desktop/trans/frontend/angular:/app-frontend
@@ -22,7 +23,8 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     volumes:
-     # - /Users/francesco/Desktop/pong/backend/nest/app:/app-backend
+     # - /Users/jmaalouf/Documents/42_transendence/backend/nest/app:/app-backend
+    #  - /Users/francesco/Desktop/pong/backend/nest/app:/app-backend
      # - /Users/frmessin/Desktop/pong/backend/nest/app:/app-backend
      - /Users/ktashbae/Desktop/trans/backend/nest/app:/app-backend
     ports:

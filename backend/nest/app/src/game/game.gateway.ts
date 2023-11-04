@@ -40,7 +40,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 			throw new UnauthorizedException()
 		}
 		this.logger.log(`Client id: ${client.id} connected`)
-		await this.userService.updateUserStatus(user.id, Status.ONLINE)
 		const player = await this.playerService.getPlayerByUser(user)
 		client.data.user = player
 		this.emitUserEvent(client, player)
@@ -71,7 +70,6 @@ async handleDisconnect(@ConnectedSocket() client: Socket, ) {
 		
 		if (currentPlayer) {
 			client.join(QUEUE)
-			await this.userService.updateUserStatus(user.id, Status.GAME)
 			await this.matchService.waitInPlayerQueue(currentPlayer, client, gameMode.mode)
 		}
 		this.emitQueueEvent()
@@ -124,8 +122,7 @@ async handleDisconnect(@ConnectedSocket() client: Socket, ) {
 	@SubscribeMessage(ROUTE_CHANGE)
 	async handleRouteChange(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() routeDto: RouteDto) {
 	try {
-		const currentPlayer: Player = await this.playerService.getPlayerById(user.id)
-		if (currentPlayer) {
+		if (user) {
 			if (routeDto.route === INGAME) {
 				await this.userService.updateUserStatus(user.id, Status.GAME)
 			} else {
