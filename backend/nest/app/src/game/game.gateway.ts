@@ -7,15 +7,16 @@ import { MatchService } from './service/match.service';
 import { Player } from './entities/player.entity';
 import { PlayerService } from './service/player.service';
 import { Game} from './utls/game';
-import { ERROR, JOIN_MATCH, POSITION_CHANGE, QUEUE, START_MATCH, USER, WAITING_MESSAGE } from './utls/rooms';
-import { GameModeDto, JoinMatchDto, PositionDto } from './utls/message-dto';
+import { ERROR, JOIN_MATCH, POSITION_CHANGE, QUEUE, START_MATCH, USER, WAITING_MESSAGE, ROUTE_CHANGE, INGAME } from './utls/rooms';
+import { GameModeDto, JoinMatchDto, PositionDto } from './utls/message.dto';
 import { WsAuthGuard } from 'src/auth/guard/ws-auth.guard';
 import { GetWsUser } from 'src/auth/utils/get-user.decorator';
+import { RouteDto } from './utls/router.dto';
 
 
 @UsePipes(new ValidationPipe({whitelist: true}))
 @WebSocketGateway({
-	namespace: 'game', 
+	namespace: INGAME, 
 	cors: {
 		origin: '*'
 	}})
@@ -113,6 +114,23 @@ async handleDisconnect(@ConnectedSocket() client: Socket, ) {
 		const currentPlayer: Player = await this.playerService.getPlayerById(user.id)
 		if (currentPlayer) {
 			this.matchService.updatePlayerPosition(currentPlayer, parseInt(positionDto.step))
+		}
+		} catch(error) {
+			this.emitError(client, error)
+		}
+	}
+
+	@UseGuards(WsAuthGuard)
+	@SubscribeMessage(ROUTE_CHANGE)
+	async handleRouteChange(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() routeDto: RouteDto) {
+	try {
+		const currentPlayer: Player = await this.playerService.getPlayerById(user.id)
+		if (currentPlayer) {
+			if (routeDto.route === INGAME) {
+				await this.userService.updateUserStatus(user.id, Status.GAME)
+			} else {
+				await this.userService.updateUserStatus(user.id, Status.ONLINE)
+			}
 		}
 		} catch(error) {
 			this.emitError(client, error)
