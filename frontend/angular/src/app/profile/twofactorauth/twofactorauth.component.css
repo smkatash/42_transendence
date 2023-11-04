@@ -22,9 +22,18 @@
   justify-content: center;
 }
 
-button {
-  margin-top: 2%;
+.buttons {
+  position: relative;
+  margin-left: 10%;
   margin-right: 10%;
+  margin-top: 3%;
+  width: 79.5%;
+  margin-top: 2%;
+  display: flex;
+  direction: row;
+}
+
+button {
   color: #4F6D7A;
   background-color: #E8DAB2;
   font-size: 1dvw;
@@ -34,7 +43,6 @@ button {
   height: 5dvh;
   width: 8dvw;
   border: .2dvh solid #2f424a;
-  float: right;
 }
 
 button:hover {
@@ -49,6 +57,14 @@ button:hover {
 .btn-invalid:hover {
   color: #2b3a41;
   background-color: #988e6f;
+}
+
+.leftbtn{
+}
+
+.rightbtn{
+  position: absolute;
+  right: 0;
 }
 
 label, p{
