@@ -4,23 +4,30 @@
       <h1 class="title">Private Channel Setup.</h1>
       <p>This type of channel is invite-only and it's not visible for the public in the list of channels.</p>
       <label for="channel-name">Choose a channel name:</label>
-      <input type="text" id="channel-name" [(ngModel)]="channelName">
+      <input type="text" id="channel-name"  #channelname="ngModel" [class.is-invalid]="channelname.invalid" [(ngModel)]="channelName" required minlength="2" maxlength="20" pattern="[^\s]*">
+      <button class="close" (click)="toggle()">Close</button>
+      <button class="change-btn" [disabled]="channelname.invalid" (click)="createChannel()" [class.btn-invalid]="channelname.invalid">Create</button>
     </div>
+
     <div *ngIf="channelType === 'protected'">
       <h1 class="title">Protected Channel Setup.</h1>
       <p>This type of channel is visible for the public in the list of channels, but only users who enter the correct password are permitted to access it.</p>
       <label for="channel-name">Choose a channel name:</label>
-      <input type="text" id="channel-name" [(ngModel)]="channelName">
+      <input type="text" id="channel-name"  #channelname="ngModel" [class.is-invalid]="channelname.invalid" [(ngModel)]="channelName" required minlength="2" maxlength="20" pattern="[^\s]*">
       <label for="channel-password">Choose a password for your channel:</label>
-      <input type="password" id="channel-password" [(ngModel)]="channelPassword">
+      <input type="password" id="channel-password" #channelpassword="ngModel" [class.is-invalid]="channelpassword.invalid" required minlength="2" maxlength="20" pattern="[^\s]*"[(ngModel)]="channelPassword">
+      <button class="close" (click)="toggle()">Close</button>
+      <button class="change-btn" [disabled]="channelname.invalid && channelpassword.invalid" (click)="createChannel()" [class.btn-invalid]="channelname.invalid || channelpassword.invalid">Create</button>
     </div>
+
     <div *ngIf="channelType === 'public'">
       <h1 class="title">Public Channel Setup.</h1>
       <p>This type of channel is visible for the public in the list of channels, anyone can access it.</p>
       <label for="channel-name">Choose a channel name:</label>
-      <input type="text" id="channel-name" [(ngModel)]="channelName">
+      <input type="text" id="channel-name" #channelname="ngModel" [class.is-invalid]="channelname.invalid" [(ngModel)]="channelName" required minlength="2" maxlength="20" pattern="[^\s]*">
+      <button class="close" (click)="toggle()">Close</button>
+      <button class="change-btn" [disabled]="channelname.invalid" (click)="createChannel()" [class.btn-invalid]="channelname.invalid">Create</button>
     </div>
-    <button class="close" (click)="toggle()">Close</button>
-    <button class="create" (click)="createChannel()">Create</button>
   </div>
 </div>
+

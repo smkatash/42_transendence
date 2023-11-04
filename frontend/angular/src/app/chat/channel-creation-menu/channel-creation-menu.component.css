@@ -24,6 +24,28 @@
   text-align: center;
   justify-content: center;
 }
+.is-invalid {
+  border-bottom: .1dvw solid #b04343;
+}
+
+.change-btn {
+  margin: 0% 10% 7% 10%;
+  float: right;
+  font-size: 1dvw;
+  height: 2.4dvw;
+  width: 4.5dvw;
+  border: .2dvh solid #2f424a;
+}
+
+.btn-invalid {
+  color: #2b3a41;
+  background-color: #988e6f;
+}
+
+.btn-invalid:hover {
+  color: #2b3a41;
+  background-color: #988e6f;
+}
 
 p {
   margin: 10%;
