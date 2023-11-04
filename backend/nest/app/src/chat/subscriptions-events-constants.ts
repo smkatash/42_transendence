@@ -136,14 +136,14 @@ export const ACCEPT_PRIVATE_INVITE = 'AcceptToPriv'
 /**
  * Session user accepts invitation to private channel
  * //TODO the flow stil in dev
- * expects: ~~cIdDto~~ PrivateInviteDto
+ * expects: PrivateInviteDto
  */
 
 export const DECLINE_PRIVATE_INVITE = 'declineToPriv'
 /**
  * Session user declines invitation to private channel
  * //TODO the flow stil in dev
- * expects: ~~cIdDto~~ PrivateInviteDto
+ * expects: PrivateInviteDto
  */
 
 export const BLOCK = 'block'
