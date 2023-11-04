@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, from } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Channel, CreateChannelInfo, JoinChannelInfo, Message, User } from '../entities.interface';
 import { ChatSocket } from '../app.module';
-import { ADD_ADMIN, BAN, BLOCK, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, ERROR, JOIN, KICK, LEAVE, MESSAGE, MUTE, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, UNMUTE, USER_CHANNELS } from './subscriptions-events-constants'
+import { ADD_ADMIN, BAN, BLOCK, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DIRECT, ERROR, JOIN, KICK, LEAVE, MESSAGE, MUTE, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, UNMUTE, USER_CHANNELS } from './subscriptions-events-constants'
 
 @Injectable({
   providedIn: 'root'
@@ -59,14 +59,22 @@ export class ChatService {
     this.socket.emit(LEAVE, { cId: channelID })
   }
 
+  sendDM(userID: string, message: string, inviteType?: string, inviteID?: string | number) {
+    this.socket.emit(DIRECT, { uId: userID, text: message, inviteType: inviteType, inviteID: inviteID })
+  }
+
+  declineChannelInvite(channelID: number) {
+    this.socket.emit(DECLINE_PRIVATE_INVITE, { cId: channelID })
+  }
+
   manageUserModeration(action: string, userID: string, channelID: number) {
     switch(action) {
       case BLOCK:
-        this.socket.emit(BLOCK, userID)
+        this.socket.emit(BLOCK, {uId: userID})
         break
 
       case UNBLOCK:
-        this.socket.emit(UNBLOCK, userID)
+        this.socket.emit(UNBLOCK, {uId: userID})
         break
 
       case MUTE:
@@ -101,11 +109,8 @@ export class ChatService {
   /* <---------- Events to listen to ----------> */
 
   onError() {
-    this.socket.on(ERROR, (error: any) => {
-      console.error('WebSocket Error:', error);
-    });
+    return this.socket.fromEvent<any>(ERROR)
   }
-
   onSuccess() {
     this.socket.on(SUCCESS, (msg: any) => {
       console.log(msg)

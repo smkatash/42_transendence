@@ -23,12 +23,17 @@ export class ChannelMessagesContentComponent implements OnInit {
   loading: boolean = false;
   isSettingsOpen: boolean = false;
 
+
   ngOnInit(): void {
     this.chatService.getChannelMessages()
       .subscribe(messages => this.fetchedMessages = messages)
 
     this.chatService.getIncomingMessages()
-      .subscribe(message => this.incomingMessages.push(message))
+      .subscribe(message => {
+        if (message.channel.id === this.channel?.id){
+          this.incomingMessages.push(message)
+        }
+      })
   }
 
   // ngOnChanges(changes: SimpleChanges): void {
@@ -60,6 +65,7 @@ export class ChannelMessagesContentComponent implements OnInit {
   }
 
   channelChangeEvent(channel: Channel | undefined) {
+    console.log(channel)
     this.channelChange.emit(channel)
   }
 }

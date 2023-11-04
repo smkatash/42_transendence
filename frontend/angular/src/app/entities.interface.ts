@@ -67,6 +67,8 @@ export interface Message {
   channel: Channel
   createdAt: Date
   sessionUser: boolean
+  inviteType?: string
+  inviteID?: string | number
 }
 
 export interface Match {

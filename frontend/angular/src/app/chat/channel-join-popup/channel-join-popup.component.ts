@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ChatService } from '../chat.service';
+import { Channel } from 'src/app/entities.interface';
 
 @Component({
-  selector: 'app-channel-creation-menu',
-  templateUrl: './channel-creation-menu.component.html',
-  styleUrls: ['./channel-creation-menu.component.css'],
+  selector: 'app-channel-join-popup',
+  templateUrl: './channel-join-popup.component.html',
+  styleUrls: ['./channel-join-popup.component.css'],
   animations: [
     trigger('openClose', [
       state('open', style({
@@ -22,15 +23,13 @@ import { ChatService } from '../chat.service';
     ]),
   ],
 })
-export class ChannelCreationMenuComponent {
+export class ChannelJoinPopupComponent {
+  constructor(private chatService: ChatService) {}
 
-  constructor(private chatService: ChatService){}
-
-  @Input() channelType?: string;
   @Input() isOpen?: boolean;
   @Output() isOpenChange = new EventEmitter<boolean>;
 
-  channelName: string = ''
+  @Input() channel?: Channel
   channelPassword?: string
 
   toggle(): void {
@@ -38,17 +37,14 @@ export class ChannelCreationMenuComponent {
     this.isOpenChange.emit(this.isOpen);
   }
 
-  createChannel(): void {
-    if (!this.channelType) return // Just for typescript
+  tryPassword(): void {
+    if (!this.channel) return // Just for typescript
 
-    this.chatService.createChannel({
-       name: this.channelName,
-       type: this.channelType,
-       private: this.channelType === 'private',
-       password: this.channelPassword
+    this.chatService.joinChannel({
+      id: this.channel.id,
+      password: this.channelPassword
     })
-    this.channelName = ''
-    this.channelPassword = ''
+    this.chatService.requestUserChannels()
     this.toggle()
   }
 }

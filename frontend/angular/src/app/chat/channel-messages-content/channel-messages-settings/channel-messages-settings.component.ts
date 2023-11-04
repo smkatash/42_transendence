@@ -2,8 +2,9 @@ import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ChatService } from '../../chat.service';
 import { Channel, User } from 'src/app/entities.interface';
-import { Observable } from 'rxjs';
+import { Observable, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs';
 import { ProfileService } from 'src/app/profile/profile.service';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-channel-messages-settings',
@@ -36,12 +37,35 @@ export class ChannelMessagesSettingsComponent implements OnChanges {
   @Output() isOpenChange = new EventEmitter<boolean>
   @Input() channel?: Channel
   @Output() channelChangeEvent = new EventEmitter<Channel | undefined>
+
   users$: Observable<User[]> = this.chatService.getChannelUsers()
   currentUser?: User
 
+  privateUserSearch = new FormControl()
+  searchedUsers: User[]
+
   ngOnInit() {
     this.profileService.getCurrentUser()
-      .subscribe(user => this.currentUser = user)
+    .subscribe(user => this.currentUser = user)
+
+    if (this.channel) {
+      this.chatService.requestChannelUsers(this.channel.id)
+    }
+
+    this.privateUserSearch.valueChanges.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      switchMap(
+        (username: string) => this.chatService.findUser(username)
+        .pipe(
+          tap((users: User[]) =>{
+            this.searchedUsers = users
+            console.log(users)
+          })
+        )
+      )
+    ).subscribe();
+
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -57,6 +81,10 @@ export class ChannelMessagesSettingsComponent implements OnChanges {
     this.toggle()
     this.channel = undefined
     this.channelChangeEvent.emit(this.channel)
+  }
+
+  sendInviteToChannel(userID: string) {
+    this.chatService.sendDM(userID, `Hey, I'm inviting you to a super cool secret channel called ${this.channel?.name}`, 'channel', this.channel?.id)
   }
 
   toggle(): void {

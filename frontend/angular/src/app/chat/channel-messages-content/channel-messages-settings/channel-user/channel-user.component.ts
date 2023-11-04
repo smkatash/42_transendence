@@ -57,11 +57,17 @@ export class ChannelUserComponent {
   }
 
   sendDM() {
-    // Send DM. This will need more work than expected
+    // Create a channel between two people
+    if (!this.user) return
+    // I was gonna ask if you can give me a way to test if there's already a chat
+    // between two people and I was gonna make a form like you said before to compose
+    // a message but I got really sleepy.
+    this.chatService.sendDM(this.user.id, "Hey")
   }
 
   manageUserModeration(action: string) {
     if (!this.user || !this.channel) return // Just a check for typescript
     this.chatService.manageUserModeration(action, this.user.id, this.channel?.id)
+    this.isDropdownSelected = false
   }
 }

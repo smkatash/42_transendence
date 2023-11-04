@@ -1,30 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@1,6..96,700&display=swap');
 
-.channel-messages-settings-border {
+.request-password-menu-border {
   position: absolute;
   width: 40%;
   z-index: 3;
   border: .1dvw solid #2f424a;
   box-sizing: border-box;
   filter: drop-shadow(0 .1dvw .2dvw rgba(0, 0, 0, 0.8));
-  right: 0%;
-  max-height: 100%;
-  height: 100%;
+  left: 0%;
 }
 
-.channel-messages-settings {
-  position: relative;
+.request-password-menu {
   box-sizing: border-box;
   background-color: #4F6D7A;
   border: .7dvw solid #E8DAB2;
-  max-height: 100%;
-  height: 100%;
-  overflow: auto;
 }
 
 .title {
   margin: 5%;
-  margin-bottom: 3%;
   color: #2f424a;
   font-family: 'Bodoni Moda', serif;
   font-size: 1.5dvw;
@@ -46,53 +39,30 @@ p {
 label {
   display: block;
   margin-left: 10%;
-  margin-top: 0%;
   font-size: 1dvw;
   font-family: 'Quattrocento', serif;
   font-weight: bolder;
   color: #E8DAB2;
 }
 
-.password-field-container, .invite-to-channel {
+input {
+  display: block;
   margin-left: 10%;
   margin-right: 10%;
   margin-top: 3%;
-  margin-bottom: 3%;
-  display: flex;
-}
-
-.invite-to-channel {
-  flex-direction: column;
-}
-
-input {
-  padding: 2%;
-  width: 67.3%;
+  margin-bottom: 7%;
+  padding: 3%;
+  width: 74%;
   font-size: 0.9dvw;
   font-family: 'Quattrocento', serif;
   font-weight: bolder;
   border: none;
   border-bottom: .1dvw solid #E8DAB2;
-  border-top: .1dvw solid #425c68;
   background-color: #425c68;
   color: #E8DAB2;
   outline: none;
 }
 
-.invite-to-channel input {
-  width: 100%;
-  height: 1.5dvw;
-}
-
-.change-btn {
-  font-size: 1dvw;
-  height: 2.4dvw;
-  width: 5dvw;
-}
-
-.users-container {
-  margin: 0% 10% 25% 10%;
-}
 
 button {
   color: #4F6D7A;
@@ -104,7 +74,7 @@ button {
   cursor: pointer;
   align-self: center;
   justify-self: center;
-  height: 2.3dvw;
+  height: 4.5dvh;
   width: 5.5dvw;
   border: .2dvh solid #2f424a;
 }
@@ -113,22 +83,11 @@ button:hover {
   background-color: #e9d5a1;
 }
 
-.footer {
-  position: fixed;
-  bottom: .69dvw;
-  right: 3.35dvw;
-  left: 2.65dvw;
-  background-color: #4F6D7A;
-}
-
 .close {
-  float: right;
-  margin: 7% 0%;
+  margin: 0% 10% 7% 10%;
 }
 
-.exit {
-  margin: 7% 0%;
-  color: #b04343;
-  width: 8.6dvw;
-  border: .2dvh solid #4a2f2f;
+.send {
+  margin: 0% 10% 7% 10%;
+  float: right;
 }

@@ -25,7 +25,7 @@ export class ChatSocket extends Socket {
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,

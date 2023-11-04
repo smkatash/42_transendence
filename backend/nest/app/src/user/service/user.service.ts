@@ -285,7 +285,10 @@ export class UserService {
 		return	await this.userRepo.find({
 			where: {
 				username: Like(`%${username.toLocaleLowerCase()}%`)
-			}
+			},
+			relations:	[
+				'blockedUsers'
+			]
 		})
 	}
 

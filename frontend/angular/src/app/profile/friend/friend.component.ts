@@ -11,22 +11,17 @@ export class FriendComponent {
 
   constructor(private profileService: ProfileService) { }
 
-  // TODO Jad bitch fix automatic update
   @Input() user?: User
-  @Output() userChange = new EventEmitter<User>
+  @Output() userChangeEvent = new EventEmitter<boolean>
   @Input() type?: string
 
   acceptRequest(userID: string) {
     this.profileService.acceptRequest(userID)
-	  .subscribe(user => {
-		this.user = user
-		this.userChange.emit(this.user)
-	  })
+      .subscribe({complete: () => this.userChangeEvent.emit(true)})
   }
 
   declineRequest(userID: string) {
-	console.log("decline " + userID)
-    this.profileService.declineRequest(userID).subscribe()
+    this.profileService.declineRequest(userID)
+      .subscribe({complete: () => this.userChangeEvent.emit(true)})
   }
-
 }

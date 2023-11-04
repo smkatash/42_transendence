@@ -21,7 +21,10 @@ export class JoinedChannelService {
         return await this.joinedChannelRepo.find({
             where:  {
                 user
-            }
+            },
+            relations: [
+                'channel', 'user'
+            ]
         })
     }
 

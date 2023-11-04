@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Match, Stats, User } from '../entities.interface';
+import { Match, Stats, User, UserProfile } from '../entities.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -58,9 +58,9 @@ export class ProfileService {
   }
 
   // TODO user requested
-  sendRequest(friendID: string): Observable<User> {
+  sendRequest(friendID: string): Observable<any> {
     const url =`${this.domain}/user/request-friend`
-    return this.http.post<User>(url, { friendId: friendID}, { withCredentials: true }) // Post with ID in the body
+    return this.http.post<any>(url, { friendId: friendID}, { withCredentials: true }) // Post with ID in the body
   }
 
   acceptRequest(friendID: string): Observable<User> {
@@ -73,9 +73,9 @@ export class ProfileService {
     return this.http.patch<User>(url, { friendId: friendID}, { withCredentials: true }) // Patch with ID in the body
   }
 
-  removeFriend(friendID: string): Observable<User> {
+  removeFriend(friendID: string): Observable<any> {
     const url =`${this.domain}/user/friend/${friendID}`
-    return this.http.delete<User>(url, { withCredentials: true })
+    return this.http.delete<any>(url, { withCredentials: true })
   }
 
   getCurrentUserRank(): Observable<number> {

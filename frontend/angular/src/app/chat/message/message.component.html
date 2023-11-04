@@ -1,6 +1,12 @@
 <div class="message-session-user-container" *ngIf="sameSender == false && msg?.sessionUser == true">
   <div class="message-session-user">
-    <div class="message-content">{{ msg?.content }}</div>
+    <div class="message-content">
+      {{ msg?.content }}
+      <span *ngIf="msg?.inviteID">
+        <button (click)="acceptInvite()">Accept</button>
+        <button (click)="declineInvite()">Reject</button>
+      </span>
+    </div>
   </div>
 </div>
 

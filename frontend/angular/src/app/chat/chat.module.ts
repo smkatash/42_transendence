@@ -8,11 +8,12 @@ import { SidebarChannelComponent } from './sidebar-channel/sidebar-channel.compo
 import { CreateChannelButtonComponent } from './create-channel-button/create-channel-button.component';
 import { DefaultContentComponent } from './default-content/default-content.component';
 import { ChannelMessagesContentComponent } from './channel-messages-content/channel-messages-content.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ChannelCreationMenuComponent } from './channel-creation-menu/channel-creation-menu.component';
 import { ChannelMessagesSettingsComponent } from './channel-messages-content/channel-messages-settings/channel-messages-settings.component';
 import { ChannelUserComponent } from './channel-messages-content/channel-messages-settings/channel-user/channel-user.component';
 import { SharedModule } from '../shared/shared.module';
+import { ChannelJoinPopupComponent } from './channel-join-popup/channel-join-popup.component';
 
 @NgModule({
   declarations: [
@@ -24,13 +25,15 @@ import { SharedModule } from '../shared/shared.module';
     ChannelMessagesContentComponent,
     ChannelCreationMenuComponent,
     ChannelMessagesSettingsComponent,
-    ChannelUserComponent
+    ChannelUserComponent,
+    ChannelJoinPopupComponent
   ],
   imports: [
     CommonModule,
     ChatRoutingModule,
     FormsModule,
     SharedModule,
+    ReactiveFormsModule
   ]
 })
 export class ChatModule { }

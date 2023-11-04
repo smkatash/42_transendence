@@ -21,7 +21,7 @@ export class ChannelService {
             
             const channel = this.channelRepository.create(channelInfo);
             channel.owner = owner
-            console.log('createchannel', channel)
+            // console.log('createchannel', channel)
             channel.messages = [];
             channel.users = [];
             channel.admins = [];
@@ -37,11 +37,11 @@ export class ChannelService {
                 channel.hash = hash;
                 channel.protected = true;
             }
-            console.log(channel)
-            const c = await this.channelRepository.save(channel);
-            console.log('----saved channel, at create chann---')
-            console.log(c)
-            return c
+            // console.log(channel)
+            /*const c = */ return   await this.channelRepository.save(channel);
+            // console.log('----saved channel, at create chann---')
+            // console.log(c)
+            // return c
             
         } catch (error) {
             Logger.error(error);
@@ -77,7 +77,7 @@ export class ChannelService {
         // })
         const channels = (await this.channelRepository.find({
             relations: [
-                'users'
+                'users', 'owner', 'admins'
             ]
         }))
         return channels.filter((c) => c.users.some((user) => user.id === userId));
@@ -87,7 +87,7 @@ export class ChannelService {
 
     async getAllChannels(): Promise<Channel[]>  {
         return await this.channelRepository.find({
-            relations: ['users']
+            relations: ['users', 'owner', 'admins']
         });
     }
 
@@ -98,7 +98,7 @@ export class ChannelService {
         })
     }
     async join(user: User, joinDto: JoinChannelDto) {
-        console.log(joinDto.id)
+        // console.log(joinDto.id)
         const   channel: Channel = await this.channelRepository.findOne({
             where:  {
                 id: joinDto.id
@@ -108,9 +108,9 @@ export class ChannelService {
         if (!channel)   {
             throw new BadRequestException('No such channel');
         }
-        console.log(channel.id)
-console.log('--------join channels users------')
-        console.log(channel)
+        // console.log(channel.id)
+// console.log('--------join channels users------')
+        // console.log(channel)
         if (channel.banned.some((banned) => banned.id === user.id)) {
             throw new BadRequestException('No access(banned)')
         }
@@ -211,5 +211,11 @@ console.log('--------join channels users------')
             // .getOne();
         return room;
 
+    }
+    async purge()   {
+        return await this.channelRepository
+            .createQueryBuilder()
+            .delete()
+            .execute()
     }
 }

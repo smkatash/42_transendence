@@ -23,30 +23,40 @@ export class ChatComponent implements OnInit {
 
   passwordToJoinChannel?: string
 
+  passwordInputPopup: boolean = false
+
   ngOnInit(): void {
     this.chatService.requestUserChannels()
     this.chatService.requestChannels()
+    this.chatService.onError()
+      .subscribe(error => {
+        alert(`WebSocket Error: ${error.message}. Check logs for more details`)
+        console.error(error)
+      })
   }
 
   onChannelSelect(channel: Channel) {
     this.selectedChannel = channel
     if (this.selectedTab === 'available-chats') {
       if (this.selectedChannel.protected) {
-        // Get the password
+        this.selectedTab= 'my-chats'
+        this.passwordInputPopup = true
+      } else {
+        this.chatService.joinChannel({
+          id: this.selectedChannel.id,
+          password: this.passwordToJoinChannel
+        })
+        this.selectTab('my-chats')
+        this.selectedChannel = channel
       }
-      this.chatService.joinChannel({
-        id: this.selectedChannel.id,
-        password: this.passwordToJoinChannel
-      })
-      this.selectTab('my-chats')
-      this.selectedChannel = channel
+    } else {
+      this.chatService.requestChannelMessages(channel.id)
     }
-    this.chatService.requestChannelMessages(channel.id)
   }
 
   createNewChannel(channelType: string) {
     this.channelToCreate = channelType
-    console.log(channelType)
+    this.selectTab('my-chats')
     this.isChannelToCreateActive = true
   }
 
@@ -61,12 +71,4 @@ export class ChatComponent implements OnInit {
       this.chatService.requestChannels()
     }
   }
-
-  // onError() {
-  //   this.chatService.onError()
-  // }
-
-  // getMessage()  {
-  //   return this.chatService.getMessage()
-  // }
 }
