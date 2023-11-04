@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Channel, CreateChannelInfo, JoinChannelInfo, Message, User } from '../entities.interface';
+import { Channel, ChannelUsers, CreateChannelInfo, JoinChannelInfo, Message, User } from '../entities.interface';
 import { ChatSocket } from '../app.module';
 import { ADD_ADMIN, BAN, BLOCK, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DIRECT, ERROR, JOIN, KICK, LEAVE, MESSAGE, MUTE, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, UNMUTE, USER_CHANNELS } from './subscriptions-events-constants'
 
@@ -125,8 +125,8 @@ export class ChatService {
     return this.socket.fromEvent<Channel[]>(CHANNELS)
   }
 
-  getChannelUsers(): Observable<User[]> {
-    return this.socket.fromEvent<User[]>(CHANNEL_USERS)
+  getChannelUsers(): Observable<ChannelUsers> {
+    return this.socket.fromEvent<ChannelUsers>(CHANNEL_USERS)
   }
 
   getChannelMessages(): Observable<Message[]> {

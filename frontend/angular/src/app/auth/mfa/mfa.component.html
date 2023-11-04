@@ -1,0 +1,10 @@
+<body>
+  <div class="container">
+    <h1>Le Mail Facteur Authenticateur.</h1>
+    <label for="mfa">Input the code we sent to your email account</label>
+    <div class="input-submit">
+      <input type="text" [(ngModel)]="code">
+      <button (click)="submit()">Submit</button>
+    </div>
+  </div>
+</body>

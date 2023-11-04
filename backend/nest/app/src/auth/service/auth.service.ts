@@ -54,7 +54,7 @@ export class AuthService {
 	async isValidTokenData(userId: string, value: string) {
 		const expiresIn = 1000 * 60 * 60 * 15
 		const token: AuthToken = await this.tokenRepo.findOneBy({value})
-		
+
 		if (token) {
 			if (token.userId == userId  && 
 				(Date.now() - token.expires) < expiresIn) {

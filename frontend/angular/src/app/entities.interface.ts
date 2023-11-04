@@ -44,6 +44,11 @@ export interface User {
   mfaStatus: number
 }
 
+export interface ChannelUsers {
+  users: User[]
+  cId: number
+}
+
 export interface Stats {
   wins: number
   losses: number

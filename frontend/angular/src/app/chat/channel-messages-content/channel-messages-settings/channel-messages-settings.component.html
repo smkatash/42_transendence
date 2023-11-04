@@ -17,7 +17,7 @@
         </div>
       </div>
 
-    <div class="users-container" *ngIf="users$ | async as users">
+    <div class="users-container">
       <div *ngFor="let user of users">
         <app-channel-user [user]="user"
                           [currentUser]="currentUser"

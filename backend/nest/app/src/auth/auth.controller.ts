@@ -36,11 +36,11 @@ export class AuthController {
 					const token = await this.authService.createAuthToken(currentUser.id)
 					await this.mailService.send(currentUser.email, `Your Auth Code is: ${token.value}`)
 					await this.userService.updateUserStatus(currentUser.id, Status.MFAPending)
-					res.status(302).redirect(FRONT_END_2FA_CALLBACK_URL)
+					return res.status(302).redirect(FRONT_END_2FA_CALLBACK_URL)
 					//res.status(302).redirect('mfa')
 			}
 			await this.userService.updateUserStatus(currentUser.id, Status.ONLINE)
-			res.status(302).redirect(FRONT_END_CALLBACK_URL)
+			return res.status(302).redirect(FRONT_END_CALLBACK_URL)
 				//res.status(302).redirect('test')
 		} catch (error) {
 			throw error
@@ -89,10 +89,10 @@ export class AuthController {
 			}
 
 			try {
-				if (this.authService.isValidTokenData(currentUser.id, codeDto.code)) {
+				if (await this.authService.isValidTokenData(currentUser.id, codeDto.code)) {
 					await this.userService.verifyUserMfa(currentUser.id)
 					await this.authService.removeToken(codeDto.code)
-					res.status(302).redirect(FRONT_END_CALLBACK_URL)
+					return res.status(200).json({ message: 'Success' });
 				}
 			} catch (error) {
 				throw error
