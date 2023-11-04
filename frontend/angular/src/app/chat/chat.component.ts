@@ -23,6 +23,8 @@ export class ChatComponent implements OnInit {
 
   passwordToJoinChannel?: string
 
+  passwordInputPopup: boolean = false
+
   ngOnInit(): void {
     this.chatService.requestUserChannels()
     this.chatService.requestChannels()
@@ -37,24 +39,19 @@ export class ChatComponent implements OnInit {
     this.selectedChannel = channel
     if (this.selectedTab === 'available-chats') {
       if (this.selectedChannel.protected) {
-        // Get the password
-        this.chatService.joinChannel({
-          id: this.selectedChannel.id,
-          password: 'abc'//tmp. need to call the request here
-        })
-      }
-      else
-      {
-        
+        this.selectedTab= 'my-chats'
+        this.passwordInputPopup = true
+      } else {
         this.chatService.joinChannel({
           id: this.selectedChannel.id,
           password: this.passwordToJoinChannel
         })
+        this.selectTab('my-chats')
+        this.selectedChannel = channel
       }
-      this.selectTab('my-chats')
-      this.selectedChannel = channel
+    } else {
+      this.chatService.requestChannelMessages(channel.id)
     }
-    this.chatService.requestChannelMessages(channel.id)
   }
 
   createNewChannel(channelType: string) {
@@ -74,8 +71,4 @@ export class ChatComponent implements OnInit {
       this.chatService.requestChannels()
     }
   }
-
-  // getMessage()  {
-  //   return this.chatService.getMessage()
-  // }
 }
