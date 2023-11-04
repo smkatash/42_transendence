@@ -16,8 +16,8 @@ export class MessageComponent {
 
   acceptInvite() {
     if (this.msg?.inviteType === 'channel') {
-      if (typeof this.msg.inviteId !== 'number') return
-      this.chatService.joinChannel({ id: this.msg.inviteId })
+      // if (typeof this.msg.inviteId !== 'number') return
+      this.chatService.joinChannel({ id: Number(this.msg.inviteId) })
     } else if (this.msg?.inviteType === 'game') {
       // Accept game invite
     }
