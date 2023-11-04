@@ -2,7 +2,7 @@
   <div class="message-session-user">
     <div class="message-content">
       {{ msg?.content }}
-      <span *ngIf="msg?.inviteID">
+      <span *ngIf="msg?.inviteId && msg?.sessionUser === true">
         <button (click)="acceptInvite()">Accept</button>
         <button (click)="declineInvite()">Reject</button>
       </span>

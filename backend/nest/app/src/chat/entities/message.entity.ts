@@ -10,15 +10,9 @@ export class Message    {
     @Column()
     content: string;
 
-    // @Column()
-    // sender: string;
-
     @ManyToOne(() => User, (user) => user.messages)
     @JoinColumn()
     user: User;
-
-    // @Column()
-    // recipient: string;
 
     @ManyToOne(() => Channel, (channel) => channel.messages)
     @JoinTable()

@@ -39,8 +39,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       await this.chatUserService.deleteAll();
       await this.muteService.purge();
       await this.joinedChannelService.purge()
-      // await this.messageService.purge();
-      // // await this.channelService.purge();
+      await this.messageService.purge();
+      await this.channelService.purge();
     }
 
   async handleConnection(@ConnectedSocket() socket: Socket) {
@@ -177,10 +177,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         await this.userService.saveUser(u);
       }
       await this.joinedChannelService.create(user, socket.id, channel);
-      /**
-       * depends on logic here,
-       */
-      // this.onGetChannelMessages(socket, {cId: channel.id})
       this.onGetUsersChannels(socket);
       this.onGetAllChannels(socket);
       return ;
@@ -323,11 +319,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         throw new BadRequestException('User not on the channel')
       }
       if (channel.type === 'direct')  {
-        /* if from both sides to do
+        // if from both sides to do
         user = await this.userService.getUserWith(user.id, [
           'blockedUsers'
         ]);
-        */
         for (const interlocutor of channel.users) {
           if (!(interlocutor.id === user.id))  {
             const u = await this.userService.getUserWith(interlocutor.id, [
@@ -335,6 +330,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
             ]);
             if (u.blockedUsers.some((blocked) => blocked.id === user.id ))  {
               throw new BadRequestException('User blocked you')
+            }
+          } else  {
+            if (user.blockedUsers.some((blocked) => blocked.id === interlocutor.id))  {
+              throw new BadRequestException('You\'re blocking the user')
             }
           }
         }
@@ -546,7 +545,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         // this.server.to(chatUser.socketId).emit(CHANNELS, cToFe);
         if (channel.users.some((u) => chatUser.user.id === u.id)) {
           const userWithBlocked = await this.userService.getUserWith(chatUser.user.id, [
-            'blockedUsers'
+            'blockedUsers', 'bannedAt'
           ]);
           const cToFe = this.userChannelsToFe(userWithBlocked, (await this.channelService.getUsersChannels(chatUser.user.id)));
           // const cToFe = (await this.channelService.getUsersChannels(chatUser.user.id))
@@ -676,7 +675,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
       await this.userService.saveUser(u);
       u = await this.userService.getUserWith(u.id, [
-        'bannedAt'
+        'blockedUsers', 'bannedAt'
       ])
       console.log(u);
       console.log(await this.channelService.saveChannel(channel));
@@ -1138,6 +1137,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       /*console.log*/ const u = (await this.userService.blockUser(user.id, userInfo.uId));
       // or whatever user 
       this.success(socket, `${u?.username} blocked`);
+      this.onGetUsersChannels(socket);
     } catch (error) {
       console.log(error);
       this.emitError(socket, error)
@@ -1156,6 +1156,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     try {
       const u = await this.userService.unBlockUser(user.id, userInfo.uId);
       this.success(socket, `${u?.username} unblocked`);
+      this.onGetUsersChannels(socket);
     } catch (error) {
       console.log(error);
       this.emitError(socket, error)
