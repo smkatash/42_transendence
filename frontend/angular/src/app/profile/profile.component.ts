@@ -156,13 +156,14 @@ export class ProfileComponent implements OnInit {
   sendRequest(): void {
     if (this.id) {
       this.profileService.sendRequest(this.id)
-        .subscribe(user => this.currentUserProfile.user = user)
+        .subscribe(user => this.currentUserProfile.sentRequests = user.sentFriendRequests)
     }
   }
 
   removeFriend(): void {
     if (this.id) {
-      this.profileService.removeFriend(this.id).subscribe()
+      this.profileService.removeFriend(this.id)
+        .subscribe(user => this.userProfile.friends = user.friends)
     }
   }
 
@@ -220,8 +221,34 @@ export class ProfileComponent implements OnInit {
   selectTab(tab: string) {
     if (tab === 'friends') {
       this.selectedTab= 'friends'
+      this.getFriends()
     } else {
       this.selectedTab= 'requests'
+      this.getReceivedRequests()
     }
+  }
+
+  getFriends() {
+    this.profileService.getCurrentUserFriends()
+      .subscribe({
+        next: users => this.userProfile.friends = users,
+        complete: () => {
+          if (!this.id) return
+          this.profileService.getFriends(this.id)
+            .subscribe(users => this.userProfile.friends = users)
+
+        }
+      })
+  }
+
+  getSentRequests() {
+    this.profileService.getCurrentUserSentRequests()
+      .subscribe(users => this.currentUserProfile.sentRequests = users)
+    this.getFriends()
+  }
+
+  getReceivedRequests() {
+    this.profileService.getCurrentUserReceivedRequests()
+      .subscribe(users => this.userProfile.receivedRequests = users)
   }
 }
