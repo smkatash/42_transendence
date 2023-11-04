@@ -66,4 +66,10 @@ export class MessageService {
             }
         })
     }
+    async findById(id: number)  {
+        return await this.msgRepo.findOneBy({id})
+    }
+    async save(msg: Message)    {
+        await this.save(msg);
+    }
 }

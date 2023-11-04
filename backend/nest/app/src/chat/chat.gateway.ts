@@ -2,7 +2,7 @@ import { BadRequestException, HttpStatus, Logger, OnModuleInit, UnauthorizedExce
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { ChannelService } from './service/channel.service';
-import { ChannelPasswordDto, ChannelToFeDto, CreateChannelDto, JoinChannelDto, PrivMsgDto, UpdateChannelDto, cIdDto, uIdDto } from './dto/channel.dto';
+import { ChannelPasswordDto, ChannelToFeDto, CreateChannelDto, JoinChannelDto, PrivMsgDto, PrivateInviteDto, UpdateChannelDto, cIdDto, uIdDto } from './dto/channel.dto';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/service/user.service';
 import { ChatUserService } from './service/chat-user.service';
@@ -13,7 +13,7 @@ import { JoinedChannel } from './entities/joinedChannel.entity';
 import { MuteService } from './service/mute.service';
 import { Channel } from './entities/channel.entity';
 import { Message } from './entities/message.entity';
-import { ADD_ADMIN, BAN, BLOCK, CHANNEL, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DELETE, DIRECT, ERROR, INVITE_TO_PRIVATE, JOIN, KICK, LEAVE, MESSAGE, MUTE, PASSWORD, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, USER_CHANNELS } from './subscriptions-events-constants';
+import { ACCEPT_PRIVATE_INVITE, ADD_ADMIN, BAN, BLOCK, CHANNEL, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DELETE, DIRECT, ERROR, INVITE_TO_PRIVATE, JOIN, KICK, LEAVE, MESSAGE, MUTE, PASSWORD, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, USER_CHANNELS } from './subscriptions-events-constants';
 
 
 @UsePipes(new ValidationPipe({whitelist: true}))
@@ -183,6 +183,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       // this.onGetChannelMessages(socket, {cId: channel.id})
       this.onGetUsersChannels(socket);
       this.onGetAllChannels(socket);
+      return ;
 
       //
       // this.emitToChatUsers(CHANNEL_USERS, channel.users, channel.users);
@@ -891,9 +892,38 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       this.emitError(socket, error);
     }
   }
+
+  @SubscribeMessage(ACCEPT_PRIVATE_INVITE)
+  async onAcceptPriv(@ConnectedSocket() socket: Socket,
+    @MessageBody() info: PrivateInviteDto)   {
+
+    const user = socket.data.user;
+    if (!user) {
+      return this.noAccess(socket);
+    }
+    try {
+      //
+      await this.onJoin(socket, { id: info.cId })
+//
+      const msg = await this.messageService.findById(info.msgId);
+      if (msg)  {
+        msg.content = 'Content no longer available';
+        delete msg.inviteType;
+        delete msg.inviteId;
+        await this.messageService.save(msg);
+      }
+      this.success(socket, `Accepted the invite`)
+      //TODO request messages
+      //SAME with changing logic
+      // this.onGetPrivInvites(socket);
+    } catch (error) {
+      console.log(error);
+      this.emitError(socket, error);
+    }
+  }
   @SubscribeMessage(DECLINE_PRIVATE_INVITE)
   async onDeclinePriv(@ConnectedSocket() socket: Socket,
-    @MessageBody() info: cIdDto)   {
+    @MessageBody() info: PrivateInviteDto)   {
 
     const user = socket.data.user;
     if (!user) {
@@ -916,8 +946,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       u.invitedTo = u.invitedTo.filter((c) => c.id !== channel.id);
       await this.userService.saveUser(u);
       await this.channelService.saveChannel(channel);
+      const msg = await this.messageService.findById(info.msgId);
+      if (msg)  {
+        msg.content = 'Content no longer available';
+        delete msg.inviteType;
+        delete msg.inviteId;
+        await this.messageService.save(msg);
+      }
+      this.success(socket, `declined the invite`)
       //SAME with changing logic
-      this.onGetPrivInvites(socket);
+      // this.onGetPrivInvites(socket);
     } catch (error) {
       console.log(error);
       this.emitError(socket, error);

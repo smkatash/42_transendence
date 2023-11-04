@@ -53,7 +53,7 @@ export  class JoinChannelDto    {
 
     @IsString()
     @IsOptional()
-    password: string;
+    password?: string;
 }
 export class    UpdateChannelDto    {
     @IsNumber()
@@ -73,12 +73,12 @@ export class ChannelPasswordDto {
     @IsString()
     @IsNotEmpty()
     @IsOptional()
-    oldPass: string;
+    oldPass?: string;
     
     @IsString()
     @IsNotEmpty()
     @IsOptional()
-    newPass: string;
+    newPass?: string;
 }
 
 export class uIdDto {
@@ -123,4 +123,14 @@ export  class CreateMessageDto  {
 
     @IsOptional()
     inviteId?: string// 'gameID' || 'channelID'
+}
+
+export class PrivateInviteDto   {
+    @IsNotEmpty()
+    @IsNumber()
+    cId: number;
+
+    @IsNotEmpty()
+    @IsNumber()
+    msgId: number;
 }
