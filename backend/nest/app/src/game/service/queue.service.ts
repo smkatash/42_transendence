@@ -1,12 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { GameMode } from "../utls/game";
 import { Socket } from "socket.io";
+import { Lobby, LobbyInterface } from "../utls/lobby";
 
 @Injectable()
 export class PlayerQueueService {
 	private MIN_NUMBER = 2
 	private playersMatchQueue: Record<string, string[]> = {}
 	private queues: Map<GameMode, Array<Map<string, Socket>>>
+	private lobby: Map<GameMode, Array<Lobby>>
 
 	constructor() {
 		this.queues = new Map()
@@ -100,4 +102,54 @@ export class PlayerQueueService {
 		return null
 	}
 
-}
+	isInLobby(playerId: string, guestId: string, mode: GameMode): boolean {
+		const playersInLobby = this.lobby.get(mode)
+		if (!playersInLobby) {
+			return false;
+		}
+
+		for (const players of playersInLobby) {
+			const group = players.getLobby()
+			if (group.id === playerId && group.guestId === guestId) {
+				return true
+			}
+			if (group.id === guestId && group.guestId === playerId) {
+				return true
+			}
+		}
+		return false
+	}
+
+
+	enterLobby(playerId: string, guestId: string, client: Socket, mode: GameMode): void {
+		if (!this.lobby.has(mode)) {
+			this.lobby.set(mode,[])
+		}
+
+		const playerSocketMap = new Map<string, Socket>()
+  		playerSocketMap.set(playerId, client);
+		const newLobby = new Lobby(playerId, playerSocketMap, guestId)
+		this.lobby.get(mode).push(newLobby);
+	}
+
+	checkInLobby(playerId: string, ownerId: string, client: Socket, mode: GameMode): LobbyInterface | null {
+		if (!this.lobby.has(mode)) {
+			this.lobby.set(mode,[])
+		}
+
+		const lobbies = this.lobby.get(mode)
+
+		for (const group of lobbies) {
+			const current = group.getLobby()
+			if (current.id === ownerId) {
+				const playerSocketMap = new Map<string, Socket>()
+  				playerSocketMap.set(playerId, client)
+				current.guestClient = playerSocketMap
+				return current
+			}
+		}
+		return null
+	}
+
+
+} 

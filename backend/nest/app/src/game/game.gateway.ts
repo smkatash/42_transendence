@@ -7,8 +7,8 @@ import { MatchService } from './service/match.service';
 import { Player } from './entities/player.entity';
 import { PlayerService } from './service/player.service';
 import { Game} from './utls/game';
-import { ERROR, JOIN_MATCH, POSITION_CHANGE, QUEUE, START_MATCH, USER, WAITING_MESSAGE, ROUTE_CHANGE, INGAME } from './utls/rooms';
-import { GameModeDto, JoinMatchDto, PositionDto } from './utls/message.dto';
+import { ERROR, JOIN_MATCH, POSITION_CHANGE, QUEUE, START_MATCH, USER, WAITING_MESSAGE, ROUTE_CHANGE, INGAME, INVITE_TO_MATCH, ACCEPT_MATCH, USER_PROFILE } from './utls/rooms';
+import { AcceptDto, GameModeDto, InviteDto, JoinMatchDto, PositionDto } from './utls/message.dto';
 import { WsAuthGuard } from 'src/auth/guard/ws-auth.guard';
 import { GetWsUser } from 'src/auth/utils/get-user.decorator';
 import { RouteDto } from './utls/router.dto';
@@ -76,18 +76,39 @@ async handleDisconnect(@ConnectedSocket() client: Socket, ) {
 	} catch(error) {
 		this.emitError(client, error)
 	}
-}
+	}
 
-//   @UseGuards(WsAuthGuard)
-//   @SubscribeMessage(INVITE_TO_MATCH)
-//   async handleInviteUserToMatch(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() invitedUserDto: InvitedUserDto) {
-	// 	try {
-		// 		//const match = await this.matchService.makeAmatch(user.id, [user.id, invitedUserDto.userId])
-		// 		client.emit(START_MATCH, match)
-		// 	} catch(error) {
-			// 		this.emitError(client, error)
-			// 	}
-			// 	} 
+	@UseGuards(WsAuthGuard)
+	@SubscribeMessage(INVITE_TO_MATCH)
+	async handleInvitation(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() inviteDto: InviteDto) {
+		try {
+			const currentPlayer: Player = await this.playerService.getPlayerById(user.id)
+			
+			if (currentPlayer) {
+				client.join(QUEUE)
+				await this.matchService.waitInPlayerLobby(currentPlayer, inviteDto.userId, client, inviteDto.mode)
+			}
+			this.emitQueueEvent()
+		} catch(error) {
+			this.emitError(client, error)
+		}
+	}
+
+	@UseGuards(WsAuthGuard)
+	@SubscribeMessage(ACCEPT_MATCH)
+	async handleAccept(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() acceptDto: AcceptDto) {
+		try {
+			const currentPlayer: Player = await this.playerService.getPlayerById(user.id)
+			
+			if (currentPlayer) {
+				client.join(QUEUE)
+				await this.matchService.checkPlayerLobby(currentPlayer, acceptDto.userId, client, acceptDto.mode)
+			}
+			this.emitQueueEvent()
+		} catch(error) {
+			this.emitError(client, error)
+		}
+	}
 			
 	@UseGuards(WsAuthGuard)
 	@SubscribeMessage(JOIN_MATCH)
@@ -99,11 +120,11 @@ async handleDisconnect(@ConnectedSocket() client: Socket, ) {
 			this.server.to(matchDto.matchId).emit(JOIN_MATCH, game)
 			this.matchService.getServer(this.server)
 			this.matchService.play()
-	   }
-   } catch(error) {
+		}
+	} catch(error) {
 		this.emitError(client, error)
-   }
-}
+	}
+	}
 
 	@UseGuards(WsAuthGuard)
 	@SubscribeMessage(POSITION_CHANGE)
@@ -132,8 +153,8 @@ async handleDisconnect(@ConnectedSocket() client: Socket, ) {
 		} catch(error) {
 			this.emitError(client, error)
 		}
-	} 
-	
+	}
+
 	emitError(client: Socket, error: Error) {
 		client.emit(ERROR, error)
 		client.disconnect()
