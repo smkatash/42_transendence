@@ -39,8 +39,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       await this.chatUserService.deleteAll();
       await this.muteService.purge();
       await this.joinedChannelService.purge()
-      // await this.messageService.purge();
-      // await this.channelService.purge();
+      await this.messageService.purge();
+      await this.channelService.purge();
     }
 
   async handleConnection(@ConnectedSocket() socket: Socket) {
@@ -311,6 +311,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!user) {
       return this.noAccess(socket);
     }
+    // console.log(message);
     try {
       const channel = await this.channelService.getChannel(message.cId, [
         'users'
@@ -351,7 +352,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           }
         }
       }
-      const newMsg = await this.messageService.newMessage(message);
+      const newMsg = await this.messageService.newMessage(channel, user,  message);
       const joinedUsers: JoinedChannel[] = await this.joinedChannelService.findByChannel(channel);
       console.log(joinedUsers);
       console.log('Emitting:', newMsg);
