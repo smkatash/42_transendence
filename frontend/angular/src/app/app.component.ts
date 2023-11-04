@@ -17,13 +17,13 @@ export class AppComponent {
         if (e instanceof NavigationEnd) {
           console.log(e.url)
           if (e.url.includes('game')) {
-            this.socket.emit('router', 'game')
+            this.socket.emit('router', {route: 'game'})
           } else if (e.url.includes('leaderboard')) {
-            this.socket.emit('router', 'leaderboard')
+            this.socket.emit('router', {route: 'leaderboard'})
           } else if (e.url.includes('profile')) {
-            this.socket.emit('router', 'profile')
+            this.socket.emit('router', {route: 'profile'})
           } else if (e.url.includes('chat')) {
-            this.socket.emit('router', 'chat')
+            this.socket.emit('router', {route: 'chat'})
           }
         }
       })
