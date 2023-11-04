@@ -13,8 +13,14 @@ export class MessageService {
         private readonly msgRepo: Repository<Message>
     ){}
 
-    async   newMessage(info: CreateMessageDto): Promise<Message>   {
-        const msg = this.msgRepo.create(info);
+    async   newMessage(chan: Channel, autor: User,  msgInfo: CreateMessageDto): Promise<Message>   {
+        const msg = this.msgRepo.create({
+            channel: chan,
+            user: autor,
+            content: msgInfo.content,
+            inviteId: msgInfo.inviteId,
+            inviteType: msgInfo.inviteType
+        });
         return await this.msgRepo.save(msg);
     }
 
