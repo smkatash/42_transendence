@@ -164,9 +164,16 @@ input {
 }
 
 .status .dot-offline {
+	height: 1dvw;
+	width: 1dvw;
+	background-color: #8b4a4a;
+	border-radius: 50%;
+  }
+
+.status .dot-playing {
   height: 1dvw;
   width: 1dvw;
-  background-color: #8b4a4a;
+  background-color: #e1ce23;
   border-radius: 50%;
 }
 

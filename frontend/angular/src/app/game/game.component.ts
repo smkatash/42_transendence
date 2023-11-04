@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, OnInit, Output, Renderer2, RendererFactory2 } from '@angular/core';
 import { GameService } from './game.service';
-import { Ball, Game, Paddle } from '../entities.interface';
+import { Ball, Game, Paddle, GameState } from '../entities.interface';
 import { GameSocket } from 'src/app/app.module';
 import { NONE_TYPE } from '@angular/compiler';
 
@@ -10,7 +10,7 @@ import { NONE_TYPE } from '@angular/compiler';
   styleUrls: ['./game.component.css']
 })
 
-export class GameComponent implements AfterViewInit {
+export class GameComponent implements AfterViewInit, OnInit {
 
   constructor(private renderer: Renderer2,
               private rendererFactory: RendererFactory2,
@@ -50,15 +50,16 @@ export class GameComponent implements AfterViewInit {
   paddleLeftY = 40;
   paddleLeftX = 40;
 
-  ballX = this.maxViewWidth/2;
-  ballY = this.maxViewHeight/2;
+  ballX = 500;
+  ballY = 250;
 
   ballRadius = 1.5;
 
   paddleLeftIncrement = 0;
   paddleRightIncrement = 0;
 
-
+  status: number;
+  statusStr = "";
 
   gameInfo?:Game = {};
 
@@ -70,8 +71,8 @@ export class GameComponent implements AfterViewInit {
       this.maxViewWidth = this.boardElement.clientWidth;
       this.maxViewHeight = this.boardElement.clientHeight;
 
-      console.log('Board width in pixels: ' + this.maxViewWidth);
-      console.log('Board height in pixels: ' + this.maxViewHeight);
+      // console.log('Board width in pixels: ' + this.maxViewWidth);
+      // console.log('Board height in pixels: ' + this.maxViewHeight);
     }
     // let board = document.querySelector('.game_board');
     // let widthValue = board!.clientWidth;
@@ -92,10 +93,10 @@ export class GameComponent implements AfterViewInit {
   onKeyDown(e: any) {
     if (e.code === 'KeyW') {
       this.gameService.padlePositionEmitter("-10")
-      console.log("movedPaddleUp")
+    //   console.log("movedPaddleUp")
     }
     if (e.code === 'KeyS') {
-      console.log("movedPaddleDown")
+      // console.log("movedPaddleDown")
       this.gameService.padlePositionEmitter("+10")
     }
   }
@@ -150,9 +151,13 @@ export class GameComponent implements AfterViewInit {
     this.checkBoardSize();
     if( game.ball){
       if(this.matchLeftSide == true){
+        // console.log('BALLX: ' +  game.ball.position.x);
+        // console.log('BALLY: ' +  game.ball.position.y);
         game.ball.position.x = (this.maxViewWidth / this.maxWidth) * game.ball.position.x;  // | - p     |
         game.ball.position.y = (this.maxViewHeight /this.maxHeight) * game.ball.position.y;
       } else {
+        // console.log('BALLX: ' +  game.ball.position.x);
+        // console.log('BALLY: ' +  game.ball.position.y);
         game.ball.position.x = this.maxViewWidth -  (this.maxViewWidth / this.maxWidth) * game.ball.position.x; // |      p - |
         game.ball.position.y = (this.maxViewHeight / this.maxHeight) * game.ball.position.y;
       }
@@ -242,7 +247,8 @@ export class GameComponent implements AfterViewInit {
   isWaitingInQueue(){
     this.gameService.getStatusQueue().subscribe((status: boolean) => {
       if(status == true){
-        this.gameService.queueEmit();
+        // this.gameService.queueEmit();
+        ;
       } else {
         this.isInQueue = false;
         this.isGameOn = true;
@@ -253,19 +259,36 @@ export class GameComponent implements AfterViewInit {
   pause = false;
 
   gameObservableInit(){
-    this.gameService.getTestObservable().subscribe((game: Game) => {
+	// TODO FRANCESCO FIX!
+    this.gameService.getGameObservable().subscribe((game: Game) => {
+      this.matchLeftSide = this.gameService.matchIsLeftSide();
+      console.log(game.match?.id);
       if(game){
         this.gameInfo = this.valueConversion(game);
         if(this.gameInfo.leftPaddle?.length){
           this.paddleHeight = ( 100/ this.maxHeight) * this.gameInfo.leftPaddle?.length;
         }
       }
-      if (this.pause == false){
-        // this.initViewValue();
-        this.pause = true;
-      }
-      this.matchLeftSide = this.gameService.matchIsLeftSide()
       this.startPlaying();
+    //   if(game.status === GameState.END && game.match){
+    //     if(game.match.winner.id === this.gameService.userInfo.id){
+    //       this.statusStr = "WIN";
+    //       this.isGameOn = false;
+    //       // console.log("WINNER " + game.match.winner.id);
+    //       return;
+    //     } else {
+    //       this.statusStr = "LOS";
+    //       this.isGameOn = false;
+    //       // console.log("LOSER " + game.match.loser.id);
+    //       return;
+    //     }
+    //     // if (game.status === GameState.PAUSE && game.match) {
+    //     //   console.log("PAUSE")
+    //     //   this.status = "WIN";
+    //     //   this.isGameOn = false;
+    //     //   return
+    //     // }
+    // }
     })
   }
 
@@ -274,12 +297,60 @@ export class GameComponent implements AfterViewInit {
 
   ngOnInit() {
     this.initViewValue()
+    this.gameService.getGameStatus().subscribe(data => {
+      this.status = data;
+      if (this.status == GameState.READY)
+        this.readyFunc();
+      else if (this.status == GameState.START)
+        this.startFunc();
+      else if (this.status == GameState.INPROGRESS)
+        this.progressFunc();
+      else if (this.status == GameState.PAUSE)
+        this.pauseFunc();
+      else if (this.status == GameState.END)
+        this.endFunc();
+    })
   };
 
+  readyFunc() {
+    console.log("READY")
+    this.gameObservableInit();
+  }
+  startFunc(){
+    console.log("START")
+  }
+
+  progressFunc(){
+    // console.log("PROGRESS")
+  }
+  pauseFunc(){
+    console.log("PAUSE")
+
+  }
+  endFunc(){
+    console.log("END")
+      if(this.gameInfo?.match?.winner.id === this.gameService.userInfo.id){
+        this.statusStr = "WIN";
+        this.isGameOn = false;
+        // console.log("WINNER " + game.match.winner.id);
+        return;
+      } else {
+        this.statusStr = "LOS";
+        this.isGameOn = false;
+        // console.log("LOSER " + game.match.loser.id);
+        return;
+      }
+      this.gameService.setGameStatus(GameState.READY);
+      // if (game.status === GameState.PAUSE && game.match) {
+      //   console.log("PAUSE")
+      //   this.status = "WIN";
+      //   this.isGameOn = false;
+      //   return
+      // }
+  }
 
   setGame(event: number) {
     this.isInQueue = true;
-    this.gameObservableInit();
     this.gameService.startGameService(event);
     this.isWaitingInQueue();
   }

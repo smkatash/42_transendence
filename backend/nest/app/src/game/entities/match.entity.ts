@@ -10,9 +10,6 @@ export class Match {
     @Column({default: GameState.READY})
     status: GameState
 
-	@Column()
-	currentPlayerId: string
-
     @ManyToMany(() => Player, (player) => player.matches, {nullable: true})
     @JoinTable()
     players: Player[]

@@ -7,15 +7,16 @@ import { MatchService } from './service/match.service';
 import { Player } from './entities/player.entity';
 import { PlayerService } from './service/player.service';
 import { Game} from './utls/game';
-import { ERROR, INVITE_TO_MATCH, JOIN_MATCH, POSITION_CHANGE, QUEUE, START_MATCH, USER, WAITING_MESSAGE } from './utls/rooms';
-import { GameModeDto, InvitedUserDto, JoinMatchDto, PositionDto } from './utls/message-dto';
+import { ERROR, JOIN_MATCH, POSITION_CHANGE, QUEUE, START_MATCH, USER, WAITING_MESSAGE, ROUTE_CHANGE, INGAME } from './utls/rooms';
+import { GameModeDto, JoinMatchDto, PositionDto } from './utls/message.dto';
 import { WsAuthGuard } from 'src/auth/guard/ws-auth.guard';
 import { GetWsUser } from 'src/auth/utils/get-user.decorator';
+import { RouteDto } from './utls/router.dto';
 
 
 @UsePipes(new ValidationPipe({whitelist: true}))
 @WebSocketGateway({
-	namespace: 'game', 
+	namespace: INGAME, 
 	cors: {
 		origin: '*'
 	}})
@@ -37,18 +38,14 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	try {
 		if (!user) {
 			throw new UnauthorizedException()
-			// throw new WsException('Pls work')
 		}
-
 		this.logger.log(`Client id: ${client.id} connected`)
-		await this.userService.updateUserStatus(user.id, Status.GAME)
-		const player = await this.playerService.getPlayerByUser(user, client.id)
+		const player = await this.playerService.getPlayerByUser(user)
 		client.data.user = player
 		this.emitUserEvent(client, player)
 		this.logger.log(`Client id: ${client.id} connected successfully`)
 	} catch (error) {
 		this.emitError(client, error)
-		// throw error
 	}
 }
 
@@ -69,38 +66,29 @@ async handleDisconnect(@ConnectedSocket() client: Socket, ) {
   @SubscribeMessage(START_MATCH)
   async handleStartMatch(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() gameMode: GameModeDto) {
 	try {
-		this.logger.debug(JSON.stringify(gameMode))
 		const currentPlayer: Player = await this.playerService.getPlayerById(user.id)
 		
 		if (currentPlayer) {
-			const match = await this.matchService.waitInPlayerQueue(currentPlayer, gameMode.mode)
-			if (match) {
-				this.logger.debug(JSON.stringify(match))
-				client.leave(QUEUE)
-				client.emit(START_MATCH, match)
-				client.join(match.id)
-			} else {
-				client.join(QUEUE)
-			}
+			client.join(QUEUE)
+			await this.matchService.waitInPlayerQueue(currentPlayer, client, gameMode.mode)
 		}
 		this.emitQueueEvent()
 	} catch(error) {
-		this.logger.debug("ERROR " + error)
 		this.emitError(client, error)
 	}
-  }
+}
 
-  @UseGuards(WsAuthGuard)
-  @SubscribeMessage(INVITE_TO_MATCH)
-  async handleInviteUserToMatch(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() invitedUserDto: InvitedUserDto) {
-	try {
-		const match = await this.matchService.makeAmatch(user.id, [user.id, invitedUserDto.userId])
-		client.emit(START_MATCH, match)
-	} catch(error) {
-		this.emitError(client, error)
-	}
-	} 
-
+//   @UseGuards(WsAuthGuard)
+//   @SubscribeMessage(INVITE_TO_MATCH)
+//   async handleInviteUserToMatch(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() invitedUserDto: InvitedUserDto) {
+	// 	try {
+		// 		//const match = await this.matchService.makeAmatch(user.id, [user.id, invitedUserDto.userId])
+		// 		client.emit(START_MATCH, match)
+		// 	} catch(error) {
+			// 		this.emitError(client, error)
+			// 	}
+			// 	} 
+			
 	@UseGuards(WsAuthGuard)
 	@SubscribeMessage(JOIN_MATCH)
 	async handleJoinMatch(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() matchDto: JoinMatchDto) {
@@ -124,6 +112,22 @@ async handleDisconnect(@ConnectedSocket() client: Socket, ) {
 		const currentPlayer: Player = await this.playerService.getPlayerById(user.id)
 		if (currentPlayer) {
 			this.matchService.updatePlayerPosition(currentPlayer, parseInt(positionDto.step))
+		}
+		} catch(error) {
+			this.emitError(client, error)
+		}
+	}
+
+	@UseGuards(WsAuthGuard)
+	@SubscribeMessage(ROUTE_CHANGE)
+	async handleRouteChange(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() routeDto: RouteDto) {
+	try {
+		if (user) {
+			if (routeDto.route === INGAME) {
+				await this.userService.updateUserStatus(user.id, Status.GAME)
+			} else {
+				await this.userService.updateUserStatus(user.id, Status.ONLINE)
+			}
 		}
 		} catch(error) {
 			this.emitError(client, error)
