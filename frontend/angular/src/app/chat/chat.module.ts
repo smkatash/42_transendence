@@ -14,6 +14,7 @@ import { ChannelMessagesSettingsComponent } from './channel-messages-content/cha
 import { ChannelUserComponent } from './channel-messages-content/channel-messages-settings/channel-user/channel-user.component';
 import { SharedModule } from '../shared/shared.module';
 import { ChannelJoinPopupComponent } from './channel-join-popup/channel-join-popup.component';
+import { DirectMessageComponent } from './direct-message/direct-message.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { ChannelJoinPopupComponent } from './channel-join-popup/channel-join-pop
     ChannelCreationMenuComponent,
     ChannelMessagesSettingsComponent,
     ChannelUserComponent,
-    ChannelJoinPopupComponent
+    ChannelJoinPopupComponent,
+    DirectMessageComponent
   ],
   imports: [
     CommonModule,

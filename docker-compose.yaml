@@ -8,7 +8,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       # - /home/jmaalouf/Documents/42/core-curriculum/42_transendence/frontend/angular:/app-frontend
-      - /Users/jmaalouf/Documents/42_transendence/frontend/angular:/app-frontend
+      - /Users/lkrabbe/Projects/42_transendence/frontend/angular:/app-frontend
       # - /Users/ajazbuti/lpong/frontend/angular:/app-frontend
       #  - /Users/ktashbae/Desktop/trans/frontend/angular:/app-frontend
     ports:
@@ -24,7 +24,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       # - /home/jmaalouf/Documents/42/core-curriculum/42_transendence/backend/nest/app:/app-backend
-      - /Users/jmaalouf/Documents/42_transendence/backend/nest/app:/app-backend
+      - /Users/lkrabbe/Projects/42_transendence/backend/nest/app:/app-backend
       # - /Users/ajazbuti/lpong/backend/nest/app:/app-backend
       # - /Users/ktashbae/Desktop/trans/backend/nest/app:/app-backend
     ports:

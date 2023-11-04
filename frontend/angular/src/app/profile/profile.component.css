@@ -60,6 +60,8 @@ button:hover {
   background-size: cover;
   height: 12dvw;
   width: 12dvw;
+  object-fit: cover;
+  object-position: center;
 }
 
 .edit-image {

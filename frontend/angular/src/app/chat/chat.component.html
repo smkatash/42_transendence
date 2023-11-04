@@ -27,7 +27,10 @@
         </div>
 
       </div>
-      <app-create-channel-button (createChannelEvent)="createNewChannel($event)"></app-create-channel-button>
+      <app-create-channel-button (createChannelEvent)="createNewChannel($event)"
+                                 (createDmEvent)="directMsgPopup = $event">
+
+      </app-create-channel-button>
     </div>
     <div class="content-container">
       <app-channel-creation-menu [channelType]="channelToCreate"
@@ -38,9 +41,13 @@
                               [(isOpen)]="passwordInputPopup">
       </app-channel-join-popup>
 
+      
       <app-channel-messages-content *ngIf="selectedChannel && !passwordInputPopup"
-                                    [(channel)]="selectedChannel">
-      </app-channel-messages-content>
+      [(channel)]="selectedChannel">
+    </app-channel-messages-content>
+    
+    <app-direct-message [(isOpen)]="directMsgPopup">
+    </app-direct-message>
 
       <app-default-content *ngIf="selectedChannel === undefined || passwordInputPopup"></app-default-content>
     </div>

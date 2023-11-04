@@ -9,11 +9,17 @@ export class CreateChannelButtonComponent {
 
   constructor(private el: ElementRef) { }
 
-  @Output() createChannelEvent = new EventEmitter<string>();
+  @Output() createChannelEvent = new EventEmitter<string>()
+  @Output() createDmEvent = new EventEmitter<boolean> ()
   isDropdownSelected: boolean = false;
 
   createNewChannel(channel: string) {
     this.createChannelEvent.emit(channel);
+    this.isDropdownSelected = false;
+  }
+  
+  createNewDM() {
+    this.createDmEvent.emit(true)
     this.isDropdownSelected = false;
   }
 
