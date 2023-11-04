@@ -37,6 +37,7 @@ export class ChannelMessagesSettingsComponent implements OnChanges {
   @Output() isOpenChange = new EventEmitter<boolean>
   @Input() channel?: Channel
   @Output() channelChangeEvent = new EventEmitter<Channel | undefined>
+
   users$: Observable<User[]> = this.chatService.getChannelUsers()
   currentUser?: User
 
@@ -45,7 +46,11 @@ export class ChannelMessagesSettingsComponent implements OnChanges {
 
   ngOnInit() {
     this.profileService.getCurrentUser()
-      .subscribe(user => this.currentUser = user)
+    .subscribe(user => this.currentUser = user)
+
+    if (this.channel) {
+      this.chatService.requestChannelUsers(this.channel.id)
+    }
 
     this.privateUserSearch.valueChanges.pipe(
       debounceTime(500),

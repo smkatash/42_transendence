@@ -39,7 +39,7 @@
       <!-- It's only one of three options: add friend, remove, or display request sent -->
       <button *ngIf="canSendRequest()" (click)="sendRequest()">Add friend</button>
       <button class="removeFriend" *ngIf="isFriendsWithCurrentUser()" (click)="removeFriend()">Remove friend</button>
-      <button *ngIf="isRequestSent()">Request Pending</button>
+      <button *ngIf="isRequestSent()" (click)="getSentRequests()">Request Pending</button>
 
       <button *ngIf="id === null" (click)="enable2FA()">Enable 2FA</button>
       <!-- <button *ngIf="id === null && !profile?.mfaEnable" (click)="disable2FA()">Disable 2FA</button> -->
@@ -76,7 +76,7 @@
               <div [class.selected]="selectedTab === 'friends'" (click)="selectTab('friends')"><h1>Friends:</h1></div>
               <div [class.selected]="selectedTab === 'requests'" (click)="selectTab('requests')"><h1>Requests:</h1></div>
             </div>
-            <div class="friend-sections" *ngIf="currentUserProfile && currentUserProfile.user && id !== null && id !== currentUserProfile.user.id">
+            <div class="friend-sections" *ngIf="currentUserProfile && currentUserProfile.user && id !== null">
               <h1>Friends:</h1>
             </div>
 
@@ -94,7 +94,7 @@
             <!-- When the requests tab is selected -->
             <div class="requests-container" *ngIf="selectedTab === 'requests' && userProfile.receivedRequests.length">
               <div *ngFor="let request of userProfile.receivedRequests">
-                <app-friend [user]="request" [type]="'request'"></app-friend>
+                <app-friend [user]="request" [type]="'request'" (userChangeEvent)="getReceivedRequests()"></app-friend>
               </div>
             </div>
             <div class="no-requests" *ngIf="selectedTab === 'requests' && !userProfile.receivedRequests.length">
