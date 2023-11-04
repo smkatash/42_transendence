@@ -4,6 +4,7 @@ import { User, UserProfile } from '../entities.interface';
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
+import { GameSocket } from '../app.module';
 
 enum ProfileType {
   CURRENTUSER,
