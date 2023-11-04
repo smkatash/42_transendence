@@ -1187,7 +1187,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       // for (const u of channel.users)  {
 // 
       // }
-      this.server.to(socket.id).emit(CHANNEL_USERS, channel.users)
+      this.server.to(socket.id).emit(CHANNEL_USERS, {
+        cId: channel.id,
+        users: channel.users
+      })
     } catch (error) {
       console.log(error);
       this.emitError(socket, error);

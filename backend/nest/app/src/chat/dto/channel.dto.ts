@@ -134,3 +134,11 @@ export class PrivateInviteDto   {
     @IsNumber()
     msgId: number;
 }
+
+export class ChannelUsersDto    {
+    @IsNotEmpty()
+    @IsNumber()
+    cId: number;
+
+    users: User[];
+}
