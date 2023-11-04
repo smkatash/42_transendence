@@ -7,11 +7,12 @@ import { MatchService } from './service/match.service';
 import { Player } from './entities/player.entity';
 import { PlayerService } from './service/player.service';
 import { Game} from './utls/game';
-import { ERROR, JOIN_MATCH, POSITION_CHANGE, QUEUE, START_MATCH, USER, WAITING_MESSAGE, ROUTE_CHANGE, INGAME, INVITE_TO_MATCH, ACCEPT_MATCH } from './utls/rooms';
+import { ERROR, JOIN_MATCH, POSITION_CHANGE, QUEUE, START_MATCH, USER, WAITING_MESSAGE, ROUTE_CHANGE, INGAME, INVITE_TO_MATCH, ACCEPT_MATCH, USER_PROFILE } from './utls/rooms';
 import { AcceptDto, GameModeDto, InviteDto, JoinMatchDto, PositionDto } from './utls/message.dto';
 import { WsAuthGuard } from 'src/auth/guard/ws-auth.guard';
 import { GetWsUser } from 'src/auth/utils/get-user.decorator';
 import { RouteDto } from './utls/router.dto';
+import { UserDto } from './utls/user.status.dto';
 
 
 @UsePipes(new ValidationPipe({whitelist: true}))
@@ -149,6 +150,19 @@ async handleDisconnect(@ConnectedSocket() client: Socket, ) {
 			} else {
 				await this.userService.updateUserStatus(user.id, Status.ONLINE)
 			}
+		}
+		} catch(error) {
+			this.emitError(client, error)
+		}
+	}
+
+	@UseGuards(WsAuthGuard)
+	@SubscribeMessage(USER_PROFILE)
+	async handleUserStatus(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() userDto: UserDto) {
+	try {
+		if (user) {
+			const profile = await this.userService.getUserById(userDto.userId)
+			client.emit(USER_PROFILE, profile)
 		}
 		} catch(error) {
 			this.emitError(client, error)
