@@ -37,7 +37,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	try {
 		if (!user) {
 			throw new UnauthorizedException()
-			// throw new WsException('Pls work')
 		}
 		this.logger.log(`Client id: ${client.id} connected`)
 		await this.userService.updateUserStatus(user.id, Status.ONLINE)

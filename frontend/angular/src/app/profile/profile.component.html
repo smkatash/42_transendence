@@ -28,12 +28,12 @@
 
       <!-- These should be hidden if the user is the user of the session -->
       <div class="status" *ngIf="id !== null">
-        <div class="dot-offline" *ngIf="profile?.status === 0"></div>
-        <h2 *ngIf="profile?.status === 0">Offline</h2>
-        <div class="dot-online" *ngIf="profile?.status === 1"></div>
-        <h2 *ngIf="profile?.status === 1">Online</h2>
-        <div class="dot-playing" *ngIf="profile?.status === 2"></div>
-        <h2 *ngIf="profile?.status === 2">Playing</h2>
+        <div class="dot-offline" *ngIf="userProfile?.user?.status === 0"></div>
+        <h2 *ngIf="userProfile?.user?.status === 0">Offline</h2>
+        <div class="dot-online" *ngIf="userProfile?.user?.status === 1"></div>
+        <h2 *ngIf="userProfile?.user?.status === 1">Online</h2>
+        <div class="dot-playing" *ngIf="userProfile?.user?.status === 2"></div>
+        <h2 *ngIf="userProfile?.user?.status === 2">Playing</h2>
       </div>
 
       <!-- It's only one of three options: add friend, remove, or display request sent -->
