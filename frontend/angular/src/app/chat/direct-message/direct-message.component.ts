@@ -23,7 +23,8 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
   ],
 })
 export class DirectMessageComponent {
-  constructor(private chatservice: ChatService){}
+  constructor(private chatservice: ChatService,
+    ){}
 
   @Input() isOpen?: boolean;
   @Output() isOpenChange = new EventEmitter<boolean>
