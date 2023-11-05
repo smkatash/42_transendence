@@ -21,7 +21,7 @@ export class ChannelService {
             
             const channel = this.channelRepository.create(channelInfo);
             channel.owner = owner
-            console.log('createchannel', channel)
+            // console.log('createchannel', channel)
             channel.messages = [];
             channel.users = [];
             channel.admins = [];
@@ -37,11 +37,11 @@ export class ChannelService {
                 channel.hash = hash;
                 channel.protected = true;
             }
-            console.log(channel)
-            const c = await this.channelRepository.save(channel);
-            console.log('----saved channel, at create chann---')
-            console.log(c)
-            return c
+            // console.log(channel)
+            /*const c = */ return   await this.channelRepository.save(channel);
+            // console.log('----saved channel, at create chann---')
+            // console.log(c)
+            // return c
             
         } catch (error) {
             Logger.error(error);
@@ -98,7 +98,7 @@ export class ChannelService {
         })
     }
     async join(user: User, joinDto: JoinChannelDto) {
-        console.log(joinDto.id)
+        // console.log(joinDto.id)
         const   channel: Channel = await this.channelRepository.findOne({
             where:  {
                 id: joinDto.id
@@ -108,9 +108,9 @@ export class ChannelService {
         if (!channel)   {
             throw new BadRequestException('No such channel');
         }
-        console.log(channel.id)
-console.log('--------join channels users------')
-        console.log(channel)
+        // console.log(channel.id)
+// console.log('--------join channels users------')
+        // console.log(channel)
         if (channel.banned.some((banned) => banned.id === user.id)) {
             throw new BadRequestException('No access(banned)')
         }

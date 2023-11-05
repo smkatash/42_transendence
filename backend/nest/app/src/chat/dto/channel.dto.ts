@@ -53,7 +53,7 @@ export  class JoinChannelDto    {
 
     @IsString()
     @IsOptional()
-    password: string;
+    password?: string;
 }
 export class    UpdateChannelDto    {
     @IsNumber()
@@ -73,12 +73,12 @@ export class ChannelPasswordDto {
     @IsString()
     @IsNotEmpty()
     @IsOptional()
-    oldPass: string;
+    oldPass?: string;
     
     @IsString()
     @IsNotEmpty()
     @IsOptional()
-    newPass: string;
+    newPass?: string;
 }
 
 export class uIdDto {
@@ -104,8 +104,41 @@ export class PrivMsgDto {
     text: string; 
 
     @IsOptional()
-    inviteType: 'game' | 'channel';
+    inviteType?: 'game' | 'channel';
 
     @IsOptional()
-    inviteId: string | number // 'gameID' || 'channelID'
+    inviteId?: string | number // 'gameID' || 'channelID'
+}
+export  class CreateMessageDto  {
+    @IsNotEmpty()
+    @IsNumber()
+    cId: number;
+
+    @IsString()
+    @IsNotEmpty()
+    content: string;
+    
+    @IsOptional()
+    inviteType?: 'game' | 'channel';
+
+    @IsOptional()
+    inviteId?: string// 'gameID' || 'channelID'
+}
+
+export class PrivateInviteDto   {
+    @IsNotEmpty()
+    @IsNumber()
+    cId: number;
+
+    @IsNotEmpty()
+    @IsNumber()
+    msgId: number;
+}
+
+export class ChannelUsersDto    {
+    @IsNotEmpty()
+    @IsNumber()
+    cId: number;
+
+    users: User[];
 }

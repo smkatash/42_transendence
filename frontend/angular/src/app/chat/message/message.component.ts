@@ -16,8 +16,8 @@ export class MessageComponent {
 
   acceptInvite() {
     if (this.msg?.inviteType === 'channel') {
-      if (typeof this.msg.inviteID !== 'number') return
-      this.chatService.joinChannel({ id: this.msg.inviteID })
+      // if (typeof this.msg.inviteId !== 'number') return
+      this.chatService.joinChannel({ id: Number(this.msg.inviteId) })
     } else if (this.msg?.inviteType === 'game') {
       // Accept game invite
     }
@@ -25,7 +25,7 @@ export class MessageComponent {
 
   declineInvite() {
     if (this.msg?.inviteType === 'channel') {
-      if (typeof this.msg.inviteID !== 'number') return
+      if (typeof this.msg.inviteId !== 'number') return
       this.chatService.declineChannelInvite(this.msg.id)
     } else if (this.msg?.inviteType === 'game') {
       // Decline game invite

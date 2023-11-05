@@ -59,8 +59,8 @@ export class ChatService {
     this.socket.emit(LEAVE, { cId: channelID })
   }
 
-  sendDM(userID: string, message: string, inviteType?: string, inviteID?: string | number) {
-    this.socket.emit(DIRECT, { uId: userID, text: message, inviteType: inviteType, inviteID: inviteID })
+  sendDM(userID: string, message: string, inviteType?: string, inviteId?: string | number) {
+    this.socket.emit(DIRECT, { uId: userID, text: message, inviteType: inviteType, inviteId: inviteId })
   }
 
   declineChannelInvite(channelID: number) {
