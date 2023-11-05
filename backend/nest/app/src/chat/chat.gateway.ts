@@ -13,7 +13,7 @@ import { JoinedChannel } from './entities/joinedChannel.entity';
 import { MuteService } from './service/mute.service';
 import { Channel } from './entities/channel.entity';
 import { Message } from './entities/message.entity';
-import { ACCEPT_PRIVATE_INVITE, ADD_ADMIN, BAN, BLOCK, CHANNEL, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DELETE, DIRECT, ERROR, INVITE_TO_PRIVATE, JOIN, KICK, LEAVE, MESSAGE, MUTE, PASSWORD, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, USER_CHANNELS } from './subscriptions-events-constants';
+import { ACCEPT_PRIVATE_INVITE, ADD_ADMIN, BAN, BLOCK, CHANNEL, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DELETE, DIRECT, ERROR, INVALIDATE_MESSAGE_CONTENT, INVITE_TO_PRIVATE, JOIN, KICK, LEAVE, MESSAGE, MUTE, PASSWORD, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, USER_CHANNELS } from './subscriptions-events-constants';
 
 
 @UsePipes(new ValidationPipe({whitelist: true}))
@@ -909,23 +909,34 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       console.log('on ACCEPT', info)
       await this.onJoin(socket, { id: info.cId })
 //
-      const msg = await this.messageService.findById(info.msgId);
+      const msg = await this.invalidateMsgContent(info.msgId);/* await this.messageService.findById(info.msgId);
       if (msg)  {
         msg.content = '*Content no longer available*';
         delete msg.inviteType;
         delete msg.inviteId;
         console.log(msg);
         await this.messageService.save(msg);
+      }*/
+      if (msg)  {
+        this.success(socket, `Accepted the invite`)
+        this.onGetChannelMessages(socket, {cId: msg.channel.id})
       }
-      this.success(socket, `Accepted the invite`)
-      //TODO request messages
-      //SAME with changing logic
-      this.onGetChannelMessages(socket, {cId: msg.channel.id})
       // this.onGetPrivInvites(socket);
     } catch (error) {
       console.log(error);
       this.emitError(socket, error);
     }
+  }
+  private async invalidateMsgContent(msgId: number): Promise<Message> {
+    const msg = await this.messageService.findById(msgId);
+    if (msg)  {
+      msg.content = '*Content no longer available*';
+        delete msg.inviteType;
+        delete msg.inviteId;
+        console.log(msg);
+        return await this.messageService.save(msg);
+    }
+    return ;
   }
   @SubscribeMessage(DECLINE_PRIVATE_INVITE)
   async onDeclinePriv(@ConnectedSocket() socket: Socket,
@@ -945,13 +956,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       if (!u || !channel) {
         throw new BadRequestException('No such channel or user')
       }
-      if (!(user.invitedTo.some((channel: Channel) => channel.id == info.cId))) {
+      if (!(u.invitedTo.some((channel: Channel) => channel.id == info.cId))) {
         throw new BadRequestException('Not invited')
       }
       channel.invitedUsers = channel.invitedUsers.filter((user) => user.id !== u.id);
       u.invitedTo = u.invitedTo.filter((c) => c.id !== channel.id);
       await this.userService.saveUser(u);
       await this.channelService.saveChannel(channel);
+      /*
       const msg = await this.messageService.findById(info.msgId);
       if (msg)  {
         msg.content = 'Content no longer available';
@@ -959,7 +971,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         delete msg.inviteId;
         await this.messageService.save(msg);
       }
-      this.success(socket, `declined the invite`)
+      */
+      const msg = await this.invalidateMsgContent(info.msgId);
+      if (msg)  {
+        this.success(socket, `declined the invite`)
+        this.onGetChannelMessages(socket, {cId: msg.channel.id})
+      }
+
       //SAME with changing logic
       // this.onGetPrivInvites(socket);
     } catch (error) {
@@ -1048,7 +1066,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       if (info.inviteType) {
         if (info.inviteType  === 'channel')  {
           if (!info.inviteId) {
-            throw new BadRequestException('How about filling a dto???')
+            throw new BadRequestException('Missing info')
           }
           const channel = await this.channelService.getChannel(Number(info.inviteId), [
           'users', 'invitedUsers'
@@ -1240,4 +1258,23 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       this.emitError(socket, error)
     }
   }
+
+  @SubscribeMessage(INVALIDATE_MESSAGE_CONTENT)
+  async onInvalidateMessageContent(@ConnectedSocket() socket: Socket,
+    @MessageBody() msgInfo: cIdDto) {
+
+      const user = socket.data.user;
+      if (!user) {
+        return this.noAccess(socket);
+      } 
+      try {
+        const msg = await this.invalidateMsgContent(msgInfo.cId);
+        if (msg)  {
+          this.onGetChannelMessages(socket, {cId: msg.channel.id})
+        }
+      } catch (error) {
+        console.log(error);
+        this.emitError(socket, error) 
+      }
+    }
 } 

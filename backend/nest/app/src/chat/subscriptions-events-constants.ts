@@ -155,6 +155,12 @@ export const UNBLOCK = 'unblock'
  *  not defined yet
  */
 
+export const INVALIDATE_MESSAGE_CONTENT = 'invalidateMessageContent'
+/**
+ * expects cIdDto => cId: msgId
+ *  msg.content -> *Content no longer available*
+ *  pukes DIRECT messages to sessionUser 
+ */
 
 /*
     **  events:
