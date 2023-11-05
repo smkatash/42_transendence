@@ -911,7 +911,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 //
       const msg = await this.messageService.findById(info.msgId);
       if (msg)  {
-        msg.content = 'Content no longer available';
+        msg.content = '*Content no longer available*';
         delete msg.inviteType;
         delete msg.inviteId;
         console.log(msg);
