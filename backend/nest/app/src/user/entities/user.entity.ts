@@ -62,7 +62,6 @@ export class User {
     @ManyToMany(() => Channel, (channel) => channel.banned, {nullable:true})
     bannedAt: Channel[]
 
-
     @OneToMany(() => Channel, (channel) => channel.owner, {nullable:true})
     ownedChannels: Channel[]
 

@@ -146,15 +146,22 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
 }
   
-  private async emitToChatUsers(event: string, criteria: User[], info: any/*User[] | Channel[]*/) {
-    const chatUsers = await this.chatUserService.getAll();
+  private async emitToChatUsers(event: string, criteria: User[] | null, info: any/*User[] | Channel[]*/) {
+
     console.log(criteria);
     console.log(info)
-    for (const chatUser of chatUsers)  {
-      if (criteria.some((u) => u.id === chatUser.user.id))  {
-        console.log(chatUser.user.username);
+    const chatUsers = await this.chatUserService.getAll();
+    if (!criteria)  {
+      for (const chatUser of chatUsers) {
         this.server.to(chatUser.socketId).emit(event, info)
       }
+    } else  {
+      for (const chatUser of chatUsers)  {
+        if (criteria.some((u) => u.id === chatUser.user.id))  {
+          console.log('emiting', info,  'to:', chatUser.user.username);
+          this.server.to(chatUser.socketId).emit(event, info)
+      }
+    }
     }
   }
 
@@ -179,9 +186,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       await this.joinedChannelService.create(user, socket.id, channel);
       this.onGetUsersChannels(socket);
       this.onGetAllChannels(socket);
+      const usersWithChatRelations = await this.usersWithChatRelations(channel.users)
       this.emitToChatUsers(CHANNEL_USERS, channel.users, {
         cId: channel.id,
-        users: channel.users
+        // users: channel.users
+        users: usersWithChatRelations
       });
       return ;
 
@@ -1208,14 +1217,25 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       // for (const u of channel.users)  {
 // 
       // }
+      const usersWithChatRelations = await this.usersWithChatRelations(channel.users);
+      // console.log(channel.users, 'AND NOW WITH RELATIONS', usersWithChatRelations);
       this.server.to(socket.id).emit(CHANNEL_USERS, {
         cId: channel.id,
-        users: channel.users
+        // users: channel.users
+        users: usersWithChatRelations
       })
     } catch (error) {
       console.log(error);
       this.emitError(socket, error);
     }
+  }
+
+  private async usersWithChatRelations(users: User[]): Promise<User[]>  {
+    return Promise.all(users.map(async (user: User) => {
+      return await this.userService.getUserWith(user.id, [
+        /*'adminAt',*/ 'bannedAt', 'blockedUsers'
+      ])
+    }))
   }
 
   private channelToFe(channel: Channel): ChannelToFeDto{
@@ -1250,7 +1270,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     try {
       const channel = await this.channelService.getChannel(channelInfo.cId, [
-        'users'
+        'users', 'admins', 'banned'
       ]);
       this.server.to(socket.id).emit(CHANNEL, this.channelToFe(channel));
     } catch (error) {
