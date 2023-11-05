@@ -1,5 +1,4 @@
 import { Component, ElementRef, EventEmitter, HostListener, Output } from '@angular/core';
-import { ChannelCreateType } from '../chat.enum';
 
 @Component({
   selector: 'app-create-channel-button',
@@ -10,13 +9,10 @@ export class CreateChannelButtonComponent {
 
   constructor(private el: ElementRef) { }
 
-  @Output() createChannelEvent = new EventEmitter<ChannelCreateType>();
+  @Output() createChannelEvent = new EventEmitter<string>();
   isDropdownSelected: boolean = false;
 
-  ChannelCreateType: typeof ChannelCreateType = ChannelCreateType;
-  channelType?: ChannelCreateType;
-
-  createNewChannel(channel: ChannelCreateType) {
+  createNewChannel(channel: string) {
     this.createChannelEvent.emit(channel);
     this.isDropdownSelected = false;
   }

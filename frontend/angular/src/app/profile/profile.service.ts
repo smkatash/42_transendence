@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Match, Stats, User } from '../entities.interface';
+import { Match, Stats, User, UserProfile } from '../entities.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +27,12 @@ export class ProfileService {
     return this.http.get<User[]>(url, { withCredentials: true })
   }
 
-  getCurrentUserRequests(): Observable<User[]> {
+  getCurrentUserSentRequests(): Observable<User[]> {
+    const url = `${this.domain}/user/friends/requests`
+    return this.http.get<User[]>(url, { withCredentials: true })
+  }
+
+  getCurrentUserReceivedRequests(): Observable<User[]> {
     const url = `${this.domain}/user/friends/pending`
     return this.http.get<User[]>(url, { withCredentials: true })
   }
@@ -52,28 +57,25 @@ export class ProfileService {
     this.http.patch(url, {title: title}, { withCredentials: true }).subscribe()
   }
 
-  sendRequest(friendID: string): void {
+  // TODO user requested
+  sendRequest(friendID: string): Observable<any> {
     const url =`${this.domain}/user/request-friend`
-    const request$ = this.http.post<User>(url, { friendId: friendID}, { withCredentials: true }) // Post with ID in the body
-    request$.subscribe()
+    return this.http.post<any>(url, { friendId: friendID}, { withCredentials: true }) // Post with ID in the body
   }
 
-  acceptRequest(friendID: string): void {
+  acceptRequest(friendID: string): Observable<User> {
     const url =`${this.domain}/user/add-friend`
-    const request$ = this.http.patch<User>(url, { friendId: friendID}, { withCredentials: true }) // Patch with ID in the body
-    request$.subscribe()
+    return this.http.patch<User>(url, { friendId: friendID}, { withCredentials: true }) // Patch with ID in the body
   }
 
-  declineRequest(friendID: string): void {
+  declineRequest(friendID: string): Observable<User> {
     const url =`${this.domain}/user/decline-friend`
-    const request$ = this.http.patch<User>(url, { friendId: friendID}, { withCredentials: true }) // Patch with ID in the body
-    request$.subscribe()
+    return this.http.patch<User>(url, { friendId: friendID}, { withCredentials: true }) // Patch with ID in the body
   }
 
-  removeFriend(friendID: string): void {
+  removeFriend(friendID: string): Observable<any> {
     const url =`${this.domain}/user/friend/${friendID}`
-    const request$ = this.http.delete<User>(url, { withCredentials: true })
-    request$.subscribe()
+    return this.http.delete<any>(url, { withCredentials: true })
   }
 
   getCurrentUserRank(): Observable<number> {

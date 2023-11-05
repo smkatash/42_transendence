@@ -1,7 +1,10 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ChatService } from '../../chat.service';
-import { User } from 'src/app/entities.interface';
+import { Channel, User } from 'src/app/entities.interface';
+import { Observable, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs';
+import { ProfileService } from 'src/app/profile/profile.service';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-channel-messages-settings',
@@ -23,26 +26,65 @@ import { User } from 'src/app/entities.interface';
     ]),
   ],
 })
-export class ChannelMessagesSettingsComponent implements OnChanges{
+export class ChannelMessagesSettingsComponent implements OnChanges {
 
-  constructor(private chatService: ChatService){ };
+  constructor(
+    private chatService: ChatService,
+    private profileService: ProfileService
+  ){ };
 
-  @Input() isOpen?: boolean;
-  @Output() isOpenChange = new EventEmitter<boolean>;
-  @Input() channelId?: number;
-  users: User[] = [];
+  @Input() isOpen?: boolean
+  @Output() isOpenChange = new EventEmitter<boolean>
+  @Input() channel?: Channel
+  @Output() channelChangeEvent = new EventEmitter<Channel | undefined>
+
+  users$: Observable<User[]> = this.chatService.getChannelUsers()
+  currentUser?: User
+
+  privateUserSearch = new FormControl()
+  searchedUsers: User[]
+
+  ngOnInit() {
+    this.profileService.getCurrentUser()
+    .subscribe(user => this.currentUser = user)
+
+    if (this.channel) {
+      this.chatService.requestChannelUsers(this.channel.id)
+    }
+
+    this.privateUserSearch.valueChanges.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      switchMap(
+        (username: string) => this.chatService.findUser(username)
+        .pipe(
+          tap((users: User[]) =>{
+            this.searchedUsers = users
+            console.log(users)
+          })
+        )
+      )
+    ).subscribe();
+
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['channelId'] && this.channelId) {
-      this.getChannelUsers(this.channelId);
+    if (changes['channel'] && this.channel) {
+      this.chatService.requestChannelUsers(this.channel.id)
     }
   }
 
-  getChannelUsers(id: number): void{
-    // this.chatService.getChannelUsers(id)
-    //   .subscribe((users) => {
-    //     this.users = users;
-    //   })
+  exitChannel(): void {
+    if (!this.channel) return // A check for typescript
+
+    this.chatService.exitChannel(this.channel.id)
+    this.toggle()
+    this.channel = undefined
+    this.channelChangeEvent.emit(this.channel)
+  }
+
+  sendInviteToChannel(userID: string) {
+    this.chatService.sendDM(userID, `Hey, I'm inviting you to a super cool secret channel called ${this.channel?.name}`, 'channel', this.channel?.id)
   }
 
   toggle(): void {

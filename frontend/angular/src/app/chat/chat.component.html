@@ -2,23 +2,47 @@
   <app-navbar></app-navbar>
   <div class="chat-interface">
     <div class="channel-container-border">
+      <div class="channel-tabs">
+        <div [class.selected]="selectedTab === 'my-chats'" (click)="selectTab('my-chats')"><h1>My Chats:</h1></div>
+        <div [class.selected]="selectedTab === 'available-chats'" (click)="selectTab('available-chats')"><h1>Available Chats:</h1></div>
+      </div>
       <div class="channel-container">
-        <div *ngFor="let channel of channels">
-          <app-sidebar-channel [isSelected]="channel === selectedChannel"
-                               [channel]="channel"
-                               (click)="onChannelSelect(channel)"></app-sidebar-channel>
+
+        <div class="channel-list" *ngIf="selectedTab === 'my-chats'">
+          <div *ngFor="let channel of myChannels$ | async">
+            <app-sidebar-channel [isSelected]="channel.id === selectedChannel?.id"
+                                 [channel]="channel"
+                                 (click)="onChannelSelect(channel)">
+            </app-sidebar-channel>
+          </div>
         </div>
+
+        <div class="channel-list" *ngIf="selectedTab === 'available-chats'">
+          <div *ngFor="let channel of allChannels$ | async">
+            <app-sidebar-channel [isSelected]="channel.id === selectedChannel?.id"
+                                 [channel]="channel"
+                                 (click)="onChannelSelect(channel)">
+            </app-sidebar-channel>
+          </div>
+        </div>
+
       </div>
       <app-create-channel-button (createChannelEvent)="createNewChannel($event)"></app-create-channel-button>
     </div>
     <div class="content-container">
       <app-channel-creation-menu [channelType]="channelToCreate"
-                                 [(isOpen)]="isChannelToCreateActive"></app-channel-creation-menu>
+                                 [(isOpen)]="isChannelToCreateActive">
+      </app-channel-creation-menu>
 
-      <app-channel-messages-content *ngIf="selectedChannel"
-                                    [channelId]="selectedChannel.id"></app-channel-messages-content>
+      <app-channel-join-popup [channel]="selectedChannel"
+                              [(isOpen)]="passwordInputPopup">
+      </app-channel-join-popup>
 
-      <app-default-content *ngIf="selectedChannel === undefined"></app-default-content>
+      <app-channel-messages-content *ngIf="selectedChannel && !passwordInputPopup"
+                                    [(channel)]="selectedChannel">
+      </app-channel-messages-content>
+
+      <app-default-content *ngIf="selectedChannel === undefined || passwordInputPopup"></app-default-content>
     </div>
   </div>
 </body>

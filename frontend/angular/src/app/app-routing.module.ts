@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Router, RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './auth/auth.component';
 import { authGuard } from './auth/auth.guard';
+import { GameSocket } from './app.module';
 
 const routes: Routes = [
   {
@@ -13,11 +14,11 @@ const routes: Routes = [
     path: 'login',
     component: LoginComponent
   },
-  // {
-  //   path: 'chat',
-  //   loadChildren: () => import('./chat/chat.module').then(m => m.ChatModule),
-  //   canActivate: [ authGuard ]
-  // },
+  {
+    path: 'chat',
+    loadChildren: () => import('./chat/chat.module').then(m => m.ChatModule),
+    canActivate: [ authGuard ]
+  },
   {
     path: 'game',
     loadChildren: () => import('./game/game.module').then(m => m.GameModule),
@@ -39,4 +40,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

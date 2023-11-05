@@ -1,5 +1,5 @@
 import { Logger, UnauthorizedException, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
-import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer, WsException } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { UserService } from '../user/service/user.service';
 import { Status } from 'src/user/utils/status.enum';
@@ -7,15 +7,16 @@ import { MatchService } from './service/match.service';
 import { Player } from './entities/player.entity';
 import { PlayerService } from './service/player.service';
 import { Game} from './utls/game';
-import { ERROR, JOIN_MATCH, POSITION_CHANGE, QUEUE, START_MATCH, USER, WAITING_MESSAGE } from './utls/rooms';
-import { GameModeDto, JoinMatchDto, PositionDto } from './utls/message-dto';
+import { ERROR, JOIN_MATCH, POSITION_CHANGE, QUEUE, START_MATCH, USER, WAITING_MESSAGE, ROUTE_CHANGE, INGAME } from './utls/rooms';
+import { GameModeDto, JoinMatchDto, PositionDto } from './utls/message.dto';
 import { WsAuthGuard } from 'src/auth/guard/ws-auth.guard';
 import { GetWsUser } from 'src/auth/utils/get-user.decorator';
+import { RouteDto } from './utls/router.dto';
 
 
 @UsePipes(new ValidationPipe({whitelist: true}))
 @WebSocketGateway({
-	namespace: 'game', 
+	namespace: INGAME, 
 	cors: {
 		origin: '*'
 	}})
@@ -39,7 +40,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 			throw new UnauthorizedException()
 		}
 		this.logger.log(`Client id: ${client.id} connected`)
-		await this.userService.updateUserStatus(user.id, Status.ONLINE)
 		const player = await this.playerService.getPlayerByUser(user)
 		client.data.user = player
 		this.emitUserEvent(client, player)
@@ -70,7 +70,6 @@ async handleDisconnect(@ConnectedSocket() client: Socket, ) {
 		
 		if (currentPlayer) {
 			client.join(QUEUE)
-			await this.userService.updateUserStatus(user.id, Status.GAME)
 			await this.matchService.waitInPlayerQueue(currentPlayer, client, gameMode.mode)
 		}
 		this.emitQueueEvent()
@@ -113,6 +112,22 @@ async handleDisconnect(@ConnectedSocket() client: Socket, ) {
 		const currentPlayer: Player = await this.playerService.getPlayerById(user.id)
 		if (currentPlayer) {
 			this.matchService.updatePlayerPosition(currentPlayer, parseInt(positionDto.step))
+		}
+		} catch(error) {
+			this.emitError(client, error)
+		}
+	}
+
+	@UseGuards(WsAuthGuard)
+	@SubscribeMessage(ROUTE_CHANGE)
+	async handleRouteChange(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() routeDto: RouteDto) {
+	try {
+		if (user) {
+			if (routeDto.route === INGAME) {
+				await this.userService.updateUserStatus(user.id, Status.GAME)
+			} else {
+				await this.userService.updateUserStatus(user.id, Status.ONLINE)
+			}
 		}
 		} catch(error) {
 			this.emitError(client, error)

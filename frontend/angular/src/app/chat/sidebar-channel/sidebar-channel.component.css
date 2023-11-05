@@ -6,6 +6,7 @@
   border: .1dvw solid #E8DAB2;
   margin-bottom: .17dvw;
   display: flex;
+  align-items: center;
 }
 
 .channel:hover {
@@ -22,15 +23,22 @@
 .channel .type-protected img{
   width: 1.5dvw;
   position: absolute;
-  top: 20%;
 }
 
-.channel .type-public {
+.channel .type-public, .channel .type-private {
   width: 13%;
 }
 
-.channel .type-public img{
+.channel .type-public img, .channel .type-private img {
   width: 1.5dvw;
+}
+
+.type-direct img {
+  border: .05dvw solid #2f424a;
+  border-radius: 50%;
+  background-size: cover;
+  height: 2dvw;
+  width: 2dvw;
 }
 
 .channel .name {
@@ -55,11 +63,7 @@
   background-color: #2f424a;
 }
 
-.selected-channel .type-protected img {
-  filter: brightness(0) saturate(100%) invert(83%) sepia(14%) saturate(475%) hue-rotate(7deg) brightness(104%) contrast(92%);
-}
-
-.selected-channel .type-public img {
+.selected-channel .type-protected img, .selected-channel .type-public img, .selected-channel .type-private img {
   filter: brightness(0) saturate(100%) invert(83%) sepia(14%) saturate(475%) hue-rotate(7deg) brightness(104%) contrast(92%);
 }
 

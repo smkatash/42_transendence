@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DOCUMENT } from '@angular/common';
 import { Observable, map } from 'rxjs';
+import { ChatSocket } from '../app.module';
 
 @Injectable({
   providedIn: 'root'

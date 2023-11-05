@@ -1,8 +1,36 @@
 export interface Channel {
   id: number
+  name?: string
+  type: string
+  protected: boolean
+  private: boolean
+  avatar?: string
+  updatedAt: Date
+  owner?: User
+  users: User[]
+  admins?: User[]
+}
+
+export interface JoinChannelInfo {
+  id: number,
+  password?: string
+}
+
+export interface CreateChannelInfo {
   name: string
   type: string
-  avatar: string
+  private: boolean
+  password?: string
+}
+
+export interface UserProfile {
+  user: User
+  friends: User[]
+  receivedRequests: User[] // Not used if not current user
+  sentRequests: User[] // Not used if not current user
+  matches: Match[]
+  rank: number
+  stats: Stats
 }
 
 export interface User {
@@ -33,10 +61,14 @@ export interface Stats {
 // }
 
 export interface Message {
-  name: string
-  messageContent: string
-  timestamp: number
+  id: number
+  user: User
+  content: string
+  channel: Channel
+  createdAt: Date
   sessionUser: boolean
+  inviteType?: string
+  inviteID?: string | number
 }
 
 export interface Match {

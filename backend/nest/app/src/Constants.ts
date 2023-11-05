@@ -26,3 +26,6 @@ export const DEFAULT_TABLE_HEIGHT = 500
 export const DEFAULT_PADDLE_GAP = 90
 export const POSTGRES_UNIQUE_VIOLATION = '23505'
 export const MAXPOINTS = 1
+
+export const SALT_ROUNDS = 10
+export const TIME_TO_MUTE = 30000;//30sec

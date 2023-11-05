@@ -1,4 +1,4 @@
-import {  Body, ConflictException, Controller, Delete, Get, Inject, Logger, Param, Patch, Post, Res, UnauthorizedException, UploadedFile, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
+import {  Body, ConflictException, Controller, Delete, Get, Inject, Logger, Param, Patch, Post, Query, Res, UnauthorizedException, UploadedFile, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
 import { UserService } from './service/user.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -67,7 +67,7 @@ export class UserController {
 
 	@Patch('title')
 	@UseGuards(SessionGuard)
-	async updateTitle(@Body('title') updateTitleDto: UpdateTitleDto, @GetUser() currentUser: SessionUserDto) {
+	async updateTitle(@Body() updateTitleDto: UpdateTitleDto, @GetUser() currentUser: SessionUserDto) {
 		if (!currentUser) {
 			throw new UnauthorizedException('Access denied');
 		}
@@ -179,7 +179,7 @@ export class UserController {
 		}
 
 		try {
-            return await this.userService.addUserFriend(currentUser.id, friendIdDto.friendId)
+			return await this.userService.addUserFriend(currentUser.id, friendIdDto.friendId)
 		} catch (error) {
 			throw error
 		}
@@ -192,6 +192,7 @@ export class UserController {
 			throw new UnauthorizedException('Access denied');
 		}
 		
+		console.log("HERE")
 		try {
 			return await this.userService.declineUserFriend(currentUser.id, friendIdDto.friendId)
         } catch(error) {
@@ -243,7 +244,7 @@ export class UserController {
     }
 
 
-    @Delete('friend/:id')
+    @Delete('friend/:friendId')
     @UseGuards(SessionGuard)
     async deleteUserFriend(@Param() friendIdDto: FriendIdDto, 
                             @GetUser() currentUser: SessionUserDto) {
@@ -301,5 +302,22 @@ export class UserController {
     }
 
 
-}
+	@Get('find-by-username')
+	@UseGuards(SessionGuard)
+	async getAllByUsername(
+		@GetUser() user: User,
+		@Query('username') username: string)	{
+		if (user?.id)   {
+			const u = await this.userService.getUserWith(user.id, [
+				'blockedUsers'
+			]);
+			const users: User[] = await this.userService.findAllByUsername(username);
+			return users.filter((us) => !us.blockedUsers.some((uu) => uu.id === u.id))
+				.filter((us) => !u.blockedUsers.some((uu) => uu.id === us.id))
+				.filter((us) => us.id !== user.id);
+		}   else	{
+			throw new UnauthorizedException('Access denied')
+		}
+	}	
 
+}

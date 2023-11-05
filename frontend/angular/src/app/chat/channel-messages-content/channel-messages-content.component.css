@@ -3,6 +3,7 @@
   width: 2.7dvw;
   top: 1dvw;
   right: 1.5dvw;
+  opacity: 40%;
   filter: drop-shadow(0 .1dvw .2dvw rgba(0, 0, 0, 0.4));
   transform: rotate(0deg);
   animation: animate-button-reverse 1s 1  cubic-bezier(0.075, 0.82, 0.165, 1);
@@ -10,6 +11,7 @@
 
 .settings-button:hover {
   cursor: pointer;
+  opacity: 100%;
   filter: drop-shadow(0 .1dvw .2dvw rgba(0, 0, 0, 0.8));
   transform: rotate(30deg);
   animation: animate-button 1s 1  cubic-bezier(0.075, 0.82, 0.165, 1);
