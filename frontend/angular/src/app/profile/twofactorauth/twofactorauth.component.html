@@ -4,18 +4,24 @@
     <div *ngSwitchCase="'sendEmail'">
       <label for="email">Please enter the email address where you'd like to enable two-factor authentication:</label>
       <input class="email" type="email" id="emailInput" #emailInput="ngModel" [class.is-invalid]="emailInput.invalid" [(ngModel)]="email" required>
-      <button (click)="sendEmail()" [disabled]="emailInput.invalid" [class.btn-invalid]="emailInput.invalid">Use email</button>
+      <div class="buttons">
+        <button (click)="closeDialog()">Close</button>
+        <button class=rightbtn (click)="sendEmail()" [disabled]="emailInput.invalid" [class.btn-invalid]="emailInput.invalid">Use email</button>
+      </div>
     </div>
 
     <div *ngSwitchCase="'sendCode'">
       <label for="code">Enter the verification code sent to your email:</label>
       <input class="code" type="text" id="code" #codeInput="ngModel" [class.is-invalid]="codeInput.invalid" [(ngModel)]="code" required minlength="8" maxlength="8">
-      <button (click)="verifyEmail()" [disabled]="codeInput.invalid" [class.btn-invalid]="codeInput.invalid">Verify</button>
+      <div class="buttons">
+        <button class=leftbtn (click)="closeDialog()">Close</button>
+        <button class=rightbtn (click)="verifyEmail()" [disabled]="codeInput.invalid" [class.btn-invalid]="codeInput.invalid">Verify</button>
+      </div>
     </div>
 
     <div *ngSwitchCase="'verified'">
       <p>Your email has been successfully verified. From now on, whenever you log in, you will receive a security code in your inbox to enter.</p>
-      <button (click)="closeDialog()">Close</button>
+      <button class=leftbtn (click)="closeDialog()">Close</button>
     </div>
 
   </div>
