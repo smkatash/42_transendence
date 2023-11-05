@@ -61,7 +61,6 @@ export class GameService {
   setGameStatus(stat: number) {
     this.gameStatus.next(stat);
   }
-
   // utils----------------------------------------------
 
   matchIsLeftSide(){
