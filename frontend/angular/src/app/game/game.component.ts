@@ -192,9 +192,11 @@ export class GameComponent implements AfterViewInit, OnInit {
   */
   moveRightPaddle(rightPaddle: Paddle){
     if(this.matchLeftSide === true){
+      console.log("FRONT END ON THE LEFT")
       this.paddleRightY = rightPaddle!.position.y;
       this.paddleRightX = rightPaddle!.position.x
     } else {
+      console.log("FRONTEND ON THE RIGHT")
       this.paddleLeftY = rightPaddle!.position.y;
       this.paddleRightX = rightPaddle!. position.x;
     }
@@ -332,12 +334,12 @@ export class GameComponent implements AfterViewInit, OnInit {
       if(this.gameInfo?.match?.winner.id === this.gameService.userInfo.id){
         this.statusStr = "WIN";
         this.isGameOn = false;
-        // console.log("WINNER " + game.match.winner.id);
+        console.log("WINNER " + this.gameInfo.match.winner.id + " " + this.gameService.userInfo.id);
         return;
       } else {
         this.statusStr = "LOS";
         this.isGameOn = false;
-        // console.log("LOSER " + game.match.loser.id);
+        console.log("LOSER " + this.gameInfo?.match?.loser.id + " " + this.gameService.userInfo.id);
         return;
       }
       this.gameService.setGameStatus(GameState.READY);

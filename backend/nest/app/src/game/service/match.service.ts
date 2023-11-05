@@ -122,19 +122,19 @@ export class MatchService {
 			if (match.status === GameState.INPROGRESS) {
 				let updateGame = this.gameService.throwBall(match)
 				if (updateGame.status === GameState.END) {
-					console.log("END OF THE GAME")
+					// console.log("END OF THE GAME")
 					await this.saveMatchHistory(updateGame)
 					this.server.to(match.match.id).emit(INGAME, updateGame)
 					this.server.socketsLeave(match.match.id)
 					this.matches.delete(match.match.id)
 				}
-                console.log("-------------------------------------------")
-                console.log(JSON.stringify(updateGame))
-                console.log("-------------------------------------------")
+                // console.log("-------------------------------------------")
+                // console.log(JSON.stringify(updateGame))
+                // console.log("-------------------------------------------")
 				this.server.to(match.match.id).emit(INGAME, updateGame)
 				updateGame = await this.checkDisconnectedPlayers(updateGame)
 				if (updateGame.match.status === GameState.PAUSE) {
-					console.log("PAUSE OF THE GAME")
+					// console.log("PAUSE OF THE GAME")
 					await this.saveMatchHistory(updateGame)
 					this.server.to(match.match.id).emit(INGAME, updateGame)
 					this.server.socketsLeave(match.match.id)

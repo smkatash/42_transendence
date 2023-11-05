@@ -61,19 +61,17 @@ export class GameService {
   setGameStatus(stat: number) {
     this.gameStatus.next(stat);
   }
-
   // utils----------------------------------------------
 
   matchIsLeftSide(){
 	if(this.matchInfo){
 		if (this.userInfo.id === this.matchInfo.players[0].id) {
-			// console.log("ON THE LEFT")
 			return true;
 		}
 		// console.log("ON THE RIGHT 1")
 		return false;
 	}
-	// console.log("ON THE RIGHT 2")
+	  // console.log("ON THE RIGHT 2")
 	return true
   }
   // join
