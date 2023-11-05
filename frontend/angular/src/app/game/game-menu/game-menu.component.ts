@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { EventEmitter, Input, Output } from '@angular/core';
-import { Socket } from 'ngx-socket-io';  
+import { Socket } from 'ngx-socket-io';
 
 @Component({
   selector: 'app-game-menu',

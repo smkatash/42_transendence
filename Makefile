@@ -1,7 +1,7 @@
 NAME = le_pong
 
 $(NAME):
-	docker compose up
+	docker compose up --build
 
 all: $(NAME)
 

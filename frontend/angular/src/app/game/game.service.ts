@@ -105,7 +105,7 @@ export class GameService {
   listenersOn = false;
   listenersInit(){
     this.listenersOn = true;
-    this.socket.on ('join', (msg: Game) => { 
+    this.socket.on ('join', (msg: Game) => {
     })
     this.socket.on ('game', (msg: any) => {
       gameInfo = msg;
@@ -118,6 +118,7 @@ export class GameService {
     this.socket.on ('start', (msg: any)  => {
       if (msg === 'Waiting players to join')
       { this.inTheQueue.next(true);
+        console.log("einfach");
       } else {
         this.inTheQueue.next(false);
         this.matchInfo = msg;
