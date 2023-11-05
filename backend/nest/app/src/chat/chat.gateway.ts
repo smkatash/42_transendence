@@ -920,6 +920,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       this.success(socket, `Accepted the invite`)
       //TODO request messages
       //SAME with changing logic
+      this.onGetChannelMessages(socket, {cId: msg.channel.id})
       // this.onGetPrivInvites(socket);
     } catch (error) {
       console.log(error);

@@ -73,7 +73,15 @@ export class MessageService {
         })
     }
     async findById(id: number)  {
-        return await this.msgRepo.findOneBy({id})
+        // return await this.msgRepo.findOneBy({id})
+        return await this.msgRepo.findOne({
+            where:  {
+                id: id
+            },
+            relations:  [
+                'channel'
+            ]
+        })
     }
     async save(msg: Message)    {
         return await this.msgRepo.save(msg);
