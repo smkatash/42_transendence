@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Channel, CreateChannelInfo, JoinChannelInfo, Message, User } from '../entities.interface';
+import { Channel, ChannelUsers, CreateChannelInfo, JoinChannelInfo, Message, User } from '../entities.interface';
 import { ChatSocket } from '../app.module';
-import { ADD_ADMIN, BAN, BLOCK, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DIRECT, ERROR, JOIN, KICK, LEAVE, MESSAGE, MUTE, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, UNMUTE, USER_CHANNELS } from './subscriptions-events-constants'
+import { ACCEPT_PRIVATE_INVITE, ADD_ADMIN, BAN, BLOCK, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DIRECT, ERROR, JOIN, KICK, LEAVE, MESSAGE, MUTE, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, UNMUTE, USER_CHANNELS } from './subscriptions-events-constants'
 
 @Injectable({
   providedIn: 'root'
@@ -43,6 +43,14 @@ export class ChatService {
     this.socket.emit(JOIN, joinInfo)
   }
 
+  acceptPrivateInvite(channelID: string, msgID: number) {
+    this.socket.emit(ACCEPT_PRIVATE_INVITE, { cId: Number(channelID), msgId: msgID })
+  }
+
+  declineChannelInvite(channelID: string, msgID: number) {
+    this.socket.emit(DECLINE_PRIVATE_INVITE, { cId: Number(channelID), msgId: msgID })
+  }
+
   leaveChannel(joinInfo: JoinChannelInfo)  {
     this.socket.emit(LEAVE, joinInfo)
   }
@@ -61,10 +69,6 @@ export class ChatService {
 
   sendDM(userID: string, message: string, inviteType?: string, inviteId?: string | number) {
     this.socket.emit(DIRECT, { uId: userID, text: message, inviteType: inviteType, inviteId: inviteId })
-  }
-
-  declineChannelInvite(channelID: number) {
-    this.socket.emit(DECLINE_PRIVATE_INVITE, { cId: channelID })
   }
 
   manageUserModeration(action: string, userID: string, channelID: number) {
@@ -125,8 +129,8 @@ export class ChatService {
     return this.socket.fromEvent<Channel[]>(CHANNELS)
   }
 
-  getChannelUsers(): Observable<User[]> {
-    return this.socket.fromEvent<User[]>(CHANNEL_USERS)
+  getChannelUsers(): Observable<ChannelUsers> {
+    return this.socket.fromEvent<ChannelUsers>(CHANNEL_USERS)
   }
 
   getChannelMessages(): Observable<Message[]> {

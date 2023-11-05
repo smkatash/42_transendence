@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@1,6..96,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quattrocento:wght@700&display=swap');
+
+body {
+  background-color: #4F6D7A;
+  position: relative;
+}
+
+.container {
+
+  width: 80%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50% , -50% );
+}
+
+h1 {
+  font-family: 'Bodoni Moda', serif;
+  font-size: 5dvw;
+  margin: 0%;
+  padding: 0%;
+  color: #2f424a;
+}
+
+label {
+  font-family: 'Quattrocento', serif;
+  font-size: 1.5dvw;
+  margin: 0%;
+  padding: 0%;
+  color: #2f424a;
+}
+
+.input-submit {
+  position: relative;
+  margin-top: 1dvw;
+}
+
+input {
+  padding: 2%;
+  padding-left: 4%;
+  width: 77%;
+  box-sizing: border-box;
+  height: 100%;
+  font-size: 1.5dvw;
+  font-family: 'Quattrocento', serif;
+  font-weight: bolder;
+  border: none;
+  border-bottom: .1dvw solid #E8DAB2;
+  border-top: .1dvw solid #425c68;
+  background-color: #425c68;
+  color: #E8DAB2;
+  outline: none;
+}
+
+
+button {
+  position: absolute;
+  color: #4F6D7A;
+  background-color: #E8DAB2;
+  font-size: 1.5dvw;
+  font-family: 'Quattrocento', serif;
+  font-weight: bolder;
+  border: none;
+  cursor: pointer;
+  align-self: center;
+  justify-self: center;
+  height: 100%;
+  width: 15%;
+}
+
+button:hover {
+  background-color: #e9d5a1;
+}

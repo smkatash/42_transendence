@@ -20,7 +20,6 @@ import { DEFAULT_PADDLE_LENGTH, DEFAULT_TABLE_HEIGHT } from 'src/Constants';
 export class MatchService {
     private matches: Map<string, Game> = new Map()
     private server: Server
-	private currentPlayerId: string
 
     constructor(@InjectRepository(Match) private matchRepo: Repository<Match>,
                 private readonly gameService: GameService,
@@ -29,17 +28,12 @@ export class MatchService {
                 ) {}
 
 	async waitInPlayerQueue(player: Player, client: Socket, mode: GameMode): Promise<void> {
-		const matchId = this.queueService.isEnqueuedInMatch(player.id)
-		if (matchId) {
-			client.leave(QUEUE)
-			const match = await this.getMatchById(matchId)
-			client.emit(START_MATCH, match)
-			client.join(match.id)
-		} else {
+		if (!this.hasExistingMatch(player.id, client)) {
 			if (!this.queueService.isInQueue(player.id, mode)) {
 				this.queueService.enqueue(player.id, client, mode)
 			}
 		}
+
 		if (this.queueService.isQueueReady(mode)) {
 			const pair: Array<Map<string, Socket>> =  this.queueService.dequeue(mode)
 			const players: string[] = []
@@ -58,6 +52,49 @@ export class MatchService {
 			})
 		}
     }
+
+	// TODO tocheck if  he has accepted from another player
+	async waitInPlayerLobby(player: Player, guestId: string, client: Socket, mode: GameMode) {
+		if (!this.hasExistingMatch(player.id, client)) {
+			if (!this.queueService.isInLobby(player.id, guestId, mode)) {
+				this.queueService.enterLobby(player.id, guestId, client, mode)
+			}
+		}
+	}
+
+	async checkPlayerLobby(player: Player, ownerId: string, client: Socket, mode: GameMode) {
+		if (!this.hasExistingMatch(player.id, client)) {
+			if (this.queueService.isInLobby(player.id, ownerId, mode)) {
+				const lobby = this.queueService.checkInLobby(player.id, ownerId, client, mode)
+				if (lobby) {
+					const newMatch = await this.makeAmatch([player.id, ownerId])
+					const owner  = lobby.ownerClient.get(ownerId)
+					const guest = lobby.guestClient.get(player.id)
+					
+					owner.leave(QUEUE)
+					guest.leave(QUEUE)
+					owner.emit(START_MATCH, newMatch)
+					guest.emit(START_MATCH, newMatch)
+					owner.join(newMatch.id)
+					guest.join(newMatch.id)
+				}
+				
+			}
+		}
+		
+	}
+
+	async hasExistingMatch(playerId: string, client: Socket) {
+		const matchId = this.queueService.isEnqueuedInMatch(playerId)
+		if (matchId) {
+			client.leave(QUEUE)
+			const match = await this.getMatchById(matchId)
+			client.emit(START_MATCH, match)
+			client.join(match.id)
+			return true
+		}
+		return false
+	}
 
 	leaveAllQueues(playerId: string) {
 		this.queueService.dequeuePlayer(playerId)

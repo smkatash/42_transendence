@@ -1,4 +1,3 @@
-import { Player } from '../entities/player.entity';
 import {  DEFAULT_TABLE_PROPORTION } from 'src/Constants';
 import { Match } from '../entities/match.entity';
 
@@ -67,13 +66,3 @@ export class GameOptions {
   }
 }
 
-export enum PlayerType {
-  OBSERVER = 0,
-  GAMER
-}
-
-export interface MessageMatch {
-  message: string
-  matchId: string | undefined
-  player: Player | undefined
-}

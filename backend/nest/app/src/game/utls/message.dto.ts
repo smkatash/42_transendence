@@ -17,10 +17,24 @@ export class PositionDto {
     step: string
 }
 
-export class InvitedUserDto {
+export class InviteDto {
 	@IsString()
+	@IsNotEmpty()
+	userId: string
+
+	@IsNumber()
   	@IsNotEmpty()
-    userId: string
+    mode: GameMode
+}
+
+export class AcceptDto {
+	@IsString()
+	@IsNotEmpty()
+	userId: string
+
+	@IsNumber()
+  	@IsNotEmpty()
+    mode: GameMode
 }
 
 export class GameModeDto {

@@ -39,8 +39,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       await this.chatUserService.deleteAll();
       await this.muteService.purge();
       await this.joinedChannelService.purge()
-      await this.messageService.purge();
-      await this.channelService.purge();
+      // await this.messageService.purge();
+      // await this.channelService.purge();
     }
 
   async handleConnection(@ConnectedSocket() socket: Socket) {
@@ -906,6 +906,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
     try {
       //
+      console.log('on ACCEPT', info)
       await this.onJoin(socket, { id: info.cId })
 //
       const msg = await this.messageService.findById(info.msgId);

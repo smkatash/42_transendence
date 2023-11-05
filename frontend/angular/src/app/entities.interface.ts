@@ -44,6 +44,11 @@ export interface User {
   mfaStatus: number
 }
 
+export interface ChannelUsers {
+  users: User[]
+  cId: number
+}
+
 export interface Stats {
   wins: number
   losses: number
@@ -68,7 +73,7 @@ export interface Message {
   createdAt: Date
   sessionUser: boolean
   inviteType?: string
-  inviteId?: string | number
+  inviteId?: string
 }
 
 export interface Match {

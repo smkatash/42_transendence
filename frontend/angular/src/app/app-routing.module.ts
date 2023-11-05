@@ -1,14 +1,18 @@
 import { NgModule } from '@angular/core';
-import { Router, RouterModule, Routes } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './auth/auth.component';
 import { authGuard } from './auth/auth.guard';
-import { GameSocket } from './app.module';
+import { MfaComponent } from './auth/mfa/mfa.component';
 
 const routes: Routes = [
   {
     path: '',
     redirectTo: '/profile',
     pathMatch: 'full'
+  },
+  {
+    path: 'login/2fa',
+    component: MfaComponent
   },
   {
     path: 'login',

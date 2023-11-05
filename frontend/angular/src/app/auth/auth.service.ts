@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DOCUMENT } from '@angular/common';
 import { Observable, map } from 'rxjs';
-import { ChatSocket } from '../app.module';
 
 @Injectable({
   providedIn: 'root'
@@ -18,9 +17,12 @@ export class AuthService {
   }
 
   logout(): void {
-	this.document.location.href = `${this.domain}/42auth/logout`
-}
+    this.document.location.href = `${this.domain}/42auth/logout`
+  }
 
+  mfaLogin(code: string): Observable<any> {
+    return this.http.post<any>(`${this.domain}/42auth/login-verify-mfa`, { code: code }, { withCredentials: true })
+  }
 
   isUserLoggedIn(): Observable<boolean> {
     const url = `${this.domain}/42auth/test`

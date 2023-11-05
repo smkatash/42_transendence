@@ -7,6 +7,8 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './auth/auth.component';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MfaComponent } from './auth/mfa/mfa.component';
+import { FormsModule } from '@angular/forms';
 
 @Injectable()
 export class GameSocket extends Socket {
@@ -25,14 +27,16 @@ export class ChatSocket extends Socket {
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent
+    LoginComponent,
+    MfaComponent
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
-    ],
+    FormsModule
+  ],
   providers: [GameSocket, ChatSocket],
   bootstrap: [AppComponent]
 })
