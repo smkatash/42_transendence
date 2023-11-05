@@ -73,7 +73,7 @@ export interface Message {
   createdAt: Date
   sessionUser: boolean
   inviteType?: string
-  inviteId?: string | number
+  inviteId?: string
 }
 
 export interface Match {

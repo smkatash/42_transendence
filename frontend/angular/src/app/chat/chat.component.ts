@@ -47,7 +47,7 @@ export class ChatComponent implements OnInit {
           password: this.passwordToJoinChannel
         })
         this.selectTab('my-chats')
-        this.selectedChannel = channel
+        // this.selectedChannel = channel
       }
     } else {
       this.chatService.requestChannelMessages(channel.id)

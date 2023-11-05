@@ -1,8 +1,3 @@
-/**
- * NOTE: I don't think we should have two files for the same constants
- * We should create a .env file to parse from
- */
-
 export const CREATE = 'create'
 /**
  * expects: CreateChannelDto
@@ -34,7 +29,6 @@ export const USER_CHANNELS = 'userChannels'
  * on success emits:
  *      USER_CHANNELS, ChannelToFeDto[]
  */
-
 export const CHANNEL_USERS = 'channelUsers'
 /**
  * expects: cidDto
@@ -99,7 +93,6 @@ export const DIRECT = 'privMsg'
  * Send direct message to user. Creates a channel between the two users
  * expects: PrivMsgDto
  * on success emits:
- *  //TODO USER_CHANNLES for both
  *  - broadcasts the message: MESSAGE, Message
  *
  */
@@ -139,12 +132,18 @@ export const INVITE_TO_PRIVATE = 'inviteToPriv'
  * expects: UpdateChannelDto
  */
 
+export const ACCEPT_PRIVATE_INVITE = 'AcceptToPriv'
+/**
+ * Session user accepts invitation to private channel
+ * //TODO the flow stil in dev
+ * expects: PrivateInviteDto
+ */
 
 export const DECLINE_PRIVATE_INVITE = 'declineToPriv'
 /**
  * Session user declines invitation to private channel
  * //TODO the flow stil in dev
- * expects: cIdDto
+ * expects: PrivateInviteDto
  */
 
 export const BLOCK = 'block'
