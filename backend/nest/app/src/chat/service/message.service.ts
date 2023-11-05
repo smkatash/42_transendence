@@ -76,6 +76,6 @@ export class MessageService {
         return await this.msgRepo.findOneBy({id})
     }
     async save(msg: Message)    {
-        return await this.save(msg);
+        return await this.msgRepo.save(msg);
     }
 }

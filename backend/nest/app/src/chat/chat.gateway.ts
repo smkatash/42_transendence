@@ -39,8 +39,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       await this.chatUserService.deleteAll();
       await this.muteService.purge();
       await this.joinedChannelService.purge()
-      // await this.messageService.purge();
-      // await this.channelService.purge();
+      await this.messageService.purge();
+      await this.channelService.purge();
     }
 
   async handleConnection(@ConnectedSocket() socket: Socket) {
@@ -914,6 +914,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         msg.content = 'Content no longer available';
         delete msg.inviteType;
         delete msg.inviteId;
+        console.log(msg);
         await this.messageService.save(msg);
       }
       this.success(socket, `Accepted the invite`)
