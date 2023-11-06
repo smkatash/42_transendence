@@ -66,8 +66,11 @@ export class GameService {
   matchIsLeftSide(){
 	if(this.matchInfo){
 		if (this.userInfo.id === this.matchInfo.players[0].id) {
+			console.log(this.userInfo.id + " " + this.matchInfo.players[0].id)
+			console.log("I AM ON THE LEFT")
 			return true;
 		}
+		console.log("I AM ON THE RIGHT, and should reverse.")
 		// console.log("ON THE RIGHT 1")
 		return false;
 	}
@@ -100,7 +103,6 @@ export class GameService {
   padlePositionEmitter(movementValue: string) {
     const toEmit = this.createPaddleDto(movementValue)
     this.socket.emit('key', toEmit);
-    //console.log(toEmit);
   }
   listenersOn = false;
   listenersInit(){
@@ -144,6 +146,7 @@ export class GameService {
 
 	getUser(): void {
 	this.socket.on('user', (user: User) => {
+		console.log(user)
 		this.userInfo = user;
 	})
 	}
