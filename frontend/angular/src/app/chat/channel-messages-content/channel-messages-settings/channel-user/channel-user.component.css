@@ -74,15 +74,7 @@
   overflow: hidden;
 }
 
-.owner {
-  font-family: 'Quattrocento', serif;
-  font-size: 0.7dvw;
-  font-style: italic;
-  font-weight: bold;
-  color: #656e71;
-}
-
-.admin {
+.owner, .admin {
   font-family: 'Quattrocento', serif;
   font-size: 0.7dvw;
   font-style: italic;
@@ -117,4 +109,28 @@
 .dd-menu li:hover {
   background-color: #E8DAB2;
   color: #2f424a;
+}
+
+.game-invite {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.game-invite span {
+  margin-left: .2dvw;
+  margin-right: .2dvw;
+}
+
+.game-invite img {
+  margin-left: .4dvw;
+  background-color: #2f424a;
+  border-radius: 50%;
+  border: .09dvw solid #E8DAB2;
+  height: 1dvw;
+  width: 1dvw;
+}
+
+.game-invite img:hover {
+  background-color: #212e34;
 }

@@ -29,6 +29,8 @@ export class ChannelUserComponent {
   @Input() channel?: Channel
   isDropdownSelected: boolean = false;
 
+  inviteGameMode: number = 0
+
   toggleDropdown(): void {
     this.isDropdownSelected = !this.isDropdownSelected;
   }
@@ -63,6 +65,21 @@ export class ChannelUserComponent {
     // between two people and I was gonna make a form like you said before to compose
     // a message but I got really sleepy.
     this.chatService.sendDM(this.user.id, "Hey")
+  }
+
+  toggleGameMode(event: Event) {
+    event.stopPropagation()
+    if (this.inviteGameMode < 2) {
+      this.inviteGameMode++
+    } else {
+      this.inviteGameMode = 0
+    }
+  }
+
+  sendGameInvite() {
+    if (!this.user) return
+
+    this.chatService.sendDM(this.user.id, "Hey, I'd like to play a game with you", 'game', this.inviteGameMode)
   }
 
   manageUserModeration(action: string) {

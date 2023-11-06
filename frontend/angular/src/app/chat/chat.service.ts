@@ -67,6 +67,7 @@ export class ChatService {
     this.socket.emit(LEAVE, { cId: channelID })
   }
 
+  // Communication problem. inviteId is actually either the invite to private channel or a game mode
   sendDM(userID: string, message: string, inviteType?: string, inviteId?: string | number) {
     this.socket.emit(DIRECT, { uId: userID, text: message, inviteType: inviteType, inviteId: inviteId })
   }

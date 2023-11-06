@@ -113,6 +113,11 @@ export class ProfileService {
     return this.http.patch<User>(url, {email: email}, { withCredentials: true })
   }
 
+  disable2FA(): Observable<User> {
+    const url = `${this.domain}/user/disable-mfa`
+    return this.http.patch<User>(url, {}, { withCredentials: true })
+  }
+
   enableSend2FA(): Observable<User>{
     const url = `${this.domain}/42auth/send-code-mfa`
     return this.http.get<User>(url, { withCredentials: true })

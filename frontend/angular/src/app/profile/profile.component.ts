@@ -212,6 +212,7 @@ export class ProfileComponent implements OnInit {
 
   disable2FA(): void {
     // Code for disabling 2FA
+    this.profileService.disable2FA().subscribe()
   }
 
   logout(): void {
