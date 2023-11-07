@@ -40,7 +40,7 @@ export class ProfileComponent implements OnInit {
 
   initUserProfile(): UserProfile {
     return {
-      user: { id: '', username: '', title: '', avatar: '', email: '', status: 0, mfaEnable: false, mfaStatus: 0 },
+      user: { id: '', username: '', title: '', avatar: '', email: '', status: 0, mfaEnabled: false, mfaStatus: 0 },
       friends: [],
       receivedRequests: [],
       sentRequests: [],
@@ -205,14 +205,22 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  enable2FA(): void {
+  toggle2FADialog(toggle: any) {
+    if (toggle === false) {
+      this.profileService.getCurrentUser()
+        .subscribe(usr => this.userProfile.user.mfaEnabled = usr.mfaEnabled)
+    }
     this.isbuttonClicked2FA = !this.isbuttonClicked2FA
     this.cd.detectChanges();
   }
 
+  enable2FA(): void {
+    this.toggle2FADialog(true)
+  }
+
   disable2FA(): void {
-    // Code for disabling 2FA
-    this.profileService.disable2FA().subscribe()
+    this.profileService.disable2FA()
+      .subscribe(usr => this.userProfile.user.mfaEnabled = usr.mfaEnabled)
   }
 
   logout(): void {

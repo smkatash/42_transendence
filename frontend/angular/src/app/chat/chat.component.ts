@@ -25,12 +25,14 @@ export class ChatComponent implements OnInit {
 
   passwordInputPopup: boolean = false
 
+  errorMessage?: any
+
   ngOnInit(): void {
     this.chatService.requestUserChannels()
     this.chatService.requestChannels()
     this.chatService.onError()
       .subscribe(error => {
-        alert(`WebSocket Error: ${error.message}. Check logs for more details`)
+        this.displayError(error.message)
         console.error(error)
       })
   }
@@ -71,4 +73,12 @@ export class ChatComponent implements OnInit {
       this.chatService.requestChannels()
     }
   }
+
+  displayError(message: any) {
+    this.errorMessage = message
+    setTimeout(() => {
+      this.errorMessage = undefined
+    }, 5000)
+  }
+
 }

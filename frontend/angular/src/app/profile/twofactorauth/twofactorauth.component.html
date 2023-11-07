@@ -21,7 +21,9 @@
 
     <div *ngSwitchCase="'verified'">
       <p>Your email has been successfully verified. From now on, whenever you log in, you will receive a security code in your inbox to enter.</p>
-      <button class=leftbtn (click)="closeDialog()">Close</button>
+      <div class="buttons">
+        <button class=leftbtn (click)="closeDialog()">Close</button>
+      </div>
     </div>
 
   </div>

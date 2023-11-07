@@ -1,7 +1,7 @@
 <body>
   <app-navbar></app-navbar>
   <!-- Wrapper for all the profile -->
-  <app-twofactorauth [(showDialog)]="isbuttonClicked2FA" *ngIf="isbuttonClicked2FA"></app-twofactorauth>
+  <app-twofactorauth [showDialog]="isbuttonClicked2FA" (closeDialogEvent)="toggle2FADialog($event)" *ngIf="isbuttonClicked2FA"></app-twofactorauth>
   <div class="profile-interface">
 
     <!-- Wrapper for the left info box containing picture and name etc... -->
@@ -41,8 +41,8 @@
       <button class="removeFriend" *ngIf="isFriendsWithCurrentUser()" (click)="removeFriend()">Remove friend</button>
       <button *ngIf="isRequestSent()" (click)="getSentRequests()">Request Pending</button>
 
-      <button *ngIf="id === null && userProfile.user.mfaEnable" (click)="enable2FA()">Enable 2FA</button>
-      <button *ngIf="id === null && !userProfile.user.mfaEnable" (click)="disable2FA()">Disable 2FA</button>
+      <button *ngIf="id === null && userProfile.user.mfaEnabled == false" (click)="enable2FA()">Enable 2FA</button>
+      <button *ngIf="id === null && userProfile.user.mfaEnabled == true" (click)="disable2FA()">Disable 2FA</button>
       <button class="logout" *ngIf="id === null" (click)="logout()">Logout</button>
 
     </div>

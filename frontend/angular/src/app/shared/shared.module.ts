@@ -3,16 +3,19 @@ import { CommonModule } from '@angular/common';
 
 import { NavbarComponent } from './navbar/navbar.component';
 import { RouterModule } from '@angular/router';
+import { ErrorMessageComponent } from './error-message/error-message.component';
 
 @NgModule({
   imports: [
     CommonModule, RouterModule
   ],
   declarations: [
-    NavbarComponent
+    NavbarComponent,
+    ErrorMessageComponent,
+    ErrorMessageComponent
   ],
   exports: [
-    NavbarComponent, CommonModule
+    NavbarComponent, ErrorMessageComponent, CommonModule
   ]
 })
 export class SharedModule { }

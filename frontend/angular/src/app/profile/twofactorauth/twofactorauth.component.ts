@@ -10,7 +10,7 @@ export class TwofactorauthComponent {
   constructor(private profileService: ProfileService, private cd: ChangeDetectorRef) { }
 
   @Input() showDialog: boolean = false
-  @Output() showDialogChange = new EventEmitter<boolean>
+  @Output() closeDialogEvent = new EventEmitter<boolean>
 
   verificationStep: string = 'sendEmail'
 
@@ -28,7 +28,7 @@ export class TwofactorauthComponent {
 
   verifyEmail(): void {
     this.profileService.verificationEnable2FA(this.code)
-      .subscribe() // TODO: Check if it as been actually verified or not
+      .subscribe(something => console.log(something)) // TODO: Check if it as been actually verified or not
     this.verificationStep = 'verified'
   }
 
@@ -37,7 +37,7 @@ export class TwofactorauthComponent {
     this.email = ''
     this.code = ''
     this.showDialog = false
-    this.showDialogChange.emit(this.showDialog)
+    this.closeDialogEvent.emit(this.showDialog)
   }
 
 }

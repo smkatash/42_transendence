@@ -45,4 +45,5 @@
       <app-default-content *ngIf="selectedChannel === undefined || passwordInputPopup"></app-default-content>
     </div>
   </div>
+  <app-error-message *ngIf="errorMessage" [message]="errorMessage"></app-error-message>
 </body>
