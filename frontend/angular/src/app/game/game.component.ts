@@ -153,6 +153,7 @@ export class GameComponent implements AfterViewInit, OnInit {
       if(this.matchLeftSide == true){
         // console.log('BALLX: ' +  game.ball.position.x);
         // console.log('BALLY: ' +  game.ball.position.y);
+        console.log("LEFT SIDE, first X is Player on left")
         game.ball.position.x = (this.maxViewWidth / this.maxWidth) * game.ball.position.x;  // | - p     |
         game.ball.position.y = (this.maxViewHeight /this.maxHeight) * game.ball.position.y;
       } else {
@@ -221,7 +222,12 @@ export class GameComponent implements AfterViewInit, OnInit {
         const ball = this.gameInfo.ball
         window.requestAnimationFrame(() => this.moveBall(ball));
       }
-      if(this.gameInfo.leftPaddle){
+      if(this.gameInfo.leftPaddle && this.gameInfo.rightPaddle){
+        console.log( "USER ID Player [0]: " + this.gameInfo.match?.players[0].id + 
+                     "\nUSER ID Player [1]: " + this.gameInfo.match?.players[1].id +
+                     "\nMY ID: " + this.gameService.userInfo.id + 
+                     "\nPADDLE LEFT IN BACKENDINFO: " + this.gameInfo.leftPaddle.position.x + 
+                     "\nPADDLE RIGHT IN BACKENDINFO: " +this.gameInfo.rightPaddle.position.x)
         const paddle = this.gameInfo.leftPaddle
         window.requestAnimationFrame(() => this.moveLeftPaddle(paddle));
       }
@@ -264,7 +270,6 @@ export class GameComponent implements AfterViewInit, OnInit {
 	// TODO FRANCESCO FIX!
     this.gameService.getGameObservable().subscribe((game: Game) => {
       this.matchLeftSide = this.gameService.matchIsLeftSide();
-      console.log(game.match?.id);
       if(game){
         this.gameInfo = this.valueConversion(game);
         if(this.gameInfo.leftPaddle?.length){
@@ -272,25 +277,6 @@ export class GameComponent implements AfterViewInit, OnInit {
         }
       }
       this.startPlaying();
-    //   if(game.status === GameState.END && game.match){
-    //     if(game.match.winner.id === this.gameService.userInfo.id){
-    //       this.statusStr = "WIN";
-    //       this.isGameOn = false;
-    //       // console.log("WINNER " + game.match.winner.id);
-    //       return;
-    //     } else {
-    //       this.statusStr = "LOS";
-    //       this.isGameOn = false;
-    //       // console.log("LOSER " + game.match.loser.id);
-    //       return;
-    //     }
-    //     // if (game.status === GameState.PAUSE && game.match) {
-    //     //   console.log("PAUSE")
-    //     //   this.status = "WIN";
-    //     //   this.isGameOn = false;
-    //     //   return
-    //     // }
-    // }
     })
   }
 
@@ -323,7 +309,7 @@ export class GameComponent implements AfterViewInit, OnInit {
   }
 
   progressFunc(){
-    // console.log("PROGRESS")
+    console.log("PROGRESS")
   }
   pauseFunc(){
     console.log("PAUSE")
