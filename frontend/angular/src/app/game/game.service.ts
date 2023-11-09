@@ -64,17 +64,16 @@ export class GameService {
   // utils----------------------------------------------
 
   matchIsLeftSide(){
-	if(this.matchInfo){
-		if (this.userInfo.id === this.matchInfo.players[0].id) {
-			return true;
-		}
-		// console.log("ON THE RIGHT 1")
-		return false;
-	}
-	  // console.log("ON THE RIGHT 2")
-	return true
+    if(this.matchInfo){
+      if (this.userInfo.id === this.matchInfo.players[0].id) {
+        console.log(this.userInfo.id + " " + this.matchInfo.players[0].id)
+        return true;
+      }
+      return false;
+    }
+	  return true
   }
-  // join
+
   createMatchInfo(ID:string, level:number){
     const matchInfo : JoinMatchDto = {
       matchId: ID,
@@ -100,7 +99,6 @@ export class GameService {
   padlePositionEmitter(movementValue: string) {
     const toEmit = this.createPaddleDto(movementValue)
     this.socket.emit('key', toEmit);
-    //console.log(toEmit);
   }
   listenersOn = false;
   listenersInit(){
@@ -109,8 +107,9 @@ export class GameService {
     })
     this.socket.on ('game', (msg: any) => {
       gameInfo = msg;
-      if(gameInfo.status === GameState.END){
-        ;
+      if(gameInfo.status === GameState.PAUSE){
+        console.log(" PAUSE SETTLED UP ")
+        gameInfo.status = GameState.END;
       }
       this.gameInfoSubject.next(gameInfo);
       this.gameStatus.next(gameInfo.status!);
@@ -145,6 +144,7 @@ export class GameService {
 
 	getUser(): void {
 	this.socket.on('user', (user: User) => {
+		console.log(user)
 		this.userInfo = user;
 	})
 	}

@@ -64,6 +64,7 @@ export class GameService {
         const loser = winner === Paddletype.LEFT ? Paddletype.RIGHT : Paddletype.LEFT
         game.match.winner = game.match.players[winner]
         game.match.loser = game.match.players[loser]
+        game.match.status = GameState.END
         game.status = GameState.END
         return game
     }
