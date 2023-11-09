@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { NavbarComponent } from './navbar/navbar.component';
 import { RouterModule } from '@angular/router';
 import { ErrorMessageComponent } from './error-message/error-message.component';
+import { NotFoundComponent } from './not-found/not-found.component';
+import { InternalErrorComponent } from './internal-error/internal-error.component';
 
 @NgModule({
   imports: [
@@ -12,7 +14,9 @@ import { ErrorMessageComponent } from './error-message/error-message.component';
   declarations: [
     NavbarComponent,
     ErrorMessageComponent,
-    ErrorMessageComponent
+    ErrorMessageComponent,
+    NotFoundComponent,
+    InternalErrorComponent
   ],
   exports: [
     NavbarComponent, ErrorMessageComponent, CommonModule

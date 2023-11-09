@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './auth/auth.component';
 import { authGuard } from './auth/auth.guard';
 import { MfaComponent } from './auth/mfa/mfa.component';
+import { NotFoundComponent } from './shared/not-found/not-found.component';
 
 const routes: Routes = [
   {
@@ -38,6 +39,10 @@ const routes: Routes = [
     loadChildren: () => import('./profile/profile.module').then(m => m.ProfileModule),
     canActivate: [ authGuard ]
   },
+  {
+	path: '**',
+	component: NotFoundComponent
+  }
 ];
 
 @NgModule({
