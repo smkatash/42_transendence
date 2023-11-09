@@ -97,8 +97,9 @@ export class MatchService {
 				this.server.to(match.match.id).emit(INGAME, updateGame)
 				updateGame = await this.checkDisconnectedPlayers(updateGame)
 				if (updateGame.match.status === GameState.PAUSE) {
-					// console.log("PAUSE OF THE GAME")
+					console.log("PAUSE OF THE GAME")
 					await this.saveMatchHistory(updateGame)
+					console.log(updateGame)
 					this.server.to(match.match.id).emit(INGAME, updateGame)
 					this.server.socketsLeave(match.match.id)
 					this.matches.delete(match.match.id)
@@ -133,11 +134,13 @@ export class MatchService {
             const playerOne = await this.playerService.getUserByPlayerId(players[0].id)
             const playerTwo = await this.playerService.getUserByPlayerId(players[1].id)
             if (playerOne.user.status !== Status.GAME) {
+                match.status = GameState.PAUSE
                 match.match.status = GameState.PAUSE
                 match.match.loser = playerOne
                 match.match.winner = playerTwo
             }
             if (playerTwo.user.status !== Status.GAME) {
+                match.status = GameState.PAUSE
                 match.match.status = GameState.PAUSE
                 match.match.loser = playerTwo
                 match.match.winner = playerOne

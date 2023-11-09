@@ -93,10 +93,8 @@ export class GameComponent implements AfterViewInit, OnInit {
   onKeyDown(e: any) {
     if (e.code === 'KeyW') {
       this.gameService.padlePositionEmitter("-10")
-    //   console.log("movedPaddleUp")
     }
     if (e.code === 'KeyS') {
-      // console.log("movedPaddleDown")
       this.gameService.padlePositionEmitter("+10")
     }
   }
@@ -114,24 +112,10 @@ export class GameComponent implements AfterViewInit, OnInit {
   }
 
   /* 
-    Here we need to be sure that the racket don't pass trough the borders:
-    .   The smaller beetween 100% - the value in which the racket is
-    .   The bigger beetween 0% + the value in which the racket is
+    Update score, 
+    should I change the value of the color of 
+    the ball depending on the game choice? 
   */
-  moveLeftRacket(position: number): void {
-    let board = document.querySelector('.game_board');
-    let newPosition = position;
-    if (newPosition >= board!.clientHeight - this.paddleHeight)
-      newPosition = this.paddleLeftY;
-    else if ( newPosition <= 0 + this.paddleHeight)
-      newPosition = this.paddleLeftY;
-    this.paddleLeftY = newPosition;
-    // newPosition = position > 100 - this.paddleHeight ? 100 - this.paddleHeight : newPosition;
-    // this.paddleLeftY = newPosition < 0 ? 0 : newPosition;
-    // window.requestAnimationFrame(() => this.moveLeftRacket(this.paddleLeftY));
-  }
-
-  /* Update score, should I change the value of the color of the ball depending on the game choice? */
   updateScore(scores: Record <string, number>) {
     let id = this.gameService.userInfo.id;
     this.yourScore = scores[id];
@@ -151,15 +135,10 @@ export class GameComponent implements AfterViewInit, OnInit {
     this.checkBoardSize();
     if( game.ball){
       if(this.matchLeftSide == true){
-        // console.log('BALLX: ' +  game.ball.position.x);
-        // console.log('BALLY: ' +  game.ball.position.y);
-        console.log("LEFT SIDE, first X is Player on left")
-        game.ball.position.x = (this.maxViewWidth / this.maxWidth) * game.ball.position.x;  // | - p     |
+        game.ball.position.x = (this.maxViewWidth / this.maxWidth) * game.ball.position.x;
         game.ball.position.y = (this.maxViewHeight /this.maxHeight) * game.ball.position.y;
       } else {
-        // console.log('BALLX: ' +  game.ball.position.x);
-        // console.log('BALLY: ' +  game.ball.position.y);
-        game.ball.position.x = this.maxViewWidth -  (this.maxViewWidth / this.maxWidth) * game.ball.position.x; // |      p - |
+        game.ball.position.x = this.maxViewWidth -  (this.maxViewWidth / this.maxWidth) * game.ball.position.x;
         game.ball.position.y = (this.maxViewHeight / this.maxHeight) * game.ball.position.y;
       }
     }
@@ -175,9 +154,7 @@ export class GameComponent implements AfterViewInit, OnInit {
   }
   
   resetAll(): void {
-    // this.score0 = 0;
-    // this.score1 = 0;
-    // this.resetBallAndRackets();
+    ;
   }
 
   async moveBall(ball: Ball): Promise<void> {
@@ -255,7 +232,6 @@ export class GameComponent implements AfterViewInit, OnInit {
   isWaitingInQueue(){
     this.gameService.getStatusQueue().subscribe((status: boolean) => {
       if(status == true){
-        // this.gameService.queueEmit();
         ;
       } else {
         this.isInQueue = false;
@@ -264,13 +240,19 @@ export class GameComponent implements AfterViewInit, OnInit {
     })
   }
 
-  pause = false;
-
+  settledSide = false;
   gameObservableInit(){
-	// TODO FRANCESCO FIX!
     this.gameService.getGameObservable().subscribe((game: Game) => {
-      this.matchLeftSide = this.gameService.matchIsLeftSide();
       if(game){
+        if(this.settledSide == false){
+          if(game.match?.players[0].id  ===  this.gameService.userInfo.id){
+            this.matchLeftSide = true;
+          } else {
+            this.matchLeftSide = false;
+          }
+          this.settledSide = true;
+        }
+        this.matchLeftSide = this.gameService.matchIsLeftSide();
         this.gameInfo = this.valueConversion(game);
         if(this.gameInfo.leftPaddle?.length){
           this.paddleHeight = ( 100/ this.maxHeight) * this.gameInfo.leftPaddle?.length;
@@ -293,8 +275,10 @@ export class GameComponent implements AfterViewInit, OnInit {
         this.startFunc();
       else if (this.status == GameState.INPROGRESS)
         this.progressFunc();
-      else if (this.status == GameState.PAUSE)
+      else if (this.status == GameState.PAUSE){
+        console.log("PAUSE")
         this.pauseFunc();
+      }
       else if (this.status == GameState.END)
         this.endFunc();
     })
@@ -307,16 +291,27 @@ export class GameComponent implements AfterViewInit, OnInit {
   startFunc(){
     console.log("START")
   }
-
   progressFunc(){
     console.log("PROGRESS")
   }
   pauseFunc(){
     console.log("PAUSE")
-
+    this.settledSide = false;
+      if(this.gameInfo?.match?.winner.id === this.gameService.userInfo.id){
+        this.statusStr = "WIN";
+        this.isGameOn = false;
+        console.log("WINNER " + this.gameInfo.match.winner.id + " " + this.gameService.userInfo.id);
+        return;
+      } else {
+        this.statusStr = "LOS";
+        this.isGameOn = false;
+        console.log("LOSER " + this.gameInfo?.match?.loser.id + " " + this.gameService.userInfo.id);
+        return;
+      }
   }
   endFunc(){
     console.log("END")
+      this.settledSide = false;
       if(this.gameInfo?.match?.winner.id === this.gameService.userInfo.id){
         this.statusStr = "WIN";
         this.isGameOn = false;
@@ -338,6 +333,7 @@ export class GameComponent implements AfterViewInit, OnInit {
   }
 
   setGame(event: number) {
+    this.settledSide = false;
     this.isInQueue = true;
     this.gameService.startGameService(event);
     this.isWaitingInQueue();

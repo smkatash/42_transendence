@@ -64,20 +64,16 @@ export class GameService {
   // utils----------------------------------------------
 
   matchIsLeftSide(){
-	if(this.matchInfo){
-		if (this.userInfo.id === this.matchInfo.players[0].id) {
-			console.log(this.userInfo.id + " " + this.matchInfo.players[0].id)
-			console.log("I AM ON THE LEFT")
-			return true;
-		}
-		console.log("I AM ON THE RIGHT, and should reverse.")
-		// console.log("ON THE RIGHT 1")
-		return false;
-	}
-	  // console.log("ON THE RIGHT 2")
-	return true
+    if(this.matchInfo){
+      if (this.userInfo.id === this.matchInfo.players[0].id) {
+        console.log(this.userInfo.id + " " + this.matchInfo.players[0].id)
+        return true;
+      }
+      return false;
+    }
+	  return true
   }
-  // join
+
   createMatchInfo(ID:string, level:number){
     const matchInfo : JoinMatchDto = {
       matchId: ID,
@@ -111,8 +107,9 @@ export class GameService {
     })
     this.socket.on ('game', (msg: any) => {
       gameInfo = msg;
-      if(gameInfo.status === GameState.END){
-        ;
+      if(gameInfo.status === GameState.PAUSE){
+        console.log(" PAUSE SETTLED UP ")
+        gameInfo.status = GameState.END;
       }
       this.gameInfoSubject.next(gameInfo);
       this.gameStatus.next(gameInfo.status!);
