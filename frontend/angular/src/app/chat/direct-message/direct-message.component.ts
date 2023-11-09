@@ -26,15 +26,15 @@ import { FormControl } from '@angular/forms';
   ],
 })
 export class DirectMessageComponent {
-  constructor(private chatService: ChatService ){ };
+  constructor(private chatService: ChatService ){ }
 
-    @Input() isOpen?: boolean;
+    @Input() isOpen?: boolean
     @Output() isOpenChange = new EventEmitter<boolean>
-    isDropdownOpen?: boolean=false;
-    messageToSend?: string;
+    isDropdownOpen?: boolean = false
+    messageToSend?: string
     userSearch = new FormControl()
-    searchedUsers: User[]
-    selectedUser: User;
+    searchedUsers?: User[]
+    selectedUser?: User
 
   ngOnInit() {
 
@@ -44,28 +44,32 @@ export class DirectMessageComponent {
       switchMap(
         (username: string) => this.chatService.findUser(username)
         .pipe(
-          tap((users: User[]) => this.searchedUsers = users)
+          tap((users: User[]) => {
+            this.searchedUsers = users
+            this.isDropdownOpen = true
+            console.log(users)
+          })
         )
       )
-    ).subscribe();
+    ).subscribe()
   }
 
   toggle(): void {
-    this.isOpen = !this.isOpen;
+    this.isOpen = !this.isOpen
     this.isOpenChange.emit(this.isOpen)
   }
 
   sendMessage(): void {
     if (this.messageToSend === undefined) return
-    this.messageToSend = this.messageToSend.trim();
+    this.messageToSend = this.messageToSend.trim()
 
-    if (!this.messageToSend) return;
-    this.chatService.sendDM(this.selectedUser.id, this.messageToSend);
+    if (!this.messageToSend || !this.selectedUser) return
+    this.chatService.sendDM(this.selectedUser?.id, this.messageToSend)
     this.messageToSend = ''
     this.toggle()
   }
   selectUser(selected: User) {
-    this.selectedUser = selected;
-    this.isDropdownOpen = false;
+    this.selectedUser = selected
+    this.isDropdownOpen = false
   }
 }

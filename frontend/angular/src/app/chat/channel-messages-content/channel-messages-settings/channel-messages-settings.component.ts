@@ -57,7 +57,6 @@ export class ChannelMessagesSettingsComponent implements OnChanges {
         })
     }
 
-
     this.privateUserSearch.valueChanges.pipe(
       debounceTime(500),
       distinctUntilChanged(),

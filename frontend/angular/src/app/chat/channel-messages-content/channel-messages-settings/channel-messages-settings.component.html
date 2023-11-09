@@ -13,7 +13,9 @@
       <div class="invite-to-channel" *ngIf="channel?.private">
         <input type="text" id="user-search" [formControl]="privateUserSearch">
         <div class=name *ngFor="let user of searchedUsers">
-          <span class="user-dropdown" (click)="sendInviteToChannel(user.id)">{{ user.username }}</span>
+          <span class="user-dropdown" (click)="sendInviteToChannel(user.id)">
+            {{ user.username }}
+          </span>
         </div>
       </div>
 
