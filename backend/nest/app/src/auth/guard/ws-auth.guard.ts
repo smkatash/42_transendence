@@ -16,11 +16,10 @@ export class WsAuthGuard implements CanActivate {
 	
 		if (request.user) {
 			const user: User = request.user
-			if (user.status === Status.MFAPending) {
-				return true
-			}
-			
 			if (user.mfaEnabled === true) {
+				if (user.mfaStatus === MfaStatus.MFAPending) {
+					return true
+				}
 				return MfaStatus.VALIDATE === user.mfaStatus
 			}
 		}

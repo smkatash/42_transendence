@@ -92,7 +92,7 @@ export class UserController {
 		}
 		
 		try {
-			return await this.userService.enableMfaVerification(currentUser.id, updateEmailDto.email)
+			return await this.userService.enableMfaEmail(currentUser.id, updateEmailDto.email)
 		} catch (error) {
 			this.logger.error(error)
 			throw error

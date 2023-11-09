@@ -26,5 +26,12 @@
       </div>
     </div>
 
+    <div *ngSwitchCase="'unverified'">
+      <p>Your email hasn't been successfully verified. Please try again.</p>
+      <div class="buttons">
+        <button class=leftbtn (click)="closeDialog()">Close</button>
+      </div>
+    </div>
+
   </div>
 </div>

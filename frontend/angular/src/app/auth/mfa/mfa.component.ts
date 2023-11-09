@@ -16,12 +16,7 @@ export class MfaComponent {
   submit() {
     this.auth.mfaLogin(this.code)
       .subscribe({
-        next: res => {
-          console.log('ACCEPTED' + res.message)
-          if (res.message === 'Accepted') {
-            this.route.navigate(['/profile'])
-          }
-        },
+        next: () => this.route.navigate(['/profile']),
         error: () => alert('Wrong code, try again')
     })
   }
