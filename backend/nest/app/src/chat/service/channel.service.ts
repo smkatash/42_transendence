@@ -94,6 +94,7 @@ export class ChannelService {
             relations:  relations
         })
     }
+
     async join(user: User, joinDto: JoinChannelDto) {
         const   channel: Channel = await this.channelRepository.findOne({
             where:  {

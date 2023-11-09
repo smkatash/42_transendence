@@ -592,15 +592,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         'owner', 'admins', 'users', 'joinedUsers'
       ]);
       let u = await this.userService.getUserWith(info.uId, [
-        'channels', 'joinedChannels']);
+        'channels', 'joinedChannels'
+      ]);
       if (!channel || !u) {
-        return this.emitError(socket, new BadRequestException('No such channel or user')) 
+        throw new BadRequestException('No such channel or user')
       }
       if (channel.owner?.id === info.uId) {
-        return this.emitError(socket, new BadRequestException('Can\'t kick the owner'))
+        throw new BadRequestException('Can\'t kick the owner')
       }
       if (!(channel.admins.some((admin) => admin.id === user.id))) {
-        return this.emitError(socket, new BadRequestException('No rights')); 
+        throw new BadRequestException('No rights')
       }
       // channel.admins = channel.admins.filter((admin) => admin.id !== u.id);
       channel.users = channel.users.filter((u) => u.id !== info.uId)
@@ -631,8 +632,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         u = await this.userService.getUserWith(u.id, [
           'blockedUsers', 'bannedAt'
         ]);
-        const channels = (await this.channelService.getUsersChannels(u.id));
-
+        const channels = await this.channelService.getUsersChannels(u.id);
         const cToFe = this.userChannelsToFe(u, channels);
         this.server.to(kicked.socketId).emit(USER_CHANNELS, cToFe)
       }
@@ -1203,6 +1203,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         cId: channel.id,
         users: usersWithChatRelations
       })
+      return ;
     } catch (error) {
       console.log(error);
       this.emitError(socket, error);
