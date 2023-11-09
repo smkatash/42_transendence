@@ -532,12 +532,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         user.bannedAt = user.bannedAt.filter((c) => c.id !== channel.id);
         await this.userService.saveUser(user);
       }
-      for (const invited of channel.invitedUsers)  {
-        const user = await this.userService.getUserWith(invited.id, [
-          'invitedTo'
-        ]);
-        user.invitedTo = user.invitedTo.filter((c) => c.id !== channel.id);
-        await this.userService.saveUser(user);
+      if (channel.private)  {
+        for (const invited of channel.invitedUsers)  {
+          const user = await this.userService.getUserWith(invited.id, [
+            'invitedTo'
+          ]);
+          user.invitedTo = user.invitedTo.filter((c) => c.id !== channel.id);
+          await this.userService.saveUser(user);
+        }
       }
       //Updating channel lists for FE
       const chatUsers = await this.chatUserService.getAll();
@@ -641,25 +643,24 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     } 
     try {
       const channel = await this.channelService.getChannel(info.cId, [
-        'owner', 'users', 'admins', 'banned'
+        'owner', 'users', 'admins', 'banned', 'joinedUsers'
       ]);
       // console.log(channel);
       let u = await this.userService.getUserWith(info.uId, [
-        'channels', 'adminAt', 'bannedAt'
+        'channels', 'adminAt', 'bannedAt', 'joinedChannels'
       ]);
-    //  console.log(u, channel); 
       if (!channel || !u) {
-        return this.emitError(socket, new BadRequestException('No such channel or user')) 
+        throw new BadRequestException('No such channel or user');
       }
       if (channel.owner?.id === info.uId) {
-        return this.emitError(socket, new BadRequestException('Can\'t ban the owner'))
+        throw new BadRequestException('Can\'t ban the owner');
       }
       if (!(channel.admins.some((admin) => admin.id === user.id))) {
         console.log('userId', user.id, 'admins', channel.admins)
-        return this.emitError(socket, new BadRequestException('No rights')); 
+        throw new BadRequestException('No rights');
       }
       if (channel.banned.some((banned) => banned.id === u.id))  {
-        return this.emitError(socket, new BadRequestException('Already banned'))
+        throw new BadRequestException('Already banned');
       }
       channel.users = channel.users.filter((u) => u.id !== info.uId)
       channel.admins = channel.admins.filter((admin) => admin.id !== info.uId);
@@ -668,11 +669,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       u.adminAt = u.adminAt.filter((adminAt) => adminAt.id !== channel.id)
       await this.userService.saveUser(u);
       u = await this.userService.getUserWith(u.id, [
-        'blockedUsers', 'bannedAt'
+        'blockedUsers', 'bannedAt'/*, 'joinedChannels'*/
       ])
-      // console.log(u);
-      console.log(await this.channelService.saveChannel(channel));
-      console.log(await this.joinedChannelService.deleteByUserChannel(u, channel));
+      await this.channelService.saveChannel(channel);
+      await this.joinedChannelService.deleteByUserChannel(u, channel)
       this.server.to(socket.id).emit(CHANNEL, this.channelToFe(channel));
       this.onGetChannelUsers(socket, {cId: channel.id});
       const banned = await this.chatUserService.findByUser(u);
@@ -704,15 +704,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         'bannedAt'
       ]);
       if (!channel || !u) {
-        return this.emitError(socket, new BadRequestException('No such channel or user')) 
+        throw new BadRequestException('No such channel or user');
       }
       if (!(channel.admins.some((admin) => admin.id === user.id))) {
-        return this.emitError(socket, new BadRequestException('No rights')); 
+        throw new BadRequestException('No rights');
       }
       if (!(channel.banned.some((banned) => banned.id === info.uId)))  {
-        return this.emitError(socket, new BadRequestException('Not banned'))
+        throw new BadRequestException('Not banned');
       }
-      // channel.admins = channel.admins.filter((admin) => admin.id !== u.id);
       channel.banned = channel.banned.filter((u) => u.id !== info.uId)
       u.bannedAt = u.bannedAt.filter((c) => c.id !== info.cId)
       await this.userService.saveUser(u);
@@ -744,17 +743,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       ]);
     //  console.log(u, channel); 
       if (!channel || !u) {
-        return this.emitError(socket, new BadRequestException('No such channel or user')) 
+        throw new BadRequestException('No such channel or user');
       }
       console.log(u.channels)
-      if (!(u.channels.some((c) => c.id === channel.id))) {
-        return this.emitError(socket, new BadRequestException('User not on channel'))
-      }
       if (!(channel.admins.some((admin) => admin.id === user.id))) {
         console.log('userId', user.id, 'admins', channel.admins)
-        return this.emitError(socket, new BadRequestException('No rights')); 
+        throw new BadRequestException('No rights');
       }
-      // console.log(channel.owner.id, u.id)
+      if (!(u.channels.some((c) => c.id === channel.id))) {
+        throw new BadRequestException('User not on channel');
+      }
       if (channel.owner?.id === info.uId) {
         return this.emitError(socket, new BadRequestException('Can\'t mute the owner'))
       }
@@ -776,21 +774,22 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     } 
     try {
       const channel = await this.channelService.getChannel(info.cId, [
-        'owner', 'admins'
+        'owner', 'admins', 'users'
       ]);
       let u = await this.userService.findUserById(info.uId);
       if (!u || !channel) {
         return this.emitError(socket, new BadRequestException('No such channel or user'))
       }
       if (channel?.owner?.id !== user.id) {
-        channel.owner = user;
-        await this.channelService.saveChannel(channel);
-        return this.emitError(socket, new BadRequestException('No rights')) 
+        throw new BadRequestException('No rights');
       }
       console.log(u)
+      if (!(channel.users.some((someone) => someone.id === u.id))){
+        throw new BadRequestException('User not on the channel');
+      }
       if (channel.admins.some((admin)=> admin.id === info.uId)) {
         console.log(`already in`)
-        return this.emitError(socket, new BadRequestException('Already an admin'))
+        throw new BadRequestException('Already an admin');
       }
       channel.admins.push(u);
       await this.channelService.saveChannel(channel);
@@ -823,18 +822,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       const u = await this.userService.getUserWith(info.uId, ['adminAt']);
       // console.log(u);
       if (!channel || !u) {
-        return this.emitError(socket, new BadRequestException('No such channel or user')) 
+        throw new BadRequestException('No such channel or user');
       }
       if (channel.owner?.id !== user.id)  {
-        return this.emitError(socket, new BadRequestException('No rights'));
+        throw new BadRequestException('No rights');
       }
       if (channel.owner?.id === u.id)  {
-        return this.emitError(socket, new BadRequestException('Can\'t remove self'));
+        throw new BadRequestException('Can\'t remove self');
       }
       channel.admins = channel.admins.filter((admin) => admin.id !== u.id);
       u.adminAt = u.adminAt.filter((c) => c.id !== channel.id);
       await this.userService.saveUser(u);
-      console.log(await this.channelService.saveChannel(channel));
+      /*console.log*/(await this.channelService.saveChannel(channel));
       this.server.to(socket.id).emit(CHANNEL, this.channelToFe(channel));
       this.success(socket, `${u.username} removed from adminlist`)
     } catch (error) {
@@ -860,7 +859,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       const u = await this.userService.getUserWith(info.uId, [
       ]);
       const channel = await this.channelService.getChannel(info.cId, [
-        'users', 'invitedUsers', 'private'
+        'users', 'invitedUsers'
       ]);
       if (!u || !channel) {
         throw new BadRequestException('No such channel or user')
@@ -877,12 +876,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       channel.invitedUsers.push(u);
       await this.channelService.saveChannel(channel);
       this.success(socket, ` ${u.username} invited to ${channel.name}`);
+      /*
       const chatUser = await this.chatUserService.findByUser(u);
-      //TODO logic cnages later to invite being sent through direct
       if (chatUser) {
         const invitedTo = u.invitedTo.map((c) => this.channelToFe(c));
         this.server.to(socket.id).emit('invitesToPrivs', invitedTo);
       }
+      */
     } catch (error) {
       console.log(error);
       this.emitError(socket, error);
@@ -902,7 +902,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       await this.onJoin(socket, { id: info.cId })
       const msg = await this.invalidateMsgContent(info.msgId);
       if (msg)  {
-        this.success(socket, `Accepted the invite`)
+        // this.success(socket, `Accepted the invite`)
         this.onGetChannelMessages(socket, {cId: msg.channel.id})
       }
       // this.onGetPrivInvites(socket);
@@ -963,7 +963,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
   }
 
-  // might not be used
+  // Unused
   @SubscribeMessage('getPrivInvites')
   async onGetPrivInvites(@ConnectedSocket() socket: Socket) {
 
@@ -1003,7 +1003,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       if (user.id !== channel.owner?.id)  {
         throw new BadRequestException('No rights');
       }
-
       const c = await this.channelService.passwordService(passInfo);
       //to update 'protected' property
       this.newPublic();
@@ -1048,9 +1047,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
             throw new BadRequestException('Missing info')
         }
         if (info.inviteType  === 'channel')  {
-          // if (!info.inviteId) {
-            // throw new BadRequestException('Missing info')
-          // }
           const channel = await this.channelService.getChannel(Number(info.inviteId), [
           'users', 'invitedUsers'
         ]);
