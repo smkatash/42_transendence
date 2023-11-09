@@ -1051,10 +1051,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         throw new BadRequestException('You\'re blocking the user')
       }
       if (info.inviteType) {
-        if (info.inviteType  === 'channel')  {
-          if (!info.inviteId) {
+        if (!info.inviteId) {
             throw new BadRequestException('Missing info')
-          }
+        }
+        if (info.inviteType  === 'channel')  {
+          // if (!info.inviteId) {
+            // throw new BadRequestException('Missing info')
+          // }
           const channel = await this.channelService.getChannel(Number(info.inviteId), [
           'users', 'invitedUsers'
         ]);
@@ -1074,6 +1077,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         await this.channelService.saveChannel(channel);
         this.success(socket, ` ${u.username} invited to ${channel.name}`);
       } else if (info.inviteType === 'game') {
+          Logger.debug(`Received game invite type message`)
           //TODO game invite logic
       } else  {
           throw new BadRequestException('Wtf, go away')
