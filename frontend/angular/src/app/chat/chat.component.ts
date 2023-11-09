@@ -24,6 +24,7 @@ export class ChatComponent implements OnInit {
   passwordToJoinChannel?: string
 
   passwordInputPopup: boolean = false
+  directMsgPopup?: boolean = false
 
   errorMessage?: any
 
