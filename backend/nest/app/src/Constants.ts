@@ -30,3 +30,4 @@ export const MAXPOINTS = 1
 export const SALT_ROUNDS = 10
 export const TIME_TO_MUTE = 30000;//30sec
 export const SAFE_PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+export const CHANNEL_NAME_REGEX = /^#?[A-Za-z\d_-]{2,20}$/

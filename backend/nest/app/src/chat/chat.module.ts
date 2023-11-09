@@ -10,7 +10,6 @@ import { ChatUser } from './entities/chatUser.entity';
 import { ChatUserService } from './service/chat-user.service';
 import { JoinedChannel } from './entities/joinedChannel.entity';
 import { JoinedChannelService } from './service/joined-channel.service';
-import { User } from 'src/user/entities/user.entity';
 import { Mute } from './entities/mute.entity';
 import { MuteService } from './service/mute.service';
 
