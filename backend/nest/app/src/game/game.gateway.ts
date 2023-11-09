@@ -204,7 +204,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   async handleConnection(@ConnectedSocket() client: Socket) {
-	console.log("HERE 1")
 	let user = client.request[USER]
 	try {
 		if (!user) {

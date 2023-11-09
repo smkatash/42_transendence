@@ -11,6 +11,8 @@ export class SessionGuard implements CanActivate {
 
 	try {
 		const request = context.switchToHttp().getRequest();
+		console.log("Session")
+		console.log(request.session)
 		if (!request.session || !request.sessionID) {
 			return false
 		}

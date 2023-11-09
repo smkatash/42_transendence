@@ -5,11 +5,12 @@ import { User } from 'src/user/entities/user.entity';
 export const GetUser = createParamDecorator(
     (_data, context: ExecutionContext): User => {
     const request = context.switchToHttp().getRequest()
+
+	console.log("GetUser")
+	console.log(request.user)
     if  (!request.user) {
         throw new UnauthorizedException()
     }
-	console.log("GetUser")
-	console.log(request.user)
     return request.user
 })
 

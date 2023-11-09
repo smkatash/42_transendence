@@ -6,22 +6,28 @@ import { MfaStatus } from "../utils/mfa-status";
 @Injectable()
 export class WsAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext) {
-    const client = context.switchToWs().getClient()
-    const request = client.request
-	if (!request.session || !request.sessionID) {
-		return false
-    }
 
-	if (request.user) {
-		const user: User = request.user
-		if (user.status === Status.MFAPending) {
-			return true
+	try {
+		const client = context.switchToWs().getClient()
+		const request = client.request
+		if (!request.session || !request.sessionID) {
+			return false
 		}
-		
-		if (user.mfaEnabled === true) {
-			return MfaStatus.VALIDATE === user.mfaStatus
+	
+		if (request.user) {
+			const user: User = request.user
+			if (user.status === Status.MFAPending) {
+				return true
+			}
+			
+			if (user.mfaEnabled === true) {
+				return MfaStatus.VALIDATE === user.mfaStatus
+			}
 		}
+		return true
+	} catch (error) {
+		console.error("WsSession Guard: " + error)
+		return false
 	}
-	return true
   }
 }

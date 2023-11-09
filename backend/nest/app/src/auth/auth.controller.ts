@@ -30,7 +30,6 @@ export class AuthController {
 		if (!currentUser) {
 			throw new UnauthorizedException('Access denied');
 		}
-		console.log("HERE")
 		
 		try {
 			if (currentUser.mfaEnabled === true && currentUser.email) {
@@ -39,12 +38,9 @@ export class AuthController {
 				console.log(token.value + 'has been sent')
 				await this.userService.updateUserStatus(currentUser.id, Status.MFAPending)
 				return res.status(302).redirect(FRONT_END_2FA_CALLBACK_URL)
-				//res.status(302).redirect('mfa')
 			}
 			await this.userService.updateUserStatus(currentUser.id, Status.ONLINE)
-			console.log("HERE 2")
 			return res.status(302).redirect(FRONT_END_CALLBACK_URL)
-				//res.status(302).redirect('test')
 		} catch (error) {
 			throw error
 		}
@@ -54,7 +50,7 @@ export class AuthController {
     @UseGuards(SessionGuard)
     async handleTest(@GetUser() currentUser: SessionUserDto, @Res({ passthrough: true }) res: Response) {
         if (currentUser) {
-            return res.status(202).send('Accepted');
+            return res.status(200).json({message: 'OK'});
         } else {
 			throw new UnauthorizedException('Access denied');
         }
@@ -87,6 +83,7 @@ export class AuthController {
 	@UseGuards(SessionGuard)
 	async handleLoginMfaVerification(@GetUser() currentUser: SessionUserDto, @Body() codeDto: CodeDto, 
 		@Res({ passthrough: true }) res: Response) {
+
 			if (!currentUser) {
 				throw new UnauthorizedException('Access denied');
 			}
@@ -96,7 +93,7 @@ export class AuthController {
 				if (await this.authService.isValidTokenData(currentUser.id, codeDto.code)) {
 					await this.userService.verifyUserMfa(currentUser.id)
 					await this.authService.removeToken(codeDto.code)
-					return res.status(202).send('Accepted');
+					return res.status(202).json({message: 'Accepted'});
 				} else {
 					throw new UnauthorizedException('Invalid token')
 				}
@@ -118,7 +115,7 @@ export class AuthController {
 			if (this.authService.isValidTokenData(currentUser.id, codeDto.code)) {
 				await this.userService.verifyUserMfa(currentUser.id)
 				await this.authService.removeToken(codeDto.code)
-				return res.status(202).send('Accepted');
+				return res.status(202).json({message: 'Accepted'});
 			} else {
 				throw new UnauthorizedException('Invalid token')
 			}
