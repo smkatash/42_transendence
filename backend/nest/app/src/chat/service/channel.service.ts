@@ -5,7 +5,7 @@ import { Channel } from '../entities/channel.entity';
 import { JoinChannelDto, CreateChannelDto, ChannelPasswordDto } from '../dto/channel.dto';
 import { User } from 'src/user/entities/user.entity';
 import * as bcrypt from 'bcrypt'
-import { POSTGRES_UNIQUE_VIOLATION, SALT_ROUNDS } from 'src/Constants';
+import { POSTGRES_UNIQUE_VIOLATION, SAFE_PASSWORD_REGEX, SALT_ROUNDS } from 'src/Constants';
 
 @Injectable()
 export class ChannelService {
@@ -163,11 +163,16 @@ export class ChannelService {
         }
         if (!(passInfo.newPass) || !(passInfo.newPass?.length)) {
             channel.protected = false;
+            channel.type = 'public';
             channel.hash = null;
         }   else    {
+            if (!SAFE_PASSWORD_REGEX.test(passInfo.newPass))    {
+                throw new BadRequestException('New password not safe!')
+            }
             const hash = await bcrypt.hash(passInfo.newPass, SALT_ROUNDS);
             channel.hash = hash;
             channel.protected = true;
+            channel.type = 'protected';
         }
         console.log('passwordService updated channel before save:', channel);
         await this.channelRepository.save(channel);

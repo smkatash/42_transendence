@@ -14,6 +14,7 @@ import { MuteService } from './service/mute.service';
 import { Channel } from './entities/channel.entity';
 import { Message } from './entities/message.entity';
 import { ACCEPT_PRIVATE_INVITE, ADD_ADMIN, BAN, BLOCK, CHANNEL, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DELETE, DIRECT, ERROR, INVALIDATE_MESSAGE_CONTENT, INVITE_TO_PRIVATE, JOIN, KICK, LEAVE, MESSAGE, MUTE, PASSWORD, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, USER_CHANNELS } from './subscriptions-events-constants';
+import { SAFE_PASSWORD_REGEX } from 'src/Constants';
 
 
 @UsePipes(new ValidationPipe({whitelist: true}))
@@ -111,6 +112,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     Logger.debug(`at CREATE  ${channelInfo.name}`)
     console.log(channelInfo)
     try {
+      if (channelInfo.type === 'protected') {
+        if (!channelInfo.password || channelInfo.password.length < 1) {
+          throw new BadRequestException('No password provided')
+        }
+        if (!SAFE_PASSWORD_REGEX.test(channelInfo.password))  {
+          throw new BadRequestException('Password not safe!')
+        }
+      }
       const channel = await this.channelService.createChannel(channelInfo, user);
       await this.joinedChannelService.create(user, socket.id, channel);
       this.success(socket, `${channel.name} created`)
@@ -898,14 +907,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     Logger.debug(`at ACCEPT_PRIVATE_INVITE`)
     try {
       await this.onJoin(socket, { id: info.cId })
-      const msg = await this.invalidateMsgContent(info.msgId);/* await this.messageService.findById(info.msgId);
-      if (msg)  {
-        msg.content = '*Content no longer available*';
-        delete msg.inviteType;
-        delete msg.inviteId;
-        console.log(msg);
-        await this.messageService.save(msg);
-      }*/
+      const msg = await this.invalidateMsgContent(info.msgId);
       if (msg)  {
         this.success(socket, `Accepted the invite`)
         this.onGetChannelMessages(socket, {cId: msg.channel.id})
@@ -921,10 +923,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     const msg = await this.messageService.findById(msgId);
     if (msg)  {
       msg.content = '*Content no longer available*';
-        /*
-        delete msg.inviteType;
-        delete msg.inviteId;
-        */
         msg.inviteId = null;
         msg.inviteType = null;
         console.log(msg);
@@ -959,21 +957,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       u.invitedTo = u.invitedTo.filter((c) => c.id !== channel.id);
       await this.userService.saveUser(u);
       await this.channelService.saveChannel(channel);
-      /*
-      const msg = await this.messageService.findById(info.msgId);
-      if (msg)  {
-        msg.content = 'Content no longer available';
-        delete msg.inviteType;
-        delete msg.inviteId;
-        await this.messageService.save(msg);
-      }
-      */
       const msg = await this.invalidateMsgContent(info.msgId);
       if (msg)  {
         this.success(socket, `declined the invite`)
         this.onGetChannelMessages(socket, {cId: msg.channel.id})
       }
-
       //SAME with changing logic
       // this.onGetPrivInvites(socket);
     } catch (error) {
@@ -1028,6 +1016,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       this.newPublic();
       this.success(socket, `Password updated`);
     } catch (error) {
+      Logger.error(`${error}`)
       this.emitError(socket, error)
     }
   }
@@ -1069,8 +1058,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           const channel = await this.channelService.getChannel(Number(info.inviteId), [
           'users', 'invitedUsers'
         ]);
-        if (!u || !channel) {
-          throw new BadRequestException('No such channel or user')
+        if (!channel) {
+          throw new BadRequestException('No such channel')
         }
         if (!channel.private) {
           throw new BadRequestException('Channel not private')
