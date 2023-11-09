@@ -603,29 +603,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       if (!(channel.admins.some((admin) => admin.id === user.id))) {
         throw new BadRequestException('No rights')
       }
-      // channel.admins = channel.admins.filter((admin) => admin.id !== u.id);
       channel.users = channel.users.filter((u) => u.id !== info.uId)
-      let jCs = await this.joinedChannelService.findByChannel(channel);
-      channel.joinedUsers = jCs.filter(
-        (jC) => jC.user.id !== u.id
-      );
-      // channel.joinedUsers = channel.joinedUsers.filter(
-        // (jC) => jC.user.id !== u.id
-      // );
       u.channels = u.channels.filter((c) => c.id !== channel.id);
-      jCs = await this.joinedChannelService.findByUser(u);
-      u.joinedChannels = jCs.filter(
-        (jC) => jC.channel.id !== channel.id
-      );
-      // u.joinedChannels = u.joinedChannels.filter(
-        // (jC) => jC.channel.id !== channel.id
-      // );
+      const jCs = u.joinedChannels;
+      const jUs = channel.joinedUsers;
+      channel.joinedUsers = channel.joinedUsers.filter((jU) => !(jCs.some((jC) => jC.id === jU.id)))
+      u.joinedChannels = u.joinedChannels.filter((jC) => !(jUs.some((jU) => jU.id === jC.id)))
       await this.joinedChannelService.deleteByUserChannel(u, channel);
       await this.userService.saveUser(u);
       await this.channelService.saveChannel(channel);
       this.onGetChannelUsers(socket, {cId: info.cId})
       this.success(socket, `${u.username} kicked out`)
-      // this.server.to(socket.id).emit(CHANNEL, this.channelToFe(channel));
       //Update kicked user's channels?
       const kicked = await this.chatUserService.findByUser(u);
       if (kicked) {
