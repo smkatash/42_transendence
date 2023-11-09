@@ -74,12 +74,16 @@ export class UserService {
 		return this.saveValidUser(user)
 	}
 
-	async enableMfaVerification(id: string, email: string): Promise<User> {
+	async enableMfaEmail(id: string, email: string): Promise<User> {
+		const user = await this.getUserById(id)
+		user.email = email
+		return this.saveValidUser(user)
+	}
+
+	async enableMfaVerification(id: string): Promise<User> {
 		const user = await this.getUserById(id)
 		user.mfaEnabled = true
-		user.email = email
-		user.mfaStatus = MfaStatus.DENY
-		user.status = Status.MFAPending
+		user.mfaStatus = MfaStatus.MFAPending
 		return this.saveValidUser(user)
 	}
 

@@ -7,5 +7,5 @@ import { GameSocket } from 'src/app/app.module';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent {
-  constructor(private socket: GameSocket) {}
+  constructor() {}
 }

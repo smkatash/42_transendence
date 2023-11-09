@@ -10,6 +10,7 @@ import { UserService } from 'src/user/service/user.service';
 import { MailService } from './service/mail.service';
 import { SessionUserDto } from 'src/user/utils/user.dto';
 import { CodeDto } from './utils/entity.dto';
+import { MfaStatus } from './utils/mfa-status';
 
 @Controller('42auth')
 export class AuthController {
@@ -35,8 +36,7 @@ export class AuthController {
 			if (currentUser.mfaEnabled === true && currentUser.email) {
 				const token = await this.authService.createAuthToken(currentUser.id)
 				await this.mailService.send(currentUser.email, token.value)
-				console.log(token.value + 'has been sent')
-				await this.userService.updateUserStatus(currentUser.id, Status.MFAPending)
+				await this.userService.setMfaVerificationStatus(currentUser.id, MfaStatus.MFAPending)
 				return res.status(302).redirect(FRONT_END_2FA_CALLBACK_URL)
 			}
 			await this.userService.updateUserStatus(currentUser.id, Status.ONLINE)
@@ -50,7 +50,7 @@ export class AuthController {
     @UseGuards(SessionGuard)
     async handleTest(@GetUser() currentUser: SessionUserDto, @Res({ passthrough: true }) res: Response) {
         if (currentUser) {
-            return res.status(200).json({message: 'OK'});
+            res.status(200);
         } else {
 			throw new UnauthorizedException('Access denied');
         }
@@ -64,11 +64,12 @@ export class AuthController {
 		}
 
 		try {
-			if (currentUser.mfaEnabled === true && currentUser.email) {
+			if (currentUser.email) {
 				const token = await this.authService.createAuthToken(currentUser.id)
 				if (token && token.value) {
 					await this.mailService.send(currentUser.email, token.value)
-					return currentUser
+					console.log(token.value)
+					await this.userService.enableMfaVerification(currentUser.id)
 				} else {
 					throw new InternalServerErrorException('Failed to send token')
 				}
@@ -87,13 +88,12 @@ export class AuthController {
 			if (!currentUser) {
 				throw new UnauthorizedException('Access denied');
 			}
-			console.log(codeDto.code + 'has been received')
 
 			try {
 				if (await this.authService.isValidTokenData(currentUser.id, codeDto.code)) {
 					await this.userService.verifyUserMfa(currentUser.id)
 					await this.authService.removeToken(codeDto.code)
-					return res.status(202).json({message: 'Accepted'});
+					res.status(202)
 				} else {
 					throw new UnauthorizedException('Invalid token')
 				}
@@ -112,11 +112,12 @@ export class AuthController {
 		}
 
 		try {
-			if (this.authService.isValidTokenData(currentUser.id, codeDto.code)) {
+			if (await this.authService.isValidTokenData(currentUser.id, codeDto.code)) {
 				await this.userService.verifyUserMfa(currentUser.id)
 				await this.authService.removeToken(codeDto.code)
-				return res.status(202).json({message: 'Accepted'});
+				res.status(202)
 			} else {
+				await this.userService.disableMfaVerification(currentUser.id)
 				throw new UnauthorizedException('Invalid token')
 			}
 		} catch (error) {

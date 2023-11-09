@@ -1,6 +1,5 @@
 export enum Status {
     OFFLINE = 0,
     ONLINE,
-    GAME,
-	MFAPending
+    GAME
 }
