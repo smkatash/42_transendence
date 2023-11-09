@@ -8,7 +8,8 @@ export const GetUser = createParamDecorator(
     if  (!request.user) {
         throw new UnauthorizedException()
     }
-
+	console.log("GetUser")
+	console.log(request.user)
     return request.user
 })
 

@@ -32,6 +32,8 @@ export class UserController {
     @Get('profile')
     @UseGuards(SessionGuard)
     async getUserInfo(@GetUser() currentUser: SessionUserDto) {
+		console.log(currentUser)
+		console.log("USER")
         if (!currentUser) {
 			throw new UnauthorizedException('Access denied');
 		}

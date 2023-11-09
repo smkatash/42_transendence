@@ -30,17 +30,19 @@ export class AuthController {
 		if (!currentUser) {
 			throw new UnauthorizedException('Access denied');
 		}
-
+		console.log("HERE")
+		
 		try {
 			if (currentUser.mfaEnabled === true && currentUser.email) {
-					const token = await this.authService.createAuthToken(currentUser.id)
-					await this.mailService.send(currentUser.email, token.value)
-					console.log(token.value + 'has been sent')
-					await this.userService.updateUserStatus(currentUser.id, Status.MFAPending)
-					return res.status(302).redirect(FRONT_END_2FA_CALLBACK_URL)
-					//res.status(302).redirect('mfa')
+				const token = await this.authService.createAuthToken(currentUser.id)
+				await this.mailService.send(currentUser.email, token.value)
+				console.log(token.value + 'has been sent')
+				await this.userService.updateUserStatus(currentUser.id, Status.MFAPending)
+				return res.status(302).redirect(FRONT_END_2FA_CALLBACK_URL)
+				//res.status(302).redirect('mfa')
 			}
 			await this.userService.updateUserStatus(currentUser.id, Status.ONLINE)
+			console.log("HERE 2")
 			return res.status(302).redirect(FRONT_END_CALLBACK_URL)
 				//res.status(302).redirect('test')
 		} catch (error) {

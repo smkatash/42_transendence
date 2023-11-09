@@ -46,7 +46,10 @@ export class ChannelMessagesSettingsComponent implements OnChanges {
 
   ngOnInit() {
     this.profileService.getCurrentUser()
-      .subscribe(user => this.currentUser = user)
+      .subscribe(user => {
+		console.log(user)
+		this.currentUser = user
+	})
 
     if (this.channel) {
       this.chatService.requestChannelUsers(this.channel.id)

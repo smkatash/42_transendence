@@ -13,6 +13,7 @@ export class ProfileService {
   domain: string = 'http://127.0.0.1:3000'
 
   getCurrentUser(): Observable<User> {
+	console.log("Getting user")
     const url = `${this.domain}/user/profile`
     return this.http.get<User>(url, { withCredentials: true })
   }

@@ -1,8 +1,8 @@
 FROM node:20-alpine3.18
 
-COPY ./script.sh /tmp
-RUN chmod +x /tmp/script.sh
+WORKDIR /app-backend
 
-EXPOSE 4200
+EXPOSE 3000
+RUN npm cache clean -force
 
-CMD ["/bin/sh", "/tmp/script.sh"]
+CMD npm install --legacy-peer-deps && npm run start:dev

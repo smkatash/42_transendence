@@ -8,23 +8,28 @@ export class SessionGuard implements CanActivate {
   constructor() {}
   
   async canActivate(context: ExecutionContext) {
-    const request = context.switchToHttp().getRequest();
-	
-    if (!request.session || !request.sessionID) {
-		return false
-    }
 
-	if (request.user) {
-		const user: User = request.user
-		if (user.status === Status.MFAPending) {
-			return true
+	try {
+		const request = context.switchToHttp().getRequest();
+		if (!request.session || !request.sessionID) {
+			return false
 		}
 		
-		if (user.mfaEnabled === true) {
-			return MfaStatus.VALIDATE === user.mfaStatus
+		if (request.user) {
+			const user: User = request.user
+			if (user.status === Status.MFAPending) {
+				return true
+			}
+			
+			if (user.mfaEnabled === true) {
+				return MfaStatus.VALIDATE === user.mfaStatus
+			}
 		}
+		return true
+	} catch (error) {
+		console.error("Session Guard: " + error)
+		return false
 	}
-	return true
   }
 }
 
