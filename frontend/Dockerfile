@@ -1,9 +1,8 @@
 FROM node:20-alpine3.18
 
-WORKDIR /app-frontend
+COPY ./script.sh /tmp
+RUN chmod +x /tmp/script.sh
 
 EXPOSE 4200
 
-RUN npm cache clean --force
-
-CMD npm install && npm run start
+CMD ["/bin/sh", "/tmp/script.sh"]
