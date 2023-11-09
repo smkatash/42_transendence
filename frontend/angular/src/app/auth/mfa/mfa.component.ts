@@ -17,7 +17,8 @@ export class MfaComponent {
     this.auth.mfaLogin(this.code)
       .subscribe({
         next: res => {
-          if (res.message === 'Success') {
+          console.log('ACCEPTED' + res.message)
+          if (res.message === 'Accepted') {
             this.route.navigate(['/profile'])
           }
         },

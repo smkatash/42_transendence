@@ -21,7 +21,10 @@ export class AuthService {
   }
 
   mfaLogin(code: string): Observable<any> {
-    return this.http.post<any>(`${this.domain}/42auth/login-verify-mfa`, { code: code }, { withCredentials: true })
+    console.log('sending ' + code)
+    const response = this.http.post<any>(`${this.domain}/42auth/login-verify-mfa`, { code: code }, { withCredentials: true })
+    console.log(response)
+    return response
   }
 
   isUserLoggedIn(): Observable<boolean> {

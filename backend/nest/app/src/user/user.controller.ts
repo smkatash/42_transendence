@@ -37,7 +37,9 @@ export class UserController {
 		}
 
 		try {
-            return await this.userService.getUserById(currentUser.id)
+            const user = await this.userService.getUserById(currentUser.id)
+			console.log(user)
+			return user
 		} catch(error) {
 			this.logger.error(error)
 			throw error

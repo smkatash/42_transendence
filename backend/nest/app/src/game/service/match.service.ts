@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { JsonContains, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Match } from '../entities/match.entity';
 import { v4 } from 'uuid';
 import { Game, GameMode, GameState } from '../utls/game';

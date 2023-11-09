@@ -34,7 +34,8 @@ export class AuthController {
 		try {
 			if (currentUser.mfaEnabled === true && currentUser.email) {
 					const token = await this.authService.createAuthToken(currentUser.id)
-					await this.mailService.send(currentUser.email, `Your Auth Code is: ${token.value}`)
+					await this.mailService.send(currentUser.email, token.value)
+					console.log(token.value + 'has been sent')
 					await this.userService.updateUserStatus(currentUser.id, Status.MFAPending)
 					return res.status(302).redirect(FRONT_END_2FA_CALLBACK_URL)
 					//res.status(302).redirect('mfa')
@@ -49,9 +50,9 @@ export class AuthController {
 
     @Get('test')
     @UseGuards(SessionGuard)
-    async handleTest(@GetUser() currentUser: SessionUserDto) {
+    async handleTest(@GetUser() currentUser: SessionUserDto, @Res({ passthrough: true }) res: Response) {
         if (currentUser) {
-            return { message: 'OK' }
+            return res.status(202).send('Accepted');
         } else {
 			throw new UnauthorizedException('Access denied');
         }
@@ -87,17 +88,19 @@ export class AuthController {
 			if (!currentUser) {
 				throw new UnauthorizedException('Access denied');
 			}
+			console.log(codeDto.code + 'has been received')
 
 			try {
 				if (await this.authService.isValidTokenData(currentUser.id, codeDto.code)) {
 					await this.userService.verifyUserMfa(currentUser.id)
 					await this.authService.removeToken(codeDto.code)
-					return res.status(200).json({ message: 'Success' });
+					return res.status(202).send('Accepted');
+				} else {
+					throw new UnauthorizedException('Invalid token')
 				}
 			} catch (error) {
 				throw error
 			}
-			throw new UnauthorizedException('Invalid token')
 		}
 
 
@@ -113,12 +116,13 @@ export class AuthController {
 			if (this.authService.isValidTokenData(currentUser.id, codeDto.code)) {
 				await this.userService.verifyUserMfa(currentUser.id)
 				await this.authService.removeToken(codeDto.code)
-				return HttpStatus.ACCEPTED
+				return res.status(202).send('Accepted');
+			} else {
+				throw new UnauthorizedException('Invalid token')
 			}
 		} catch (error) {
 			throw error
 		}
-		throw new UnauthorizedException('Invalid token')
     }
 
     @Get('logout')

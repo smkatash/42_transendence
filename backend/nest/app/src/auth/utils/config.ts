@@ -1,3 +1,5 @@
+import { EMAIL_HOST, EMAIL_PASSWORD, EMAIL_PORT, EMAIL_USER } from "src/Constants"
+
 export interface MailSettings {
 	host: string
 	port?: number
@@ -9,19 +11,19 @@ export interface MailSettings {
 }
 
 export const settings: MailSettings = {
-	host: "smtp.gmail.com",
-	port: 465,
+	host: EMAIL_HOST,
+	port: EMAIL_PORT,
 	secure: true,
 	auth: {
-	  user: '42.master.pong@gmail.com',
-	  pass: 'nrvbszqkuckandnn'
+	  user: EMAIL_USER,
+	  pass: EMAIL_PASSWORD
 	}
 }
 
 
 export const options = {
-    from: '42.master.pong@gmail.com',
+    from: EMAIL_USER,
     to: "", 
-    subject: "Verify your accont", 
+    subject: "42 Pong Master: Verification code", 
     text: ""
 }

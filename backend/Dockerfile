@@ -4,4 +4,6 @@ WORKDIR /app-backend
 
 EXPOSE 3000
 
-CMD npm install --legacy-peer-deps && npm run start:dev
+RUN npm cache clean --force
+
+CMD npm install && npm run start:dev
