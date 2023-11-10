@@ -39,8 +39,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       await this.chatUserService.deleteAll();
       await this.muteService.purge();
       await this.joinedChannelService.purge()
-      await this.messageService.purge();
-      await this.channelService.purge();
+      // await this.messageService.purge();
+      // await this.channelService.purge();
     }
 
   async handleConnection(@ConnectedSocket() socket: Socket) {
@@ -329,14 +329,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           'blockedUsers'
         ]);
         for (const interlocutor of channel.users) {
-          if (!(interlocutor.id === user.id))  {
+          if (interlocutor.id !== user.id)  {
             const u = await this.userService.getUserWith(interlocutor.id, [
               'blockedUsers'
             ]);
             if (u.blockedUsers.some((blocked) => blocked.id === user.id ))  {
               throw new BadRequestException('User blocked you')
             }
-          } else  {
             if (user.blockedUsers.some((blocked) => blocked.id === interlocutor.id))  {
               throw new BadRequestException('You\'re blocking the user')
             }

@@ -133,14 +133,6 @@ export class ChannelService {
         return await this.channelRepository.save(channel);
     }
 
-    async inviteToGame(user: User, userId: number, channelId: number)   {
-       
-    }
- 
-    async inviteToPrivate(user: User, userId: number, channelId: number) {
- 
-    }
- 
     async passwordService(passInfo: ChannelPasswordDto)   {
         const channel = await this.getChannel(passInfo.cId, []);
         if (channel.hash?.length)    {
