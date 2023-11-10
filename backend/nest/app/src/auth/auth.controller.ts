@@ -1,16 +1,17 @@
-import { Controller, Get, Inject, Res, UseGuards, UnauthorizedException, Req, Post, Body, HttpStatus, InternalServerErrorException } from '@nestjs/common';
+import { Controller, Get, Inject, Res, UseGuards, UnauthorizedException, Req, Post, Body, InternalServerErrorException } from '@nestjs/common';
 import { OauthGuard } from './guard/oauth.guard';
 import { Response } from 'express';
 import { AuthService } from './service/auth.service';
 import { GetUser } from './utils/get-user.decorator';
 import { SessionGuard } from './guard/auth.guard';
 import { Status } from 'src/user/utils/status.enum';
-import { FRONT_END_2FA_CALLBACK_URL, FRONT_END_CALLBACK_URL, FRONT_END_URL } from 'src/Constants';
+import { FRONT_END_2FA_CALLBACK_URL, FRONT_END_CALLBACK_URL } from 'src/Constants';
 import { UserService } from 'src/user/service/user.service';
 import { MailService } from './service/mail.service';
 import { SessionUserDto } from 'src/user/utils/user.dto';
 import { CodeDto } from './utils/entity.dto';
 import { MfaStatus } from './utils/mfa-status';
+import { Cron } from '@nestjs/schedule';
 
 @Controller('42auth')
 export class AuthController {
@@ -50,7 +51,7 @@ export class AuthController {
     @UseGuards(SessionGuard)
     async handleTest(@GetUser() currentUser: SessionUserDto, @Res({ passthrough: true }) res: Response) {
         if (currentUser) {
-            res.status(200);
+            res.status(200)
         } else {
 			throw new UnauthorizedException('Access denied');
         }
@@ -68,7 +69,6 @@ export class AuthController {
 				const token = await this.authService.createAuthToken(currentUser.id)
 				if (token && token.value) {
 					await this.mailService.send(currentUser.email, token.value)
-					console.log(token.value)
 					await this.userService.enableMfaVerification(currentUser.id)
 				} else {
 					throw new InternalServerErrorException('Failed to send token')
@@ -127,7 +127,7 @@ export class AuthController {
 
     @Get('logout')
     @UseGuards(SessionGuard)
-    async handleLogOut(@GetUser() currentUser: SessionUserDto,@Req() req, @Res() res: Response) {
+    async handleLogOut(@GetUser() currentUser: SessionUserDto, @Req() req, @Res() res: Response) {
 		if (!currentUser) {
 			throw new UnauthorizedException('Access denied');
 		}
@@ -140,6 +140,15 @@ export class AuthController {
 		} catch (error) {
 			throw error
 		} 
+	}
+
+	@Cron('0 0 * * * *')
+	async tokenCleanUp() {
+		try {
+			await this.authService.deleteExpiredTokens();
+		} catch (error) {
+			console.error(error)
+		}
 	}
 
 }
