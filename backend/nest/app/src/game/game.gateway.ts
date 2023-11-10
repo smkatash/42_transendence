@@ -210,7 +210,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 			throw new UnauthorizedException()
 		}
 		this.logger.log(`Client id: ${client.id} connected`)
-		await this.userService.updateUserStatus(user.id, Status.ONLINE)
 		const player = await this.playerService.getPlayerByUser(user)
 		client.data.user = player
 		this.emitUserEvent(client, player)
@@ -237,8 +236,9 @@ async handleDisconnect(@ConnectedSocket() client: Socket, ) {
   @SubscribeMessage(START_MATCH)
   async handleStartMatch(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() gameMode: GameModeDto) {
 	try {
+		console.log("START MATCH")
 		const currentPlayer: Player = await this.playerService.getPlayerById(user.id)
-		
+		this.emitUserEvent(client, currentPlayer)
 		if (currentPlayer) {
 			client.join(QUEUE)
 			await this.userService.updateUserStatus(user.id, Status.GAME)
@@ -246,26 +246,18 @@ async handleDisconnect(@ConnectedSocket() client: Socket, ) {
 		}
 		this.emitQueueEvent()
 	} catch(error) {
+		console.log(error)
 		this.emitError(client, error)
 	}
 }
 
-//   @UseGuards(WsAuthGuard)
-//   @SubscribeMessage(INVITE_TO_MATCH)
-//   async handleInviteUserToMatch(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() invitedUserDto: InvitedUserDto) {
-	// 	try {
-		// 		//const match = await this.matchService.makeAmatch(user.id, [user.id, invitedUserDto.userId])
-		// 		client.emit(START_MATCH, match)
-		// 	} catch(error) {
-			// 		this.emitError(client, error)
-			// 	}
-			// 	} 
 			
 	@UseGuards(WsAuthGuard)
 	@SubscribeMessage(JOIN_MATCH)
 	async handleJoinMatch(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() matchDto: JoinMatchDto) {
 	try {
 		const currentPlayer: Player = await this.playerService.getPlayerById(user.id)
+		this.emitUserEvent(client, currentPlayer)
 		if (currentPlayer) {
 			const game: Game = await this.matchService.joinMatch(matchDto.matchId, matchDto.mode)
 			this.server.to(matchDto.matchId).emit(JOIN_MATCH, game)
@@ -282,6 +274,7 @@ async handleDisconnect(@ConnectedSocket() client: Socket, ) {
 	async handleKeyPress(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() positionDto: PositionDto) {
 	try {
 		const currentPlayer: Player = await this.playerService.getPlayerById(user.id)
+		this.emitUserEvent(client, currentPlayer)
 		if (currentPlayer) {
 			this.matchService.updatePlayerPosition(currentPlayer, parseInt(positionDto.step))
 		}
@@ -300,7 +293,6 @@ async handleDisconnect(@ConnectedSocket() client: Socket, ) {
 	}
 
 	emitQueueEvent() {
-		console.log("START_MATCH" + WAITING_MESSAGE);
 		this.server.to(QUEUE).emit(START_MATCH, WAITING_MESSAGE)
 	}
 }

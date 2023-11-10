@@ -20,6 +20,7 @@ export class GameService {
   width = 500;
 
   constructor(private socket: GameSocket) {}
+  
   public test : number[] = [0,0];
 
   // GAME INFO: Ball position, paddle, id, bla bla
@@ -63,17 +64,6 @@ export class GameService {
   }
   // utils----------------------------------------------
 
-  matchIsLeftSide(){
-    if(this.matchInfo){
-      if (this.userInfo.id === this.matchInfo.players[0].id) {
-        console.log(this.userInfo.id + " " + this.matchInfo.players[0].id)
-        return true;
-      }
-      return false;
-    }
-	  return true
-  }
-
   createMatchInfo(ID:string, level:number){
     const matchInfo : JoinMatchDto = {
       matchId: ID,
@@ -107,13 +97,18 @@ export class GameService {
     })
     this.socket.on ('game', (msg: any) => {
       gameInfo = msg;
+	  if(!this.userInfo){
+		gameInfo.status = GameState.PAUSE
+	  }
       if(gameInfo.status === GameState.PAUSE){
-        console.log(" PAUSE SETTLED UP ")
         gameInfo.status = GameState.END;
       }
       this.gameInfoSubject.next(gameInfo);
       this.gameStatus.next(gameInfo.status!);
     })
+	this.socket.on('error',(msg:any)=>{
+		alert('Internal Server Error');
+	})
     this.socket.on ('start', (msg: any)  => {
       if (msg === 'Waiting players to join')
       { this.inTheQueue.next(true);
@@ -144,7 +139,6 @@ export class GameService {
 
 	getUser(): void {
 	this.socket.on('user', (user: User) => {
-		console.log(user)
 		this.userInfo = user;
 	})
 	}

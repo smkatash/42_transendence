@@ -32,16 +32,12 @@ export class UserController {
     @Get('profile')
     @UseGuards(SessionGuard)
     async getUserInfo(@GetUser() currentUser: SessionUserDto) {
-		console.log(currentUser)
-		console.log("USER")
         if (!currentUser) {
 			throw new UnauthorizedException('Access denied');
 		}
 
 		try {
-            const user = await this.userService.getUserById(currentUser.id)
-			console.log(user)
-			return user
+            return await this.userService.getUserById(currentUser.id)
 		} catch(error) {
 			this.logger.error(error)
 			throw error

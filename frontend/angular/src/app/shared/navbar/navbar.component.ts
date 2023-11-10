@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { GameSocket } from 'src/app/app.module';
 
 @Component({
   selector: 'app-navbar',
@@ -8,4 +7,5 @@ import { GameSocket } from 'src/app/app.module';
 })
 export class NavbarComponent {
   constructor() {}
+
 }

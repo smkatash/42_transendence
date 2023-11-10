@@ -28,12 +28,12 @@ export class MatchService {
                 ) {}
 
 	async waitInPlayerQueue(player: Player, client: Socket, mode: GameMode): Promise<void> {
-		if (!this.hasExistingMatch(player.id, client)) {
+		if (!(await this.hasExistingMatch(player.id, client))) {
 			if (!this.queueService.isInQueue(player.id, mode)) {
 				this.queueService.enqueue(player.id, client, mode)
 			}
 		}
-
+		
 		if (this.queueService.isQueueReady(mode)) {
 			const pair: Array<Map<string, Socket>> =  this.queueService.dequeue(mode)
 			const players: string[] = []
@@ -122,21 +122,15 @@ export class MatchService {
 			if (match.status === GameState.INPROGRESS) {
 				let updateGame = this.gameService.throwBall(match)
 				if (updateGame.status === GameState.END) {
-					// console.log("END OF THE GAME")
 					await this.saveMatchHistory(updateGame)
 					this.server.to(match.match.id).emit(INGAME, updateGame)
 					this.server.socketsLeave(match.match.id)
 					this.matches.delete(match.match.id)
 				}
-                // console.log("-------------------------------------------")
-                // console.log(JSON.stringify(updateGame))
-                // console.log("-------------------------------------------")
 				this.server.to(match.match.id).emit(INGAME, updateGame)
 				updateGame = await this.checkDisconnectedPlayers(updateGame)
 				if (updateGame.match.status === GameState.PAUSE) {
-					console.log("PAUSE OF THE GAME")
 					await this.saveMatchHistory(updateGame)
-					console.log(updateGame)
 					this.server.to(match.match.id).emit(INGAME, updateGame)
 					this.server.socketsLeave(match.match.id)
 					this.matches.delete(match.match.id)

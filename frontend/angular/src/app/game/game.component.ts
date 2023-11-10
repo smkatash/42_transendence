@@ -20,7 +20,6 @@ export class GameComponent implements AfterViewInit, OnInit {
   {
     this.gameService.getUser();
     this.renderer = rendererFactory.createRenderer(null, null);
-
   }
 
   matchLeftSide = true;
@@ -240,7 +239,8 @@ export class GameComponent implements AfterViewInit, OnInit {
     })
   }
 
-  settledSide = false;
+  settledSide : boolean;
+  
   gameObservableInit(){
     this.gameService.getGameObservable().subscribe((game: Game) => {
       if(game){
@@ -252,7 +252,6 @@ export class GameComponent implements AfterViewInit, OnInit {
           }
           this.settledSide = true;
         }
-        this.matchLeftSide = this.gameService.matchIsLeftSide();
         this.gameInfo = this.valueConversion(game);
         if(this.gameInfo.leftPaddle?.length){
           this.paddleHeight = ( 100/ this.maxHeight) * this.gameInfo.leftPaddle?.length;
@@ -276,7 +275,6 @@ export class GameComponent implements AfterViewInit, OnInit {
       else if (this.status == GameState.INPROGRESS)
         this.progressFunc();
       else if (this.status == GameState.PAUSE){
-        console.log("PAUSE")
         this.pauseFunc();
       }
       else if (this.status == GameState.END)
@@ -311,7 +309,7 @@ export class GameComponent implements AfterViewInit, OnInit {
   }
   endFunc(){
     console.log("END")
-      this.settledSide = false;
+    this.settledSide = false;
       if(this.gameInfo?.match?.winner.id === this.gameService.userInfo.id){
         this.statusStr = "WIN";
         this.isGameOn = false;

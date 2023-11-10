@@ -11,17 +11,20 @@ export class PlayerQueueService {
 	private lobby: Map<GameMode, Array<Lobby>>
 
 	constructor() {
-		this.queues = new Map()
+		this.queues = new Map<GameMode, Array<Map<string, Socket>>>()
+		this.queues.set(GameMode.EASY, [])
+		this.queues.set(GameMode.MEDIUM, [])
+		this.queues.set(GameMode.HARD, [])
 	}
 
 	enqueue(playerId: string, client: Socket, mode: GameMode): void {
 		if (!this.queues.has(mode)) {
-			this.queues.set(mode,[])
+			return
 		}
 
 		const playerSocketMap = new Map<string, Socket>()
-  		playerSocketMap.set(playerId, client);
-		this.queues.get(mode).push(playerSocketMap);
+  		playerSocketMap.set(playerId, client)
+		this.queues.get(mode).push(playerSocketMap)
 	}
 
 	dequeue(mode: GameMode): Array<Map<string, Socket>> {
@@ -72,7 +75,7 @@ export class PlayerQueueService {
 	}
 
 	isQueueReady(mode: GameMode): boolean {
-		return this.queues.get(mode).length >= this.MIN_NUMBER
+		return this.queues.get(mode) && this.queues.get(mode).length >= this.MIN_NUMBER
 	}
 
 	isInQueue(playerId: string, mode: GameMode): boolean {
@@ -80,6 +83,7 @@ export class PlayerQueueService {
 		if (!playersInQueue) {
 			return false;
 		}
+
 		return playersInQueue.some(playerMap => playerMap.has(playerId));
 	}
 
