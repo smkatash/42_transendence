@@ -10,6 +10,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MfaComponent } from './auth/mfa/mfa.component';
 import { FormsModule } from '@angular/forms';
 
+
+@Injectable()
+export class UserSocket extends Socket {
+  constructor() {
+    super({ url: 'http://127.0.0.1:3000/profile', options: { withCredentials: true } })
+  }
+}
+
 @Injectable()
 export class GameSocket extends Socket {
   constructor() {
@@ -37,7 +45,7 @@ export class ChatSocket extends Socket {
     HttpClientModule,
     FormsModule
   ],
-  providers: [GameSocket, ChatSocket],
+  providers: [GameSocket, ChatSocket, UserSocket],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

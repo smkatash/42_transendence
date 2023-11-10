@@ -7,7 +7,6 @@ export const QUEUE = "queue"
 export const ERROR = "error"
 export const INGAME = "game"
 export const POSITION_CHANGE = "key"
-export const ROUTE_CHANGE = "router"
-export const USER_PROFILE = "profile"
+
 
 export const WAITING_MESSAGE = "Waiting players to join"

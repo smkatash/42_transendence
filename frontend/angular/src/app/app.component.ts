@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { GameSocket } from './app.module';
+import { GameSocket, UserSocket } from './app.module';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, pipe } from 'rxjs';
 
@@ -10,7 +10,7 @@ import { filter, pipe } from 'rxjs';
 })
 export class AppComponent {
   title = 'Le Pong';
-  constructor(private router: Router, private socket: GameSocket) {}
+  constructor(private router: Router, private socket: UserSocket) {}
   ngOnInit(): void {
     this.router.events
       .subscribe((e) => {

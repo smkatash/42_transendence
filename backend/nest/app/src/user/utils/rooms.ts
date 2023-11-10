@@ -1,0 +1,5 @@
+export const ROUTE_CHANGE = "router"
+export const USER = "user"
+export const ERROR = "error"
+export const INGAME = "game"
+export const USER_PROFILE = "profile"
