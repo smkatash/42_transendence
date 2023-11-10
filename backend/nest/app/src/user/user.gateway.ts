@@ -1,5 +1,5 @@
 import { Logger, UnauthorizedException, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
-import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { INGAME, ROUTE_CHANGE, USER, USER_PROFILE, USER_STATUS } from 'src/user/utils/rooms';
 import { Status } from './utils/status.enum';
@@ -17,7 +17,7 @@ import { UserIdDto } from './utils/user.dto';
 	cors: {
 		origin: '*'
 	}})
-export class UserGateway implements OnGatewayInit, OnGatewayConnection {
+export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 	private readonly logger = new Logger(UserGateway.name)
 	@WebSocketServer()
 	server: Server
@@ -42,11 +42,11 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection {
 		}
 	}
 	
-	async handleDisconnect(@ConnectedSocket() client: Socket, ) {
+	async handleDisconnect(@ConnectedSocket() client: Socket) {
 		try {
 			if (!client.data?.user?.id) throw new UnauthorizedException()
 			const userStatus = await this.userService.updateUserStatus(client.data.user.id, Status.OFFLINE)
-			client.to(userStatus.id).emit(ROUTE_CHANGE, userStatus.status)
+			client.to(userStatus.id).emit(USER_STATUS, userStatus.status)
 			this.logger.log(`Cliend id:${client.id} disconnected`)
 			return client.disconnect()
 		} catch (error) {
