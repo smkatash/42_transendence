@@ -2,13 +2,18 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Match, Stats, User, UserProfile } from '../entities.interface';
+import { UserSocket } from '../app.module';
+import { USER_STATUS } from '../chat/subscriptions-events-constants';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProfileService {
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private userSocket: UserSocket
+  ) { }
 
   domain: string = 'http://127.0.0.1:3000'
 
@@ -125,6 +130,14 @@ export class ProfileService {
   verificationEnable2FA(code: string): Observable<User> {
     const url = `${this.domain}/42auth/verify-mfa`
     return this.http.post<User>(url, {code: code}, { withCredentials: true })
+  }
+
+  statusListener(): Observable<number> {
+    return this.userSocket.fromEvent<number>(USER_STATUS)
+  }
+
+  requestStatus(userID: string) {
+    this.userSocket.emit(USER_STATUS, { id: userID })
   }
 
 }

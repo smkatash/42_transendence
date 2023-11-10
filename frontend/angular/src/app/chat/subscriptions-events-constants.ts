@@ -189,3 +189,4 @@ export const SUCCESS = 'success'
 // Fetch channel messages. Should always be subscribed to. Changes when we emit different getChannelMessages to socket
 'channelMessages', Message[]
 */
+export const USER_STATUS = "user-status"

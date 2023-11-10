@@ -20,7 +20,9 @@ export class JoinedChannelService {
     async findByUser(user: User): Promise<JoinedChannel[]>  {
         return await this.joinedChannelRepo.find({
             where:  {
-                user
+                user: {
+                    id: user.id
+                }
             },
             relations: [
                 'channel', 'user'

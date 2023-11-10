@@ -11,9 +11,8 @@ export class CreateChannelDto    {
 
     @IsString()
     @IsOptional()
-    password: string;
+    password?: string;
 
-    // @IsString()
     @IsNotEmpty()
     type: 'private' | 'protected' | 'public' | 'direct';
 }
