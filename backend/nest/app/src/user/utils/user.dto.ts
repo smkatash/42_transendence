@@ -2,6 +2,12 @@ import { IsNotEmpty, IsString, IsEmail, IsBoolean, IsEnum } from 'class-validato
 import { MfaStatus } from 'src/auth/utils/mfa-status';
 import { Status } from './status.enum';
 
+export class UserIdDto {
+	@IsString()
+	@IsNotEmpty()
+    id: string
+}
+
 export class UserDto {
 	@IsString()
 	@IsNotEmpty()

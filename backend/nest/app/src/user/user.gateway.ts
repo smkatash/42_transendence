@@ -1,7 +1,7 @@
 import { Logger, UnauthorizedException, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayInit, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { INGAME, ROUTE_CHANGE, USER, USER_PROFILE } from 'src/user/utils/rooms';
+import { INGAME, ROUTE_CHANGE, USER, USER_PROFILE, USER_STATUS } from 'src/user/utils/rooms';
 import { Status } from './utils/status.enum';
 import { GetWsUser } from 'src/auth/utils/get-user.decorator';
 import { WsAuthGuard } from 'src/auth/guard/ws-auth.guard';
@@ -9,6 +9,7 @@ import { User } from './entities/user.entity';
 import { RouteDto } from './utils/router.dto';
 import { ERROR } from './utils/rooms';
 import { UserService } from './service/user.service';
+import { UserIdDto } from './utils/user.dto';
 
 @UsePipes(new ValidationPipe({whitelist: true}))
 @WebSocketGateway({
@@ -60,11 +61,23 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection {
 			if (user) {
 				if (routeDto.route === INGAME) {
 					const userStatus = await this.userService.updateUserStatus(user.id, Status.GAME)
-					client.to(user.id).emit(ROUTE_CHANGE, userStatus.status)
+					client.to(user.id).emit(USER_STATUS, userStatus.status)
 				} else {
 					const userStatus = await this.userService.updateUserStatus(user.id, Status.ONLINE)
-					client.to(user.id).emit(ROUTE_CHANGE, userStatus.status)
+					client.to(user.id).emit(USER_STATUS, userStatus.status)
 				}
+			}
+			} catch(error) {
+				this.emitError(client, error)
+			}
+		}
+
+		@UseGuards(WsAuthGuard)
+		@SubscribeMessage(USER_STATUS)
+		async handleUserStatusChange(@ConnectedSocket() client: Socket, @GetWsUser() user: User, @MessageBody() userIdDto: UserIdDto) {
+		try {
+			if (user) {
+				client.join(userIdDto.id)
 			}
 			} catch(error) {
 				this.emitError(client, error)
