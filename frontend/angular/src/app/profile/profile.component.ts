@@ -60,6 +60,7 @@ export class ProfileComponent implements OnInit {
       } else {
         this.getUserProfileFromID(this.id, ProfileType.USERPROFILE)
         this.getCurrentUserProfile(ProfileType.CURRENTUSER)
+        this.profileService.requestStatus(this.id)
       }
     })
   }
@@ -97,7 +98,6 @@ export class ProfileComponent implements OnInit {
         } else {
           this.userProfile = userProfile
         }
-        console.log(userProfile)
       },
       error: err => this.handleError(err)
     });
@@ -130,6 +130,8 @@ export class ProfileComponent implements OnInit {
         } else {
           this.userProfile = userProfile
         }
+        this.profileService.statusListener()
+          .subscribe(status => this.userProfile.user.status = status)
       },
       error: err => this.handleError(err)
     });

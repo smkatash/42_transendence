@@ -193,6 +193,9 @@ export const SUCCESS = 'success'
 /**
  * Invite types to send to backend
  * */
+
+export const USER_STATUS = "user-status"
+
 export const GAME_INVITE = 'game'
 
 export const CHANNEL_INVITE = 'channel'

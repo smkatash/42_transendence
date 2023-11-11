@@ -36,7 +36,6 @@ export class Channel    {
 
     @ManyToMany(() => User, (user) => user.adminAt, {nullable: true})
     @JoinTable()
-    // @JoinColumn()
     admins: User[];
 
     @OneToMany(

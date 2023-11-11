@@ -2,6 +2,8 @@ import { HttpClient} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Match, Stats, User} from '../entities.interface';
+import { UserSocket } from '../app.module';
+import { USER_STATUS } from '../chat/subscriptions-events-constants';
 import { HOST_IP } from '../Constants';
 
 @Injectable({
@@ -9,7 +11,10 @@ import { HOST_IP } from '../Constants';
 })
 export class ProfileService {
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private userSocket: UserSocket
+  ) { }
 
   domain: string = HOST_IP
 
@@ -126,6 +131,14 @@ export class ProfileService {
   verificationEnable2FA(code: string): Observable<User> {
     const url = `${this.domain}/42auth/verify-mfa`
     return this.http.post<User>(url, {code: code}, { withCredentials: true })
+  }
+
+  statusListener(): Observable<number> {
+    return this.userSocket.fromEvent<number>(USER_STATUS)
+  }
+
+  requestStatus(userID: string) {
+    this.userSocket.emit(USER_STATUS, { id: userID })
   }
 
 }

@@ -66,6 +66,7 @@ export class ChannelMessagesContentComponent implements OnInit {
 
   channelChangeEvent(channel: Channel | undefined) {
     console.log(channel)
+	this.incomingMessages = []
     this.channelChange.emit(channel)
   }
 }

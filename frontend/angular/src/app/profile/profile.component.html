@@ -27,7 +27,7 @@
       </div>
 
       <!-- These should be hidden if the user is the user of the session -->
-      <div class="status" *ngIf="id !== null">
+      <div class="status" *ngIf="id !== null && id !== this.currentUserProfile.user.id">
         <div class="dot-offline" *ngIf="userProfile?.user?.status === 0"></div>
         <h2 *ngIf="userProfile?.user?.status === 0">Offline</h2>
         <div class="dot-online" *ngIf="userProfile?.user?.status === 1"></div>

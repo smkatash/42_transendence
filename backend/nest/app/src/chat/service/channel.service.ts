@@ -5,7 +5,7 @@ import { Channel } from '../entities/channel.entity';
 import { JoinChannelDto, CreateChannelDto, ChannelPasswordDto } from '../dto/channel.dto';
 import { User } from 'src/user/entities/user.entity';
 import * as bcrypt from 'bcrypt'
-import { POSTGRES_UNIQUE_VIOLATION, SALT_ROUNDS } from 'src/Constants';
+import { POSTGRES_UNIQUE_VIOLATION, SAFE_PASSWORD_REGEX, SALT_ROUNDS } from 'src/Constants';
 
 @Injectable()
 export class ChannelService {
@@ -17,11 +17,8 @@ export class ChannelService {
     async createChannel(channelInfo: CreateChannelDto, owner: User): Promise<Channel>{
 
         try {
-            // console.log(channel)
-            
             const channel = this.channelRepository.create(channelInfo);
             channel.owner = owner
-            // console.log('createchannel', channel)
             channel.messages = [];
             channel.users = [];
             channel.admins = [];
@@ -29,6 +26,7 @@ export class ChannelService {
             channel.type = channelInfo.type;
             if (channel.private)    {
                 channel.invitedUsers = [];
+                channel.type = 'private';
             }
             channel.users.push(owner);
             channel.admins.push(owner);
@@ -36,18 +34,15 @@ export class ChannelService {
                 const hash = await bcrypt.hash(channelInfo.password, SALT_ROUNDS);
                 channel.hash = hash;
                 channel.protected = true;
+                channel.type = 'protected'
             }
-            // console.log(channel)
-            /*const c = */ return   await this.channelRepository.save(channel);
-            // console.log('----saved channel, at create chann---')
-            // console.log(c)
-            // return c
+            return  await this.channelRepository.save(channel);
             
         } catch (error) {
             Logger.error(error);
             if (error.code === POSTGRES_UNIQUE_VIOLATION)   {
-                throw new HttpException('Channel already exists', HttpStatus.BAD_REQUEST)
-            }   else    {
+                throw new BadRequestException(`Channel ${channelInfo.name} already exists`);
+            }   else   {
                 throw error;
             }
         }
@@ -87,7 +82,9 @@ export class ChannelService {
 
     async getAllChannels(): Promise<Channel[]>  {
         return await this.channelRepository.find({
-            relations: ['users', 'owner', 'admins']
+            relations: [
+                'users', 'owner', 'admins', 'banned'
+            ]
         });
     }
 
@@ -97,8 +94,8 @@ export class ChannelService {
             relations:  relations
         })
     }
+
     async join(user: User, joinDto: JoinChannelDto) {
-        // console.log(joinDto.id)
         const   channel: Channel = await this.channelRepository.findOne({
             where:  {
                 id: joinDto.id
@@ -108,13 +105,9 @@ export class ChannelService {
         if (!channel)   {
             throw new BadRequestException('No such channel');
         }
-        // console.log(channel.id)
-// console.log('--------join channels users------')
-        // console.log(channel)
         if (channel.banned.some((banned) => banned.id === user.id)) {
             throw new BadRequestException('No access(banned)')
         }
-        
         if (channel.users.some((u) => u.id === user.id)){
             throw new BadRequestException('Already in channel')
         }
@@ -137,18 +130,9 @@ export class ChannelService {
             }
         }
         channel.users.push(user);
-        //if user in invited, remove user
         return await this.channelRepository.save(channel);
     }
 
-    async inviteToGame(user: User, userId: number, channelId: number)   {
-       
-    }
- 
-    async inviteToPrivate(user: User, userId: number, channelId: number) {
- 
-    }
- 
     async passwordService(passInfo: ChannelPasswordDto)   {
         const channel = await this.getChannel(passInfo.cId, []);
         if (channel.hash?.length)    {
@@ -163,11 +147,16 @@ export class ChannelService {
         }
         if (!(passInfo.newPass) || !(passInfo.newPass?.length)) {
             channel.protected = false;
+            channel.type = 'public';
             channel.hash = null;
         }   else    {
+            if (!SAFE_PASSWORD_REGEX.test(passInfo.newPass))    {
+                throw new BadRequestException('New password not safe!')
+            }
             const hash = await bcrypt.hash(passInfo.newPass, SALT_ROUNDS);
             channel.hash = hash;
             channel.protected = true;
+            channel.type = 'protected';
         }
         console.log('passwordService updated channel before save:', channel);
         await this.channelRepository.save(channel);
