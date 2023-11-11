@@ -2,6 +2,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { User , Game, GamePlayer, SocketResponse, GameMode, GameState, JoinMatchDto, PositionDto, GameModeDto } from '../entities.interface';
 import { GameSocket } from '../app.module';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { ACCEPT_MATCH } from '../chat/subscriptions-events-constants';
 
 async function waitOneSecond() {
   await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -148,4 +149,8 @@ export class GameService {
 		this.userInfo = user;
 	})
 	}
+
+  acceptInvite(userID: string, mode: number) {
+    this.socket.emit(ACCEPT_MATCH, { userId: userID, mode: mode })
+  }
 }

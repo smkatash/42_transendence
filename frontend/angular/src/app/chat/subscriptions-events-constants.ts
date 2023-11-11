@@ -189,3 +189,14 @@ export const SUCCESS = 'success'
 // Fetch channel messages. Should always be subscribed to. Changes when we emit different getChannelMessages to socket
 'channelMessages', Message[]
 */
+
+/**
+ * Invite types to send to backend
+ * */
+export const GAME_INVITE = 'game'
+
+export const CHANNEL_INVITE = 'channel'
+
+export const ACCEPT_MATCH = 'accept'
+
+export const INVITE_TO_MATCH = 'invite'

@@ -5,6 +5,7 @@ import { Channel, User } from 'src/app/entities.interface';
 import { Observable, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs';
 import { ProfileService } from 'src/app/profile/profile.service';
 import { FormControl } from '@angular/forms';
+import { CHANNEL_INVITE } from '../../subscriptions-events-constants';
 
 @Component({
   selector: 'app-channel-messages-settings',
@@ -90,7 +91,7 @@ export class ChannelMessagesSettingsComponent implements OnChanges {
   }
 
   sendInviteToChannel(userID: string) {
-    this.chatService.sendDM(userID, `Hey, I'm inviting you to a super cool secret channel called ${this.channel?.name}`, 'channel', this.channel?.id)
+    this.chatService.sendDM(userID, `Hey, I'm inviting you to a super cool secret channel called ${this.channel?.name}`, CHANNEL_INVITE, this.channel?.id)
   }
 
   toggle(): void {

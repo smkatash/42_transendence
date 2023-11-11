@@ -1,6 +1,6 @@
 import { Component, ElementRef, HostListener, Input } from '@angular/core';
 import { ChatService } from 'src/app/chat/chat.service';
-import { ADD_ADMIN, BAN, BLOCK, KICK, MUTE, REM_ADMIN, UNBAN, UNBLOCK } from 'src/app/chat/subscriptions-events-constants';
+import { ADD_ADMIN, BAN, BLOCK, GAME_INVITE, KICK, MUTE, REM_ADMIN, UNBAN, UNBLOCK } from 'src/app/chat/subscriptions-events-constants';
 import { Channel, User } from 'src/app/entities.interface';
 
 @Component({
@@ -79,7 +79,7 @@ export class ChannelUserComponent {
   sendGameInvite() {
     if (!this.user) return
 
-    this.chatService.sendDM(this.user.id, "Hey, I'd like to play a game with you", 'game', this.inviteGameMode)
+    this.chatService.sendDM(this.user.id, "Hey, I'd like to play a game with you", GAME_INVITE, this.inviteGameMode)
   }
 
   manageUserModeration(action: string) {
