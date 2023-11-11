@@ -2,6 +2,7 @@ import { HttpClient} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Player } from '../entities.interface';
+import { HOST_IP } from '../Constants';
 
 @Injectable({
 	providedIn: 'root'
@@ -10,7 +11,7 @@ import { Player } from '../entities.interface';
   
 	constructor(private http: HttpClient) { }
   
-	domain: string = 'http://127.0.0.1:3000'
+	domain: string = HOST_IP
   
 	getAllPlayersStats(): Observable<Player[]> {
 	  const url = `${this.domain}/ranking/board`

@@ -1,5 +1,5 @@
 <div class="user">
-  <div class="profile-pic"><img src="http://127.0.0.1:3000/user/image/{{ user?.avatar }}"></div>
+  <div class="profile-pic"><img src="{{ domain }}/user/image/{{ user?.avatar }}"></div>
   <div class="name">
     {{ user?.username }}
     <div class="owner" *ngIf="userIsOwner()">owner</div>

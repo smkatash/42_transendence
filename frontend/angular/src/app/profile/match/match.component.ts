@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { HOST_IP } from 'src/app/Constants';
 import { Match } from 'src/app/entities.interface';
 
 @Component({
@@ -8,4 +9,5 @@ import { Match } from 'src/app/entities.interface';
 })
 export class MatchComponent {
   @Input() match?: Match
+  public domain = HOST_IP
 }

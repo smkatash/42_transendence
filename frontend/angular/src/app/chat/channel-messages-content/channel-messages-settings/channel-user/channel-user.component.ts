@@ -1,4 +1,5 @@
 import { Component, ElementRef, HostListener, Input } from '@angular/core';
+import { HOST_IP } from 'src/app/Constants';
 import { ChatService } from 'src/app/chat/chat.service';
 import { ADD_ADMIN, BAN, BLOCK, KICK, MUTE, REM_ADMIN, UNBAN, UNBLOCK } from 'src/app/chat/subscriptions-events-constants';
 import { Channel, User } from 'src/app/entities.interface';
@@ -18,6 +19,8 @@ export class ChannelUserComponent {
   public kick    = KICK
   public promote = ADD_ADMIN
   public demote  = REM_ADMIN
+
+  public domain  = HOST_IP
 
   constructor(
     private chatService: ChatService,

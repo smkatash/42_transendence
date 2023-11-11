@@ -1,7 +1,8 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Match, Stats, User, UserProfile } from '../entities.interface';
+import { Match, Stats, User} from '../entities.interface';
+import { HOST_IP } from '../Constants';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ export class ProfileService {
 
   constructor(private http: HttpClient) { }
 
-  domain: string = 'http://127.0.0.1:3000'
+  domain: string = HOST_IP
 
   getCurrentUser(): Observable<User> {
     const url = `${this.domain}/user/profile`

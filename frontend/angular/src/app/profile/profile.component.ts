@@ -4,6 +4,7 @@ import { User, UserProfile } from '../entities.interface';
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
+import { HOST_IP } from '../Constants';
 
 enum ProfileType {
   CURRENTUSER,
@@ -16,6 +17,7 @@ enum ProfileType {
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
+	public domain = HOST_IP
 
   constructor(
     private profileService: ProfileService,

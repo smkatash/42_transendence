@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DOCUMENT } from '@angular/common';
 import { Observable, map } from 'rxjs';
+import { HOST_IP } from '../Constants';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ export class AuthService {
 
   constructor(private http: HttpClient, @Inject(DOCUMENT) private document: Document) { };
 
-  domain: string = 'http://127.0.0.1:3000'
+  domain: string = HOST_IP
 
   login(): void {
     this.document.location.href = `${this.domain}/42auth/login`

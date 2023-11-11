@@ -1,6 +1,6 @@
 <div class="friend" [routerLink]="['/profile', user.id]" *ngIf="type === 'friend' && user">
   <div class="wrapper">
-    <div class="profile-pic"><img src="http://127.0.0.1:3000/user/image/{{ user.avatar }}"></div>
+    <div class="profile-pic"><img src="{{ domain }}/user/image/{{ user.avatar }}"></div>
     <div class="name" >{{ user.username }}</div>
     <div class="status" *ngIf="user.status === 0">Offline</div>
     <div class="status" *ngIf="user.status === 1">Online</div>
@@ -10,7 +10,7 @@
 
 <div class="request" *ngIf="type === 'request' && user">
   <div class="wrapper">
-    <div class="profile-pic"><img src="http://127.0.0.1:3000/user/image/{{ user.avatar }}"></div>
+    <div class="profile-pic"><img src="{{ domain }}/user/image/{{ user.avatar }}"></div>
     <div class="name" >{{ user.username }}</div>
     <button (click)="acceptRequest(user.id)">Accept</button>
     <button (click)="declineRequest(user.id)">Decline</button>

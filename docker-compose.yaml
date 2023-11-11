@@ -6,6 +6,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    env_file:
+      - ./frontend/dev.env
     volumes:
       # - /home/jmaalouf/Documents/42/core-curriculum/42_transendence/frontend/angular:/app-frontend
       # - /Users/jmaalouf/Documents/42_transendence/frontend/angular:/app-frontend

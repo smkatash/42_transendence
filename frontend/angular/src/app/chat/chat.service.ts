@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Channel, ChannelUsers, CreateChannelInfo, JoinChannelInfo, Message, User } from '../entities.interface';
 import { ChatSocket } from '../app.module';
 import { ACCEPT_PRIVATE_INVITE, ADD_ADMIN, BAN, BLOCK, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DIRECT, ERROR, JOIN, KICK, LEAVE, MESSAGE, MUTE, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, UNMUTE, USER_CHANNELS } from './subscriptions-events-constants'
+import { HOST_IP } from '../Constants';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class ChatService {
     private socket: ChatSocket,
   ) { }
 
-  domain: string = 'http://127.0.0.1:3000';
+  domain: string = HOST_IP
 
   findUser(username: string): Observable<User[]>  {
     return this.http.get<User[]>(`${this.domain}/user/find-by-username?username=${username}`, { withCredentials: true })
