@@ -3,6 +3,7 @@ import { GameService } from './game.service';
 import { Ball, Game, Paddle, GameState } from '../entities.interface';
 import { GameSocket } from 'src/app/app.module';
 import { NONE_TYPE } from '@angular/compiler';
+import { ActivatedRoute, Route } from '@angular/router';
 
 @Component({
   selector: 'app-game',
@@ -14,9 +15,9 @@ export class GameComponent implements AfterViewInit, OnInit {
 
   constructor(private renderer: Renderer2,
               private rendererFactory: RendererFactory2,
-              private elementReference: ElementRef, 
+              private elementReference: ElementRef,
               private gameService: GameService,
-              private socket: GameSocket ) 
+              private route: ActivatedRoute)
   {
     this.gameService.getUser();
     this.renderer = rendererFactory.createRenderer(null, null);
@@ -26,7 +27,7 @@ export class GameComponent implements AfterViewInit, OnInit {
 
   yourScore = 0;
   opponentScore = 0;
-  
+
   maxViewHeight = 546;
   maxViewWidth = 1092;
 
@@ -110,10 +111,10 @@ export class GameComponent implements AfterViewInit, OnInit {
     this.checkBoardSize();
   }
 
-  /* 
-    Update score, 
-    should I change the value of the color of 
-    the ball depending on the game choice? 
+  /*
+    Update score,
+    should I change the value of the color of
+    the ball depending on the game choice?
   */
   updateScore(scores: Record <string, number>) {
     let id = this.gameService.userInfo.id;
@@ -151,7 +152,7 @@ export class GameComponent implements AfterViewInit, OnInit {
     }
     return game;
   }
-  
+
   resetAll(): void {
     ;
   }
@@ -161,8 +162,8 @@ export class GameComponent implements AfterViewInit, OnInit {
       this.ballY = ball.position.y;
   }
 
-  /* 
-    since the values comes from backend this function move the 
+  /*
+    since the values comes from backend this function move the
     rightPaddle or the leftPaddle depending if the game is Leftside or not
     if yes: then this move the Right Paddle;
     if not: it moves the left;
@@ -179,7 +180,7 @@ export class GameComponent implements AfterViewInit, OnInit {
     }
   }
 
-  /* 
+  /*
     same as the one upstairs
   */
   moveLeftPaddle(leftPaddle: Paddle){
@@ -199,10 +200,10 @@ export class GameComponent implements AfterViewInit, OnInit {
         window.requestAnimationFrame(() => this.moveBall(ball));
       }
       if(this.gameInfo.leftPaddle && this.gameInfo.rightPaddle){
-        console.log( "USER ID Player [0]: " + this.gameInfo.match?.players[0].id + 
+        console.log( "USER ID Player [0]: " + this.gameInfo.match?.players[0].id +
                      "\nUSER ID Player [1]: " + this.gameInfo.match?.players[1].id +
-                     "\nMY ID: " + this.gameService.userInfo.id + 
-                     "\nPADDLE LEFT IN BACKENDINFO: " + this.gameInfo.leftPaddle.position.x + 
+                     "\nMY ID: " + this.gameService.userInfo.id +
+                     "\nPADDLE LEFT IN BACKENDINFO: " + this.gameInfo.leftPaddle.position.x +
                      "\nPADDLE RIGHT IN BACKENDINFO: " +this.gameInfo.rightPaddle.position.x)
         const paddle = this.gameInfo.leftPaddle
         window.requestAnimationFrame(() => this.moveLeftPaddle(paddle));
@@ -218,7 +219,7 @@ export class GameComponent implements AfterViewInit, OnInit {
     }
   }
 
-  // ------------------------------------------------------------------------------------------------ INIT VALUE 
+  // ------------------------------------------------------------------------------------------------ INIT VALUE
 
   initViewValue(){
     let element = document.getElementById("board") as unknown as SVGRectElement;
@@ -240,7 +241,7 @@ export class GameComponent implements AfterViewInit, OnInit {
   }
 
   settledSide : boolean;
-  
+
   gameObservableInit(){
     this.gameService.getGameObservable().subscribe((game: Game) => {
       if(game){
@@ -264,8 +265,16 @@ export class GameComponent implements AfterViewInit, OnInit {
   isInQueue: boolean = false;
   isGameOn: boolean = false;
 
+  /* Router params for game invite */
+  invited: boolean = false
+  accepted: boolean = false
+
   ngOnInit() {
     this.initViewValue()
+
+    this.invited = ('true' === this.route.snapshot.paramMap.get('invite'))
+    this.accepted = ('true' === this.route.snapshot.paramMap.get('accepte'))
+
     this.gameService.getGameStatus().subscribe(data => {
       this.status = data;
       if (this.status == GameState.READY)

@@ -15,9 +15,9 @@
 
       <li class="game-invite" (click)="sendGameInvite()">
         Invite to
-        <span *ngIf="inviteGameMode === 0">easy</span>
-        <span *ngIf="inviteGameMode === 1">medium</span>
-        <span *ngIf="inviteGameMode === 2">hard</span>
+        <span *ngIf="inviteGameMode === 1">easy</span>
+        <span *ngIf="inviteGameMode === 2">medium</span>
+        <span *ngIf="inviteGameMode === 3">hard</span>
         game
         <img (click)="toggleGameMode($event)" src="data:image/svg+xml,%3Csvg width='24' height='24' xmlns='http://www.w3.org/2000/svg' xmlns:svg='http://www.w3.org/2000/svg'%3E%3Cg class='layer'%3E%3Ctitle%3ELayer 1%3C/title%3E%3Cpath d='m20,17l-16,0m0,0l4,-4m-4,4l4,4m-4,-14l16,0m0,0l-4,-4m4,4l-4,4' fill='black' id='svg_1' stroke='%23e8dab2' stroke-linecap='round' stroke-linejoin='round' stroke-width='2'/%3E%3C/g%3E%3C/svg%3E">
       </li>
