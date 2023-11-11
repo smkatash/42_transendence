@@ -2,6 +2,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { User , Game, GamePlayer, SocketResponse, GameMode, GameState, JoinMatchDto, PositionDto, GameModeDto } from '../entities.interface';
 import { GameSocket } from '../app.module';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { ACCEPT_MATCH, INVITE_TO_MATCH } from '../chat/subscriptions-events-constants';
 
 async function waitOneSecond() {
   await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -20,7 +21,7 @@ export class GameService {
   width = 500;
 
   constructor(private socket: GameSocket) {}
-  
+
   public test : number[] = [0,0];
 
   // GAME INFO: Ball position, paddle, id, bla bla
@@ -142,4 +143,12 @@ export class GameService {
 		this.userInfo = user;
 	})
 	}
+
+  inviteToMatch(invitedUser: string, selectedMode: number) {
+    this.socket.emit(INVITE_TO_MATCH, { userId: invitedUser, mode: selectedMode })
+  }
+
+  acceptInvite(userID: string, mode: GameMode) {
+    this.socket.emit(ACCEPT_MATCH, { userId: userID, mode: mode })
+  }
 }

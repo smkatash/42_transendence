@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryColumn, UpdateDateColumn } from "typeorm";
 import { GameState } from "../utls/game";
 import { Player } from "./player.entity";
 
@@ -24,4 +24,10 @@ export class Match {
 
     @Column({ type: 'jsonb', nullable: true, default: null })
     scores: Record<string, number>
+
+	@CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+	createdAt: Date;
+
+	@UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+	updatedAt: Date;
 }

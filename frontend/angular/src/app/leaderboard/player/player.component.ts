@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Player } from 'src/app/entities.interface';
+import { HOST_IP } from '../../Constants';
 
 @Component({
   selector: 'app-player',
@@ -8,4 +9,5 @@ import { Player } from 'src/app/entities.interface';
 })
 export class PlayerComponent {
   @Input() player?: Player;
+  public domain = HOST_IP
 }

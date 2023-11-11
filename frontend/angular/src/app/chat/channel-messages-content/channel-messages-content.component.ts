@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { ChatService } from '../chat.service';
 import { Channel, Message, User } from 'src/app/entities.interface';
 import { ProfileService } from 'src/app/profile/profile.service';
@@ -36,11 +36,11 @@ export class ChannelMessagesContentComponent implements OnInit {
       })
   }
 
-  // ngOnChanges(changes: SimpleChanges): void {
-  //   if (changes['channelID']) {
-
-  //   }
-  // }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['channel']) {
+      this.incomingMessages = []
+    }
+  }
 
   sendMessage(): void {
 
@@ -65,7 +65,6 @@ export class ChannelMessagesContentComponent implements OnInit {
   }
 
   channelChangeEvent(channel: Channel | undefined) {
-    console.log(channel)
     this.channelChange.emit(channel)
   }
 }

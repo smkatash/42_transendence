@@ -1,7 +1,10 @@
 import { Component, ElementRef, HostListener, Input } from '@angular/core';
+import { Router } from '@angular/router';
+import { HOST_IP } from 'src/app/Constants';
 import { ChatService } from 'src/app/chat/chat.service';
-import { ADD_ADMIN, BAN, BLOCK, KICK, MUTE, REM_ADMIN, UNBAN, UNBLOCK } from 'src/app/chat/subscriptions-events-constants';
+import { ADD_ADMIN, BAN, BLOCK, GAME_INVITE, KICK, MUTE, REM_ADMIN, UNBAN, UNBLOCK } from 'src/app/chat/subscriptions-events-constants';
 import { Channel, User } from 'src/app/entities.interface';
+import { GameService } from 'src/app/game/game.service';
 
 @Component({
   selector: 'app-channel-user',
@@ -19,8 +22,12 @@ export class ChannelUserComponent {
   public promote = ADD_ADMIN
   public demote  = REM_ADMIN
 
+  public domain  = HOST_IP
+
   constructor(
     private chatService: ChatService,
+    private gameService: GameService,
+    private router: Router,
     private el: ElementRef
   ) {}
 
@@ -29,7 +36,7 @@ export class ChannelUserComponent {
   @Input() channel?: Channel
   isDropdownSelected: boolean = false;
 
-  inviteGameMode: number = 0
+  inviteGameMode: number = 1
 
   toggleDropdown(): void {
     this.isDropdownSelected = !this.isDropdownSelected;
@@ -67,19 +74,21 @@ export class ChannelUserComponent {
     this.chatService.sendDM(this.user.id, "Hey")
   }
 
+  /* EASY: 1, MEDIUM: 2, HARD: 3 */
   toggleGameMode(event: Event) {
     event.stopPropagation()
-    if (this.inviteGameMode < 2) {
+    if (this.inviteGameMode < 3) {
       this.inviteGameMode++
     } else {
-      this.inviteGameMode = 0
+      this.inviteGameMode = 1
     }
   }
 
   sendGameInvite() {
     if (!this.user) return
-
-    this.chatService.sendDM(this.user.id, "Hey, I'd like to play a game with you", 'game', this.inviteGameMode)
+    this.chatService.sendDM(this.user.id, "Hey, I'd like to play a game with you", GAME_INVITE, this.inviteGameMode)
+    this.gameService.inviteToMatch(this.user.id, this.inviteGameMode)
+    this.router.navigate(['/game', { invite: true, accept: false }])
   }
 
   manageUserModeration(action: string) {

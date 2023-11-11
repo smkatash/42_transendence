@@ -233,7 +233,8 @@ export class MatchService {
             .innerJoinAndSelect('loser.user', 'loserUser')
             .where('players.id = :id', { id })
             .addSelect(['winnerUser.username'])
-            .addSelect(['loserUser.username']) 
+            .addSelect(['loserUser.username'])
+			.orderBy('match.updatedAt', 'DESC') 
             .getMany()
     }
 }

@@ -52,7 +52,7 @@ export class AuthService {
 	}
 
 	async isValidTokenData(userId: string, value: string) {
-		const expiresIn = 1000 * 60 * 60 * 15
+		const expiresIn = 1000 * 60 * 5
 		const token: AuthToken = await this.tokenRepo.findOneBy({value})
 
 		if (token) {
@@ -82,6 +82,19 @@ export class AuthService {
 		const hash = createHash('sha256').update(randomString).digest('hex')
 		const baseHash = Buffer.from(hash, 'hex').toString('base64')
 		return baseHash.slice(0, 8)
+	}
+
+	async deleteExpiredTokens() {
+		const currentTimestamp = Date.now()
+		return this.tokenRepo
+		  .createQueryBuilder()
+		  .delete()
+		  .where('expires < :currentTimestamp', { currentTimestamp })
+		  .execute();
+	}
+
+	async getAllTokens() {
+		return this.tokenRepo.find()
 	}
     
 }

@@ -31,7 +31,7 @@
             <rect class="paddle" [attr.x]="paddleLeftX + 'px'" [attr.y]="paddleLeftY + 'px'" [attr.width]="paddleWidth + '%'" [attr.height]="paddleHeight + '%'"/>
             <rect class="paddle" [attr.x]="paddleRightX + 'px'" [attr.y]="paddleRightY + 'px'" [attr.width]="paddleWidth + '%'" [attr.height]="paddleHeight + '%'"/>
             <circle id="ball" [attr.cx]="ballX + 'px'" [attr.cy]="ballY + 'px'" [attr.r]="ballRadius + '%'" stroke-width="2" />
-        </svg> 
+        </svg>
         <h1>{{opponentScore | number:"1.0-0"}}</h1>
     </div>
     <!-- <app-game-board *ngIf="!isGameOn"></app-game-board> -->

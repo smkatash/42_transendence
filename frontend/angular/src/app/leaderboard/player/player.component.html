@@ -1,6 +1,6 @@
 <div class="player">
     <div class="wrapper">
-	  <div class="profile-pic"><img src="http://127.0.0.1:3000/user/image/{{ player?.user?.avatar }}"></div>
+	  <div class="profile-pic"><img src="{{ domain }}/user/image/{{ player?.user?.avatar }}"></div>
       <div class="name" >{{ player?.user?.username }}</div>
 	  <div class="title" >{{ player?.user?.title }}</div>
       <div class="status">{{ player?.score }}</div>
