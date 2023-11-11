@@ -178,8 +178,8 @@ import { MatchService } from './service/match.service';
 import { Player } from './entities/player.entity';
 import { PlayerService } from './service/player.service';
 import { Game} from './utls/game';
-import { ERROR, JOIN_MATCH, POSITION_CHANGE, QUEUE, START_MATCH, USER, WAITING_MESSAGE } from './utls/rooms';
-import { GameModeDto, JoinMatchDto, PositionDto } from './utls/message.dto';
+import { ACCEPT_MATCH, ERROR, INVITE_TO_MATCH, JOIN_MATCH, POSITION_CHANGE, QUEUE, START_MATCH, USER, WAITING_MESSAGE } from './utls/rooms';
+import { AcceptDto, GameModeDto, InviteDto, JoinMatchDto, PositionDto } from './utls/message.dto';
 import { WsAuthGuard } from 'src/auth/guard/ws-auth.guard';
 import { GetWsUser } from 'src/auth/utils/get-user.decorator';
 
@@ -278,7 +278,39 @@ async handleDisconnect(@ConnectedSocket() client: Socket, ) {
 		} catch(error) {
 			this.emitError(client, error)
 		}
-	} 
+	}
+
+	@UseGuards(WsAuthGuard)
+	@SubscribeMessage(INVITE_TO_MATCH)
+	async handleInvitation(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() inviteDto: InviteDto) {
+		try {
+			const currentPlayer: Player = await this.playerService.getPlayerById(user.id)
+			
+			if (currentPlayer) {
+				client.join(QUEUE)
+				await this.matchService.waitInPlayerLobby(currentPlayer, inviteDto.userId, client, inviteDto.mode)
+			}
+			this.emitQueueEvent()
+		} catch(error) {
+			this.emitError(client, error)
+		}
+	}
+
+	@UseGuards(WsAuthGuard)
+	@SubscribeMessage(ACCEPT_MATCH)
+	async handleAccept(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() acceptDto: AcceptDto) {
+		try {
+			const currentPlayer: Player = await this.playerService.getPlayerById(user.id)
+			
+			if (currentPlayer) {
+				client.join(QUEUE)
+				await this.matchService.checkPlayerLobby(currentPlayer, acceptDto.userId, client, acceptDto.mode)
+			}
+			this.emitQueueEvent()
+		} catch(error) {
+			this.emitError(client, error)
+		}
+	}
 	
 	emitError(client: Socket, error: Error) {
 		client.emit(ERROR, error)
