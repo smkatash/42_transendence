@@ -60,11 +60,9 @@ export class UserGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		try {
 			if (user) {
 				if (routeDto.route === INGAME) {
-					this.logger.debug("GAME")
 					const userStatus = await this.userService.updateUserStatus(user.id, Status.GAME)
 					client.to(user.id).emit(USER_STATUS, userStatus.status)
 				} else {
-					this.logger.debug("ONLINE")
 					const userStatus = await this.userService.updateUserStatus(user.id, Status.ONLINE)
 					client.to(user.id).emit(USER_STATUS, userStatus.status)
 				}

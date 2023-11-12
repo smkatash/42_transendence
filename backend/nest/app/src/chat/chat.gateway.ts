@@ -868,13 +868,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         throw new BadRequestException('No such channel or user')
       }
       if (!channel.private) {
-        throw new BadRequestException('Channel not private')
+        throw new BadRequestException('Channel is not private')
       }
       if (channel.users.some((user) => user.id === u.id)) {
-        throw new BadRequestException('Already on channel')
+        throw new BadRequestException('User is already in the channel')
       }
       if (channel.invitedUsers.some((user) => user.id === u.id))  {
-        throw new BadRequestException('Already invited')
+        throw new BadRequestException('User is already invited')
       }
       channel.invitedUsers.push(u);
       await this.channelService.saveChannel(channel);
@@ -1057,13 +1057,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           throw new BadRequestException('No such channel')
         }
         if (!channel.private) {
-          throw new BadRequestException('Channel not private')
+          throw new BadRequestException('Channel is not private')
         }
         if (channel.users.some((user) => user.id === u.id)) {
-          throw new BadRequestException('Already on channel')
+          throw new BadRequestException('User is already in the channel')
         }
         if (channel.invitedUsers.some((user) => user.id === u.id))  {
-          throw new BadRequestException('Already invited')
+          throw new BadRequestException('User is already invited')
         }
         channel.invitedUsers.push(u);
         await this.channelService.saveChannel(channel);
