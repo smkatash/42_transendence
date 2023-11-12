@@ -19,12 +19,12 @@ export class ChatComponent implements OnInit {
   allChannels$: Observable<Channel[]> = this.chatService.getChannels()
   selectedChannel?: Channel
   channelToCreate?: string // type of channel to create
-  isChannelToCreateActive: boolean = false
 
   passwordToJoinChannel?: string
 
+  channelCreationPopup: boolean = false
   passwordInputPopup: boolean = false
-  directMsgPopup?: boolean = false
+  directMsgPopup: boolean = false
 
   errorMessage?: any
 
@@ -44,6 +44,8 @@ export class ChatComponent implements OnInit {
       if (this.selectedChannel.protected) {
         this.selectedTab= 'my-chats'
         this.passwordInputPopup = true
+        this.channelCreationPopup = false
+        this.directMsgPopup = false
       } else {
         this.chatService.joinChannel({
           id: this.selectedChannel.id,
@@ -60,7 +62,15 @@ export class ChatComponent implements OnInit {
   createNewChannel(channelType: string) {
     this.channelToCreate = channelType
     this.selectTab('my-chats')
-    this.isChannelToCreateActive = true
+    this.channelCreationPopup = true
+    this.directMsgPopup = false
+    this.passwordInputPopup = false
+  }
+
+  createDm() {
+    this.directMsgPopup = true
+    this.passwordInputPopup = false
+    this.channelCreationPopup = false
   }
 
   selectTab(tab: string) {

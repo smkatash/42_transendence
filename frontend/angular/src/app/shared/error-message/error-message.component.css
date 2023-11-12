@@ -1,33 +1,40 @@
 @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@1,6..96,700&display=swap');
 
 .error-message-border {
-    position: absolute;
-    width: 40%;
-	height: 100px;
-	align-items: center;
-	justify-content: center; 
-    z-index: 3;
-    border: 1px solid #2f424a;
-    box-sizing: border-box;
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
-    left: 50%;
-    transform: translateX(-50%);
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  border: .4dvw solid #E8DAB2;
+  box-sizing: border-box;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+img {
+  width: 3dvw;
+  margin-left: 2dvw;
+  margin-right: .8dvw;
 }
 
 .error-message {
-	height: 100px;
-	display: flex;
-	align-items: center;
-	justify-content: center; 
-	box-sizing: border-box;
-	background-color: #b04343;
-	border: .4dvw solid #E8DAB2;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  background-color: #b04343;
+  padding: 5% 4%;
 }
 
 p {
+  margin-right: 2dvw;
   font-family: 'Quattrocento', serif;
   font-weight: bolder;
+  width: auto;
   color: #E8DAB2;
-  font-size: 2dvw;
+  font-size: 1.5dvw;
+  white-space: nowrap;
 }
 
