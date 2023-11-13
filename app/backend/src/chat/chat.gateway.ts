@@ -18,7 +18,7 @@ import { CHANNEL_NAME_REGEX, SAFE_PASSWORD_REGEX } from 'src/Constants';
 
 @UsePipes(new ValidationPipe({whitelist: true}))
 @WebSocketGateway({
-  namespace: 'chat',
+  namespace: '/api/chat',
   cors: '*'
 })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit  {
