@@ -1,40 +1,17 @@
 version: '3.8'
 
 services:
-  angular:
-    container_name: angular
+  app:
+    container_name: app
     build:
-      context: ./frontend
+      context: ./docker
       dockerfile: Dockerfile
     env_file:
-      - ./frontend/dev.env
+      - ./docker/dev.env
     volumes:
-      # - /home/jmaalouf/Documents/42/core-curriculum/42_transendence/frontend/angular:/app-frontend
-      - /Users/jmaalouf/Documents/42/Core_Curriculum/42_transendence/frontend/angular:/app-frontend
-      # - /Users/francesco/Desktop/pong/frontend/angular:/app-frontend
-      # - /Users/frmessin/Desktop/pong/frontend/angular:/app-frontend
-      #  - /Users/ktashbae/Desktop/42_transendence/frontend/angular:/app-frontend
-    ports:
-      - 4200:4200
-    depends_on:
-      - nestjs
-    restart: unless-stopped
-
-  nestjs:
-    container_name: nestjs
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    volumes:
-      # - /home/jmaalouf/Documents/42/core-curriculum/42_transendence/backend/nest/app:/app-backend
-      - /Users/jmaalouf/Documents/42/Core_Curriculum/42_transendence/backend/nest/app:/app-backend
-      # - /Users/francesco/Desktop/pong/backend/nest/app:/app-backend
-      # - /Users/frmessin/Desktop/pong/backend/nest/app:/app-backend
-        # - /Users/ktashbae/Desktop/42_transendence/backend/nest/app:/app-backend
+      - /Users/ktashbae/Desktop/42_transendence/app:/app
     ports:
       - 3000:3000
-    env_file:
-      - ./backend/dev.env
     depends_on:
       - postgres
       - redis
@@ -47,7 +24,7 @@ services:
     volumes:
       - db-volume:/var/lib/postgresql/data
     env_file:
-      - ./backend/dev.env
+      - ./docker/dev.env
     ports:
       - 5432:5432
 
@@ -56,7 +33,7 @@ services:
     image: redis:7.2.1-alpine3.18
     restart: unless-stopped
     env_file:
-      - ./backend/dev.env
+      - ./docker/dev.env
     volumes: 
       - redis-volume:/data
     ports:
