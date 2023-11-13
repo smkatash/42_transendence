@@ -20,6 +20,8 @@ import { Message } from './chat/entities/message.entity';
 import { JoinedChannel } from './chat/entities/joinedChannel.entity';
 import { ConfigModule } from '@nestjs/config';
 import { Mute } from './chat/entities/mute.entity';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -27,6 +29,9 @@ import { Mute } from './chat/entities/mute.entity';
       envFilePath: 'dev.env',
       isGlobal: true
     }),
+	ServeStaticModule.forRoot({
+		rootPath: join(__dirname, '..', 'public'),
+	}),
     PassportModule.register({ session: true}),
     AuthModule,
     UserModule,

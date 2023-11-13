@@ -39,7 +39,8 @@ async function bootstrap() {
 	app.use(sessionMiddleware)
 	app.use(passport.initialize())
 	app.use(passport.session())
-	app.useWebSocketAdapter(new SessionAdapter(sessionMiddleware, app));
+	app.useWebSocketAdapter(new SessionAdapter(sessionMiddleware, app))
+
 	await app.listen(3000)
 }
 bootstrap()
