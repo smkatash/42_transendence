@@ -1,8 +1,9 @@
+
 export const CLIENT_ID = process.env.CLIENT_ID
 export const CLIENT_SECRET = process.env.CLIENT_SECRET
-export const CALLBACK_URL = process.env.CALLBACK_URL
-export const FRONT_END_CALLBACK_URL = process.env.FRONT_END_CALLBACK_URL
-export const FRONT_END_2FA_CALLBACK_URL = process.env.FRONT_END_2FA_CALLBACK_URL
+export const CALLBACK_URL = `${process.env.HOST_IP}/api/42auth/redirect`
+export const FRONT_END_CALLBACK_URL = `${process.env.HOST_IP}/profile`
+export const FRONT_END_2FA_CALLBACK_URL = `${process.env.HOST_IP}/login/2fa`
 export const DB_TYPE = "postgres"
 export const DB_HOST = process.env.DB_HOST
 export const DB_PORT= Number(process.env.DB_PORT)
@@ -21,7 +22,7 @@ export const REDIS_HOST = process.env.REDIS_HOST
 export const REDIS_PORT = process.env.REDIS_PORT
 export const REDIS_PASSWORD = process.env.REDIS_PASSWORD
 export const REDIS_CLIENT = process.env.REDIS_CLIENT
-export const FRONT_END_URL = process.env.FRONT_END_URL
+export const FRONT_END_URL = process.env.HOST_IP
 
 export const DEFAULT_PADDLE_LENGTH = 80
 export const DEFAULT_PADDLE_WIDTH = 1
