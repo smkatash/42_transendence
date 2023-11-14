@@ -158,7 +158,6 @@ export class ChannelService {
             channel.protected = true;
             channel.type = 'protected';
         }
-        console.log('passwordService updated channel before save:', channel);
         await this.channelRepository.save(channel);
         return (channel);
     }
@@ -178,20 +177,8 @@ export class ChannelService {
     }
 
     async getPrivate(u1: User, u2: User): Promise<Channel[]>  {
-        // console.log(u1.id, u2.id)
         const userIds = [u1.id, u2.id].sort();
-        console.log(userIds)
         const room = await this.channelRepository
-            /*
-            .createQueryBuilder('channel')
-            .leftJoinAndSelect('channel.users', 'users')
-            // .where('users.id = :userId', {userId: u2.id})
-            .where('users.id IN (:userIds)', {userIds)
-            // .andWhere("channel.name IS NULL")
-            // .groupBy('channel.id')
-            // .having('COUNT(channel.id) = 2')
-            .getMany();
-            */
            .createQueryBuilder('channel')
            .innerJoin('channel.users', 'users')
            .where('users.id IN (:...userIds)', {userIds})

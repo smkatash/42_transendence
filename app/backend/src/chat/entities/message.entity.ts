@@ -21,9 +21,9 @@ export class Message    {
     @CreateDateColumn()
     createdAt: Date
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     inviteType: 'game' | 'channel';
     
-    @Column({nullable: true})
-    inviteId: string;
+    @Column({ nullable: true })
+    inviteId: number;
 }

@@ -55,10 +55,10 @@ export class Channel    {
     @JoinTable()
     invitedUsers: User[]
 
-    @ManyToMany(() => User, (user)=> user.bannedAt, {nullable: true})
+    @ManyToMany(() => User, (user)=> user.bannedAt, { nullable: true })
     @JoinTable()
     banned: User[]
 
-    @Column({default: 'public', nullable: true})
+    @Column({ default: 'public', nullable: true })
     type: 'private' | 'protected' | 'public' | 'direct';
 }
