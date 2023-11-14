@@ -1,6 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ChatService } from '../chat.service';
+import { FormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs';
+import { User } from 'src/app/entities.interface';
 
 @Component({
   selector: 'app-channel-creation-menu',
@@ -32,6 +35,44 @@ export class ChannelCreationMenuComponent {
 
   channelName: string = ''
   channelPassword?: string
+
+  userSearch = new FormControl()
+  searchedUsers?: User[]
+  isDropdownOpen?: boolean = false
+  selectedUser?: User
+  messageToSend?: string
+
+  ngOnInit() {
+    this.userSearch.valueChanges.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      switchMap(
+        (username: string) => this.chatService.findUser(username)
+        .pipe(
+          tap((users: User[]) => {
+            this.searchedUsers = users
+            this.isDropdownOpen = true
+            console.log(users)
+          })
+        )
+      )
+    ).subscribe()
+  }
+
+  selectUser(selected: User) {
+    this.selectedUser = selected
+    this.isDropdownOpen = false
+  }
+
+  sendMessage(): void {
+    if (this.messageToSend === undefined) return
+    this.messageToSend = this.messageToSend.trim()
+
+    if (!this.messageToSend || !this.selectedUser) return
+    this.chatService.sendDM(this.selectedUser?.id, this.messageToSend)
+    this.messageToSend = ''
+    this.toggle()
+  }
 
   toggle(): void {
     this.isOpen = !this.isOpen;

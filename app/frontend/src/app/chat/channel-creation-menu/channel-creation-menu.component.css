@@ -24,6 +24,7 @@
   text-align: center;
   justify-content: center;
 }
+
 .is-invalid {
   border-bottom: .1dvw solid #b04343;
 }
@@ -76,6 +77,63 @@ input {
   outline: none;
 }
 
+.user-search {
+  margin-bottom: 0%;
+}
+
+.search-result {
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
+.user {
+  background-color: #E8DAB2;
+  box-sizing: border-box;
+  border: .1dvw solid #2f424a;
+  font-size: 0.8dvw;
+  font-family: 'Quattrocento', serif;
+  width: 100%;
+  padding: 0.5dvw;
+}
+
+.user:hover {
+  cursor: pointer;
+  background-color: #e9d5a1;
+}
+
+.message-box {
+  box-sizing: border-box;
+  height: 10dvh;
+  margin: 2dvh;
+}
+
+.message-box textarea {
+  all: unset;
+  box-sizing: border-box;
+  resize: none;
+  width: 100%;
+  height: 100%;
+  background-color: #E8DAB2;
+  border-radius: 2dvw;
+  border: .3dvw solid #E8DAB2;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-left: 2dvw;
+  padding-right: 5dvw;
+  padding-top: 1.6dvh;
+  font-family: 'Quattrocento', serif;
+  font-size: 1.3dvw;
+  font-weight: bold;
+  color: #423B0B;
+  caret-color: #423B0B;
+  scrollbar-width: none;
+}
+
+.message-box textarea:focus {
+  border: .3dvw solid #5f5948;
+}
 
 button {
   color: #4F6D7A;

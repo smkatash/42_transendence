@@ -14,7 +14,7 @@ import { ChannelMessagesSettingsComponent } from './channel-messages-content/cha
 import { ChannelUserComponent } from './channel-messages-content/channel-messages-settings/channel-user/channel-user.component';
 import { SharedModule } from '../shared/shared.module';
 import { ChannelJoinPopupComponent } from './channel-join-popup/channel-join-popup.component';
-import { DirectMessageComponent } from './direct-message/direct-message.component';
+import { ItalicizeTextPipe } from './message/italicize-text.pipe';
 
 @NgModule({
   declarations: [
@@ -28,7 +28,7 @@ import { DirectMessageComponent } from './direct-message/direct-message.componen
     ChannelMessagesSettingsComponent,
     ChannelUserComponent,
     ChannelJoinPopupComponent,
-    DirectMessageComponent
+    ItalicizeTextPipe
   ],
   imports: [
     CommonModule,

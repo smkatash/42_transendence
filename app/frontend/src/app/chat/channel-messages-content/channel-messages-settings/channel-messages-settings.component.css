@@ -68,7 +68,6 @@ label {
 .user-dropdown {
   background-color: #E8DAB2;
   box-sizing: border-box;
-  border: .1dvw solid #E8DAB2;
   width: 100%;
   padding: 0.5dvw;
   border: .1dvw solid  #2f424a;
@@ -146,9 +145,6 @@ button:hover {
   left: 2.65dvw;
   background-color: #4F6D7A;
 }
-
-
-
 
 .close {
   float: right;
