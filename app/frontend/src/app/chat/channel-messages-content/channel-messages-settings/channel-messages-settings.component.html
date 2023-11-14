@@ -11,7 +11,7 @@
     <!-- <div class="invite-to-channel" *ngIf="channel?.private && channel?.owner?.id === currentUser?.id"> -->
       <label for="user-search" *ngIf="channel?.private">Search for user to invite:</label>
       <div class="invite-to-channel" *ngIf="channel?.private">
-        <input type="text" id="user-search" [formControl]="privateUserSearch">
+        <input type="text" id="user-search" [formControl]="privateUserSearch" required pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$">
         <div class=name *ngFor="let user of searchedUsers">
           <span class="user-dropdown" (click)="sendInviteToChannel(user.id)">
             {{ user.username }}
