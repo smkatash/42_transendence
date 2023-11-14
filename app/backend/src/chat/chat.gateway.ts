@@ -13,7 +13,7 @@ import { JoinedChannel } from './entities/joinedChannel.entity';
 import { MuteService } from './service/mute.service';
 import { Channel } from './entities/channel.entity';
 import { Message } from './entities/message.entity';
-import { ACCEPT_PRIVATE_INVITE, ADD_ADMIN, BAN, BLOCK, CHANNEL, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DELETE, DIRECT, ERROR, INVALIDATE_MESSAGE_CONTENT, INVITE_TO_PRIVATE, JOIN, KICK, LEAVE, MESSAGE, MUTE, PASSWORD, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, USER_CHANNELS } from './subscriptions-events-constants';
+import { ACCEPT_PRIVATE_INVITE, ADD_ADMIN, BAN, BLOCK, BLOCKED_USERS, CHANNEL, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DELETE, DIRECT, ERROR, INVALIDATE_MESSAGE_CONTENT, INVITE_TO_PRIVATE, JOIN, KICK, LEAVE, MESSAGE, MUTE, PASSWORD, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, USER_CHANNELS } from './subscriptions-events-constants';
 import { CHANNEL_NAME_REGEX, SAFE_PASSWORD_REGEX } from 'src/Constants';
 
 @UsePipes(new ValidationPipe({whitelist: true}))
@@ -398,6 +398,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       ]);
       const cToFe = this.userChannelsToFe(user, channels);  
       this.server.to(socket.id).emit(USER_CHANNELS, cToFe);
+      return ;
     } catch (error) {
       this.emitError(socket, error);
     }
@@ -677,7 +678,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       await this.userService.saveUser(u);
       await this.channelService.saveChannel(channel);
       this.server.to(socket.id).emit(CHANNEL, this.channelToFe(channel));
-      this.success(socket, `${u.username} unbanned from ${channel.name}`)
+      // this.success(socket, `${u.username} unbanned from ${channel.name}`)
     } catch (error) {
       this.emitError(socket, error);
     }
@@ -779,12 +780,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       if (channel.owner?.id === u.id)  {
         throw new BadRequestException('Can\'t remove self');
       }
-      channel.admins = channel.admins.filter((admin) => admin.id !== u.id);
-      u.adminAt = u.adminAt.filter((c) => c.id !== channel.id);
-      await this.userService.saveUser(u);
-      await this.channelService.saveChannel(channel);
-      this.server.to(socket.id).emit(CHANNEL, this.channelToFe(channel));
-      this.success(socket, `${u.username} removed from adminlist`)
+      if (channel.admins.some((admin) => admin.id === u.id))  {
+        channel.admins = channel.admins.filter((admin) => admin.id !== u.id);
+        u.adminAt = u.adminAt.filter((c) => c.id !== channel.id);
+        await this.userService.saveUser(u);
+        await this.channelService.saveChannel(channel);
+        this.server.to(socket.id).emit(CHANNEL, this.channelToFe(channel));
+        // this.success(socket, `${u.username} removed from adminlist`)
+      } else  {
+        throw new BadRequestException('User is not an admin')
+      }
     } catch (error) {
       this.emitError(socket, error);
     }
@@ -1043,8 +1048,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         throw new BadRequestException('Can\'t block self')
       }
       const u = (await this.userService.blockUser(user.id, userInfo.uId));
-      this.success(socket, `${u?.username} blocked`);
+      // this.success(socket, `${u?.username} blocked`);
       this.onGetUsersChannels(socket);
+      this.onBlockedUsers(socket);
     } catch (error) {
       // this.emitError(socket, error)
     }
@@ -1064,6 +1070,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       const u = await this.userService.unBlockUser(user.id, userInfo.uId);
       // this.success(socket, `${u?.username} unblocked`);
       this.onGetUsersChannels(socket);
+      this.onBlockedUsers(socket);
     } catch (error) {
       this.emitError(socket, error)
     }
@@ -1161,6 +1168,27 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       }
     } catch (error) {
       this.emitError(socket, error) 
+    }
+  }
+
+  /** emits session user's banned User[] */
+  @SubscribeMessage(BLOCKED_USERS)
+  async onBlockedUsers(@ConnectedSocket() socket: Socket)  {
+    let user = socket.data.user;
+    if (!user)  {
+      return this.noAccess(socket);
+    }
+    try {
+      user = await this.userService.getUserWith(user.id, [
+        'blockedUsers'
+      ]);
+      if (user) {
+        this.server.to(socket.id).emit(BLOCKED_USERS, user.blockedUsers);
+      } else  {
+        throw new Error('Couldn\'t get user data');
+      }
+    } catch (error) {
+      this.emitError(socket, error)
     }
   }
 } 
