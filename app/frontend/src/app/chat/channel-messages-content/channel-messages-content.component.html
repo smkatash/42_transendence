@@ -19,7 +19,6 @@
   <div *ngFor="let message of incomingMessages; let i = index">
     <app-message [msg]="message"
                  [sameSender]="true ? i > 0 && incomingMessages[i - 1].user === message.user : false">
-      {{ scrollToBottom() }}
     </app-message>
   </div>
 </div>

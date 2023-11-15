@@ -61,11 +61,6 @@ export class ChatComponent implements OnInit {
     this.passwordInputPopup = false
   }
 
-  createDm() {
-    this.passwordInputPopup = false
-    this.channelCreationPopup = false
-  }
-
   selectTab(tab: string) {
     if (tab === 'my-chats') {
       this.selectedTab= 'my-chats'

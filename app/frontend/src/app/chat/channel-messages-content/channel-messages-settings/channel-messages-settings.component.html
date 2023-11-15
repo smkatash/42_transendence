@@ -8,9 +8,8 @@
       <button class="change-btn">Change</button>
     </div>
 
-    <!-- <div class="invite-to-channel" *ngIf="channel?.private && channel?.owner?.id === currentUser?.id"> -->
-      <label for="user-search" *ngIf="channel?.private">Search for user to invite:</label>
-      <div class="invite-to-channel" *ngIf="channel?.private">
+      <label for="user-search" *ngIf="channel?.type !== 'private'">Search for user to invite:</label>
+      <div class="invite-to-channel" *ngIf="channel?.type !== 'private'">
         <input type="text" id="user-search" [formControl]="privateUserSearch" required pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$">
         <div class=name *ngFor="let user of searchedUsers">
           <span class="user-dropdown" (click)="sendInviteToChannel(user.id)">
@@ -28,7 +27,7 @@
       </div>
     </div>
     <div class="footer">
-      <button class="exit" (click)="exitChannel()">Exit channel</button>
+      <button class="exit" (click)="exitChannel()" *ngIf="channel?.type !== 'direct'" >Exit channel</button>
       <button class="close" (click)="toggle()">Close</button>
     </div>
   </div>

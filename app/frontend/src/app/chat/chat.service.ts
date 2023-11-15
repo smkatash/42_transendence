@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Channel, ChannelUsers, CreateChannelInfo, JoinChannelInfo, Message, User } from '../entities.interface';
 import { ChatSocket } from '../app.module';
-import { ACCEPT_PRIVATE_INVITE, ADD_ADMIN, BAN, BLOCK, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DIRECT, ERROR, JOIN, KICK, LEAVE, MESSAGE, MUTE, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, UNMUTE, USER_CHANNELS } from './subscriptions-events-constants'
+import { ACCEPT_PRIVATE_INVITE, ADD_ADMIN, BAN, BLOCK, BLOCKED_USERS, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DIRECT, ERROR, JOIN, KICK, LEAVE, MESSAGE, MUTE, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, UNMUTE, USER_CHANNELS } from './subscriptions-events-constants'
 import { HOST_IP } from '../Constants';
 
 @Injectable({
@@ -71,6 +71,10 @@ export class ChatService {
   // Communication problem. inviteId is actually either the invite to private channel or a game mode
   sendDM(userID: string, message: string, inviteType?: string, inviteId?: string | number) {
     this.socket.emit(DIRECT, { uId: userID, text: message, inviteType: inviteType, inviteId: inviteId })
+  }
+
+  requestBlockedUsers() {
+    this.socket.emit(BLOCKED_USERS)
   }
 
   manageUserModeration(action: string, userID: string, channelID: number) {
@@ -141,5 +145,9 @@ export class ChatService {
 
   getIncomingMessages(): Observable<Message> {
     return this.socket.fromEvent<Message>(MESSAGE)
+  }
+
+  getBlockedUsers(): Observable<User[]> {
+    return this.socket.fromEvent<User[]>(BLOCKED_USERS)
   }
 }

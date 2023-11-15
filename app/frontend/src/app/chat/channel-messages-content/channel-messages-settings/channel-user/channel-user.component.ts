@@ -34,9 +34,18 @@ export class ChannelUserComponent {
   @Input() user?: User;
   @Input() currentUser?: User
   @Input() channel?: Channel
+
+  currentUserBlockedList: User[] = []
+
   isDropdownSelected: boolean = false;
 
   inviteGameMode: number = 1
+
+  ngOnInit(): void {
+    this.chatService.requestBlockedUsers()
+    this.chatService.getBlockedUsers()
+      .subscribe(blocked => this.currentUserBlockedList = blocked)
+  }
 
   toggleDropdown(): void {
     this.isDropdownSelected = !this.isDropdownSelected;
@@ -63,6 +72,10 @@ export class ChannelUserComponent {
 
   currentIsAdmin(): boolean {
     return this.channel?.admins?.some(admin => admin.id === this.currentUser?.id) || false
+  }
+
+  userIsBlocked(): boolean {
+    return this.currentUserBlockedList.some(blockedUser => blockedUser.id === this.user?.id) || false
   }
 
   sendDM() {
