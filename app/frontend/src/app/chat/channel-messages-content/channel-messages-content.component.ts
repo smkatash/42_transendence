@@ -1,7 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { ChatService } from '../chat.service';
-import { Channel, Message, User } from 'src/app/entities.interface';
-import { ProfileService } from 'src/app/profile/profile.service';
+import { Channel, Message } from 'src/app/entities.interface';
 
 @Component({
   selector: 'app-channel-messages-content',
@@ -32,6 +31,7 @@ export class ChannelMessagesContentComponent implements OnInit {
       .subscribe(message => {
         if (message.channel.id === this.channel?.id){
           this.incomingMessages.push(message)
+          this.scrollToBottom()
         }
       })
   }
@@ -52,7 +52,6 @@ export class ChannelMessagesContentComponent implements OnInit {
 
     this.chatService.sendMessage(this.channel?.id, this.messageToSend)
 
-    this.scrollToBottom()
     this.messageToSend = ''
   }
 

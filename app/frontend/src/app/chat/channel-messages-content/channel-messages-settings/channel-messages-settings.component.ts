@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ChatService } from '../../chat.service';
 import { Channel, User } from 'src/app/entities.interface';
-import { Observable, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs';
 import { ProfileService } from 'src/app/profile/profile.service';
 import { FormControl } from '@angular/forms';
 import { CHANNEL_INVITE } from '../../subscriptions-events-constants';
@@ -64,14 +64,10 @@ export class ChannelMessagesSettingsComponent implements OnChanges {
       switchMap(
         (username: string) => this.chatService.findUser(username)
         .pipe(
-          tap((users: User[]) =>{
-            this.searchedUsers = users
-            console.log(users)
-          })
+          tap((users: User[]) => this.searchedUsers = users)
         )
       )
     ).subscribe();
-
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -90,6 +86,8 @@ export class ChannelMessagesSettingsComponent implements OnChanges {
   }
 
   sendInviteToChannel(userID: string) {
+    this.searchedUsers = []
+    this.privateUserSearch.reset()
     this.chatService.sendDM(userID, `Hey, I'm inviting you to a super cool secret channel called ${this.channel?.name}`, CHANNEL_INVITE, this.channel?.id)
   }
 

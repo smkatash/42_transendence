@@ -15,7 +15,7 @@
       <label for="channel-name">Choose a channel name:</label>
       <input type="text" id="channel-name"  #channelname="ngModel" [class.is-invalid]="channelname.invalid" [(ngModel)]="channelName" required minlength="2" maxlength="20" pattern="[^\s]*">
       <label for="channel-password">Choose a password for your channel:</label>
-      <input type="password" id="channel-password" #channelpassword="ngModel" [class.is-invalid]="channelpassword.invalid" required minlength="8" maxlength="20" pattern="[^\s]*"[(ngModel)]="channelPassword">
+      <input type="password" id="channel-password" #channelpassword="ngModel" [class.is-invalid]="channelpassword.invalid" required pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" [(ngModel)]="channelPassword">
       <button class="close" (click)="toggle()">Close</button>
       <button class="change-btn" [disabled]="channelname.invalid && channelpassword.invalid" (click)="createChannel()" [class.btn-invalid]="channelname.invalid || channelpassword.invalid">Create</button>
     </div>
@@ -28,6 +28,27 @@
       <button class="close" (click)="toggle()">Close</button>
       <button class="change-btn" [disabled]="channelname.invalid" (click)="createChannel()" [class.btn-invalid]="channelname.invalid">Create</button>
     </div>
+
+    <div *ngIf="channelType === 'direct'">
+      <h1 class="title">Le Message</h1>
+      <p>This will create a direct channel between you and the user you send the message to. This type of channel is not visible for the public in the list of channels. </p>
+      <label for="user-search">Search for user to message:</label>
+      <input class="user-search" value="{{ selectedUser?.username }}" type="text" ng-model="inputText" placeholder="e.g. ktashbae" class="user-search-input" type="text" id="user-search" [formControl]="userSearch">
+
+      <div class="search-result" *ngFor="let user of searchedUsers">
+        <span class="user" (click)="selectUser(user)">
+          {{ user.username }}
+        </span>
+      </div>
+
+      <div class="message-box">
+        <textarea [(ngModel)]="messageToSend" (keyup.enter)="sendMessage()" type="text" placeholder="Message" autofocus></textarea>
+      </div>
+
+      <button class="change-btn" (click)="sendMessage()">Send</button>
+      <button class="close" (click)="toggle()">Close</button>
+    </div>
+
   </div>
 </div>
 

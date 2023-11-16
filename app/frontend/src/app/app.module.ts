@@ -15,21 +15,21 @@ import { HOST_IP } from './Constants';
 @Injectable()
 export class UserSocket extends Socket {
   constructor() {
-    super({ url: `${HOST_IP}/profile`, options: { withCredentials: true } })
+    super({ url: `${HOST_IP}/api/profile`, options: { withCredentials: true } })
   }
 }
 
 @Injectable()
 export class GameSocket extends Socket {
   constructor() {
-    super({ url: `${HOST_IP}/game`, options: { withCredentials: true } })
+    super({ url: `${HOST_IP}/api/game`, options: { withCredentials: true } })
   }
 }
 
 @Injectable()
 export class ChatSocket extends Socket {
   constructor() {
-    super({ url: `${HOST_IP}/chat`, options: { withCredentials: true } })
+    super({ url: `${HOST_IP}/api/chat`, options: { withCredentials: true } })
   }
 }
 

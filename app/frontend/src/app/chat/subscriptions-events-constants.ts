@@ -96,7 +96,6 @@ export const DIRECT = 'privMsg'
  *  - broadcasts the message: MESSAGE, Message
  *
  */
-//
 
 export const CHANNEL = 'channel'
 // Doesn't do shit for me
@@ -150,11 +149,17 @@ export const BLOCK = 'block'
 export const UNBLOCK = 'unblock'
 /**
  * expects: uIdDto
- * disables(enables back) communication between users
+ * disables(enables back) communication between 2 users
  * emits:
- *  not defined yet
+ *  not defined yet, || SUCCESS, msg: string
  */
 
+export const INVALIDATE_MESSAGE_CONTENT = 'invalidateMessageContent'
+/**
+ * expects cIdDto => cId: msgId
+ *  msg.content -> *Content no longer available*
+ *  pukes ~~DIRECT~~ channel's messages to sessionUser
+ */
 
 /*
     **  events:
@@ -175,6 +180,8 @@ export const SUCCESS = 'success'
  *  'success', (to be determined)
  */
 
+
+export const BLOCKED_USERS = 'blockedUsers'
 /*
 
 // Backend emits all channels the session user is in
@@ -189,10 +196,6 @@ export const SUCCESS = 'success'
 // Fetch channel messages. Should always be subscribed to. Changes when we emit different getChannelMessages to socket
 'channelMessages', Message[]
 */
-
-/**
- * Invite types to send to backend
- * */
 
 export const USER_STATUS = "user-status"
 
