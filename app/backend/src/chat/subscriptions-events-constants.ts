@@ -180,6 +180,8 @@ export const SUCCESS = 'success'
  *  'success', (to be determined)
  */
  
+
+export const BLOCKED_USERS = 'blockedUsers'
 /*
 
 // Backend emits all channels the session user is in

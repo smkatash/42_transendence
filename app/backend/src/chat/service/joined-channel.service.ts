@@ -31,7 +31,6 @@ export class JoinedChannelService {
     }
 
     async findByChannel(channel: Channel): Promise<JoinedChannel[]>  {
-        console.log(channel);
         return await this.joinedChannelRepo.find({
             relations: [
                 'channel', 'user'
