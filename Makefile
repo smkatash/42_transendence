@@ -1,6 +1,7 @@
 NAME = le_pong
 
 $(NAME):
+	./docker/replace_ng_env.sh
 	docker compose up --build
 
 all: $(NAME)

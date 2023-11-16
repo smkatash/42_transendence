@@ -78,15 +78,17 @@ input {
 }
 
 .user-search {
-  margin-bottom: 0%;
+  margin-bottom: 20% !important;
 }
 
 .search-result {
   margin-left: 10%;
   margin-right: 10%;
+  margin-top: 0%  ;
 }
 
 .user {
+  margin-top: 0%;
   background-color: #E8DAB2;
   box-sizing: border-box;
   border: .1dvw solid #2f424a;

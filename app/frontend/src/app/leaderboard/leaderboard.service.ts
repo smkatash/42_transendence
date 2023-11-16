@@ -8,13 +8,13 @@ import { HOST_IP } from '../Constants';
 	providedIn: 'root'
   })
   export class LeaderboardService {
-  
+
 	constructor(private http: HttpClient) { }
-  
+
 	domain: string = HOST_IP
-  
+
 	getAllPlayersStats(): Observable<Player[]> {
-	  const url = `${this.domain}/ranking/board`
+	  const url = `${this.domain}/api/ranking/board`
 	  return this.http.get<Player[]>(url, { withCredentials: true })
 	}
 }

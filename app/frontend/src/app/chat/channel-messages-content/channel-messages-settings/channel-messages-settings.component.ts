@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { ChatService } from '../../chat.service';
 import { Channel, User } from 'src/app/entities.interface';
-import { Observable, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs';
 import { ProfileService } from 'src/app/profile/profile.service';
 import { FormControl } from '@angular/forms';
 import { CHANNEL_INVITE } from '../../subscriptions-events-constants';

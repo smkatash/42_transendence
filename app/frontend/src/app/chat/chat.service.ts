@@ -18,7 +18,7 @@ export class ChatService {
   domain: string = HOST_IP
 
   findUser(username: string): Observable<User[]>  {
-    return this.http.get<User[]>(`${this.domain}/user/find-by-username?username=${username}`, { withCredentials: true })
+    return this.http.get<User[]>(`${this.domain}/api/user/find-by-username?username=${username}`, { withCredentials: true })
   }
 
 
