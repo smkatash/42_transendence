@@ -957,7 +957,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         throw new BadRequestException('You\'re blocking the user')
       }
       if (info.inviteType) {
-        if (info.hasOwnProperty('inviteId')) {
+        if (!info.hasOwnProperty('inviteId')) {
             throw new BadRequestException('Missing invite info')
         }
         if (info.inviteType  === 'channel')  {

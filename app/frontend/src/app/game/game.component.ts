@@ -235,6 +235,7 @@ export class GameComponent implements AfterViewInit, OnInit {
         ;
       } else {
         this.isInQueue = false;
+        this.invited = false;
         this.isGameOn = true;
       }
     })
@@ -271,10 +272,27 @@ export class GameComponent implements AfterViewInit, OnInit {
 
   ngOnInit() {
     this.initViewValue()
+    this.gameService.socket.connect()
 
     this.invited = ('true' === this.route.snapshot.paramMap.get('invite'))
-    this.accepted = ('true' === this.route.snapshot.paramMap.get('accepte'))
+    this.accepted = ('true' === this.route.snapshot.paramMap.get('accept'))
 
+    if( this.invited === true){
+      this.isInQueue = true;
+      this.isWaitingInQueue();
+      this.settledSide = false;
+      if(this.gameService.listenersOn === false){
+        this.gameService.listenersInit();
+      }
+    }
+    if(this.accepted === true){
+      this.isInQueue = false;
+      this.settledSide = false;
+      this.isGameOn=true;
+      if(this.gameService.listenersOn === false){
+        this.gameService.listenersInit();
+      }
+    }
     this.gameService.getGameStatus().subscribe(data => {
       this.status = data;
       if (this.status == GameState.READY)
@@ -307,11 +325,15 @@ export class GameComponent implements AfterViewInit, OnInit {
       if(this.gameInfo?.match?.winner.id === this.gameService.userInfo.id){
         this.statusStr = "WIN";
         this.isGameOn = false;
+        this.accepted = false;
+        this.invited = false;
         console.log("WINNER " + this.gameInfo.match.winner.id + " " + this.gameService.userInfo.id);
         return;
       } else {
         this.statusStr = "LOS";
         this.isGameOn = false;
+        this.accepted = false;
+        this.invited = false;
         console.log("LOSER " + this.gameInfo?.match?.loser.id + " " + this.gameService.userInfo.id);
         return;
       }
@@ -322,11 +344,15 @@ export class GameComponent implements AfterViewInit, OnInit {
       if(this.gameInfo?.match?.winner.id === this.gameService.userInfo.id){
         this.statusStr = "WIN";
         this.isGameOn = false;
+        this.accepted = false;
+        this.invited = false;
         console.log("WINNER " + this.gameInfo.match.winner.id + " " + this.gameService.userInfo.id);
         return;
       } else {
         this.statusStr = "LOS";
         this.isGameOn = false;
+        this.accepted = false;
+        this.invited = false;
         console.log("LOSER " + this.gameInfo?.match?.loser.id + " " + this.gameService.userInfo.id);
         return;
       }
@@ -338,6 +364,13 @@ export class GameComponent implements AfterViewInit, OnInit {
       //   return
       // }
   }
+  ngOnDestroy() {
+    this.gameService.socket.disconnect();
+    this.invited = false;
+    this.accepted = false;
+    this.gameService.listenersOn = false;
+  }
+
 
   setGame(event: number) {
     this.settledSide = false;
