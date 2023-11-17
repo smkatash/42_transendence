@@ -726,7 +726,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     @MessageBody() info: UpdateChannelDto)   {
 
     const user = socket.data.user;
-    Logger.debug(`at AD_ADMIN`);
+    Logger.debug(`at ADD_ADMIN`);
     if (!user) {
       return this.noAccess(socket);
     } 
@@ -750,7 +750,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       channel.admins.push(u);
       await this.channelService.saveChannel(channel);
       this.server.to(socket.id).emit(CHANNEL, this.channelToFe(channel));
-      this.success(socket, `${u.username} set as admin`);
+    //   this.success(socket, `${u.username} set as admin`);
     } catch (error) {
         return this.emitError(socket, error)
     }
@@ -1137,6 +1137,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
      if (channel.admins)  {
       chanToFe.admins = channel.admins
      }
+	 console.log(chanToFe)
      return chanToFe;
   }
 
