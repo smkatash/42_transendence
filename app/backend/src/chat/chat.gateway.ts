@@ -985,17 +985,26 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           throw new BadRequestException('Wtf, go away')
       }
     }
-    const exists = await this.channelService.getPrivate(user, u);
-    let room: Channel;
-    if (!exists.length) {
+    // const exists = await this.channelService.getPrivate(user, u);
+    // let room: Channel;
+    // if (!exists.length) {
+    //   room =  await this.channelService.createPrivate(user, u);
+    //   await this.joinedChannelService.create(user, socket.id, room);
+    //   const chatUser = await this.chatUserService.findByUser(u);
+    //   if (chatUser) {
+    //     await this.joinedChannelService.create(u, chatUser.socketId, room);
+    //   }
+    // } else  {
+    //   room = exists[0];
+    // }
+	let room = await this.channelService.getDirectChannel(user, u);
+    if (!room) {
       room =  await this.channelService.createPrivate(user, u);
       await this.joinedChannelService.create(user, socket.id, room);
       const chatUser = await this.chatUserService.findByUser(u);
       if (chatUser) {
         await this.joinedChannelService.create(u, chatUser.socketId, room);
       }
-    } else  {
-      room = exists[0];
     }
       //emit user channels to both
     this.onGetUsersChannels(socket);
