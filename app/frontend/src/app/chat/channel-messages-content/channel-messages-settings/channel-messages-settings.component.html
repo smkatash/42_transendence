@@ -8,8 +8,8 @@
       <button class="change-btn">Change</button>
     </div>
 
-      <label for="user-search" *ngIf="channel?.type !== 'private'">Search for user to invite:</label>
-      <div class="invite-to-channel" *ngIf="channel?.type !== 'private'">
+      <label for="user-search" *ngIf="channel?.type === 'private'">Search for user to invite:</label>
+      <div class="invite-to-channel" *ngIf="channel?.type === 'private'">
         <input type="text" id="user-search" [formControl]="privateUserSearch" required pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$">
         <div class=name *ngFor="let user of searchedUsers">
           <span class="user-dropdown" (click)="sendInviteToChannel(user.id)">

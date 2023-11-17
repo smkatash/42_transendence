@@ -20,7 +20,7 @@ export class GameService {
   height = 1000;
   width = 500;
 
-  constructor(private socket: GameSocket) {}
+  constructor(public socket: GameSocket) {}
 
   public test : number[] = [0,0];
 
@@ -91,6 +91,7 @@ export class GameService {
     const toEmit = this.createPaddleDto(movementValue)
     this.socket.emit('key', toEmit);
   }
+
   listenersOn = false;
   listenersInit(){
     this.listenersOn = true;
@@ -113,14 +114,18 @@ export class GameService {
     this.socket.on ('start', (msg: any)  => {
       if (msg === 'Waiting players to join')
       { this.inTheQueue.next(true);
-        console.log("einfach");
+        console.log("i am waiting for the opponent to join.");
+        console.log(this.socket.ioSocket.id)
       } else {
+        console.log("you are not emitting in the start when the invited join")
+        console.log(this.socket.ioSocket.id)
         this.inTheQueue.next(false);
         this.matchInfo = msg;
-		if (this.matchInfo.id) {
-			const matchID = this.createMatchInfo(this.matchInfo.id, this.difficulty)
-			this.socket.emit('join', matchID)
-		}}
+        console.log(this.matchInfo)
+		    if (this.matchInfo.id) {
+			    const matchID = this.createMatchInfo(this.matchInfo.id, this.difficulty)
+			    this.socket.emit('join', matchID)}
+      }
 		})
 	}
 

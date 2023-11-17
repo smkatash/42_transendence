@@ -726,7 +726,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     @MessageBody() info: UpdateChannelDto)   {
 
     const user = socket.data.user;
-    Logger.debug(`at AD_ADMIN`);
+    Logger.debug(`at ADD_ADMIN`);
     if (!user) {
       return this.noAccess(socket);
     } 
@@ -750,7 +750,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       channel.admins.push(u);
       await this.channelService.saveChannel(channel);
       this.server.to(socket.id).emit(CHANNEL, this.channelToFe(channel));
-      this.success(socket, `${u.username} set as admin`);
+    //   this.success(socket, `${u.username} set as admin`);
     } catch (error) {
         return this.emitError(socket, error)
     }
@@ -985,17 +985,26 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           throw new BadRequestException('Wtf, go away')
       }
     }
-    const exists = await this.channelService.getPrivate(user, u);
-    let room: Channel;
-    if (!exists.length) {
+    // const exists = await this.channelService.getPrivate(user, u);
+    // let room: Channel;
+    // if (!exists.length) {
+    //   room =  await this.channelService.createPrivate(user, u);
+    //   await this.joinedChannelService.create(user, socket.id, room);
+    //   const chatUser = await this.chatUserService.findByUser(u);
+    //   if (chatUser) {
+    //     await this.joinedChannelService.create(u, chatUser.socketId, room);
+    //   }
+    // } else  {
+    //   room = exists[0];
+    // }
+	let room = await this.channelService.getDirectChannel(user, u);
+    if (!room) {
       room =  await this.channelService.createPrivate(user, u);
       await this.joinedChannelService.create(user, socket.id, room);
       const chatUser = await this.chatUserService.findByUser(u);
       if (chatUser) {
         await this.joinedChannelService.create(u, chatUser.socketId, room);
       }
-    } else  {
-      room = exists[0];
     }
       //emit user channels to both
     this.onGetUsersChannels(socket);
@@ -1128,6 +1137,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
      if (channel.admins)  {
       chanToFe.admins = channel.admins
      }
+	 console.log(chanToFe)
      return chanToFe;
   }
 

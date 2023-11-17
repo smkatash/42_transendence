@@ -176,7 +176,10 @@ export class ChannelService {
         return await this.channelRepository.save(room);
     }
 
-    async getPrivate(u1: User, u2: User): Promise<Channel[]>  {
+    
+	/** */ 
+	/*
+	async getPrivate(u1: User, u2: User): Promise<Channel[]>  {
         const userIds = [u1.id, u2.id].sort();
         const room = await this.channelRepository
            .createQueryBuilder('channel')
@@ -186,8 +189,29 @@ export class ChannelService {
            .getMany()
             // .getOne();
         return room;
-
     }
+	*/
+	async getDirectChannel(u1: User, u2: User): Promise<Channel>	{
+		const directs = (await this.channelRepository.find({
+			where:	{
+				type: 'direct'
+			},
+			relations: [
+				'users'
+			]
+			}))
+			.filter((c) =>
+				c.users.some((user) => user.id === u1.id)
+				&&
+				c.users.some((user) => user.id === u2.id)
+			)
+		if (directs.length)	{
+			return directs[0];
+		}	else {
+			return null;
+		}
+
+	}
     async purge()   {
         return await this.channelRepository
             .createQueryBuilder()
