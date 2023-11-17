@@ -1,6 +1,12 @@
 <body>
     <app-navbar></app-navbar>
     <div class="board-interface">
+		<div class="header-row">
+			<div class="column-header">Player</div>
+			<div class="column-header">Title</div>
+			<div class="column-header">Score</div>
+		</div>
+
 		<div class="players-container" *ngIf="players.length"></div>
         <div *ngFor="let player of players">
             <app-player [player]="player"></app-player>
