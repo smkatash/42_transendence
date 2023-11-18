@@ -566,14 +566,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       }
       channel.users = channel.users.filter((u) => u.id !== info.uId)
       u.channels = u.channels.filter((c) => c.id !== channel.id);
-      /*
-      ** all this bs solved with cascade..
       const jCs = u.joinedChannels;
       const jUs = channel.joinedUsers;
-      console.log(jCs, jUs)
+      // console.log(jCs, jUs)
       channel.joinedUsers = channel.joinedUsers.filter((jU) => !(jCs.some((jC) => jC.id === jU.id)))
       u.joinedChannels = u.joinedChannels.filter((jC) => !(jUs.some((jU) => jU.id === jC.id)))
-      */
       await this.joinedChannelService.deleteByUserChannel(u, channel);
       await this.userService.saveUser(u);
       await this.channelService.saveChannel(channel);
@@ -749,7 +746,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       }
       channel.admins.push(u);
       await this.channelService.saveChannel(channel);
-      this.server.to(socket.id).emit(CHANNEL, this.channelToFe(channel));
+      const usersWithChatRelations = await this.usersWithChatRelations(channel.users)
+      this.emitToChatUsers(CHANNEL_USERS, channel.users, {
+        cId: channel.id,
+        users: usersWithChatRelations
+      });
+      // this.server.to(socket.id).emit(CHANNEL, this.channelToFe(channel));
     //   this.success(socket, `${u.username} set as admin`);
     } catch (error) {
         return this.emitError(socket, error)
@@ -785,7 +787,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         u.adminAt = u.adminAt.filter((c) => c.id !== channel.id);
         await this.userService.saveUser(u);
         await this.channelService.saveChannel(channel);
-        this.server.to(socket.id).emit(CHANNEL, this.channelToFe(channel));
+        const usersWithChatRelations = await this.usersWithChatRelations(channel.users)
+        this.emitToChatUsers(CHANNEL_USERS, channel.users, {
+          cId: channel.id,
+          users: usersWithChatRelations
+        });
+        // this.server.to(socket.id).emit(CHANNEL, this.channelToFe(channel));
         // this.success(socket, `${u.username} removed from adminlist`)
       } else  {
         throw new BadRequestException('User is not an admin')
@@ -1137,7 +1144,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
      if (channel.admins)  {
       chanToFe.admins = channel.admins
      }
-	 console.log(chanToFe)
+	//  console.log(chanToFe)
      return chanToFe;
   }
 
