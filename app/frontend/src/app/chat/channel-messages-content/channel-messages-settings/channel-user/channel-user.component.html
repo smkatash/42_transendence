@@ -3,7 +3,7 @@
   <div class="name">
     {{ user?.username }}
     <div class="owner" *ngIf="userIsOwner()">owner</div>
-    <div class="admin" *ngIf="userIsAdmin()">admin</div>
+    <div class="admin" *ngIf="userIsAdmin() && !userIsOwner()">admin</div>
   </div>
   <div class="dropdown" *ngIf="user?.id !== currentUser?.id">
     <img class="dd-button" [class.dd-button-up]="isDropdownSelected" (click)="toggleDropdown()" src="data:image/svg+xml,%3Csvg width='1024' height='1024' xmlns='http://www.w3.org/2000/svg' xmlns:svg='http://www.w3.org/2000/svg' class='svg-icon'%3E%3Cg class='layer'%3E%3Ctitle%3ELayer 1%3C/title%3E%3Cpath d='m952.16851,329.60386l-61.40554,-60.77825c-8.91402,-8.84034 -23.15434,-9.06138 -31.77468,-0.51779l-345.12741,328.74223l-352.08794,-342.56915c-8.72982,-8.65512 -23.12058,-8.43409 -32.10828,0.48198l-61.99803,61.36767c-9.02556,8.95189 -9.24864,23.1564 -0.51779,31.81152l430.9869,419.33451c8.69196,8.65615 23.08374,8.43306 32.10827,-0.51882l61.99701,-61.36767c1.4183,-1.405 2.58999,-2.95224 3.57236,-4.5793l356.83813,-339.92901c8.65512,-8.54256 8.43307,-22.67442 -0.483,-31.47792z' fill='%234f6d7a' id='svg_1'/%3E%3C/g%3E%3C/svg%3E">

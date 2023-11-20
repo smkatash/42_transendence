@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Input } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { HOST_IP } from 'src/app/Constants';
 import { ChatService } from 'src/app/chat/chat.service';
@@ -46,6 +46,12 @@ export class ChannelUserComponent {
     this.chatService.getBlockedUsers()
       .subscribe(blocked => this.currentUserBlockedList = blocked)
   }
+
+  // ngOnChanges(changes: SimpleChanges): void {
+  //   if(changes['user']) {
+  //     console.log(changes['user'].currentValue)
+  //   }
+  // }
 
   toggleDropdown(): void {
     this.isDropdownSelected = !this.isDropdownSelected;
