@@ -123,6 +123,7 @@ async handleDisconnect(@ConnectedSocket() client: Socket, ) {
 		}
 	}
 
+	// TODO Create rejection
 	@UseGuards(WsAuthGuard)
 	@SubscribeMessage(ACCEPT_MATCH)
 	async handleAccept(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() acceptDto: AcceptDto) {

@@ -1,38 +1,37 @@
 <body>
-  <app-navbar></app-navbar>
-  <app-game-menu [statusValue]="statusStr"  (newGameEvent)="setGame($event)" *ngIf="!isInQueue && !isGameOn && !invited"></app-game-menu>
-  <div class ="waitingQueue" *ngIf="isInQueue && !isGameOn || invited && !isGameOn && !accepted">
-      <!-- <div class="loadingSpinner"></div> -->
-      <div class="coffe-machine">
-          <div class="coffee-header">
-            <div class="coffee-header__buttons coffee-header__button-one"></div>
-            <div class="coffee-header__buttons coffee-header__button-two"></div>
-            <div class="coffee-header__display"></div>
-            <div class="coffee-header__details"></div>
-          </div>
-          <div class="coffee-medium">
-            <div class="coffe-medium__exit"></div>
-            <div class="coffee-medium__arm"></div>
-            <div class="coffee-medium__liquid"></div>
-            <div class="coffee-medium__smoke coffee-medium__smoke-one"></div>
-            <div class="coffee-medium__smoke coffee-medium__smoke-two"></div>
-            <div class="coffee-medium__smoke coffee-medium__smoke-three"></div>
-            <div class="coffee-medium__smoke coffee-medium__smoke-for"></div>
-            <div class="coffee-medium__cup"></div>
-          </div>
-          <div class="coffee-footer"></div>
-      </div>
-  </div>
-  <div class = "game_board" *ngIf="isGameOn || !invited && accepted">
-      <h1>{{yourScore | number:"1.0-0"}}</h1>
-      <svg  class="table" width="50%" height="50%" fill="#4F6D7A">
-          <rect id="board" width="100%" height="100%" viewBox="0 0 1 2"/>
-          <line id="net" x1="50%" y1="0px" x2="50%" y2="100%" />
-          <rect class="paddle" [attr.x]="paddleLeftX + 'px'" [attr.y]="paddleLeftY + 'px'" [attr.width]="paddleWidth + '%'" [attr.height]="paddleHeight + '%'"/>
-          <rect class="paddle" [attr.x]="paddleRightX + 'px'" [attr.y]="paddleRightY + 'px'" [attr.width]="paddleWidth + '%'" [attr.height]="paddleHeight + '%'"/>
-          <circle id="ball" [attr.cx]="ballX + 'px'" [attr.cy]="ballY + 'px'" [attr.r]="ballRadius + '%'" stroke-width="2" />
-      </svg>
-      <h1>{{opponentScore | number:"1.0-0"}}</h1>
-  </div>
-  <!-- <app-game-board *ngIf="!isGameOn"></app-game-board> -->
+    <app-navbar></app-navbar>
+    <app-game-menu [statusValue]="statusStr"  (newGameEvent)="setGame($event)" *ngIf="!gameQueue && !isGameOn && !invited"></app-game-menu>
+    <div class ="waitingQueue" *ngIf="gameQueue && !isGameOn || invited && !isGameOn && !accepted">
+        <div class="coffe-machine">
+            <div class="coffee-header">
+              <div class="coffee-header__buttons coffee-header__button-one"></div>
+              <div class="coffee-header__buttons coffee-header__button-two"></div>
+              <div class="coffee-header__display"></div>
+              <div class="coffee-header__details"></div>
+            </div>
+            <div class="coffee-medium">
+              <div class="coffe-medium__exit"></div>
+              <div class="coffee-medium__arm"></div>
+              <div class="coffee-medium__liquid"></div>
+              <div class="coffee-medium__smoke coffee-medium__smoke-one"></div>
+              <div class="coffee-medium__smoke coffee-medium__smoke-two"></div>
+              <div class="coffee-medium__smoke coffee-medium__smoke-three"></div>
+              <div class="coffee-medium__smoke coffee-medium__smoke-for"></div>
+              <div class="coffee-medium__cup"></div>
+            </div>
+            <div class="coffee-footer"></div>
+        </div>
+    </div>
+    <div class = "game_board" *ngIf="isGameOn || !invited && accepted">
+        <h1>{{yourScore | number:"1.0-0"}}</h1>
+        <svg  class="table" width="50%" height="50%" fill="#4F6D7A">
+            <rect id="board" width="100%" height="100%" viewBox="0 0 1 2"/>
+            <line id="net" x1="50%" y1="0px" x2="50%" y2="100%" />
+            <rect class="paddle" [attr.x]="paddleLeftX + 'px'" [attr.y]="paddleLeftY + 'px'" [attr.width]="paddleWidth + '%'" [attr.height]="paddleHeight + '%'"/>
+            <rect class="paddle" [attr.x]="paddleRightX + 'px'" [attr.y]="paddleRightY + 'px'" [attr.width]="paddleWidth + '%'" [attr.height]="paddleHeight + '%'"/>
+            <circle id="ball" [attr.cx]="ballX + 'px'" [attr.cy]="ballY + 'px'" [attr.r]="ballRadius + '%'" stroke-width="2" />
+        </svg>
+        <h1>{{opponentScore | number:"1.0-0"}}</h1>
+    </div>
+    <!-- <app-game-board *ngIf="!isGameOn"></app-game-board> -->
 </body>

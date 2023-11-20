@@ -2,58 +2,31 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { User , Game, GamePlayer, SocketResponse, GameMode, GameState, JoinMatchDto, PositionDto, GameModeDto } from '../entities.interface';
 import { GameSocket } from '../app.module';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { Socket } from 'ngx-socket-io';
 import { ACCEPT_MATCH, INVITE_TO_MATCH } from '../chat/subscriptions-events-constants';
-
-async function waitOneSecond() {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  // console.log("...");
-}
-
-var matchID : string = "";
-var gameInfo! : Game;
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameService {
 
-  height = 1000;
-  width = 500;
+  constructor(public socket: GameSocket) {
+  }
 
-  constructor(public socket: GameSocket) {}
-
-  public test : number[] = [0,0];
-
-  // GAME INFO: Ball position, paddle, id, bla bla
   private gameInfoSubject: Subject <Game> = new Subject<Game>();
   private gameStatus = new BehaviorSubject<GameState>(0);
-  // QUEUE, player waiting in that.
-  private inTheQueue : Subject<boolean> = new Subject<boolean>();
-  public keyPress: EventEmitter<string> = new EventEmitter();
-  public started = false;
-  public userInfo : User;
+  private gameQueue : Subject<boolean> = new Subject<boolean>();
   private difficulty = 0;
   private matchInfo : SocketResponse;
+  public  userInfo : User;
+  public  gameInfo! : Game;
 
-  // private testSubject = new Subject<number[]>();
-  paddlePosition: string = '0';
 
-  updateSize(w: number, h: number) {
-    this.width = w;
-    this.height = h;
-  }
-
-  returnValue(){
-    // return gameInfo;
-    return this.test
-  }
-
-  // observable-----------------------------------------
   getGameObservable() {
     return this.gameInfoSubject.asObservable();
   }
   getStatusQueue(){
-    return this.inTheQueue.asObservable();
+    return this.gameQueue.asObservable();
   }
 
   getGameStatus() {
@@ -63,7 +36,6 @@ export class GameService {
   setGameStatus(stat: number) {
     this.gameStatus.next(stat);
   }
-  // utils----------------------------------------------
 
   createMatchInfo(ID:string, level:number){
     const matchInfo : JoinMatchDto = {
@@ -72,82 +44,99 @@ export class GameService {
     }
     return matchInfo;
   }
-  // emit paddle
+
   createPaddleDto(value: string){
     const retValue: PositionDto = {
       step: value
     }
     return retValue;
   }
-  // play
+
   createGameDto(level: number){
     const gameMode: GameModeDto = {
       mode: level
     };
     return gameMode
   }
+  
+  handlerGameInfo(msg: any) {
+    console.log("Received raw data from backend:");
+    console.log(JSON.stringify(msg));
+  
+    this.gameInfo = msg;
+  
+    console.log("Updated gameInfo:");
+    console.log(JSON.stringify(this.gameInfo));
+  
+    console.log("Receiving game info:" + this.gameInfo.status);
+  
+    this.gameInfoSubject.next(this.gameInfo);
+    this.gameStatus.next(this.gameInfo.status!);
+  }
 
-  padlePositionEmitter(movementValue: string) {
+  handlerGameStart( msg :any )  { 
+    if (msg === 'Waiting players to join') { 
+      console.log("Player in queue... Waiting for players to join");
+      this.gameQueue.next(true);
+    } else {
+      this.matchInfo = msg;
+      this.gameQueue.next(false);
+      console.log("joining the match: " + this.matchInfo.id);
+      this.emitJoinMatch();
+    }
+  }
+
+  emitPaddlePosition(movementValue: string) {
     const toEmit = this.createPaddleDto(movementValue)
     this.socket.emit('key', toEmit);
   }
 
-  listenersOn = false;
+  emitJoinMatch() {
+    const matchID = this.createMatchInfo(this.matchInfo.id, this.difficulty)
+    this.socket.emit('join', matchID)
+  }
+
+  emitStart(difficulty: number){
+		const gameMode = this.createGameDto(difficulty);
+		this.socket.emit('start', gameMode);
+	}
+
+  public listenersOn : boolean  = false;
   listenersInit(){
-    this.listenersOn = true;
-    this.socket.on ('join', (msg: Game) => {
-    })
-    this.socket.on ('game', (msg: any) => {
-      gameInfo = msg;
-	  if(!this.userInfo){
-		gameInfo.status = GameState.PAUSE
-	  }
-      if(gameInfo.status === GameState.PAUSE){
-        gameInfo.status = GameState.END;
-      }
-      this.gameInfoSubject.next(gameInfo);
-      this.gameStatus.next(gameInfo.status!);
-    })
-	this.socket.on('error',(msg:any)=>{
-		alert('Internal Server Error');
-	})
-    this.socket.on ('start', (msg: any)  => {
-      if (msg === 'Waiting players to join')
-      { this.inTheQueue.next(true);
-        console.log("i am waiting for the opponent to join.");
-        console.log(this.socket.ioSocket.id)
-      } else {
-        console.log("you are not emitting in the start when the invited join")
-        console.log(this.socket.ioSocket.id)
-        this.inTheQueue.next(false);
-        this.matchInfo = msg;
-        console.log(this.matchInfo)
-		    if (this.matchInfo.id) {
-			    const matchID = this.createMatchInfo(this.matchInfo.id, this.difficulty)
-			    this.socket.emit('join', matchID)}
-      }
-		})
-	}
-
-	queueEmit(){
-		const gameMode = this.createGameDto(this.difficulty);
-		this.socket.emit('start', gameMode);
-	}
-
-	startGameService(level: number): void {
-		this.difficulty = level;
-    if(this.listenersOn === false){
-      this.listenersInit();
+    console.log("listeners on: " + this.listenersOn )
+    if(this.listenersOn === false) {
+      this.listenersOn = true;
+      this.socket.on ('error',(msg:any) => { alert('Internal Server Error') })
+      this.socket.on ('join', (msg: Game) => { console.log(JSON.stringify(msg))})
+      this.socket.on ('game', (msg: any) => { this.handlerGameInfo( msg ) })
+      this.socket.on ('start', (msg: any)  => { this.handlerGameStart(msg) })
+      this.socket.on ('disconnect', () => {  this.handleDisconnection(); });
+      this.socket.on ('connect', () => { console.log("CONNECTION " + this.socket.ioSocket.id) });
     }
-		const gameMode = this.createGameDto(this.difficulty);
-		this.socket.emit('start', gameMode);
+  }
+
+  startGameService(level: number): void {
+		this.difficulty = level;
+    this.emitStart(level)
+    console.log("EMiTTING START + LEVEL");
 	}
 
-	getUser(): void {
-	this.socket.on('user', (user: User) => {
-		this.userInfo = user;
-	})
-	}
+  handleDisconnection(){
+    // this.listenersOn = false;
+    // this.socket.removeAllListeners();
+    console.log("Disconnection.");
+  }
+
+  handleConnection() {
+    this.listenersInit();
+  }
+
+	getUser(): void { 
+    this.socket.on('user', (user: User) => { 
+      this.userInfo = user;
+      console.log("USER: " + user.id );
+    }) 
+  }
 
   inviteToMatch(invitedUser: string, selectedMode: number) {
     this.socket.emit(INVITE_TO_MATCH, { userId: invitedUser, mode: selectedMode })

@@ -10,8 +10,6 @@ export class GameService {
     private hookeyMode: boolean = false;
     private tmpIncrement: number = 0;
 
-    private maxBounceAngle: number = 80;
-    
     constructor() {}
 
     public launchGame(match: Match, mode: GameMode): Game {
@@ -23,6 +21,7 @@ export class GameService {
         const rightPaddle: Paddle = this.launchPaddle(Paddletype.RIGHT)
         const scores: Record<string, number> = {}
         
+        match.status = GameState.INPROGRESS
         match.players.forEach((player) => {
             scores[player.id] = 0
         })
@@ -136,22 +135,6 @@ export class GameService {
         return paddle
     }
 
-    // calculatePaddleBounce(game:Game, paddle:Paddle, ball:Ball) {
-    //     // let relativeIntersect = paddle.position.y + paddle.length/2 - ball.position.y
-    //     let relativeIntersect = Math.abs(ball.position.y - paddle.position.y) / (paddle.length/2)
-    //     // let relativeIntersectNormalized = relativeIntersect / (paddle.length/2);
-    //     let maximumBounceAngle : number;
-    //     let bounceAngle : number;
-    //     if( this.increment === 2){
-    //         maximumBounceAngle = 45;
-    //     } else { maximumBounceAngle = 60;}
-    //         bounceAngle = (relativeIntersect) * maximumBounceAngle ;
-    //     game.ball.velocity.x = ball.velocity.x * Math.cos(bounceAngle);
-    //     game.ball.velocity.y = ball.velocity.y * Math.cos(bounceAngle);
-    //     this.tmpIncrement = 2 + Math.abs((game.ball.velocity.y + game.ball.velocity.y)/2);
-    //     return game;
-    // }
-
     throwBall(game: Game): Game {
         game.ball.position.x += game.ball.velocity.x
         game.ball.position.y += game.ball.velocity.y
@@ -202,65 +185,3 @@ export class GameService {
         return game
     }
 }
-
-// 1. random value -1 and 1 , to identify the start direction
-// 2. random value between 0 and 90, cos and sin
-/* 
-    Degree
-    if (v > 45) {
-        v -=45
-    } else {
-        v = 320 + v
-    }
-
-    convert to radian
-    dx = cos(radian)
-    dy = sin (radian)
-
-
-    position = position.x + x, position.y + y
-    
-    width="1024px" height="768px -> inital
-
-*/
-/* while loop, 
-     x += dx
-     y += dy
-
-    if (x,y >== height) {
-        dy *= -1
-        x = x
-        y = height - 0.5
-    } else if (x,y <== 0) {
-        dy *= -1
-        x = x
-        y = 0 + 0.5
-    }
-
-    if ( x <= 10 ) {
-        if (y > leftPaddle.y - 10 && y < leftPaddle.y + 10) {
-            dx *= - 1
-            x = 10 + 0.5
-            y = y
-        } else {
-            Score! Reset the position/game
-        }
-    } else if (x > width - 10) {
-         if (y > rightPaddle.y - 10 && y < rightPaddle.y + 10) {
-            dx *= - 1
-            x = width - 10 - 0.5
-            y = y
-        } else {
-            Score! Reset the position/game
-        }
-    }
-
-    if (score => MAXSCORE) {
-        STOP
-    }
-
-
-    leftPaddle = y = height / 2, x = 10
-    rightPaddle = y height / 2, x = width - 10
-
-*/

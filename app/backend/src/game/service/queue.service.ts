@@ -15,6 +15,10 @@ export class PlayerQueueService {
 		this.queues.set(GameMode.EASY, [])
 		this.queues.set(GameMode.MEDIUM, [])
 		this.queues.set(GameMode.HARD, [])
+		this.lobby = new Map<GameMode, Array<Lobby>>()
+		this.lobby.set(GameMode.EASY, [])
+		this.lobby.set(GameMode.MEDIUM, [])
+		this.lobby.set(GameMode.HARD, [])
 	}
 
 	enqueue(playerId: string, client: Socket, mode: GameMode): void {
@@ -106,7 +110,7 @@ export class PlayerQueueService {
 		return null
 	}
 
-	isInLobby(playerId: string, guestId: string, mode: GameMode): boolean {
+	isInLobby(playerId: string, guestId: string, client: Socket, mode: GameMode): boolean {
 		const playersInLobby = this.lobby.get(mode)
 		if (!playersInLobby) {
 			return false;
@@ -114,7 +118,7 @@ export class PlayerQueueService {
 
 		for (const players of playersInLobby) {
 			const group = players.getLobby()
-			if (group.id === playerId && group.guestId === guestId) {
+			if (group.id === playerId && group.ownerClient.get(playerId) === client && group.guestId === guestId) {
 				return true
 			}
 			if (group.id === guestId && group.guestId === playerId) {

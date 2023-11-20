@@ -38,7 +38,7 @@ export class MatchService {
 			const pair: Array<Map<string, Socket>> =  this.queueService.dequeue(mode)
 			const players: string[] = []
 			pair.forEach( pp => {
-				for (let [key, value] of pp) {
+				for (let [key, value] of pp) { 
 					players.push(key)
 				}
 			})
@@ -53,18 +53,17 @@ export class MatchService {
 		}
     }
 
-	// TODO tocheck if  he has accepted from another player
 	async waitInPlayerLobby(player: Player, guestId: string, client: Socket, mode: GameMode) {
-		if (!this.hasExistingMatch(player.id, client)) {
-			if (!this.queueService.isInLobby(player.id, guestId, mode)) {
+		if (!(await this.hasExistingMatch(player.id, client))) {
+			if (!this.queueService.isInLobby(player.id, guestId, client, mode)) {
 				this.queueService.enterLobby(player.id, guestId, client, mode)
 			}
 		}
 	}
 
 	async checkPlayerLobby(player: Player, ownerId: string, client: Socket, mode: GameMode) {
-		if (!this.hasExistingMatch(player.id, client)) {
-			if (this.queueService.isInLobby(player.id, ownerId, mode)) {
+		if (!(await this.hasExistingMatch(player.id, client))) {
+			if (this.queueService.isInLobby(player.id, ownerId, client, mode)) {
 				const lobby = this.queueService.checkInLobby(player.id, ownerId, client, mode)
 				if (lobby) {
 					const newMatch = await this.makeAmatch([player.id, ownerId])
@@ -129,7 +128,7 @@ export class MatchService {
 				}
 				this.server.to(match.match.id).emit(INGAME, updateGame)
 				updateGame = await this.checkDisconnectedPlayers(updateGame)
-				if (updateGame.match.status === GameState.PAUSE) {
+				if (updateGame.status === GameState.PAUSE) {
 					await this.saveMatchHistory(updateGame)
 					this.server.to(match.match.id).emit(INGAME, updateGame)
 					this.server.socketsLeave(match.match.id)
@@ -238,5 +237,4 @@ export class MatchService {
             .getMany()
     }
 }
-
 

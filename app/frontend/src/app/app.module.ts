@@ -21,8 +21,30 @@ export class UserSocket extends Socket {
 
 @Injectable()
 export class GameSocket extends Socket {
+  private connectionSubject: Subject<boolean> = new Subject<boolean>();
+  public connection$ = this.connectionSubject.asObservable();
+
   constructor() {
-    super({ url: `${HOST_IP}/api/game`, options: { withCredentials: true } })
+    super({ url: `${HOST_IP}/game`, options: { withCredentials: true } });
+
+    this.ioSocket.on('connect', () => {
+      console.log(" INJECTABLE GOT CONNECTION")
+      this.connectionSubject.next(true);
+    });
+
+    this.ioSocket.on('disconnect', () => {
+      console.log(" INJECTABLE GOT DISCONNECTION")
+      this.connectionSubject.next(false);
+    });
+  }
+  connection(): void {
+    this.ioSocket.connect();
+    this.connectionSubject.next(true);
+  }
+
+  disconnection(): void {
+    this.ioSocket.disconnect();
+    this.connectionSubject.next(false);
   }
 }
 
