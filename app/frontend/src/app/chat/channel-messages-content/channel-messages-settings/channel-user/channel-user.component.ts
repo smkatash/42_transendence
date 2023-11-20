@@ -47,11 +47,11 @@ export class ChannelUserComponent {
       .subscribe(blocked => this.currentUserBlockedList = blocked)
   }
 
-  // ngOnChanges(changes: SimpleChanges): void {
-  //   if(changes['user']) {
-  //     console.log(changes['user'].currentValue)
-  //   }
-  // }
+  ngOnChanges(changes: SimpleChanges): void {
+    if(changes['user']) {
+      console.log(this.user)
+    }
+  }
 
   toggleDropdown(): void {
     this.isDropdownSelected = !this.isDropdownSelected;
@@ -72,8 +72,12 @@ export class ChannelUserComponent {
     return this.channel?.owner?.id === this.currentUser?.id
   }
 
+  // userIsAdmin(): boolean {
+  //   return this.channel?.admins?.some(admin => admin.id === this.user?.id) || false
+  // }
+
   userIsAdmin(): boolean {
-    return this.channel?.admins?.some(admin => admin.id === this.user?.id) || false
+    return this.user?.adminAt?.some(chaine => chaine.id === this.channel?.id) || false
   }
 
   currentIsAdmin(): boolean {

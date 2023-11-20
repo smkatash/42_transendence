@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { HOST_IP } from '../Constants';
+import { ChatService } from '../chat/chat.service';
 
 enum ProfileType {
   CURRENTUSER,
@@ -23,7 +24,8 @@ export class ProfileComponent implements OnInit {
     private profileService: ProfileService,
     private route: ActivatedRoute,
     private cd: ChangeDetectorRef,
-    private auth: AuthService) {}
+    private auth: AuthService,
+    private chatService: ChatService) {}
 
     // ID to be extracted from url. If null then we know we're the current user
     id: string | null = null
@@ -39,6 +41,8 @@ export class ProfileComponent implements OnInit {
 
     // Used for extra logic
     currentUserProfile: UserProfile = this.initUserProfile()
+
+    currentUserBlockedList: User[] = []
 
   initUserProfile(): UserProfile {
     return {
@@ -63,6 +67,11 @@ export class ProfileComponent implements OnInit {
         this.profileService.requestStatus(this.id)
       }
     })
+
+    // Get blocked list of users
+    this.chatService.requestBlockedUsers()
+    this.chatService.getBlockedUsers()
+      .subscribe(blocked => this.currentUserBlockedList = blocked)
   }
 
   private handleError(err: any): void {
@@ -155,6 +164,18 @@ export class ProfileComponent implements OnInit {
   isRequestSent(): boolean {
     if (this.userProfile === undefined || this.currentUserProfile === undefined) return false
     return this.currentUserProfile.sentRequests.some(user => user.id === this.userProfile?.user.id)
+  }
+
+  isUserBlocked(): boolean {
+    return this.currentUserBlockedList.some(blockedUser => blockedUser.id === this.userProfile.user.id) || false
+  }
+
+  blockUser(): void {
+    this.chatService.manageUserModeration('block', this.userProfile.user.id)
+  }
+
+  unblockUser(): void {
+    this.chatService.manageUserModeration('unblock', this.userProfile.user.id)
   }
 
   sendRequest(): void {

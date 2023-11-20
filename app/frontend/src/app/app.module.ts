@@ -10,6 +10,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MfaComponent } from './auth/mfa/mfa.component';
 import { FormsModule } from '@angular/forms';
 import { HOST_IP } from './Constants';
+import { Subject } from 'rxjs';
 
 
 @Injectable()

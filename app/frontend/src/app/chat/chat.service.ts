@@ -77,7 +77,7 @@ export class ChatService {
     this.socket.emit(BLOCKED_USERS)
   }
 
-  manageUserModeration(action: string, userID: string, channelID: number) {
+  manageUserModeration(action: string, userID: string, channelID?: number) {
     switch(action) {
       case BLOCK:
         this.socket.emit(BLOCK, {uId: userID})

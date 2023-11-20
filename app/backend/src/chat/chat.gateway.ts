@@ -770,7 +770,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     Logger.debug(`at REM_ADMIN`)
     try {
       const channel = await this.channelService.getChannel(info.cId, [
-        'owner', 'admins'
+        'owner', 'admins', 'users'
       ]);
       const u = await this.userService.getUserWith(info.uId, ['adminAt']);
       if (!channel || !u) {
@@ -798,6 +798,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         throw new BadRequestException('User is not an admin')
       }
     } catch (error) {
+      Logger.debug(error)
       this.emitError(socket, error);
     }
   }

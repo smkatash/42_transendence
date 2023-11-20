@@ -41,8 +41,8 @@
       <button class="removeFriend" *ngIf="isFriendsWithCurrentUser()" (click)="removeFriend()">Remove friend</button>
       <button *ngIf="isRequestSent()" (click)="getSentRequests()">Request Pending</button>
 
-	  <button *ngIf="canSendRequest()" (click)="sendRequest()">Block</button>
-      <button class="removeFriend" *ngIf="isFriendsWithCurrentUser()" (click)="removeFriend()">Unblock</button>
+      <button *ngIf="!isUserBlocked()" (click)="blockUser()">Block</button>
+      <button *ngIf="isUserBlocked()" (click)="unblockUser()">Unblock</button>
 
       <button *ngIf="id === null && userProfile.user.mfaEnabled == false" (click)="enable2FA()">Enable 2FA</button>
       <button *ngIf="id === null && userProfile.user.mfaEnabled == true" (click)="disable2FA()">Disable 2FA</button>

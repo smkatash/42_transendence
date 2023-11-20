@@ -9,8 +9,8 @@ services:
     env_file:
       - ./docker/dev.env
     volumes:
-      - /home/jmaalouf/Documents/42/core-curriculum/42_transendence/app:/app
-      #- /Users/jmaalouf/Documents/42/Core_Curriculum/42_transendence/app:/app
+      # - /home/jmaalouf/Documents/42/core-curriculum/42_transendence/app:/app
+      - /Users/jmaalouf/Documents/42/Core_Curriculum/42_transendence/app:/app
       #  - /Users/ktashbae/Desktop/42_transendence/app:/app
     ports:
       - 3000:3000

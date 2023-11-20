@@ -8,7 +8,7 @@
       </div>
       <div class="channel-container">
         <div class="channel-list" *ngIf="selectedTab === 'my-chats'">
-          <p>These are all the chats/channels you have joined/created</p>
+          <p>These are all the chats you have joined/created</p>
           <div *ngFor="let channel of myChannels$ | async">
             <app-sidebar-channel [isSelected]="channel.id === selectedChannel?.id"
                                  [channel]="channel"
@@ -18,7 +18,7 @@
         </div>
 
         <div class="channel-list" *ngIf="selectedTab === 'available-chats'">
-          <p>After joining/creating a chat/channel, you will be able to see it in 'My Chats'</p>
+          <p>After joining/creating a chat, you will be able to see it in 'My Chats'</p>
           <div *ngFor="let channel of allChannels$ | async">
             <app-sidebar-channel [isSelected]="channel.id === selectedChannel?.id"
                                  [channel]="channel"

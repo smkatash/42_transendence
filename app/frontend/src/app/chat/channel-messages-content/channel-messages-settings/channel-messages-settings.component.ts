@@ -53,9 +53,9 @@ export class ChannelMessagesSettingsComponent implements OnChanges {
       this.chatService.requestChannelUsers(this.channel.id)
       this.chatService.getChannelUsers()
         .subscribe(channelUsers => {
-          if (channelUsers.cId === this.channel?.id)
+          if (channelUsers.cId === this.channel?.id) {
             this.users = channelUsers.users
-            console.log('Got new changes from CHANNEL_USERS')
+          }
         })
     }
 

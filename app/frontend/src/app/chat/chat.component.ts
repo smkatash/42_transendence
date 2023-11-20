@@ -38,6 +38,8 @@ export class ChatComponent implements OnInit {
   }
 
   onChannelSelect(channel: Channel) {
+    if (channel.id === this.selectedChannel?.id) return
+
     this.selectedChannel = channel
     if (this.selectedTab === 'available-chats') {
       if (this.selectedChannel.protected) {
