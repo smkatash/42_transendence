@@ -1,0 +1,1 @@
+Redirect URI for API school               127.0.0.1:3000/api/42auth/redirect

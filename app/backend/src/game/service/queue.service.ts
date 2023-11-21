@@ -134,10 +134,13 @@ export class PlayerQueueService {
 			this.lobby.set(mode,[])
 		}
 
+		console.log(playerId + " | ", guestId)
 		const playerSocketMap = new Map<string, Socket>()
   		playerSocketMap.set(playerId, client);
+		console.log("here 3")
 		const newLobby = new Lobby(playerId, playerSocketMap, guestId)
 		this.lobby.get(mode).push(newLobby);
+		console.log("here 2")
 	}
 
 	checkInLobby(playerId: string, ownerId: string, client: Socket, mode: GameMode): LobbyInterface | null {

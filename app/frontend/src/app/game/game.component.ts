@@ -1,7 +1,9 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, OnInit, Output, Renderer2, RendererFactory2 } from '@angular/core';
 import { GameService } from './game.service';
 import { Ball, Game, Paddle, GameState } from '../entities.interface';
-import { ActivatedRoute} from '@angular/router';
+// import { NONE_TYPE } from '@angular/compiler';
+import { ActivatedRoute, Route } from '@angular/router';
+import { Socket } from 'ngx-socket-io';
 import { Subscription } from 'rxjs';
 
 @Component({

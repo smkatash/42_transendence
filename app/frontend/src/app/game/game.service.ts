@@ -5,6 +5,12 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { Socket } from 'ngx-socket-io';
 import { ACCEPT_MATCH, INVITE_TO_MATCH } from '../chat/subscriptions-events-constants';
 
+async function waitOneSecond() {
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  // console.log("...");
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
