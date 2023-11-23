@@ -26,6 +26,7 @@ export class MessageComponent {
       this.chatService.acceptPrivateInvite(String(this.msg.inviteId), this.msg.id)
     } else if (this.msg?.inviteType === GAME_INVITE && this.msg.inviteId) {
       this.gameService.acceptInvite(this.msg.user.id, Number(this.msg.inviteId)) // Naming problem, inviteId is game mode as well
+      this.chatService.invalidateMessage(this.msg.id)
       this.router.navigate(['/game', { invite: false, accept: true }])
     }
   }
@@ -34,6 +35,7 @@ export class MessageComponent {
     if (this.msg?.inviteType === CHANNEL_INVITE && this.msg.inviteId) {
       this.chatService.declineChannelInvite(String(this.msg.inviteId), this.msg.id)
     } else if (this.msg?.inviteType === GAME_INVITE) {
+      this.chatService.invalidateMessage(this.msg.id)
       this.gameService.declineInvite(this.msg.user.id, Number(this.msg.inviteId)) // Naming problem, inviteId is game mode as well
     }
   }

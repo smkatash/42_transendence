@@ -143,11 +143,10 @@ export class PlayerQueueService {
 
 	checkInLobby(playerId: string, ownerId: string, client: Socket, mode: GameMode): LobbyInterface | null {
 		if (!this.lobby.has(mode)) {
-			this.lobby.set(mode,[])
+			return null
 		}
 
 		const lobbies = this.lobby.get(mode)
-
 		for (const group of lobbies) {
 			if (group.id === ownerId) {
 				const playerSocketMap = new Map<string, Socket>()

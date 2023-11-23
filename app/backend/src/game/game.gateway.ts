@@ -134,6 +134,7 @@ async handleDisconnect(@ConnectedSocket() client: Socket, ) {
 			if (currentPlayer) {
 				client.join(QUEUE)
 				this.emitUserEvent(client, currentPlayer)
+				this.logger.debug(JSON.stringify(acceptDto))
 				await this.matchService.checkPlayerLobby(currentPlayer, acceptDto.userId, client, acceptDto.mode)
 			}
 			this.emitQueueEvent()

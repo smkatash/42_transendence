@@ -3,7 +3,7 @@
     <h1 class="title">Le Password</h1>
     <p>To enter this Channel please type in the correct Password</p>
     <label for="channel-password">Password:</label>
-    <input type="text" id="channel-password" [(ngModel)]="channelPassword">
+    <input type="password" id="channel-password" [(ngModel)]="channelPassword">
 
     <button class="close" (click)="toggle()">Close</button>
     <button class="send" (click)="tryPassword()">Join</button>

@@ -62,20 +62,29 @@ export class MatchService {
 	}
 
 	async checkPlayerLobby(player: Player, ownerId: string, client: Socket, mode: GameMode) {
+		console.log("!!!!!!!!!!!!!!!!!!!!!")
+		console.log("Check Lobby")
 		if (!(await this.hasExistingMatch(player.id, client))) {
+			console.log("!!!!!!!!!!!!!!!!!!!!!")
+			console.log("No exitsting match")
 			if (this.queueService.isInLobby(player.id, ownerId, client, mode)) {
+				console.log("FOUND LOBBY")
 				const lobby = this.queueService.checkInLobby(player.id, ownerId, client, mode)
 				if (lobby) {
+					console.log(JSON.stringify(lobby))
 					const newMatch = await this.makeAmatch([player.id, ownerId])
+
 					const owner  = lobby.ownerClient.get(ownerId)
 					const guest = lobby.guestClient.get(player.id)
 
+					console.log("EMITTING TO PLAYERS")
 					owner.leave(QUEUE)
 					guest.leave(QUEUE)
 					owner.emit(START_MATCH, newMatch)
 					guest.emit(START_MATCH, newMatch)
 					owner.join(newMatch.id)
 					guest.join(newMatch.id)
+					console.log(newMatch.id)
 				}
 				
 			}
@@ -115,6 +124,9 @@ export class MatchService {
 	   
 		this.queueService.dequeueMatch(match.id)
 		const newGame = this.gameService.launchGame(match, mode)
+		console.log("GAME")
+		console.log(JSON.stringify(newGame))
+
 		this.matches.set(matchId, newGame)
 		return newGame
 	}
@@ -176,14 +188,14 @@ export class MatchService {
                 match.match.status = GameState.PAUSE
                 match.match.loser = playerOne
                 match.match.winner = playerTwo
-				match.match.scores[playerTwo.id]++;
+				// match.match.scores[playerTwo.id]++;
             }
             if (playerTwo.user.status !== Status.GAME) {
 				match.status = GameState.PAUSE
                 match.match.status = GameState.PAUSE
                 match.match.loser = playerTwo
                 match.match.winner = playerOne
-				match.match.scores[playerOne.id]++;
+				// match.match.scores[playerOne.id]++;
             }
         }
 		return match

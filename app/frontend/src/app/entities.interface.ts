@@ -159,8 +159,7 @@ export enum GameState {
   START,
   INPROGRESS,
   PAUSE,
-  END,
-  REFUSED
+  END
 }
 
 export enum GameMode {

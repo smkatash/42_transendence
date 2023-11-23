@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Channel, ChannelUsers, CreateChannelInfo, JoinChannelInfo, Message, User } from '../entities.interface';
 import { ChatSocket } from '../app.module';
-import { ACCEPT_PRIVATE_INVITE, ADD_ADMIN, BAN, BLOCK, BLOCKED_USERS, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DIRECT, ERROR, JOIN, KICK, LEAVE, MESSAGE, MUTE, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, UNMUTE, USER_CHANNELS } from './subscriptions-events-constants'
+import { ACCEPT_PRIVATE_INVITE, ADD_ADMIN, BAN, BLOCK, BLOCKED_USERS, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DIRECT, ERROR, INVALIDATE_MESSAGE_CONTENT, JOIN, KICK, LEAVE, MESSAGE, MUTE, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, UNMUTE, USER_CHANNELS } from './subscriptions-events-constants'
 import { HOST_IP } from '../Constants';
 
 @Injectable({
@@ -50,6 +50,10 @@ export class ChatService {
 
   declineChannelInvite(channelID: string, msgID: number) {
     this.socket.emit(DECLINE_PRIVATE_INVITE, { cId: Number(channelID), msgId: msgID })
+  }
+
+  invalidateMessage(messageID: number) {
+    this.socket.emit(INVALIDATE_MESSAGE_CONTENT, { cId: messageID })
   }
 
   leaveChannel(joinInfo: JoinChannelInfo)  {

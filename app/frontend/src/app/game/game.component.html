@@ -1,7 +1,7 @@
 <body>
     <app-navbar></app-navbar>
     <app-game-menu [statusValue]="statusStr"  (newGameEvent)="setGame($event)" *ngIf="!gameQueue && !isGameOn && !invited"></app-game-menu>
-    <div class ="waitingQueue" *ngIf="gameQueue && !isGameOn || invited && !isGameOn && !accepted">
+    <div class ="waitingQueue" *ngIf="(gameQueue && !isGameOn )|| (invited && !isGameOn && !accepted)">
         <div class="coffe-machine">
             <div class="coffee-header">
               <div class="coffee-header__buttons coffee-header__button-one"></div>
@@ -22,7 +22,7 @@
             <div class="coffee-footer"></div>
         </div>
     </div>
-    <div class = "game_board" *ngIf="isGameOn || !invited && accepted">
+    <div class = "game_board" *ngIf="isGameOn || (!invited && accepted)">
         <h1>{{yourScore | number:"1.0-0"}}</h1>
         <svg  class="table" width="50%" height="50%" fill="#4F6D7A">
             <rect id="board" width="100%" height="100%" viewBox="0 0 1 2"/>

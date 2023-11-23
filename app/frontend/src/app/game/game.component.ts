@@ -257,19 +257,19 @@ export class GameComponent implements AfterViewInit, OnInit {
         this.settledSide = true;
       }
       console.log("BEFORE CONVERSION")
-      console.log(JSON.stringify(game)); 
+      console.log(JSON.stringify(game));
       this.gameInfo = this.valueConversion(game);
       // console.log( "USER ID Player [0]: " + this.gameInfo.match?.players[0].id +
       //                "\nUSER ID Player [1]: " + this.gameInfo.match?.players[1].id +
-      //                "\nMY ID: " + this.gameService.userInfo.id + 
+      //                "\nMY ID: " + this.gameService.userInfo.id +
       //                "\nball: " + this.gameInfo.ball?.position.x + " " + this.gameInfo.ball?.position.y +
       //                "\nmatch score: " + this.gameInfo.match?.currentUserScore + " id: "
-      //                            +  this.gameInfo.match?.id + " loser: " 
-      //                            +  this.gameInfo.match?.loser + " matchResult: "  
-      //                            +  this.gameInfo.match?.matchResult + " opponentUser: "  
-      //                            +  this.gameInfo.match?.opponentUser + " oppoentScore: "  
-      //                            +  this.gameInfo.match?.opponentUserScore + " status: "  
-      //                            +  this.gameInfo.match?.status + " winner: "  
+      //                            +  this.gameInfo.match?.id + " loser: "
+      //                            +  this.gameInfo.match?.loser + " matchResult: "
+      //                            +  this.gameInfo.match?.matchResult + " opponentUser: "
+      //                            +  this.gameInfo.match?.opponentUser + " oppoentScore: "
+      //                            +  this.gameInfo.match?.opponentUserScore + " status: "
+      //                            +  this.gameInfo.match?.status + " winner: "
       //                            +  this.gameInfo.match?.winner );
       if(this.gameInfo.leftPaddle?.length){
         this.paddleHeight = ( 100/ this.maxHeight) * this.gameInfo.leftPaddle?.length;
@@ -290,8 +290,6 @@ export class GameComponent implements AfterViewInit, OnInit {
         this.pauseFunc();
       else if (this.status === GameState.END)
         this.endFunc();
-      else if (this.status === GameState.REFUSED)
-        this.refuseFunc();
   }
 
   handlerInvite(){
@@ -341,6 +339,7 @@ export class GameComponent implements AfterViewInit, OnInit {
 
   ngOnInit() {
     this.gameService.handleConnection();
+    console.log("SUBSCRIBE TO OBSERVABLE")
     this.gameObservableInit();
     this.invited = ('true' === this.route.snapshot.paramMap.get('invite'))
     this.accepted = ('true' === this.route.snapshot.paramMap.get('accept'))
@@ -365,30 +364,12 @@ export class GameComponent implements AfterViewInit, OnInit {
   }
   endFunc(){
     console.log("END")
-    // this.gameService.socket.disconnect();
-    // this.gameService.socket.connect()
     this.settledSide = false;
     this.invited = false;
     this.accepted = false;
     this.gameQueue = false;
     this.isGameOn = false;
     this.winnerPrompt();
-  }
-
-  refuseFunc(){
-    console.log("REFUSED")
-    // this.gameService.socket.disconnect();
-    // this.gameService.socket.connect()
-    this.settledSide = false;
-    this.invited = false;
-    this.accepted = false;
-    this.gameQueue = false;
-    this.isGameOn = false;
-    this.connectionRefused();
-  }
-
-  connectionRefused(){
-    this.statusStr = "REFUSED";
   }
 
   winnerPrompt(){
@@ -403,8 +384,9 @@ export class GameComponent implements AfterViewInit, OnInit {
     ;
   }
 
+
   ngOnDestroy() {
-    // this.gameService.listenersOn = false;
+    console.log("UNSUBSCRIBE OBSERVABLE");
     if (this.sub) {
       this.sub.unsubscribe()
       this.subOne?.unsubscribe()
@@ -412,13 +394,10 @@ export class GameComponent implements AfterViewInit, OnInit {
     }
     this.gameService.handleDisconnection();
     this.isGameOn = false;
-    // this.gameService.socket.disconnection();
   }
 
   setGame(event: number) {
     this.settledSide = false;
-      // this.gameService.socket.connect();
-      // this.gameService.listenersInit();
     console.log("going to start emit");
     this.gameService.startGameService(event);
     this.gameQueue = true;
