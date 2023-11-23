@@ -152,14 +152,17 @@ export class GameService {
   }
 
   inviteToMatch(invitedUser: string, selectedMode: number) {
+    console.log("Invited HERE");
     this.socket.emit(INVITE_TO_MATCH, { userId: invitedUser, mode: selectedMode })
   }
 
   acceptInvite(userID: string, mode: GameMode) {
+    console.log("accepted Here");
     this.socket.emit(ACCEPT_MATCH, { userId: userID, mode: mode })
   }
 
   declineInvite(userID: string, mode: GameMode) {
+    console.log("decline Here");
     this.socket.emit(REJECT_MATCH, { userId: userID, mode: mode })
   }
 }

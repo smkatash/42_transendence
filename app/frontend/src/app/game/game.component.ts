@@ -336,7 +336,6 @@ export class GameComponent implements AfterViewInit, OnInit {
     }
   }
 
-
   ngOnInit() {
     this.gameService.handleConnection();
     console.log("SUBSCRIBE TO OBSERVABLE")
