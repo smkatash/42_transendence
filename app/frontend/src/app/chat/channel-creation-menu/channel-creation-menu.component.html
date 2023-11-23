@@ -33,12 +33,13 @@
       <h1 class="title">Le Message</h1>
       <p>This will create a direct channel between you and the user you send the message to. This type of channel is not visible for the public in the list of channels. </p>
       <label for="user-search">Search for user to message:</label>
-      <input class="user-search" value="{{ selectedUser?.username }}" type="text" ng-model="inputText" placeholder="e.g. ktashbae" class="user-search-input" type="text" id="user-search" [formControl]="userSearch">
-
-      <div class="search-result" *ngFor="let user of searchedUsers">
-        <span class="user" (click)="selectUser(user)">
-          {{ user.username }}
-        </span>
+      <div class="dm-sender">
+        <input value="{{ selectedUser?.username }}" type="text" ng-model="inputText" placeholder="e.g. ktashbae" class="user-search-input" type="text" id="user-search" [formControl]="userSearch">
+        <div class="search-result" *ngFor="let user of searchedUsers">
+          <span class="user" (click)="selectUser(user)">
+            {{ user.username }}
+          </span>
+        </div>
       </div>
 
       <div class="message-box">

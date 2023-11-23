@@ -803,6 +803,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     }
   }
 
+  @SubscribeMessage(INVITE_TO_PRIVATE)
   async onInviteToPriv(@ConnectedSocket() socket: Socket,
     @MessageBody() info: UpdateChannelDto)   {
 

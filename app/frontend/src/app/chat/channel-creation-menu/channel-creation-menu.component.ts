@@ -38,7 +38,6 @@ export class ChannelCreationMenuComponent {
 
   userSearch = new FormControl()
   searchedUsers?: User[]
-  isDropdownOpen?: boolean = false
   selectedUser?: User
   messageToSend?: string
 
@@ -51,7 +50,6 @@ export class ChannelCreationMenuComponent {
         .pipe(
           tap((users: User[]) => {
             this.searchedUsers = users
-            this.isDropdownOpen = true
             console.log(users)
           })
         )
@@ -61,7 +59,7 @@ export class ChannelCreationMenuComponent {
 
   selectUser(selected: User) {
     this.selectedUser = selected
-    this.isDropdownOpen = false
+    this.userSearch.reset()
   }
 
   sendMessage(): void {
