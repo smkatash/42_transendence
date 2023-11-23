@@ -9,7 +9,7 @@ services:
     env_file:
       - ./docker/dev.env
     volumes:
-      - /Users/francesco/pong/app:/app
+     # - /Users/francesco/pong/app:/app
     ports:
       - 3000:3000
     depends_on:

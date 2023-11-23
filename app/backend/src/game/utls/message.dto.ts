@@ -37,6 +37,16 @@ export class AcceptDto {
     mode: GameMode
 }
 
+export class RejectDto {
+	@IsString()
+	@IsNotEmpty()
+	userId: string
+
+	@IsNumber()
+  	@IsNotEmpty()
+    mode: GameMode
+}
+
 export class GameModeDto {
 	@IsNumber()
   	@IsNotEmpty()

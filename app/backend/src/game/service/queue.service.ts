@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { GameMode } from "../utls/game";
 import { Socket } from "socket.io";
 import { Lobby, LobbyInterface } from "../utls/lobby";
+import { QUEUE } from "../utls/rooms";
 
 @Injectable()
 export class PlayerQueueService {
@@ -74,6 +75,7 @@ export class PlayerQueueService {
 		this.queues.set(GameMode.HARD, this.removePlayerFromQueue(hardQueue, playerId));
 	}
 
+
 	private removePlayerFromQueue(queue: Array<Map<string, Socket>>, playerId: string): Array<Map<string, Socket>> {
 		return queue.filter(playerMap => !playerMap.has(playerId));
 	}
@@ -116,8 +118,7 @@ export class PlayerQueueService {
 			return false;
 		}
 
-		for (const players of playersInLobby) {
-			const group = players.getLobby()
+		for (const group of playersInLobby) {
 			if (group.id === playerId && group.ownerClient.get(playerId) === client && group.guestId === guestId) {
 				return true
 			}
@@ -134,13 +135,10 @@ export class PlayerQueueService {
 			this.lobby.set(mode,[])
 		}
 
-		console.log(playerId + " | ", guestId)
 		const playerSocketMap = new Map<string, Socket>()
   		playerSocketMap.set(playerId, client);
-		console.log("here 3")
 		const newLobby = new Lobby(playerId, playerSocketMap, guestId)
 		this.lobby.get(mode).push(newLobby);
-		console.log("here 2")
 	}
 
 	checkInLobby(playerId: string, ownerId: string, client: Socket, mode: GameMode): LobbyInterface | null {
@@ -151,16 +149,49 @@ export class PlayerQueueService {
 		const lobbies = this.lobby.get(mode)
 
 		for (const group of lobbies) {
-			const current = group.getLobby()
-			if (current.id === ownerId) {
+			if (group.id === ownerId) {
 				const playerSocketMap = new Map<string, Socket>()
   				playerSocketMap.set(playerId, client)
-				current.guestClient = playerSocketMap
-				return current
+				group.guestClient = playerSocketMap
+				return group
 			}
 		}
 		return null
 	}
 
+	dequeueLobbies(playerId: string) {
+		for (const [mode, lobbies] of this.lobby) {
+		  if (lobbies) {
+			const filteredLobbies = lobbies.filter(
+			  lobby => lobby.id === playerId || lobby.guestId === playerId
+			)
+			if (filteredLobbies.length > 0) {
+			  this.lobby.set(mode, lobbies.filter(lobby => !filteredLobbies.includes(lobby)));
+			}
+		  }
+		}
+	}
 
+	removeFromLobby(ownerId: string, mode: GameMode) {
+		if (!this.lobby.has(mode)) {
+			return
+		}
+
+		const lobbies = this.lobby.get(mode)
+		if (lobbies) {
+			const idx = lobbies.findIndex(group => {
+				return group.id === ownerId;
+			})
+		
+			if (idx !== -1) {
+				const owner = lobbies[idx].ownerClient.get(ownerId)
+
+				if (owner) {
+					lobbies.splice(idx, 1);
+					owner.emit(QUEUE, "Game rejected");
+					this.lobby.set(mode, lobbies);
+				}
+			}
+		}
+	}
 } 

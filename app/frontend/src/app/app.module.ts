@@ -26,7 +26,7 @@ export class GameSocket extends Socket {
   public connection$ = this.connectionSubject.asObservable();
 
   constructor() {
-    super({ url: `${HOST_IP}/game`, options: { withCredentials: true } });
+    super({ url: `${HOST_IP}/api/game`, options: { withCredentials: true } });
 
     this.ioSocket.on('connect', () => {
       console.log(" INJECTABLE GOT CONNECTION")

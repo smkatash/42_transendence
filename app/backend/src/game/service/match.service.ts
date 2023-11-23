@@ -44,7 +44,6 @@ export class MatchService {
 			})
 			const newMatch = await this.makeAmatch(players)
 			pair.forEach( pp => {
-				console.log("NEW MATCH IS INITIALIZED " + newMatch.id)
 				for (let [key, value] of pp) {
 					value.leave(QUEUE)
 					value.emit(START_MATCH,newMatch)
@@ -54,33 +53,23 @@ export class MatchService {
 		}
     }
 
-	// TODO tocheck if  he has accepted from another player
 	async waitInPlayerLobby(player: Player, guestId: string, client: Socket, mode: GameMode) {
 		if (!(await this.hasExistingMatch(player.id, client))) {
 			if (!this.queueService.isInLobby(player.id, guestId, client, mode)) {
 				this.queueService.enterLobby(player.id, guestId, client, mode)
-				console.log("______________________")
-				console.log("ENTERD LOBBY")
 			}
 		}
 	}
 
 	async checkPlayerLobby(player: Player, ownerId: string, client: Socket, mode: GameMode) {
-		console.log("CHECK LOBBY")
-		console.log(ownerId + " | " + mode)
 		if (!(await this.hasExistingMatch(player.id, client))) {
 			if (this.queueService.isInLobby(player.id, ownerId, client, mode)) {
 				const lobby = this.queueService.checkInLobby(player.id, ownerId, client, mode)
 				if (lobby) {
-					console.log("EMITTING TO PLAYERS")
 					const newMatch = await this.makeAmatch([player.id, ownerId])
 					const owner  = lobby.ownerClient.get(ownerId)
 					const guest = lobby.guestClient.get(player.id)
 
-					console.log(JSON.stringify(newMatch))
-					console.log(owner.id)
-					console.log(guest.id)
-					
 					owner.leave(QUEUE)
 					guest.leave(QUEUE)
 					owner.emit(START_MATCH, newMatch)
@@ -91,7 +80,14 @@ export class MatchService {
 				
 			}
 		}
-		
+	}
+
+	async removePlayersFromLobby(player: Player, ownerId: string, client: Socket, mode: GameMode) {
+		if (!(await this.hasExistingMatch(player.id, client))) {
+			if (this.queueService.isInLobby(player.id, ownerId, client, mode)) {
+				this.queueService.removeFromLobby(ownerId,mode)
+			}
+		}
 	}
 
 	async hasExistingMatch(playerId: string, client: Socket) {
@@ -101,7 +97,6 @@ export class MatchService {
 			const match = await this.getMatchById(matchId)
 			client.emit(START_MATCH, match)
 			client.join(match.id)
-			console.log("USER HAS UNFINISHED MATCH")
 			return true
 		}
 		return false
@@ -109,6 +104,7 @@ export class MatchService {
 
 	leaveAllQueues(playerId: string) {
 		this.queueService.dequeuePlayer(playerId)
+		this.queueService.dequeueLobbies(playerId)
 	}
 
 
@@ -133,7 +129,6 @@ export class MatchService {
 			if (match.status === GameState.INPROGRESS) {
 				let updateGame = this.gameService.throwBall(match)
 				if (updateGame.status === GameState.END) {
-					console.log("GAME END")
 					await this.saveMatchHistory(updateGame)
 					this.server.to(match.match.id).emit(INGAME, updateGame)
 					this.server.socketsLeave(match.match.id)
@@ -142,10 +137,8 @@ export class MatchService {
 				this.server.to(match.match.id).emit(INGAME, updateGame)
 				updateGame = await this.checkDisconnectedPlayers(updateGame)
 				if (updateGame.status === GameState.PAUSE) {
-					console.log("GAME PAUSE")
 					await this.saveMatchHistory(updateGame)
 					this.server.to(match.match.id).emit(INGAME, updateGame)
-					console.log(updateGame)
 					this.server.socketsLeave(match.match.id)
 					this.matches.delete(match.match.id)
 				}
@@ -179,18 +172,18 @@ export class MatchService {
             const playerOne = await this.playerService.getUserByPlayerId(players[0].id)
             const playerTwo = await this.playerService.getUserByPlayerId(players[1].id)
             if (playerOne.user.status !== Status.GAME) {
-				console.log("PLAYER ONE HAS DISCONNECTED")
                 match.status = GameState.PAUSE
                 match.match.status = GameState.PAUSE
                 match.match.loser = playerOne
                 match.match.winner = playerTwo
+				match.match.scores[playerTwo.id]++;
             }
             if (playerTwo.user.status !== Status.GAME) {
-				console.log("PLAYER TWO HAS DISCONNECTED")
-                match.status = GameState.PAUSE
+				match.status = GameState.PAUSE
                 match.match.status = GameState.PAUSE
                 match.match.loser = playerTwo
                 match.match.winner = playerOne
+				match.match.scores[playerOne.id]++;
             }
         }
 		return match

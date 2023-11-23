@@ -8,18 +8,16 @@ export interface LobbyInterface {
 	guestClient?: Map<string, Socket>
 }
 
-export class Lobby {
-	lobby: LobbyInterface
+export class Lobby implements LobbyInterface {
+	id: string
+	guestId: string
+	ownerClient: Map<string, Socket>
+	guestClient?: Map<string, Socket>
 	
 	constructor(id: string, owner: Map<string, Socket>, guestId: string) {
-		this.lobby = {
-			id: id,
-			ownerClient: owner,
-			guestId: guestId,
-		}
+			this.id = id
+			this.ownerClient = owner,
+			this.guestId = guestId
 	}
 
-	public getLobby() {
-		return this.lobby
-	}
 }
