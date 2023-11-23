@@ -205,4 +205,6 @@ export const CHANNEL_INVITE = 'channel'
 
 export const ACCEPT_MATCH = 'accept'
 
+export const REJECT_MATCH = 'reject'
+
 export const INVITE_TO_MATCH = 'invite'

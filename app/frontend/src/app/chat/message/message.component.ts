@@ -34,7 +34,7 @@ export class MessageComponent {
     if (this.msg?.inviteType === CHANNEL_INVITE && this.msg.inviteId) {
       this.chatService.declineChannelInvite(String(this.msg.inviteId), this.msg.id)
     } else if (this.msg?.inviteType === GAME_INVITE) {
-      // Decline game invite
+      this.gameService.declineInvite(this.msg.user.id, Number(this.msg.inviteId)) // Naming problem, inviteId is game mode as well
     }
   }
 }

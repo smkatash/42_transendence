@@ -3,7 +3,7 @@ import { User , Game, GamePlayer, SocketResponse, GameMode, GameState, JoinMatch
 import { GameSocket } from '../app.module';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { Socket } from 'ngx-socket-io';
-import { ACCEPT_MATCH, INVITE_TO_MATCH } from '../chat/subscriptions-events-constants';
+import { ACCEPT_MATCH, INVITE_TO_MATCH, REJECT_MATCH } from '../chat/subscriptions-events-constants';
 
 async function waitOneSecond() {
   await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -151,5 +151,9 @@ export class GameService {
 
   acceptInvite(userID: string, mode: GameMode) {
     this.socket.emit(ACCEPT_MATCH, { userId: userID, mode: mode })
+  }
+
+  declineInvite(userID: string, mode: GameMode) {
+    this.socket.emit(REJECT_MATCH, { userId: userID, mode: mode })
   }
 }
