@@ -118,6 +118,7 @@ export class GameService {
       this.socket.on ('start', (msg: any)  => { this.handlerGameStart(msg) })
       this.socket.on ('disconnect', () => {  this.handleDisconnection(); });
       this.socket.on ('connect', () => { console.log("CONNECTION " + this.socket.ioSocket.id) });
+      this.socket.on ('queue', () => { console.log("Game rejected") ; this.gameStatus.next(GameState.REFUSED);})
     }
   }
 

@@ -290,6 +290,8 @@ export class GameComponent implements AfterViewInit, OnInit {
         this.pauseFunc();
       else if (this.status === GameState.END)
         this.endFunc();
+      else if (this.status === GameState.REFUSED)
+        this.refuseFunc();
   }
 
   handlerInvite(){
@@ -373,6 +375,22 @@ export class GameComponent implements AfterViewInit, OnInit {
     this.winnerPrompt();
   }
 
+  refuseFunc(){
+    console.log("REFUSED")
+    // this.gameService.socket.disconnect();
+    // this.gameService.socket.connect()
+    this.settledSide = false;
+    this.invited = false;
+    this.accepted = false;
+    this.gameQueue = false;
+    this.isGameOn = false;
+    this.connectionRefused();
+  }
+
+  connectionRefused(){
+    this.statusStr = "REFUSED";
+  }
+
   winnerPrompt(){
     if(this.gameInfo?.match?.winner.id === this.gameService.userInfo.id){
       this.statusStr = "WIN";
@@ -384,7 +402,6 @@ export class GameComponent implements AfterViewInit, OnInit {
   resetAll(): void {
     ;
   }
-
 
   ngOnDestroy() {
     // this.gameService.listenersOn = false;
