@@ -2,10 +2,30 @@
   <div class="channel-messages-settings">
     <h1 class="title">Channel Settings.</h1>
     <p>To access the different options, hover over a user's name and click the dropdown menu.</p>
-    <label for="change-password" *ngIf="channel?.owner === currentUser">Change your channel's password:</label>
-    <div class="password-field-container" *ngIf="channel?.owner === currentUser">
-      <input type="password" id="change-password">
-      <button class="change-btn">Change</button>
+    <label for="channel-password" *ngIf="canManagePassword()">Manage your channel's password:</label>
+    <label for="channel-password" *ngIf="canAddPassword()">Add a password to your channel:</label>
+    <div class="password-field-container" *ngIf="canManagePassword() || canAddPassword()">
+      <input type="password" id="channel-password" #channelpassword="ngModel" [class.is-invalid]="channelpassword.invalid" required pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" [(ngModel)]="channelPassword">
+      <div class="password-buttons">
+        <button class="pass-mod" *ngIf="canManagePassword()"
+                                 (click)="passModeration('change')"
+                                 [disabled]="channelpassword.invalid"
+                                 [class.btn-invalid]="channelpassword.invalid">
+                                 Change
+        </button>
+        <button class="pass-mod" *ngIf="canManagePassword()"
+                                 (click)="passModeration('remove')"
+                                 [disabled]="channelpassword.invalid"
+                                 [class.btn-invalid]="channelpassword.invalid">
+                                 Remove
+        </button>
+        <button class="pass-mod" *ngIf="canAddPassword()"
+                                 (click)="passModeration('add')"
+                                 [disabled]="channelpassword.invalid"
+                                 [class.btn-invalid]="channelpassword.invalid">
+                                 Add
+        </button>
+      </div>
     </div>
 
       <label for="user-search" *ngIf="channel?.type === 'private'">Search for user to invite:</label>

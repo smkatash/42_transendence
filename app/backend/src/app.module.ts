@@ -50,13 +50,14 @@ import { APP_FILTER } from "@nestjs/core";
     GameModule,
     ScheduleModule.forRoot(),
     RankingModule,
-    ChatModule, {
-      provide: APP_FILTER,
-      useClass: GlobalExceptionFilter,
-    }
+    ChatModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,
+  {
+      provide: APP_FILTER,
+      useClass: GlobalExceptionFilter,
+    }],
 })
 
 export class AppModule {}

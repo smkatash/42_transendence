@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Channel, ChannelUsers, CreateChannelInfo, JoinChannelInfo, Message, User } from '../entities.interface';
 import { ChatSocket } from '../app.module';
-import { ACCEPT_PRIVATE_INVITE, ADD_ADMIN, BAN, BLOCK, BLOCKED_USERS, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DIRECT, ERROR, INVALIDATE_MESSAGE_CONTENT, JOIN, KICK, LEAVE, MESSAGE, MUTE, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, UNMUTE, USER_CHANNELS } from './subscriptions-events-constants'
+import { ACCEPT_PRIVATE_INVITE, ADD_ADMIN, BAN, BLOCK, BLOCKED_USERS, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DIRECT, ERROR, INVALIDATE_MESSAGE_CONTENT, JOIN, KICK, LEAVE, MESSAGE, MUTE, PASSWORD, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, UNMUTE, USER_CHANNELS } from './subscriptions-events-constants'
 import { HOST_IP } from '../Constants';
 
 @Injectable({
@@ -42,6 +42,14 @@ export class ChatService {
 
   joinChannel(joinInfo: JoinChannelInfo) {
     this.socket.emit(JOIN, joinInfo)
+  }
+
+  passwordModeration(action: string, channelID: number, password: string) {
+    if (action === 'add' || action === 'change') {
+      this.socket.emit(PASSWORD, { cId: channelID, newPass: password })
+    } else { // remove
+      this.socket.emit(PASSWORD, { cId: channelID, oldPass: password })
+    }
   }
 
   acceptPrivateInvite(channelID: string, msgID: number) {
