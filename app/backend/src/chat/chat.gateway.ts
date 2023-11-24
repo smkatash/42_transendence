@@ -152,7 +152,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   /** event emiter for User[] group */
   private async emitToChatUsers(event: string, criteria: User[] | null, info: any/*User[] | Channel[]*/) {
     const chatUsers = await this.chatUserService.getAll();
-    if (!criteria)  {
+    if (event === USER_CHANNELS)  {
+      for (const chatUser of chatUsers) {
+        if (criteria.some((u) => chatUser.user.id === u.id)) {
+          const channels = await this.channelService.getUsersChannels(chatUser.user.id);
+          const user = await this.userService.getUserWith(chatUser.user.id, [
+            'blockedUsers', 'bannedAt'
+          ]);
+          const cToFe = this.userChannelsToFe(user, channels);
+          this.server.to(chatUser.socketId).emit(event, cToFe)
+        }
+      }
+    } else if (!criteria)  {
       for (const chatUser of chatUsers) {
         this.server.to(chatUser.socketId).emit(event, info)
       }
@@ -511,7 +522,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         }
       }
       //Updating channel lists for FE
-      const chatUsers = await this.chatUserService.getAll();
+      /*const chatUsers = await this.chatUserService.getAll();
       for (const chatUser of chatUsers) {
         if (channel.users.some((u) => chatUser.user.id === u.id)) {
           const userWithBlocked = await this.userService.getUserWith(chatUser.user.id, [
@@ -521,6 +532,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           this.server.to(chatUser.socketId).emit(USER_CHANNELS, cToFe);
         }
       }
+      */
+      this.emitToChatUsers(USER_CHANNELS, channel.users, 'foo')
       await this.muteService.deleteMutesByChannel(channel.id);
       await this.joinedChannelService.deleteByChannel(channel);
       await this.messageService.deleteByChannel(channel);
@@ -909,7 +922,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     Logger.debug(`at PASSWORD`)
     try {
       const channel = await this.channelService.getChannel(passInfo.cId, [
-        'owner'
+        'owner', 'users'
       ]) 
       if (!channel) {
         throw new BadRequestException('No such channel');
@@ -919,6 +932,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       }
       await this.channelService.passwordService(passInfo);
       this.newPublic();
+      this.emitToChatUsers(USER_CHANNELS, channel.users, 'foo');
     } catch (error) {
       this.emitError(socket, error)
     }
