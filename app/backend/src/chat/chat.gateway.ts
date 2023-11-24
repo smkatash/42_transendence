@@ -401,7 +401,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       user = await this.userService.getUserWith(user.id, [
         'blockedUsers', 'bannedAt'
       ]);
-      const cToFe = await this.userChannelsToFe(user, channels);  
+      const cToFe = this.userChannelsToFe(user, channels);
       this.server.to(socket.id).emit(USER_CHANNELS, cToFe);
       return ;
     } catch (error) {
@@ -410,17 +410,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   }
 
   /** prepare user's channel list for the FE */
-  private async userChannelsToFe(user: User, channels: Channel[]): Promise<ChannelToFeDto[]> {
+  private userChannelsToFe(user: User, channels: Channel[]): ChannelToFeDto[] {
     const cToFe: ChannelToFeDto[] = channels
-          .filter(async (c) => {
+          .filter((c) => {
             if (c.type === 'direct')  {
               for (let u of c.users)  {
                 if (u.id !== user.id) {
-                  u = await this.userService.getUserWith(u.id, [
-                    'blockedUsers'
-                  ]);
-                  if (!(user.blockedUsers.some((blocked) => blocked.id === u.id))
-                    && !(u.blockedUsers.some((blocked) => blocked.id === user.id)))  {
+                  if (!(user.blockedUsers.some((blocked) => blocked.id === u.id))){
                     return c;
                   }
                 }
@@ -478,14 +474,12 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           }
       }
       await Promise.all(channel.messages.map(async (message) => {
-        // console.log(message.user.messages)
         await this.userService.saveUser(message.user)
       }))
       for (const user of channel.users) {
         const u = await this.userService.getUserWith(user.id, [
           'channels', 'adminAt', 'joinedChannels', 'joinedChannels.channel', 'ownedChannels'
         ]);
-        // console.log(u);
         if (u.channels) {
           u.channels = u.channels.filter((c) => c.id !== channel.id);
         }
@@ -493,7 +487,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           u.adminAt = u.adminAt.filter((c) => c.id !== channel.id);
         }
         if (u.joinedChannels) {
-          // console.log(u.joinedChannels)
           u.joinedChannels = u.joinedChannels.filter((jC) => jC.channel.id !== channel.id);
         }
         if (u.ownedChannels)  {
@@ -524,7 +517,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           const userWithBlocked = await this.userService.getUserWith(chatUser.user.id, [
             'blockedUsers', 'bannedAt'
           ]);
-          const cToFe = await this.userChannelsToFe(userWithBlocked, (await this.channelService.getUsersChannels(chatUser.user.id)));
+          const cToFe = this.userChannelsToFe(userWithBlocked, (await this.channelService.getUsersChannels(chatUser.user.id)));
           this.server.to(chatUser.socketId).emit(USER_CHANNELS, cToFe);
         }
       }
@@ -589,7 +582,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           'blockedUsers', 'bannedAt'
         ]);
         const channels = await this.channelService.getUsersChannels(u.id);
-        const cToFe = await this.userChannelsToFe(u, channels);
+        const cToFe = this.userChannelsToFe(u, channels);
         this.server.to(kicked.socketId).emit(USER_CHANNELS, cToFe)
       }
     } catch (error) {
@@ -642,7 +635,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       const banned = await this.chatUserService.findByUser(u);
       if (banned) {
         const channels = (await this.channelService.getUsersChannels(u.id))
-        this.server.to(banned.socketId).emit(USER_CHANNELS, await this.userChannelsToFe(u, channels));
+        this.server.to(banned.socketId).emit(USER_CHANNELS, this.userChannelsToFe(u, channels));
       }
     } catch (error) {
       this.emitError(socket, error);
