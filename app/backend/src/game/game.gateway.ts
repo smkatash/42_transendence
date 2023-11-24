@@ -41,6 +41,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       this.logger.log(`Client id: ${client.id} connected successfully`);
     } catch (error) {
       this.emitError(client, error);
+	  this.logger.error(error)
     }
   }
 
@@ -157,10 +158,10 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     }
   }
 
-  emitError(client: Socket, error: Error) {
-    this.logger.debug(error);
-    client.emit(ERROR, error);
-    client.disconnect();
+  emitError(client: Socket, error: any) {
+		this.logger.debug(error);
+		client.emit(ERROR, error);
+		client.disconnect();
   }
 
   emitUserEvent(client: Socket, currentPlayer: Player) {

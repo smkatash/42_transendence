@@ -7,12 +7,12 @@ export class GlobalExceptionFilter extends BaseExceptionFilter {
     const response = host.switchToHttp().getResponse();
 
     if (exception instanceof HttpException && exception.getStatus() === HttpStatus.INTERNAL_SERVER_ERROR) {
-      response.status(418).json({
-        statusCode: 418,
-        message: 'I am a teapot', 
-      })
+		response.status(418).json({
+			statusCode: 418,
+			message: 'I am a teapot', 
+		})
     } else  if (exception instanceof HttpException && exception.getStatus() !== HttpStatus.INTERNAL_SERVER_ERROR) {
-      super.catch(exception, host);
+		super.catch(exception, host);
     } else {
       response.status(418).json({
         statusCode: 418,
