@@ -46,30 +46,28 @@ export class JoinedChannelService {
     });
   }
 
-  async findByChannelUser(channel: Channel, user: User) {
-    return await this.joinedChannelRepo.findOne({
-      where: {
-        channel: {
-          id: channel.id,
-        },
-        user: {
-          id: user.id,
-        },
-      },
-    });
-  }
-  async deleteByUserChannel(user: User, channel: Channel) {
-    return await this.joinedChannelRepo.delete({
-      // user: user,
-      // channel: channel
-      user: {
-        id: user.id,
-      },
-      channel: {
-        id: channel.id,
-      },
-    });
-  }
+    async findByChannelUser (channel: Channel, user: User)   {
+        return  await this.joinedChannelRepo.findOne({
+            where:  {
+                channel: {
+                    id: channel.id
+                },
+                user: {
+                    id: user.id
+                }
+            }
+        })
+    }
+    async deleteByUserChannel(user: User, channel: Channel)    {
+        return await this.joinedChannelRepo.delete({
+            user: {
+                id: user.id
+            },
+            channel: {
+                id: channel.id
+            }
+        })
+    }
 
   async deleteByChannel(channel: Channel) {
     return await this.joinedChannelRepo.delete({

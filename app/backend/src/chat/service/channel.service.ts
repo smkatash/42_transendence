@@ -14,65 +14,50 @@ export class ChannelService {
     private readonly channelRepository: Repository<Channel>,
   ) {}
 
-  async createChannel(channelInfo: CreateChannelDto, owner: User): Promise<Channel> {
-    try {
-      const channel = this.channelRepository.create(channelInfo);
-      channel.owner = owner;
-      channel.messages = [];
-      channel.users = [];
-      channel.admins = [];
-      channel.banned = [];
-      channel.type = channelInfo.type;
-      if (channel.private) {
-        channel.invitedUsers = [];
-        channel.type = "private";
-      }
-      channel.users.push(owner);
-      channel.admins.push(owner);
-      if (channelInfo.password?.length) {
-        const hash = await bcrypt.hash(channelInfo.password, SALT_ROUNDS);
-        channel.hash = hash;
-        channel.protected = true;
-        channel.type = "protected";
-      }
-      return await this.channelRepository.save(channel);
-    } catch (error) {
-      Logger.error(error);
-      if (error.code === POSTGRES_UNIQUE_VIOLATION) {
-        throw new BadRequestException(`Channel ${channelInfo.name} already exists`);
-      } else {
-        throw error;
-      }
+    async createChannel(channelInfo: CreateChannelDto, owner: User): Promise<Channel>{
+
+        try {
+            const channel = this.channelRepository.create(channelInfo);
+            channel.owner = owner
+            channel.messages = [];
+            channel.users = [];
+            channel.admins = [];
+            channel.banned = [];
+            channel.type = channelInfo.type;
+            if (channel.private)    {
+                channel.invitedUsers = [];
+                channel.type = 'private';
+            }
+            channel.users.push(owner);
+            channel.admins.push(owner);
+            if (channelInfo.password?.length)   {
+                const hash = await bcrypt.hash(channelInfo.password, SALT_ROUNDS);
+                channel.hash = hash;
+                channel.protected = true;
+                channel.type = 'protected'
+            }
+            return  await this.channelRepository.save(channel);
+        } catch (error) {
+            if (error.code === POSTGRES_UNIQUE_VIOLATION)   {
+                throw new BadRequestException(`Channel ${channelInfo.name} already exists`);
+            }   else   {
+                throw error;
+            }
+        }
     }
-  }
 
   async delete(id: number) {
     return await this.channelRepository.delete(id);
   }
 
-  async getUsersChannels(userId: string): Promise<Channel[]> {
-    // const channels = await this.channelRepository
-    // .createQueryBuilder('channel')
-    // .leftJoin('channel.users', 'user')
-    //        // .leftJoinAndSelect('channel.users', 'user')
-    // .where('user.id = :userId', {userId})
-    // .getMany();
-    // return channels;
-    // return await this.channelRepository.find({
-    //     where: {
-    //         users: {
-    //            id: userId
-    //         }
-    //     },
-    //     relations: [
-    //         'users'
-    //     ]
-    // })
-    const channels = await this.channelRepository.find({
-      relations: ["users", "owner", "admins"],
-    });
-    return channels.filter(c => c.users.some(user => user.id === userId));
-  }
+    async getUsersChannels(userId: string): Promise<Channel[]>  {
+        const channels = (await this.channelRepository.find({
+            relations: [
+                'users', 'owner', 'admins'
+            ]
+        }))
+        return channels.filter((c) => c.users.some((user) => user.id === userId));
+    }
 
   async getAllChannels(): Promise<Channel[]> {
     return await this.channelRepository.find({
@@ -87,43 +72,42 @@ export class ChannelService {
     });
   }
 
-  async join(user: User, joinDto: JoinChannelDto) {
-    const channel: Channel = await this.channelRepository.findOne({
-      where: {
-        id: joinDto.id,
-      },
-      relations: ["users", "banned", "invitedUsers"],
-    });
-    if (!channel) {
-      throw new BadRequestException("No such channel");
+    async join(user: User, joinDto: JoinChannelDto) {
+        const   channel: Channel = await this.channelRepository.findOne({
+            where:  {
+                id: joinDto.id
+            },
+            relations: ['users', 'banned', 'invitedUsers']
+        })
+        if (!channel)   {
+            throw new BadRequestException('No such channel');
+        }
+        if (channel.banned.some((banned) => banned.id === user.id)) {
+            throw new BadRequestException('No access(banned)')
+        }
+        if (channel.users.some((u) => u.id === user.id)){
+            throw new BadRequestException('Already in channel')
+        }
+        if (channel.private)    {
+            if (!(channel.invitedUsers.some((invited) => invited.id === user.id)))  {
+                throw new BadRequestException('No access to private channel')
+            }   else    {
+                channel.invitedUsers = channel.invitedUsers.filter((iU) => iU.id !== user.id);
+            }
+        }
+        //check password
+        if (channel.hash)  {
+            if (!(joinDto.password))    {
+                throw new BadRequestException('No password provided')
+            }
+            const passMatch = await bcrypt.compare(joinDto.password, channel.hash);
+            if (!passMatch) {
+                throw new BadRequestException('Bad password')
+            }
+        }
+        channel.users.push(user);
+        return await this.channelRepository.save(channel);
     }
-    if (channel.banned.some(banned => banned.id === user.id)) {
-      throw new BadRequestException("No access(banned)");
-    }
-    if (channel.users.some(u => u.id === user.id)) {
-      throw new BadRequestException("Already in channel");
-    }
-    if (channel.private) {
-      //check if invited
-      if (!channel.invitedUsers.some(invited => invited.id === user.id)) {
-        throw new BadRequestException("No access to private channel");
-      } else {
-        channel.invitedUsers = channel.invitedUsers.filter(iU => iU.id !== user.id);
-      }
-    }
-    //check password
-    if (channel.hash) {
-      if (!joinDto.password) {
-        throw new BadRequestException("No password provided");
-      }
-      const passMatch = await bcrypt.compare(joinDto.password, channel.hash);
-      if (!passMatch) {
-        throw new BadRequestException("Bad password");
-      }
-    }
-    channel.users.push(user);
-    return await this.channelRepository.save(channel);
-  }
 
   async passwordService(passInfo: ChannelPasswordDto) {
     const channel = await this.getChannel(passInfo.cId, []);

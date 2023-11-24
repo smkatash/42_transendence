@@ -3,8 +3,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { TIME_TO_MUTE } from "src/utils/Constants";
 import { Repository } from "typeorm";
 import { Mute } from "../entities/mute.entity";
-
-// const timeToMute = 30000;//30sec
+import { Repository } from "typeorm";
+import { TIME_TO_MUTE } from "src/Constants";
 
 @Injectable()
 export class MuteService {
@@ -36,19 +36,15 @@ export class MuteService {
     });
   }
 
-  // async deleteMute(uId: string, cId: number)  {
-  async deleteMute(id: number) {
-    return await this.muteRepository.delete(id);
-    // return await this.muteRepository.delete({
-    // uId, cId
+    async deleteMute(id: number)    {
+        return await this.muteRepository.delete(id);
+    }
 
-    // });
-  }
-  async deleteMutesByChannel(cId: number) {
-    return await this.muteRepository.delete({
-      cId,
-    });
-  }
+    async deleteMutesByChannel(cId: number) {
+        return await this.muteRepository.delete({
+           cId 
+        });
+    }
 
   async purge() {
     await this.muteRepository.createQueryBuilder().delete().execute();
