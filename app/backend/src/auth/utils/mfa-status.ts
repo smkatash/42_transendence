@@ -1,5 +1,5 @@
 export enum MfaStatus {
-	DENY = 0,
-	VALIDATE,
-	MFAPending
+  DENY = 0,
+  VALIDATE,
+  MFAPending,
 }

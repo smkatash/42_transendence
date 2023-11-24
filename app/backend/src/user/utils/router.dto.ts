@@ -1,8 +1,8 @@
-import { IsNotEmpty } from "class-validator"
+import { IsNotEmpty } from "class-validator";
 
-export type ROUTE = "game" | "leaderboard" | "profile" | "chat"
+export type ROUTE = "game" | "leaderboard" | "profile" | "chat";
 
 export class RouteDto {
-	@IsNotEmpty()
-	route: ROUTE
+  @IsNotEmpty()
+  route: ROUTE;
 }

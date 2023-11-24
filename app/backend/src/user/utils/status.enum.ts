@@ -1,5 +1,5 @@
 export enum Status {
-    OFFLINE = 0,
-    ONLINE,
-    GAME
+  OFFLINE = 0,
+  ONLINE,
+  GAME,
 }

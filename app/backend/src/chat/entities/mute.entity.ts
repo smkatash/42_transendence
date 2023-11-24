@@ -1,16 +1,16 @@
-import { Column, Entity, JoinTable, ManyToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity,PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class Mute{
-    @PrimaryGeneratedColumn()
-    id: number;
+export class Mute {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    mutedUntil: Date;
+  @Column()
+  mutedUntil: Date;
 
-    @Column()
-    uId: string;
+  @Column()
+  uId: string;
 
-    @Column()
-    cId: number;
+  @Column()
+  cId: number;
 }

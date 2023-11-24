@@ -1,77 +1,75 @@
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn} from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryColumn } from "typeorm";
 import { Status } from "../utils/status.enum";
 import { Channel } from "src/chat/entities/channel.entity";
 import { MfaStatus } from "src/auth/utils/mfa-status";
 import { Message } from "src/chat/entities/message.entity";
 import { JoinedChannel } from "src/chat/entities/joinedChannel.entity";
 
-
-@Entity({name: 'users'})
+@Entity({ name: "users" })
 export class User {
-    @PrimaryColumn({unique: true})
-    id: string
-    
-    @Column({unique: true})
-    username: string
-    
-    @Column()
-    title: string
-    
-    @Column()
-    avatar: string
+  @PrimaryColumn({ unique: true })
+  id: string;
 
-	@Column({nullable: true})
-    email: string
+  @Column({ unique: true })
+  username: string;
 
-	@Column({default: false})
-	mfaEnabled: boolean
+  @Column()
+  title: string;
 
-	@Column({default: MfaStatus.DENY})
-	mfaStatus: MfaStatus
+  @Column()
+  avatar: string;
 
-    @Column({ default: Status.OFFLINE})
-    status: Status
+  @Column({ nullable: true })
+  email: string;
 
-    @ManyToMany(() => User, (user) => user.friends)
-    @JoinTable()
-    friendOf: User[]
+  @Column({ default: false })
+  mfaEnabled: boolean;
 
-    @ManyToMany(() => User, (user) => user.friendOf)
-    friends: User[]
+  @Column({ default: MfaStatus.DENY })
+  mfaStatus: MfaStatus;
 
-	@ManyToMany(() => User, (user) => user.pendingFriendRequests)
-	@JoinTable()
-	sentFriendRequests: User[]
+  @Column({ default: Status.OFFLINE })
+  status: Status;
 
-	@ManyToMany(() => User, (user) => user.sentFriendRequests)
-	pendingFriendRequests: User[]
+  @ManyToMany(() => User, user => user.friends)
+  @JoinTable()
+  friendOf: User[];
 
-    @ManyToMany(() => User, (user) => user.blockedUsers)
-	@JoinTable()
-	blockedUsers: User[];
+  @ManyToMany(() => User, user => user.friendOf)
+  friends: User[];
 
-    /**
-     * kello
-     */
-    @ManyToMany(() => Channel, channel => channel.users)
-    channels: Channel[];
+  @ManyToMany(() => User, user => user.pendingFriendRequests)
+  @JoinTable()
+  sentFriendRequests: User[];
 
-    @ManyToMany(() => Channel, channel => channel.admins, {nullable:true})
-    adminAt: Channel[]
+  @ManyToMany(() => User, user => user.sentFriendRequests)
+  pendingFriendRequests: User[];
 
-    @ManyToMany(() => Channel, (channel) => channel.banned, {nullable:true})
-    bannedAt: Channel[]
+  @ManyToMany(() => User, user => user.blockedUsers)
+  @JoinTable()
+  blockedUsers: User[];
 
-    @OneToMany(() => Channel, (channel) => channel.owner, {nullable:true})
-    ownedChannels: Channel[]
+  /**
+   * kello
+   */
+  @ManyToMany(() => Channel, channel => channel.users)
+  channels: Channel[];
 
-    @OneToMany(()=> Message, (message) => message.user)
-    messages: Message[]
+  @ManyToMany(() => Channel, channel => channel.admins, { nullable: true })
+  adminAt: Channel[];
 
-    @OneToMany(() => JoinedChannel, (joinedChannel) => joinedChannel.user)
-    joinedChannels: JoinedChannel[]
+  @ManyToMany(() => Channel, channel => channel.banned, { nullable: true })
+  bannedAt: Channel[];
 
-    @ManyToMany(() => Channel, (channel) => channel.invitedUsers)
-    invitedTo: Channel[]
+  @OneToMany(() => Channel, channel => channel.owner, { nullable: true })
+  ownedChannels: Channel[];
+
+  @OneToMany(() => Message, message => message.user)
+  messages: Message[];
+
+  @OneToMany(() => JoinedChannel, joinedChannel => joinedChannel.user)
+  joinedChannels: JoinedChannel[];
+
+  @ManyToMany(() => Channel, channel => channel.invitedUsers)
+  invitedTo: Channel[];
 }
-	
