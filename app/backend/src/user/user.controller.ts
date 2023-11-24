@@ -5,6 +5,7 @@ import {
   Delete,
   Get,
   Inject,
+  InternalServerErrorException,
   Logger,
   Param,
   Patch,
@@ -205,7 +206,6 @@ export class UserController {
       throw new UnauthorizedException("Access denied");
     }
 
-    console.log("HERE");
     try {
       return await this.userService.declineUserFriend(currentUser.id, friendIdDto.friendId);
     } catch (error) {
@@ -241,7 +241,6 @@ export class UserController {
     }
   }
 
-  // TODO to check with frontend
   @Post("unblock")
   @UseGuards(SessionGuard)
   async handleUnblockUser(@Body() unblockUserDto: UnblockUserDto, @GetUser() currentUser: SessionUserDto) {
@@ -276,11 +275,11 @@ export class UserController {
     if (!currentUser) {
       throw new UnauthorizedException("Access denied");
     }
-
+	
     try {
       return await this.userService.getUserById(paramUserIdDto.id);
     } catch (error) {
-      throw error;
+    	throw error;
     }
   }
 

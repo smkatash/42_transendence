@@ -53,11 +53,10 @@ import { APP_FILTER } from "@nestjs/core";
     ChatModule
   ],
   controllers: [AppController],
-  providers: [AppService,
-  {
-      provide: APP_FILTER,
-      useClass: GlobalExceptionFilter,
-    }],
+  providers: [AppService, {
+		provide: APP_FILTER,
+		useClass: GlobalExceptionFilter,
+	}],
 })
 
 export class AppModule {}

@@ -115,7 +115,7 @@ export class GameService {
     console.log("listeners on: " + this.listenersOn )
     if(this.listenersOn === false) {
       this.listenersOn = true;
-      this.socket.on ('error',(msg:any) => { alert('Internal Server Error') })
+      this.socket.on ('error',(msg:any) => { alert('I am a teapot') })
       this.socket.on ('join', (msg: Game) => { console.log(JSON.stringify(msg))})
       this.socket.on ('game', (msg: any) => { this.handlerGameInfo( msg ) })
       this.socket.on ('start', (msg: any)  => { this.handlerGameStart(msg) })
