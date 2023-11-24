@@ -64,8 +64,6 @@ export class JoinedChannelService {
     }
     async deleteByUserChannel(user: User, channel: Channel)    {
         return await this.joinedChannelRepo.delete({
-            // user: user,
-            // channel: channel
             user: {
                 id: user.id
             },

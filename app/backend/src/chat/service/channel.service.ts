@@ -37,9 +37,7 @@ export class ChannelService {
                 channel.type = 'protected'
             }
             return  await this.channelRepository.save(channel);
-            
         } catch (error) {
-            Logger.error(error);
             if (error.code === POSTGRES_UNIQUE_VIOLATION)   {
                 throw new BadRequestException(`Channel ${channelInfo.name} already exists`);
             }   else   {
@@ -53,31 +51,12 @@ export class ChannelService {
     }
 
     async getUsersChannels(userId: string): Promise<Channel[]>  {
-        // const channels = await this.channelRepository
-        // .createQueryBuilder('channel')
-        // .leftJoin('channel.users', 'user')
-//        // .leftJoinAndSelect('channel.users', 'user')
-        // .where('user.id = :userId', {userId})
-        // .getMany();
-        // return channels;
-        // return await this.channelRepository.find({
-        //     where: {
-        //         users: {
-        //            id: userId 
-        //         }
-        //     },
-        //     relations: [
-        //         'users'
-        //     ]
-        // })
         const channels = (await this.channelRepository.find({
             relations: [
                 'users', 'owner', 'admins'
             ]
         }))
         return channels.filter((c) => c.users.some((user) => user.id === userId));
-         
-
     }
 
     async getAllChannels(): Promise<Channel[]>  {
@@ -112,7 +91,6 @@ export class ChannelService {
             throw new BadRequestException('Already in channel')
         }
         if (channel.private)    {
-            //check if invited
             if (!(channel.invitedUsers.some((invited) => invited.id === user.id)))  {
                 throw new BadRequestException('No access to private channel')
             }   else    {

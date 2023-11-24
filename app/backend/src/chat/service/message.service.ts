@@ -24,28 +24,7 @@ export class MessageService {
         return await this.msgRepo.save(msg);
     }
 
-    //wtf
-    // async findMessagesByChannel(channel:  Channel): Promise<Message[]>  {
-    //     return await this.msgRepo.find({
-    //         where:  {
-    //             channel
-    //         },
-    //         relations: ['user', 'channel'],
-    //         order:  {
-    //             createdAt: "ASC"
-    //         }
-    //     })
-    // }
-
     async findMessagesForChannel(channel: Channel)  {
-        // const query = this.msgRepo
-        //     .createQueryBuilder('message')
-        //     .leftJoin('message.channel', 'channel')
-        //     .where('channel.id = :channelId', {channelId: channel.id})
-        //     .leftJoinAndSelect('message.user', 'user')
-        //     .orderBy('message.createdAt', 'ASC')
-        //     .execute()
-        // return query
         return await this.msgRepo.find({
             where:  {
                 channel: {
@@ -72,8 +51,8 @@ export class MessageService {
             }
         })
     }
+
     async findById(id: number)  {
-        // return await this.msgRepo.findOneBy({id})
         return await this.msgRepo.findOne({
             where:  {
                 id: id
@@ -83,6 +62,7 @@ export class MessageService {
             ]
         })
     }
+
     async save(msg: Message)    {
         return await this.msgRepo.save(msg);
     }

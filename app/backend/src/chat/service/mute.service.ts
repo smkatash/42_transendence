@@ -4,8 +4,6 @@ import { Mute } from "../entities/mute.entity";
 import { Repository } from "typeorm";
 import { TIME_TO_MUTE } from "src/Constants";
 
-// const timeToMute = 30000;//30sec
-
 @Injectable()
 export class MuteService    {
     constructor(
@@ -34,14 +32,10 @@ export class MuteService    {
         }) 
     }
 
-    // async deleteMute(uId: string, cId: number)  {
     async deleteMute(id: number)    {
         return await this.muteRepository.delete(id);
-        // return await this.muteRepository.delete({
-            // uId, cId
-
-        // });
     }
+
     async deleteMutesByChannel(cId: number) {
         return await this.muteRepository.delete({
            cId 
