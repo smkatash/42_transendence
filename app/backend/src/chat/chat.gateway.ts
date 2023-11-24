@@ -982,7 +982,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         }
         channel.invitedUsers.push(u);
         await this.channelService.saveChannel(channel);
-        // this.success(socket, ` ${u.username} invited to ${channel.name}`);
       } else if (info.inviteType === 'game') {
           Logger.debug(`Received game invite type message`)
       } else  {
