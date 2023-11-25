@@ -15,6 +15,7 @@ import { MessageService } from "./service/message.service";
 import { MuteService } from "./service/mute.service";
 import {
   ACCEPT_PRIVATE_INVITE,
+  ACHTUNG,
   ADD_ADMIN,
   BAN,
   BLOCK,
@@ -1113,5 +1114,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     } catch (error) {
       this.emitError(socket, error);
     }
+  }
+
+  @SubscribeMessage(ACHTUNG)
+  onAchtung(@ConnectedSocket() socket: Socket, @MessageBody() msg: uIdDto)  {
+    let user = socket.data.user;
+    if (!user) {
+      return this.noAccess(socket);
+    }
+    this.emitError(socket, new BadRequestException(msg.uId));
   }
 } 
