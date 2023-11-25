@@ -87,7 +87,8 @@ export class ChannelCreationMenuComponent {
        password: this.channelPassword
     })
     this.channelName = ''
-    this.channelPassword = ''
+    this.channelPassword = undefined
+    this.userSearch.reset()
     this.toggle()
   }
 }

@@ -5,6 +5,7 @@ import { ChatService } from 'src/app/chat/chat.service';
 import { ADD_ADMIN, BAN, BLOCK, GAME_INVITE, KICK, MUTE, REM_ADMIN, UNBAN, UNBLOCK } from 'src/app/chat/subscriptions-events-constants';
 import { Channel, User } from 'src/app/entities.interface';
 import { GameService } from 'src/app/game/game.service';
+import { ProfileService } from 'src/app/profile/profile.service';
 
 @Component({
   selector: 'app-channel-user',
@@ -27,6 +28,7 @@ export class ChannelUserComponent {
   constructor(
     private chatService: ChatService,
     private gameService: GameService,
+    private profileService: ProfileService,
     private router: Router,
     private el: ElementRef
   ) {}
@@ -34,6 +36,8 @@ export class ChannelUserComponent {
   @Input() user?: User;
   @Input() currentUser?: User
   @Input() channel?: Channel
+
+  userStatus?: number;
 
   currentUserBlockedList: User[] = []
 
@@ -45,10 +49,16 @@ export class ChannelUserComponent {
     this.chatService.requestBlockedUsers()
     this.chatService.getBlockedUsers()
       .subscribe(blocked => this.currentUserBlockedList = blocked)
+
+    if (!this.user) return
+    this.profileService.requestStatus(this.user?.id)
+
+    this.profileService.statusListener()
+      .subscribe(status => this.userStatus = status)
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if(changes['user']) {
+    if (changes['user']) {
       console.log(this.user)
     }
   }
@@ -109,6 +119,10 @@ export class ChannelUserComponent {
 
   sendGameInvite() {
     if (!this.user) return
+    if (this.userStatus !== 1) {
+      alert('User is not online. Cannot send a game invite')
+      return
+    }
     this.chatService.sendDM(this.user.id, "Hey, I'd like to play a game with you", GAME_INVITE, this.inviteGameMode)
     this.gameService.inviteToMatch(this.user.id, this.inviteGameMode)
     this.router.navigate(['/game', { invite: true, accept: false }])

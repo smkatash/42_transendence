@@ -17,7 +17,7 @@ export class ChatService {
 
   domain: string = HOST_IP
 
-  findUser(username: string): Observable<User[]>  {
+  findUser(username: string): Observable<User[]> {
     return this.http.get<User[]>(`${this.domain}/api/user/find-by-username?username=${username}`, { withCredentials: true })
   }
 
@@ -47,7 +47,9 @@ export class ChatService {
   passwordModeration(action: string, channelID: number, password: string, oldPassword?: string) {
     if (action === 'add') {
       this.socket.emit(PASSWORD, { cId: channelID, newPass: password })
-    } else { // remove or change
+    } else if (action === 'remove'){
+      this.socket.emit(PASSWORD, { cId: channelID, oldPass: password })
+    } else { // change
       this.socket.emit(PASSWORD, { cId: channelID, oldPass: oldPassword, newPass: password })
     }
   }

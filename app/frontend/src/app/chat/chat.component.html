@@ -9,7 +9,7 @@
       <div class="channel-container">
         <div class="channel-list" *ngIf="selectedTab === 'my-chats'">
           <p>These are all the chats you have joined/created</p>
-          <div *ngFor="let channel of myChannels$ | async">
+          <div *ngFor="let channel of myChannels">
             <app-sidebar-channel [isSelected]="channel.id === selectedChannel?.id"
                                  [channel]="channel"
                                  (click)="onChannelSelect(channel)">
@@ -37,7 +37,7 @@
                                  [(isOpen)]="channelCreationPopup">
       </app-channel-creation-menu>
 
-      <app-channel-join-popup [channel]="selectedChannel"
+      <app-channel-join-popup [channel]="channelToJoin"
                               [(isOpen)]="passwordInputPopup">
       </app-channel-join-popup>
 

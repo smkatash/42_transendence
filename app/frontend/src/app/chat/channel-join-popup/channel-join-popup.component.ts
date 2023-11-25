@@ -45,6 +45,7 @@ export class ChannelJoinPopupComponent {
       password: this.channelPassword
     })
     this.chatService.requestUserChannels()
+    this.channelPassword = undefined
     this.toggle()
   }
 }

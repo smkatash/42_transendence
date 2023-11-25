@@ -42,6 +42,8 @@ export class ChannelMessagesSettingsComponent implements OnChanges {
   users: User[] = []
   currentUser?: User
 
+  wantsToChangePass: boolean = false
+  wantsToRemovePass: boolean = false
   channelPassword?: string // password being inputted in case of adding/changing/removing
   channelPasswordVerify?: string
 
@@ -76,6 +78,7 @@ export class ChannelMessagesSettingsComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['channel'] && this.channel) {
+      console.log('channel change')
       this.chatService.requestChannelUsers(this.channel.id)
     }
   }
@@ -111,6 +114,10 @@ export class ChannelMessagesSettingsComponent implements OnChanges {
   passModeration(action: string) {
     if (!this.channel || !this.channelPassword) return
     this.chatService.passwordModeration(action, this.channel.id, this.channelPassword, this.channelPasswordVerify)
+    this.channelPassword = undefined
+    this.channelPasswordVerify = undefined
+    this.wantsToChangePass = false
+    this.wantsToRemovePass = false
     this.toggle()
   }
 }

@@ -116,8 +116,8 @@ export const MESSAGE = 'newMsg'
 export const PASSWORD = 'password'
 /**
  * Use when you want to change, add or remove a password.
- * Usage: If there is no password already, I fill in newPass to make channel protected.
- * If there is a password already, I fill in newPass to change the password.
+ * Usage: If there is no password already, I fill in newPass only to make channel protected.
+ * If there is a password already, I fill in newPass && oldPass to change the password.
  * Or I can send the oldPass only to remove password protection
  *
  * expects: ChannelPasswordDto

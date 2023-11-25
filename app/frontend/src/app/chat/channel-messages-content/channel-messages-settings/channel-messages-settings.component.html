@@ -2,30 +2,48 @@
   <div class="channel-messages-settings">
     <h1 class="title">Channel Settings.</h1>
     <p>To access the different options, hover over a user's name and click the dropdown menu.</p>
-    <label for="channel-password" *ngIf="canManagePassword()">Change your channel's password:</label>
-    <label for="channel-password" *ngIf="canManagePassword()">Or remove your channel's password:</label>
+    <div class="pass-moderation-option" *ngIf="canManagePassword() && wantsToRemovePass === false && wantsToChangePass === false">
+      <button (click)="wantsToRemovePass = true">Remove password</button>
+      <button (click)="wantsToChangePass = true">Change password</button>
+    </div>
+    <label for="channel-password" *ngIf="canManagePassword() && wantsToChangePass">Input new password:</label>
+    <label for="channel-password" *ngIf="canManagePassword() && wantsToRemovePass">Verify password to remove:</label>
     <label for="channel-password" *ngIf="canAddPassword()">Add a password to your channel:</label>
-    <div class="password-field-container" *ngIf="canManagePassword() || canAddPassword()">
-      <input type="password" id="channel-password" #channelpassword="ngModel" [class.is-invalid]="channelpassword.invalid" required pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" [(ngModel)]="channelPassword">
-      <label class="verify-pass" for="channel-password-verify" *ngIf="canManagePassword()">Verify password if changing:</label>
-      <label class="verify-pass" for="channel-password-verify" *ngIf="canManagePassword()">Insert old password if removing:</label>
-      <input *ngIf="canManagePassword()" type="password" id="channel-password-verify" #channelpasswordverify="ngModel" [class.is-invalid]="channelpasswordverify.invalid" required pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" [(ngModel)]="channelPasswordVerify">
+    <div class="password-field-container" *ngIf="wantsToChangePass || wantsToRemovePass || canAddPassword()">
+
+      <input type="password"
+             id="channel-password"
+             #channelpassword="ngModel"
+             [class.is-invalid]="channelpassword.invalid"
+             required pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
+             [(ngModel)]="channelPassword">
+
+             <label class="verify-pass" for="channel-password-verify" *ngIf="canManagePassword() && wantsToChangePass">Input old password:</label>
+
+      <input *ngIf="canManagePassword() && wantsToChangePass"
+             type="password"
+             id="channel-password-verify"
+             #channelpasswordverify="ngModel"
+             [class.is-invalid]="channelpasswordverify.invalid"
+             required pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
+             [(ngModel)]="channelPasswordVerify">
+
       <div class="password-buttons">
-        <button class="pass-mod" *ngIf="canManagePassword()"
+        <button class="pass-mod" *ngIf="canManagePassword() && wantsToChangePass"
                                  (click)="passModeration('change')"
                                  [disabled]="channelpassword.invalid"
-                                 [class.btn-invalid]="channelpassword.invalid || (channelPassword !== channelPasswordVerify)">
+                                 [class.btn-invalid]="channelpassword.invalid">
                                  Change
         </button>
-        <button class="pass-mod" *ngIf="canManagePassword()"
+        <button class="pass-mod" *ngIf="canManagePassword() && wantsToRemovePass"
                                  (click)="passModeration('remove')"
                                  [disabled]="channelpassword.invalid"
-                                 [class.btn-invalid]="channelpassword.invalid || (channelPassword !== channelPasswordVerify)">
+                                 [class.btn-invalid]="channelpassword.invalid">
                                  Remove
         </button>
         <button class="pass-mod" *ngIf="canAddPassword()"
                                  (click)="passModeration('add')"
-                                 [disabled]="channelpassword.invalid || (channelPassword !== channelPasswordVerify)"
+                                 [disabled]="channelpassword.invalid"
                                  [class.btn-invalid]="channelpassword.invalid">
                                  Add
         </button>
