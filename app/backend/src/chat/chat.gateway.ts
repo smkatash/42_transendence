@@ -1,4 +1,4 @@
-import { BadRequestException, Logger, OnModuleInit, UnauthorizedException, UsePipes, ValidationPipe } from "@nestjs/common";
+import { BadRequestException, HttpStatus, Logger, OnModuleInit, UnauthorizedException, UsePipes, ValidationPipe } from "@nestjs/common";
 import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
 import { User } from "src/user/entities/user.entity";

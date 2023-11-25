@@ -43,6 +43,7 @@ export class ChannelMessagesSettingsComponent implements OnChanges {
   currentUser?: User
 
   channelPassword?: string // password being inputted in case of adding/changing/removing
+  channelPasswordVerify?: string
 
   privateUserSearch = new FormControl()
   searchedUsers: User[]
@@ -109,10 +110,7 @@ export class ChannelMessagesSettingsComponent implements OnChanges {
 
   passModeration(action: string) {
     if (!this.channel || !this.channelPassword) return
-    console.log("emitting to backend")
-    console.log(action)
-    console.log(this.channelPassword)
-    console.log(this.channel.id)
-    this.chatService.passwordModeration(action, this.channel.id, this.channelPassword)
+    this.chatService.passwordModeration(action, this.channel.id, this.channelPassword, this.channelPasswordVerify)
+    this.toggle()
   }
 }

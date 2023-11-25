@@ -53,6 +53,12 @@ label {
   color: #E8DAB2;
 }
 
+div .verify-pass {
+  margin-top: 4%;
+  margin-bottom: 2%;
+  margin-left: 0;
+}
+
 .password-field-container, .invite-to-channel {
   margin-left: 10%;
   margin-right: 10%;

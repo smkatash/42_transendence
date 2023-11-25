@@ -3,8 +3,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { TIME_TO_MUTE } from "src/utils/Constants";
 import { Repository } from "typeorm";
 import { Mute } from "../entities/mute.entity";
-import { Repository } from "typeorm";
-import { TIME_TO_MUTE } from "src/Constants";
 
 @Injectable()
 export class MuteService {

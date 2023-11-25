@@ -44,11 +44,11 @@ export class ChatService {
     this.socket.emit(JOIN, joinInfo)
   }
 
-  passwordModeration(action: string, channelID: number, password: string) {
-    if (action === 'add' || action === 'change') {
+  passwordModeration(action: string, channelID: number, password: string, oldPassword?: string) {
+    if (action === 'add') {
       this.socket.emit(PASSWORD, { cId: channelID, newPass: password })
-    } else { // remove
-      this.socket.emit(PASSWORD, { cId: channelID, oldPass: password })
+    } else { // remove or change
+      this.socket.emit(PASSWORD, { cId: channelID, oldPass: oldPassword, newPass: password })
     }
   }
 
