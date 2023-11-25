@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, OnInit, Output, Renderer2, RendererFactory2 } from '@angular/core';
 import { GameService } from './game.service';
-import { Ball, Game, Paddle, GameState } from '../entities.interface';
+import { Ball, Game, Paddle, GameState, GameMode } from '../entities.interface';
 // import { NONE_TYPE } from '@angular/compiler';
-import { ActivatedRoute, Route } from '@angular/router';
+import { ActivatedRoute, Route, Router } from '@angular/router';
 import { Socket } from 'ngx-socket-io';
 import { Subscription } from 'rxjs';
 
@@ -18,9 +18,11 @@ export class GameComponent implements AfterViewInit, OnInit {
               private rendererFactory: RendererFactory2,
               private elementReference: ElementRef,
               private gameService: GameService,
-              private route: ActivatedRoute)
+              private route: ActivatedRoute,
+			  private router: Router
+			  )
   {
-    this.gameService.getUser();
+    // this.gameService.getUser();
     this.renderer = rendererFactory.createRenderer(null, null);
   }
 
@@ -77,7 +79,6 @@ export class GameComponent implements AfterViewInit, OnInit {
   ngAfterViewInit(): void {
     this.checkBoardSize();
   }
-
 
   @Output() paddlePositionChange = new EventEmitter<string>();
 
@@ -205,36 +206,10 @@ export class GameComponent implements AfterViewInit, OnInit {
   initViewValue(){
     let element = document.getElementById("board") as unknown as SVGRectElement;
     if(element?.height && element?.width){
-        console.log("HEIGHT:" + element.height + " WIDTH: " + element.width)
         this.maxViewHeight = element?.height.baseVal.value;
         this.maxViewWidth = element?.width.baseVal.value;
     }
   }
-
-  isWaitingInQueue(){
-    this.gameService.getStatusQueue().subscribe((status: boolean) => {
-      if(status === true){
-        ;
-      } else {
-        this.isInQueue = false;
-        this.invited = false;
-        this.isGameOn = true;
-      }
-    })
-  }
-
-  settledSide : boolean;
-
-  isInQueue: boolean = false;
-  isGameOn: boolean = false;
-
-  /* Router params for game invite */
-  invited: boolean = false
-  accepted: boolean = false
-
-  observableAreOn = false;
-
-  gameQueue: boolean = false;
 
   handlerQueueInfo( status: boolean) {
     if(status === true){
@@ -256,21 +231,7 @@ export class GameComponent implements AfterViewInit, OnInit {
         }
         this.settledSide = true;
       }
-      console.log("BEFORE CONVERSION")
-      console.log(JSON.stringify(game));
       this.gameInfo = this.valueConversion(game);
-      // console.log( "USER ID Player [0]: " + this.gameInfo.match?.players[0].id +
-      //                "\nUSER ID Player [1]: " + this.gameInfo.match?.players[1].id +
-      //                "\nMY ID: " + this.gameService.userInfo.id +
-      //                "\nball: " + this.gameInfo.ball?.position.x + " " + this.gameInfo.ball?.position.y +
-      //                "\nmatch score: " + this.gameInfo.match?.currentUserScore + " id: "
-      //                            +  this.gameInfo.match?.id + " loser: "
-      //                            +  this.gameInfo.match?.loser + " matchResult: "
-      //                            +  this.gameInfo.match?.matchResult + " opponentUser: "
-      //                            +  this.gameInfo.match?.opponentUser + " oppoentScore: "
-      //                            +  this.gameInfo.match?.opponentUserScore + " status: "
-      //                            +  this.gameInfo.match?.status + " winner: "
-      //                            +  this.gameInfo.match?.winner );
       if(this.gameInfo.leftPaddle?.length){
         this.paddleHeight = ( 100/ this.maxHeight) * this.gameInfo.leftPaddle?.length;
       }
@@ -292,77 +253,44 @@ export class GameComponent implements AfterViewInit, OnInit {
         this.endFunc();
   }
 
-  handlerInvite(){
-    this.settledSide = false;
-    this.gameQueue = true;
-    this.isWaitingInQueue();
-  }
-
-  handlerAccept() {
-    this.gameQueue = false;
-    this.settledSide = false;
-    this.isGameOn = true;
-  }
   private sub: Subscription | undefined;
   private subOne: Subscription | undefined;
   private subTwo: Subscription | undefined;
-  private subThree: Subscription | undefined;
 
   public gameObservableOn = false;
+
   gameObservableInit() {
     if (!this.gameObservableOn) {
       this.gameObservableOn = true;
-
-      this.sub = this.gameService.getGameObservable().subscribe((game: Game) => {
-        console.log("Received game update from observable:");
-        console.log(JSON.stringify(game));
-
+      this.sub = this.gameService.getGameInfoObservable().subscribe((game: Game) => {
         this.handlerGameInfo(game);
       });
-
-      this.subOne = this.gameService.getGameStatus().subscribe(data => {
-        console.log("Received game status update:");
-        console.log(JSON.stringify(data));
-
+      this.subOne = this.gameService.getGameStatusObservable().subscribe(data => {
         this.handlerStatusInfo(data);
       });
-
-      this.subTwo = this.gameService.getStatusQueue().subscribe((status: boolean) => {
-        console.log("Received queue status update:");
-        console.log(JSON.stringify(status));
-
+      this.subTwo = this.gameService.getGameQueueObservable().subscribe((status: boolean) => {
         this.handlerQueueInfo(status);
       });
     }
   }
 
-  ngOnInit() {
-    this.gameService.handleConnection();
-    console.log("SUBSCRIBE TO OBSERVABLE")
-    this.gameObservableInit();
-    this.invited = ('true' === this.route.snapshot.paramMap.get('invite'))
-    this.accepted = ('true' === this.route.snapshot.paramMap.get('accept'))
-    if( this.invited === true) { this.handlerInvite() }
-    if( this.accepted === true) { this.handlerAccept() }
+  readyFunc() {
   }
 
-  readyFunc() {
-    console.log("READY")
-  }
   startFunc(){
   }
+
   progressFunc(){
   }
+
   pauseFunc(){
-    this.settledSide = false;
-    this.invited = false;
-    this.accepted = false;
-    this.gameQueue = false;
-    this.isGameOn = false;
-    this.winnerPrompt();
+    this.endFunc();
   }
+
   endFunc(){
-    console.log("END")
+	if(this.accepted || this.invited){
+		// this.router.navigate(['/chat']);
+	}
     this.settledSide = false;
     this.invited = false;
     this.accepted = false;
@@ -383,23 +311,68 @@ export class GameComponent implements AfterViewInit, OnInit {
     ;
   }
 
-
   ngOnDestroy() {
-    console.log("UNSUBSCRIBE OBSERVABLE");
     if (this.sub) {
       this.sub.unsubscribe()
       this.subOne?.unsubscribe()
       this.subTwo?.unsubscribe()
     }
     this.gameService.handleDisconnection();
-    this.isGameOn = false;
+  }
+
+  handlerInvite(){
+    this.gameQueue = true;
+    this.invitedUser = this.route.snapshot.queryParamMap.get('userId');
+    this.difficultyLevel = this.route.snapshot.queryParamMap.get('level');
+    if( this.invitedUser && this.difficultyLevel){
+      if( this.difficultyLevel == "1"){
+        this.gameService.emitInvite(this.invitedUser, GameMode.EASY);
+      } else if ( this.difficultyLevel == "2"){
+        this.gameService.emitInvite(this.invitedUser, GameMode.MEDIUM);
+      } else {
+        this.gameService.emitInvite(this.invitedUser, GameMode.HARD);
+      }
+    }
+  }
+
+  handlerAccept() {
+    this.invitedUser = this.route.snapshot.queryParamMap.get('userId');
+    this.difficultyLevel = this.route.snapshot.queryParamMap.get('level');
+    if( this.invitedUser && this.difficultyLevel) {
+      if( this.difficultyLevel == "1"){
+        this.gameService.emitAcceptInvite(this.invitedUser, GameMode.EASY);
+      } else if ( this.difficultyLevel == "2"){
+        this.gameService.emitAcceptInvite(this.invitedUser, GameMode.MEDIUM);
+      } else {
+        this.gameService.emitAcceptInvite(this.invitedUser, GameMode.HARD);
+      }
+    }
+    this.isGameOn = true;
+  }
+
+  /* --------------   params for game logic    ------------*/
+  settledSide : boolean;
+  isGameOn: boolean = false;
+  gameQueue: boolean = false;
+  invited: boolean = false;
+  accepted: boolean = false;
+  invitedUser: string | null;
+  difficultyLevel: string | null;
+
+  ngOnInit() {
+    this.gameService.handleConnection();
+    this.gameObservableInit();
+    this.invited = ('true' === this.route.snapshot.queryParamMap.get('invite'))
+    this.accepted = ('true' === this.route.snapshot.queryParamMap.get('accept'))
+    if( this.invited === true && this.accepted === false) {
+      this.handlerInvite() }
+    else if( this.accepted === true) {
+      this.handlerAccept() }
   }
 
   setGame(event: number) {
     this.settledSide = false;
-    console.log("going to start emit");
     this.gameService.startGameService(event);
     this.gameQueue = true;
-    this.isWaitingInQueue();
   }
 }

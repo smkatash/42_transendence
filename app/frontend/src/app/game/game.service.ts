@@ -3,8 +3,8 @@ import { User , Game, GamePlayer, SocketResponse, GameMode, GameState, JoinMatch
 import { GameSocket } from '../app.module';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { Socket } from 'ngx-socket-io';
-import { ACCEPT_MATCH, INVITE_TO_MATCH, REJECT_MATCH } from '../chat/subscriptions-events-constants';
-import { Router } from '@angular/router';
+import { ACCEPT_MATCH, INVITE_TO_MATCH } from '../chat/subscriptions-events-constants';
+import { GameServiceUtils } from './utils';
 
 async function waitOneSecond() {
   await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -17,126 +17,89 @@ async function waitOneSecond() {
 })
 export class GameService {
 
-  constructor(
-    public socket: GameSocket,
-    public router: Router) {
-      }
+  constructor(public socket: GameSocket) { }
 
-      private gameInfoSubject: Subject <Game> = new Subject<Game>();
-      private gameStatus = new BehaviorSubject<GameState>(0);
-      private gameQueue : Subject<boolean> = new Subject<boolean>();
-      private difficulty = 0;
-      private matchInfo : SocketResponse;
-      public  userInfo : User;
-      public  gameInfo! : Game;
+// -------------------------------------------------------------------------------
+//                                    * vars      *
+// -------------------------------------------------------------------------------
 
+  private obsGameInfo : Subject <Game> = new Subject<Game>();
+  private obsGameStatus : BehaviorSubject<GameState> = new BehaviorSubject<GameState>(0);
+  private obsGameQueue : Subject<boolean> = new Subject<boolean>();
 
-      getGameObservable() {
-        return this.gameInfoSubject.asObservable();
-      }
-      getStatusQueue(){
-        return this.gameQueue.asObservable();
-      }
+  private difficulty = 0;
+  public  userInfo : User;
+  public  gameInfo! : Game;
 
-      getGameStatus() {
-        return this.gameStatus;
-      }
+// -------------------------------------------------------------------------------
+//                                    * observable *
+// -------------------------------------------------------------------------------
+  getGameInfoObservable() { return this.obsGameInfo.asObservable(); }
+  getGameQueueObservable() { return this.obsGameQueue.asObservable(); }
+  getGameStatusObservable() { return this.obsGameStatus.asObservable(); }
 
-      setGameStatus(stat: number) {
-        this.gameStatus.next(stat);
-      }
+  setGameStatusObservable(stat: number) { console.log("Observable: Game info Next = " + JSON.stringify(stat)) ; this.obsGameStatus.next(stat); }
+  setGameInfoObservable( gameInfo: Game){
+	// console.log ("Observable: Game info Next = " + JSON.stringify(gameInfo)) ;
+  	this.obsGameInfo.next( gameInfo); }
+  setGameQueueObservable( status: boolean){ console.log ("Observable Queue Next = " + status); this.obsGameQueue.next( status ); }
 
-      createMatchInfo(ID:string, level:number){
-        const matchInfo : JoinMatchDto = {
-          matchId: ID,
-          mode: level
-        }
-        return matchInfo;
-      }
+// -------------------------------------------------------------------------------
+//                                    * emitters *
+// -------------------------------------------------------------------------------
+  emitPaddlePosition(movementValue: string) {
+    const toEmit = GameServiceUtils.createPaddleDto(movementValue)
+    this.socket.emit('key', toEmit);
+  }
 
-      createPaddleDto(value: string){
-        const retValue: PositionDto = {
-          step: value
-        }
-        return retValue;
-      }
+  emitJoinMatch( matchInfo : SocketResponse ) {
+    const matchID = GameServiceUtils.createMatchInfoDto(matchInfo.id, this.difficulty)
+    console.log("Step 3) emit Join " + matchID.matchId);
+    this.socket.emit('join', matchID)
+  }
 
-      createGameDto(level: number){
-        const gameMode: GameModeDto = {
-          mode: level
-        };
-        return gameMode
-      }
+  emitStart(difficulty: number){
+		const gameMode = GameServiceUtils.createGameDto(difficulty);
+    console.log("Step 1) Emitting Start;");
+		this.socket.emit('start', gameMode);
+	}
 
-      handlerGameInfo(msg: any) {
-        console.log("Received raw data from backend:");
-        console.log(JSON.stringify(msg));
+  emitInvite(invitedUser: string,  mode: GameMode) {
+    console.log("Exceptional Step: Invite To Match... brings you to queue " + mode)
+	this.difficulty = mode;
+    this.socket.emit("invite", { userId: invitedUser, mode: mode })
+    console.log("userId: " + invitedUser + ", mode: " + mode);
+  }
 
-        this.gameInfo = msg;
-
-        console.log("Updated gameInfo:");
-        console.log(JSON.stringify(this.gameInfo));
-
-        console.log("Receiving game info:" + this.gameInfo.status);
-
-        this.gameInfoSubject.next(this.gameInfo);
-        this.gameStatus.next(this.gameInfo.status!);
-      }
-
-      handlerGameStart( msg :any )  {
-        if (msg === 'Waiting players to join') {
-          console.log("Player in queue... Waiting for players to join");
-          this.gameQueue.next(true);
-        } else {
-          this.matchInfo = msg;
-          this.gameQueue.next(false);
-          console.log("joining the match: " + this.matchInfo.id);
-          this.emitJoinMatch();
-        }
-      }
-
-      emitPaddlePosition(movementValue: string) {
-        const toEmit = this.createPaddleDto(movementValue)
-        this.socket.emit('key', toEmit);
-      }
-
-      emitJoinMatch() {
-        const matchID = this.createMatchInfo(this.matchInfo.id, this.difficulty)
-        this.socket.emit('join', matchID)
-      }
-
-      emitStart(difficulty: number){
-        const gameMode = this.createGameDto(difficulty);
-        this.socket.emit('start', gameMode);
-      }
+  emitAcceptInvite(userID: string , mode: GameMode) {
+	this.difficulty = mode;
+    console.log("Exceptional Step: Accepted Match... brings you to game " + mode)
+    this.socket.emit("accept", { userId: userID, mode: mode })
+    console.log("userId: " + userID + ", mode: " + mode);
+  }
+// -------------------------------------------------------------------------------
+//                                    * listeners *
+// -------------------------------------------------------------------------------
 
   public listenersOn : boolean  = false;
   listenersInit(){
-    console.log("listeners on: " + this.listenersOn )
     if(this.listenersOn === false) {
       this.listenersOn = true;
-      this.socket.on ('error',(msg:any) => { alert('I am a teapot') })
+      this.socket.on ('error',(msg:any) => { alert('Internal Server Error') })
       this.socket.on ('join', (msg: Game) => { console.log(JSON.stringify(msg))})
       this.socket.on ('game', (msg: any) => { this.handlerGameInfo( msg ) })
       this.socket.on ('start', (msg: any)  => { this.handlerGameStart(msg) })
       this.socket.on ('disconnect', () => {  this.handleDisconnection(); });
-      this.socket.on ('connect', () => { console.log("CONNECTION " + this.socket.ioSocket.id) });
-      this.socket.on ('queue', () => {console.log("Game rejected") ;alert("You're game invite was rejected")
-      this.router.navigate(['/chat'])
-      })
+      this.socket.on ('connect', () => { console.log("CONNECTION " + this.socket.ioSocket.id); });
+      this.socket.on ('user', (user: User) => { this.userInfo = user; })
     }
   }
-
-
-  startGameService(level: number): void {
-		this.difficulty = level;
-    this.emitStart(level)
-    console.log("EMiTTING START + LEVEL");
-	}
+// -------------------------------------------------------------------------------
+//                                    * handlers *
+// -------------------------------------------------------------------------------
 
   handleDisconnection(){
-    // this.listenersOn = false;
-    // this.socket.removeAllListeners();
+	this.socket.emit("route-change");
     console.log("Disconnection.");
   }
 
@@ -144,25 +107,37 @@ export class GameService {
     this.listenersInit();
   }
 
-	getUser(): void {
-    this.socket.on('user', (user: User) => {
-      this.userInfo = user;
-      console.log("USER: " + user.id );
-    })
+  handlerGameInfo(msg: any) {
+    this.gameInfo = msg;
+    this.setGameInfoObservable(this.gameInfo);
+    this.setGameStatusObservable(this.gameInfo.status!);
   }
 
-  inviteToMatch(invitedUser: string, selectedMode: number) {
-    console.log("Invited HERE");
-    this.socket.emit(INVITE_TO_MATCH, { userId: invitedUser, mode: selectedMode })
+  handlerGameStart( msg :any )  {
+    if (msg === 'Waiting players to join') {
+      console.log("Step 2) Emitting status Queue true;")
+      this.obsGameQueue.next(true);
+	} else if(msg === 'Game does not exist'){
+		alert("sucaminchirecatti");
+    } else {
+      this.setGameQueueObservable(false);
+      this.emitJoinMatch(msg);
+    }
   }
 
-  acceptInvite(userID: string, mode: GameMode) {
-    console.log("accepted Here");
-    this.socket.emit(ACCEPT_MATCH, { userId: userID, mode: mode })
-  }
+// -------------------------------------------------------------------------------
+//                                    * start *
+// -------------------------------------------------------------------------------
 
-  declineInvite(userID: string, mode: GameMode) {
-    console.log("decline Here");
-    this.socket.emit(REJECT_MATCH, { userId: userID, mode: mode })
-  }
+	startGameService(level: number): void {
+	this.difficulty = level;
+	this.emitStart(level)
+	}
+
+  // declineInvite(userID: string, mode: GameMode) {
+  //   console.log("decline Here");
+  //   this.socket.emit(REJECT_MATCH, { userId: userID, mode: mode })
+  // }
 }
+
+

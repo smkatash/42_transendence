@@ -13,7 +13,7 @@ export class GameMenuComponent {
 
   @Input() statusValue: string;
 
-  @Output() newGameEvent = new EventEmitter<number>;
+  @Output() newGameEvent = new EventEmitter<number>
 
   newGameEasy(){
     this.newGameEvent.emit(1);

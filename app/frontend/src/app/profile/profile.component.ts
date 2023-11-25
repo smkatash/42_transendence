@@ -83,7 +83,6 @@ export class ProfileComponent implements OnInit {
   }
 
   private handleError(err: any): void {
-    // TODO: Route to Unauthorized or Not found page depending on error
     this.router.navigate(['/profile'])
     this.chatService.generateAchtung(err.message)
   }

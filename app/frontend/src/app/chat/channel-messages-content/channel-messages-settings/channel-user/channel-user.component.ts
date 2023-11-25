@@ -126,8 +126,14 @@ export class ChannelUserComponent {
       return
     }
     this.chatService.sendDM(this.user.id, "Hey, I'd like to play a game with you", GAME_INVITE, this.inviteGameMode)
-    this.gameService.inviteToMatch(this.user.id, this.inviteGameMode)
-    this.router.navigate(['/game', { invite: true, accept: false }])
+    this.router.navigate(['/game'], {
+      queryParams: {
+        invite: true,
+        accept: false,
+        userId: this.user.id,
+        level: this.inviteGameMode
+      }
+    });
   }
 
   manageUserModeration(action: string) {
