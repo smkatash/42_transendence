@@ -65,6 +65,10 @@ button:hover {
   background-color: #e9d5a1;
 }
 
+.accept-request {
+  margin-right: .5dvw;
+}
+
 .friend:hover, .request:hover {
   background-color: #223036;
   border: 0.17dvw solid #223036;

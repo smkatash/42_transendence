@@ -12,7 +12,7 @@
   <div class="wrapper">
     <div class="profile-pic"><img src="{{ domain }}/api/user/image/{{ user.avatar }}"></div>
     <div class="name" >{{ user.username }}</div>
-    <button (click)="acceptRequest(user.id)">Accept</button>
-    <button (click)="declineRequest(user.id)">Decline</button>
+    <button class="accept-request" (click)="acceptRequest(user.id)">Accept</button>
+    <button class="decline-request" (click)="declineRequest(user.id)">Decline</button>
   </div>
 </div>
