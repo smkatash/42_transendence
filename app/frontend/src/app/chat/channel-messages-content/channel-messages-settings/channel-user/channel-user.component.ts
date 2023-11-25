@@ -50,16 +50,18 @@ export class ChannelUserComponent {
     this.chatService.getBlockedUsers()
       .subscribe(blocked => this.currentUserBlockedList = blocked)
 
-    if (!this.user) return
-    this.profileService.requestStatus(this.user?.id)
+      this.profileService.statusListener()
+      .subscribe(status => {
+        console.log(status)
+        this.userStatus = status
+      })
+    }
 
-    this.profileService.statusListener()
-      .subscribe(status => this.userStatus = status)
-  }
+    ngOnChanges(changes: SimpleChanges): void {
+      if (changes['user']) {
+        if (!this.user) return
+        this.profileService.requestStatus(this.user?.id)
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['user']) {
-      console.log(this.user)
     }
   }
 
@@ -120,7 +122,7 @@ export class ChannelUserComponent {
   sendGameInvite() {
     if (!this.user) return
     if (this.userStatus !== 1) {
-      alert('User is not online. Cannot send a game invite')
+      this.chatService.generateAchtung("User is either in a game or not online.")
       return
     }
     this.chatService.sendDM(this.user.id, "Hey, I'd like to play a game with you", GAME_INVITE, this.inviteGameMode)

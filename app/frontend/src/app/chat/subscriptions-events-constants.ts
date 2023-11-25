@@ -182,6 +182,12 @@ export const SUCCESS = 'success'
 
 
 export const BLOCKED_USERS = 'blockedUsers'
+
+export const ACHTUNG = "achtung"
+/**
+ * expects: uIdDto
+ */
+
 /*
 
 // Backend emits all channels the session user is in

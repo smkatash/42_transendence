@@ -20,12 +20,6 @@ img {
   margin-right: .5dvw;
 }
 
-.type-direct {
-  border: .05dvw solid #2f424a;
-  border-radius: 50%;
-  background-size: auto;
-}
-
 .selected-channel .type-protected, .selected-channel .type-public, .selected-channel .type-private {
   filter: brightness(0) saturate(100%) invert(83%) sepia(14%) saturate(475%) hue-rotate(7deg) brightness(104%) contrast(92%);
 }
@@ -54,4 +48,33 @@ img {
 
 .selected-channel:hover {
   background-color: #2f424a;
+}
+
+.type-direct {
+  display: flex;
+  justify-content: center;
+  width: 10%;
+}
+
+.type-direct img {
+  border: .05dvw solid #2f424a;
+  border-radius: 50%;
+  background-size: cover;
+  object-fit: cover;
+  object-position: center;
+}
+
+.dot-online, .dot-offline, .dot-playing {
+  height: 1dvw;
+  width: 1dvw;
+  background-color: #618B4A;
+  border-radius: 50%;
+}
+
+.dot-offline {
+	background-color: #8b4a4a;
+}
+
+.dot-playing {
+  background-color: #e1ce23;
 }

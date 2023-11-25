@@ -183,7 +183,7 @@ export const BLOCKED_USERS = "blockedUsers";
 
 export const ACHTUNG = "achtung"
 /**
- * expects a string
+ * expects: uIdDto
  */
 
 /*

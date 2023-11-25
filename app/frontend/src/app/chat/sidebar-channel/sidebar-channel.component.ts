@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { HOST_IP } from 'src/app/Constants';
-import { Channel } from 'src/app/entities.interface';
+import { Channel, User } from 'src/app/entities.interface';
 
 @Component({
   selector: 'app-sidebar-channel',

@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ProfileService } from './profile.service';
 import { User, UserProfile } from '../entities.interface';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { HOST_IP } from '../Constants';
@@ -25,7 +25,8 @@ export class ProfileComponent implements OnInit {
     private route: ActivatedRoute,
     private cd: ChangeDetectorRef,
     private auth: AuthService,
-    private chatService: ChatService) {}
+    private chatService: ChatService,
+    private router: Router) {}
 
     // ID to be extracted from url. If null then we know we're the current user
     id: string | null = null
@@ -44,6 +45,8 @@ export class ProfileComponent implements OnInit {
 
     currentUserBlockedList: User[] = []
 
+    errorMessage?: any
+
   initUserProfile(): UserProfile {
     return {
       user: { id: '', username: '', title: '', avatar: '', email: '', status: 0, mfaEnabled: false, mfaStatus: 0 },
@@ -57,6 +60,11 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.chatService.onError()
+      .subscribe(error => {
+        this.displayError(error.message)
+        console.error(error)
+      })
     this.route.paramMap.subscribe(params => {
       this.id = params.get('id')
       if (this.id === null) {
@@ -76,7 +84,8 @@ export class ProfileComponent implements OnInit {
 
   private handleError(err: any): void {
     // TODO: Route to Unauthorized or Not found page depending on error
-    alert(err.message);
+    this.router.navigate(['/profile'])
+    this.chatService.generateAchtung(err.message)
   }
 
   /* Gets the current user's profile */
@@ -223,10 +232,10 @@ export class ProfileComponent implements OnInit {
       this.profileService.setAvatar(formData)
         .subscribe({
           next: (user: User) => this.userProfile.user = user,
-          error: (error) => alert(error.message)
+          error: (error) => this.chatService.generateAchtung(error.message)
       })
     } else {
-      alert("File too big!")
+      this.chatService.generateAchtung("File too big!")
     }
   }
 
@@ -284,5 +293,12 @@ export class ProfileComponent implements OnInit {
   getReceivedRequests() {
     this.profileService.getCurrentUserReceivedRequests()
       .subscribe(users => this.userProfile.receivedRequests = users)
+  }
+
+  displayError(message: any) {
+    this.errorMessage = message
+    setTimeout(() => {
+      this.errorMessage = undefined
+    }, 5000)
   }
 }

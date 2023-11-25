@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Channel, ChannelUsers, CreateChannelInfo, JoinChannelInfo, Message, User } from '../entities.interface';
 import { ChatSocket } from '../app.module';
-import { ACCEPT_PRIVATE_INVITE, ADD_ADMIN, BAN, BLOCK, BLOCKED_USERS, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DIRECT, ERROR, INVALIDATE_MESSAGE_CONTENT, JOIN, KICK, LEAVE, MESSAGE, MUTE, PASSWORD, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, UNMUTE, USER_CHANNELS } from './subscriptions-events-constants'
+import { ACCEPT_PRIVATE_INVITE, ACHTUNG, ADD_ADMIN, BAN, BLOCK, BLOCKED_USERS, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DIRECT, ERROR, INVALIDATE_MESSAGE_CONTENT, JOIN, KICK, LEAVE, MESSAGE, MUTE, PASSWORD, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, UNMUTE, USER_CHANNELS } from './subscriptions-events-constants'
 import { HOST_IP } from '../Constants';
 
 @Injectable({
@@ -128,6 +128,11 @@ export class ChatService {
       default:
         break
     }
+  }
+
+  /* This is a state of the art technique to generate errors */
+  generateAchtung(msg: string) {
+    this.socket.emit(ACHTUNG, { uId: msg })
   }
 
   /* <---------- Events to listen to ----------> */

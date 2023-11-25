@@ -189,7 +189,7 @@ export class UserService {
       throw new NotFoundException("User not found");
     }
 
-    if (currentUser.blockedUsers && currentUser.blockedUsers.some(user => user.id !== unblockId)) {
+    if (currentUser.blockedUsers && !currentUser.blockedUsers.some(user => user.id === unblockId)) {
       throw new BadRequestException("User is not blocked");
     }
 
