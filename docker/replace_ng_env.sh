@@ -1,11 +1,5 @@
 #!/bin/bash
 
-key="HOST_IP"
+file="/app/frontend/src/environments/environment.ts"
 
-line=$(grep "^$key=" /dev.env)
-
-value=$(echo "$line" | awk -F= '{print $2}')
-
-file="/app/frontend/src/environments/environment.development.ts"
-
-awk -v key="$key" -v value="$value" '{gsub(key":.*", key": \047" value "\047,", $0); print}' "$file" > temp_file && mv temp_file "$file"
+awk -v key="HOST_IP" -v value="$HOST_IP" '{gsub(key":.*", key": \047" value "\047,", $0); print}' "$file" > temp_file && mv temp_file "$file"

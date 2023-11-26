@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ChatService } from './chat.service';
 import { Channel } from '../entities.interface';
 import { Observable } from 'rxjs';
+import { HttpStatusCode } from '@angular/common/http';
 
 @Component({
   selector: 'app-chat',
@@ -28,10 +29,16 @@ export class ChatComponent implements OnInit {
 
   errorMessage?: any
 
+  canEmitToBackend: boolean = false
+
   ngOnInit(): void {
 
     this.chatService.onSuccess()
-      .subscribe(msg => console.log(msg))
+      .subscribe(msg => {
+        if (msg === HttpStatusCode.Ok) {
+          this.canEmitToBackend = true
+        }
+      })
 
     this.chatService.onError()
       .subscribe(error => {

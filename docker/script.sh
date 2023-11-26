@@ -36,7 +36,7 @@ fi
 
 # Step 1: Build the frontend
 echo -e "${GREEN}Step 1: Building the frontend...${NC}"
-(cd "$frontend_dir" && npm install --legacy-peer-deps && npm run build:development) || handle_error "Frontend build failed"
+(cd "$frontend_dir" && npm install --legacy-peer-deps && npm run build:production) || handle_error "Frontend build failed"
 
 echo "                  "
 echo "                  "

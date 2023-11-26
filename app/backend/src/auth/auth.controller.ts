@@ -70,7 +70,6 @@ export class AuthController {
         const token = await this.authService.createAuthToken(currentUser.id);
         if (token && token.value) {
           await this.mailService.send(currentUser.email, token.value);
-          await this.userService.enableMfaVerification(currentUser.id);
         } else {
           throw new BadRequestException("Failed to send token");
         }
@@ -79,14 +78,14 @@ export class AuthController {
       throw error;
     }
   }
-
+  
   @Post("login-verify-mfa")
   @UseGuards(SessionGuard)
   async handleLoginMfaVerification(@GetUser() currentUser: SessionUserDto, @Body() codeDto: CodeDto, @Res({ passthrough: true }) res: Response) {
     if (!currentUser) {
       throw new UnauthorizedException("Access denied");
     }
-
+    
     try {
       if (await this.authService.isValidTokenData(currentUser.id, codeDto.code)) {
         await this.userService.verifyUserMfa(currentUser.id);
@@ -99,17 +98,17 @@ export class AuthController {
       throw error;
     }
   }
-
+  
   @Post("verify-mfa")
   @UseGuards(SessionGuard)
   async handleMfaVerification(@GetUser() currentUser: SessionUserDto, @Body() codeDto: CodeDto, @Res({ passthrough: true }) res: Response) {
     if (!currentUser) {
       throw new UnauthorizedException("Access denied");
     }
-
+    
     try {
       if (await this.authService.isValidTokenData(currentUser.id, codeDto.code)) {
-        await this.userService.verifyUserMfa(currentUser.id);
+        await this.userService.enableMfaVerification(currentUser.id);
         await this.authService.removeToken(codeDto.code);
         res.status(202);
       } else {

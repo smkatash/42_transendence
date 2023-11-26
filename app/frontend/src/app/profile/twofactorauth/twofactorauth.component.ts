@@ -33,6 +33,11 @@ export class TwofactorauthComponent {
   }
 
   closeDialog(): void {
+    this.profileService.verificationEnable2FA('bSlol')
+      .subscribe({
+        next: () => this.verificationStep = 'verified',
+        error: () => this.verificationStep = 'unverified'
+      })
     this.verificationStep = 'sendEmail'
     this.email = ''
     this.code = ''

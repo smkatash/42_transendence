@@ -81,8 +81,9 @@ export class UserService {
 
   async enableMfaVerification(id: string): Promise<User> {
     const user = await this.getUserById(id);
+    user.status = Status.ONLINE;
+    user.mfaStatus = MfaStatus.VALIDATE;
     user.mfaEnabled = true;
-    user.mfaStatus = MfaStatus.MFAPending;
     return this.saveValidUser(user);
   }
 

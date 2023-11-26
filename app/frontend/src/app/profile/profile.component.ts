@@ -43,6 +43,9 @@ export class ProfileComponent implements OnInit {
     // Used for extra logic
     currentUserProfile: UserProfile = this.initUserProfile()
 
+    nameToChange: string = ''
+    titleToChange: string = ''
+
     currentUserBlockedList: User[] = []
 
     errorMessage?: any
@@ -209,14 +212,32 @@ export class ProfileComponent implements OnInit {
     this.cd.detectChanges();
   }
 
+  isValidString(input: string): boolean {
+    // Check if the string is alphanumeric and has length <= 12 and >= 2
+    const alphanumericRegex = /^[a-zA-Z0-9]+$/;
+    return alphanumericRegex.test(input) && input.length >= 2 && input.length <= 12;
+}
+
   changeName(): void {
     this.isEditingName = false
-    this.profileService.setName(this.userProfile.user.username)
+    if (this.isValidString(this.nameToChange)) {
+      this.profileService.setName(this.nameToChange)
+      this.userProfile.user.username = this.nameToChange
+      this.nameToChange = ''
+    } else {
+      this.displayError('Name not valid bitch')
+    }
   }
 
   changeTitle(): void {
     this.isEditingTitle = false
-    this.profileService.setTitle(this.userProfile.user.title)
+    if (this.isValidString(this.titleToChange)) {
+      this.profileService.setTitle(this.titleToChange)
+      this.userProfile.user.title = this.titleToChange
+      this.titleToChange = ''
+    } else {
+      this.displayError('Title not valid bitch')
+    }
   }
 
   onImageSelected(event: any) {
