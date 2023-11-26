@@ -39,11 +39,9 @@ export class GameService {
   getGameQueueObservable() { return this.obsGameQueue.asObservable(); }
   getGameStatusObservable() { return this.obsGameStatus.asObservable(); }
 
-  setGameStatusObservable(stat: number) { console.log("Observable: Game info Next = " + JSON.stringify(stat)) ; this.obsGameStatus.next(stat); }
-  setGameInfoObservable( gameInfo: Game){
-	// console.log ("Observable: Game info Next = " + JSON.stringify(gameInfo)) ;
-  	this.obsGameInfo.next( gameInfo); }
-  setGameQueueObservable( status: boolean){ console.log ("Observable Queue Next = " + status); this.obsGameQueue.next( status ); }
+  setGameStatusObservable(stat: number) { this.obsGameStatus.next(stat); }
+  setGameInfoObservable( gameInfo: Game){ this.obsGameInfo.next( gameInfo); }
+  setGameQueueObservable( status: boolean){ this.obsGameQueue.next( status ); }
 
 // -------------------------------------------------------------------------------
 //                                    * emitters *
@@ -55,28 +53,22 @@ export class GameService {
 
   emitJoinMatch( matchInfo : SocketResponse ) {
     const matchID = GameServiceUtils.createMatchInfoDto(matchInfo.id, this.difficulty)
-    console.log("Step 3) emit Join " + matchID.matchId);
     this.socket.emit('join', matchID)
   }
 
   emitStart(difficulty: number){
 		const gameMode = GameServiceUtils.createGameDto(difficulty);
-    console.log("Step 1) Emitting Start;");
 		this.socket.emit('start', gameMode);
 	}
 
   emitInvite(invitedUser: string,  mode: GameMode) {
-    console.log("Exceptional Step: Invite To Match... brings you to queue " + mode)
 	this.difficulty = mode;
     this.socket.emit("invite", { userId: invitedUser, mode: mode })
-    console.log("userId: " + invitedUser + ", mode: " + mode);
   }
 
   emitAcceptInvite(userID: string , mode: GameMode) {
 	this.difficulty = mode;
-    console.log("Exceptional Step: Accepted Match... brings you to game " + mode)
     this.socket.emit("accept", { userId: userID, mode: mode })
-    console.log("userId: " + userID + ", mode: " + mode);
   }
 // -------------------------------------------------------------------------------
 //                                    * listeners *
@@ -91,16 +83,15 @@ export class GameService {
       this.socket.on ('game', (msg: any) => { this.handlerGameInfo( msg ) })
       this.socket.on ('start', (msg: any)  => { this.handlerGameStart(msg) })
       this.socket.on ('disconnect', () => {  this.handleDisconnection(); });
-      this.socket.on ('connect', () => { console.log("CONNECTION " + this.socket.ioSocket.id); });
+      this.socket.on ('connect', () => { });
       this.socket.on ('user', (user: User) => { this.userInfo = user; })
-	  this.socket.on ('queue', () => { this.handleInviteRefuse(); })
+	    this.socket.on ('queue', () => { this.handleInviteRefuse(); })
     }
   }
 // -------------------------------------------------------------------------------
 //                                    * handlers *
 // -------------------------------------------------------------------------------
   handleInviteRefuse(){
-	console.log("Game rejected");
 	alert("Your game invite was rejected");
 	this.router.navigate(['/chat']);
   }
@@ -108,7 +99,6 @@ export class GameService {
 
   handleDisconnection(){
 	this.socket.emit("route-change");
-    console.log("Disconnection.");
   }
 
   handleConnection() {
@@ -122,9 +112,7 @@ export class GameService {
   }
 
   handlerGameStart( msg :any )  {
-	console.log("Listening to 'start'" + msg );
     if (msg === 'Waiting players to join') {
-      console.log("Step 2) Emitting status Queue true;")
       this.obsGameQueue.next(true);
 	} else if(msg === 'Game does not exist'){
 		alert(msg);
@@ -141,12 +129,11 @@ export class GameService {
 // -------------------------------------------------------------------------------
 
 	startGameService(level: number): void {
-	this.difficulty = level;
-	this.emitStart(level)
+	  this.difficulty = level;
+	  this.emitStart(level)
 	}
 
   declineInvite(userID: string, mode: GameMode) {
-    console.log("decline Here!");
     this.socket.emit("reject", { userId: userID, mode: mode })
   }
 }

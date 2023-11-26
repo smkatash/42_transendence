@@ -22,59 +22,39 @@ export class GameComponent implements AfterViewInit, OnInit {
 			  private router: Router
 			  )
   {
-    // this.gameService.getUser();
     this.renderer = rendererFactory.createRenderer(null, null);
   }
 
-  matchLeftSide = true;
-
-  yourScore = 0;
-  opponentScore = 0;
-
-  maxViewHeight = 546;
-  maxViewWidth = 1092;
-
-  // TODO THIS VALUE SHOULD GO INTO THE ENV
-  maxHeight = 500;
-  maxWidth = 1000;
-
-  ballCanMove = true;
-  paddleCanMove = true;
-
-  ballWidth = 3;
-  ballHeight = 3;
-
-  paddleWidth = 1;
-  paddleHeight = 20;
-  paddleMargin = 3;
-  paddleSpeed = 1;
-  paddleRightX = this.maxViewWidth - 40;
-  paddleRightY = 40;
-  paddleLeftY = 40;
-  paddleLeftX = 40;
-
-  ballX = 500;
-  ballY = 250;
-
-  ballRadius = 1.5;
-
-  paddleLeftIncrement = 0;
-  paddleRightIncrement = 0;
-
-  status: number;
-  statusStr = "";
-
-  gameInfo?:Game = {};
-
+// -------------------------------------------------------------------------------
+//                                    * variable *
+// -------------------------------------------------------------------------------
+  yourScore           : number = 0;
+  opponentScore       : number = 0;
+  maxViewHeight       : number = 546;
+  maxViewWidth        : number = 1092;
+  maxHeight           : number = 500;
+  maxWidth            : number = 1000;
+  paddleHeight        : number = 20;
+  paddleSpeed         : number = 15;
+  paddleRightX        : number = this.maxViewWidth - 40;
+  paddleRightY        : number = 40;
+  paddleLeftY         : number =40;
+  paddleLeftX         : number = 40;
+  ballX               : number = 500;
+  ballY               : number = 250;
+  status              : number;
+  statusStr           : string = "";
+  gameInfo?           : Game = {};
+  settledSide         : boolean = false;
+  isGameOn            : boolean = false;
+  gameQueue           : boolean = false;
+  invited             : boolean = false;
+  accepted            : boolean = false;
+  invitedUser         : string | null;
+  difficultyLevel     : string | null;
+  matchLeftSide       : boolean = true;
+    
   private boardElement: HTMLElement;
-
-  checkBoardSize() {
-    if (this.isGameOn) {
-      this.boardElement = this.elementReference.nativeElement.querySelector('.table');
-      this.maxViewWidth = this.boardElement.clientWidth;
-      this.maxViewHeight = this.boardElement.clientHeight;
-    }
-  }
 
   ngAfterViewInit(): void {
     this.checkBoardSize();
@@ -85,10 +65,12 @@ export class GameComponent implements AfterViewInit, OnInit {
   @HostListener('window:keydown', ['$event'])
   onKeyDown(e: any) {
     if (e.code === 'KeyW') {
-      this.gameService.emitPaddlePosition("-15")
+      this.gameService.emitPaddlePosition("-" + this.paddleSpeed);
+      const smooth = ( this.maxViewWidth / this.maxWidth ) * this.paddleSpeed;
     }
     if (e.code === 'KeyS') {
-      this.gameService.emitPaddlePosition("+15")
+      this.gameService.emitPaddlePosition("+" + this.paddleSpeed);
+      const smooth = ( this.maxViewWidth / this.maxWidth ) * this.paddleSpeed;
     }
   }
 
@@ -104,11 +86,6 @@ export class GameComponent implements AfterViewInit, OnInit {
     this.checkBoardSize();
   }
 
-  /*
-    Update score,
-    should I change the value of the color of
-    the ball depending on the game choice?
-  */
   updateScore(scores: Record <string, number>) {
     let id = this.gameService.userInfo.id;
     this.yourScore = scores[id];
@@ -119,11 +96,14 @@ export class GameComponent implements AfterViewInit, OnInit {
     }
   }
 
-  /*
-    the backend send position related to a window 2:1
-    in frontend we use % so we need to translate the values
-    that's how we do that:
-  */
+  checkBoardSize() {
+    if (this.isGameOn) {
+      this.boardElement = this.elementReference.nativeElement.querySelector('.table');
+      this.maxViewWidth = this.boardElement.clientWidth;
+      this.maxViewHeight = this.boardElement.clientHeight;
+    }
+  }
+
   valueConversion(game: Game) {
     this.checkBoardSize();
     if( game.ball){
@@ -151,12 +131,6 @@ export class GameComponent implements AfterViewInit, OnInit {
       this.ballY = ball.position.y;
   }
 
-  /*
-    since the values comes from backend this function move the
-    rightPaddle or the leftPaddle depending if the game is Leftside or not
-    if yes: then this move the Right Paddle;
-    if not: it moves the left;
-  */
   moveRightPaddle(rightPaddle: Paddle){
     if(this.matchLeftSide === true){
       this.paddleRightY = rightPaddle!.position.y;
@@ -167,9 +141,6 @@ export class GameComponent implements AfterViewInit, OnInit {
     }
   }
 
-  /*
-    same as the one upstairs
-  */
   moveLeftPaddle(leftPaddle: Paddle){
     if(this.matchLeftSide === true) {
       this.paddleLeftY = leftPaddle!.position.y;
@@ -201,8 +172,6 @@ export class GameComponent implements AfterViewInit, OnInit {
     }
   }
 
-  // ------------------------------------------------------------------------------------------------ INIT VALUE
-
   initViewValue(){
     let element = document.getElementById("board") as unknown as SVGRectElement;
     if(element?.height && element?.width){
@@ -225,12 +194,10 @@ export class GameComponent implements AfterViewInit, OnInit {
     if( game && game.gameStatus !== GameState.END){
       if(this.settledSide === false){
         if(game.match?.players[0].id  ===  this.gameService.userInfo.id){
-			this.matchLeftSide = true;
-			console.log( this.matchLeftSide + " " + game.match?.players[0].id + " "  +  this.gameService.userInfo.id)
-		} else {
-          this.matchLeftSide = false;
-		  console.log( this.matchLeftSide + " " + game.match?.players[0].id + " "  +  this.gameService.userInfo.id);
-        }
+			  this.matchLeftSide = true;
+		  } else {
+        this.matchLeftSide = false;
+      }
         this.settledSide = true;
       }
       this.gameInfo = this.valueConversion(game);
@@ -243,13 +210,7 @@ export class GameComponent implements AfterViewInit, OnInit {
 
   handlerStatusInfo(data:any){
     this.status = data;
-      if (this.status === GameState.READY)
-        this.readyFunc();
-      else if (this.status === GameState.START)
-        this.startFunc();
-      else if (this.status === GameState.INPROGRESS)
-        this.progressFunc();
-      else if (this.status === GameState.PAUSE)
+      if (this.status === GameState.PAUSE)
         this.pauseFunc();
       else if (this.status === GameState.END)
         this.endFunc();
@@ -276,19 +237,9 @@ export class GameComponent implements AfterViewInit, OnInit {
     }
   }
 
-  readyFunc() {
-  }
-
-  startFunc(){
-  }
-
-  progressFunc(){
-  }
-
   pauseFunc(){
     this.endFunc();
   }
-
 
   endFunc(){
 	if(this.accepted || this.invited){
@@ -308,10 +259,6 @@ export class GameComponent implements AfterViewInit, OnInit {
     } else {
       this.statusStr = "LOS";
     }
-  }
-
-  resetAll(): void {
-    ;
   }
 
   ngOnDestroy() {
@@ -352,15 +299,6 @@ export class GameComponent implements AfterViewInit, OnInit {
     }
     this.isGameOn = true;
   }
-
-  /* --------------   params for game logic    ------------*/
-  settledSide : boolean = false;
-  isGameOn: boolean = false;
-  gameQueue: boolean = false;
-  invited: boolean = false;
-  accepted: boolean = false;
-  invitedUser: string | null;
-  difficultyLevel: string | null;
 
   ngOnInit() {
     this.gameService.handleConnection();
