@@ -112,16 +112,18 @@ export class PlayerQueueService {
   }
 
   isInLobby(playerId: string, guestId: string, client: Socket, mode: GameMode): boolean {
-    const playersInLobby = this.lobby.get(mode);
+	const playersInLobby = this.lobby.get(mode);
     if (!playersInLobby) {
       return false;
     }
 
     for (const group of playersInLobby) {
-      if (group.id === playerId && group.ownerClient.get(playerId) === client && group.guestId === guestId) {
-        return true;
-      }
-      if (group.id === guestId && group.guestId === playerId) {
+      if (group.id === playerId && group.ownerClient?.get(playerId)?.id === client.id && group.guestId === guestId) {
+        console.log("here")
+		return true;
+	}
+	if (group.id === guestId && group.guestId === playerId) {
+		  console.log("here 1")
         return true;
       }
     }
@@ -158,38 +160,118 @@ export class PlayerQueueService {
 
   dequeueLobbies(playerId: string) {
     for (const [mode, lobbies] of this.lobby) {
-      if (lobbies) {
-        const filteredLobbies = lobbies.filter(lobby => lobby.id === playerId || lobby.guestId === playerId);
-        if (filteredLobbies.length > 0) {
-          this.lobby.set(
-            mode,
-            lobbies.filter(lobby => !filteredLobbies.includes(lobby)),
-          );
-        }
+		console.log("CLEAN UP")
+		if (lobbies) {
+		  console.log(lobbies)
+		  const filteredLobbies = lobbies.filter(lobby => lobby.id !== playerId && lobby.guestId !== playerId)
+		  console.log(filteredLobbies)
+		  this.lobby.set(mode,filteredLobbies);
+		  console.log("AFTER") 
+		  console.log(this.lobby.get(mode))
       }
     }
   }
 
-  removeFromLobby(ownerId: string, mode: GameMode) {
+  removeRejectionFromLobby(guestId: string, ownerId: string, mode: GameMode) {
+	  if (!this.lobby.has(mode)) {
+		  return
+		}
+		const lobbies = this.lobby.get(mode)
+		if (lobbies) {
+			const idx = lobbies.findIndex(group => {
+				return group.id === ownerId && group.guestId == guestId;
+			})
+			
+			if (idx !== -1) {
+				const owner = lobbies[idx].ownerClient.get(ownerId)
+				
+				if (owner) {
+					lobbies.splice(idx, 1);
+					owner.emit(QUEUE, "Game rejected");
+					this.lobby.set(mode, lobbies);
+			}
+		}
+	}
+	}
+
+  removeFromLobby(ownerId: string, guestId: string, mode: GameMode) {
     if (!this.lobby.has(mode)) {
       return;
     }
 
     const lobbies = this.lobby.get(mode);
     if (lobbies) {
-      const idx = lobbies.findIndex(group => {
-        return group.id === ownerId;
-      });
-
-      if (idx !== -1) {
-        const owner = lobbies[idx].ownerClient.get(ownerId);
-
-        if (owner) {
-          lobbies.splice(idx, 1);
-          owner.emit(QUEUE, "Game rejected");
-          this.lobby.set(mode, lobbies);
-        }
+		const idx = lobbies.findIndex(group => {
+			return group.id === ownerId && group.guestId == guestId;
+		});
+		if (idx !== -1) {
+				lobbies.splice(idx, 1);
+				this.lobby.set(mode, lobbies);
+			}
       }
-    }
+  }
+
+  getAllLobbyData() {
+	console.log("------------------------")
+	const easy = this.queues.get(GameMode.EASY);
+	const medium = this.queues.get(GameMode.MEDIUM);
+	const hard = this.queues.get(GameMode.HARD);
+	console.log("EASY: ")
+	easy.forEach(one => {
+		console.log("************")
+		for (const key of one.keys()) {
+			console.log(key)
+			console.log(one.get(key).id)
+		}
+		console.log("************")
+		
+	}) 
+	console.log("MEDIUM: ")
+	medium.forEach(one => {
+		console.log("************")
+		for (const key of one.keys()) {
+			console.log(key)
+			console.log(one.get(key).id)
+		}
+		console.log("************")
+	}) 
+	console.log("HARD: ")
+	hard.forEach(one => {
+		console.log("************")
+		for (const key of one.keys()) {
+			console.log(key)
+			console.log(one.get(key).id)
+		}
+		console.log("************")
+	}) 
+	
+	console.log("------------------------")
+
+	const easyLobby = this.lobby.get(GameMode.EASY);
+	const mediumLobby = this.lobby.get(GameMode.MEDIUM);
+	const hardLobby = this.lobby.get(GameMode.HARD);
+	console.log("EASY LOBBY: ") 
+		easyLobby.forEach(one => {
+			console.log("************")
+			console.log(one.id)
+			console.log(one.guestId)
+			console.log("************")
+		}) 
+
+	console.log("MEDIUM LOBBY: " )
+	mediumLobby.forEach(one => {
+		console.log("************")
+		console.log(one.id)
+		console.log(one.guestId)
+		console.log("************")
+	}) 
+	console.log("HARD LOBBY: ")
+	hardLobby.forEach(one => {
+		console.log("************")
+		console.log(one.id)
+		console.log(one.guestId)
+		console.log("************")
+	}) 
+	console.log("------------------------")
   }
 }

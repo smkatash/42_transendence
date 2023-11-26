@@ -1,253 +1,269 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import { Interval } from "@nestjs/schedule";
-import { InjectRepository } from "@nestjs/typeorm";
-import { validate } from "class-validator";
-import { Server, Socket } from "socket.io";
-import { Status } from "src/user/utils/status.enum";
-import { DEFAULT_PADDLE_LENGTH, DEFAULT_TABLE_HEIGHT } from "src/utils/Constants";
-import { Repository } from "typeorm";
-import { v4 } from "uuid";
-import { Match } from "../entities/match.entity";
-import { Player } from "../entities/player.entity";
-import { Game, GameMode, GameState } from "../utls/game";
-import { INGAME, QUEUE, START_MATCH } from "../utls/rooms";
-import { GameService } from "./game.service";
-import { PlayerService } from "./player.service";
-import { PlayerQueueService } from "./queue.service";
+import { BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Match } from '../entities/match.entity';
+import { v4 } from 'uuid';
+import { Game, GameMode, GameState } from '../utls/game';
+import { validate } from 'class-validator';
+import { Player } from '../entities/player.entity';
+import { PlayerService } from './player.service';
+import { PlayerQueueService} from './queue.service';
+import { GameService } from './game.service';
+import { Interval } from '@nestjs/schedule';
+import { Server, Socket } from 'socket.io';
+import { INGAME, QUEUE, START_MATCH } from '../utls/rooms';
+import { Status } from 'src/user/utils/status.enum';
+import { DEFAULT_PADDLE_LENGTH, DEFAULT_TABLE_HEIGHT } from 'src/utils/Constants';
+
 
 @Injectable()
 export class MatchService {
-  private matches: Map<string, Game> = new Map();
-  private server: Server;
+    private matches: Map<string, Game> = new Map()
+    private server: Server
 
-  constructor(
-    @InjectRepository(Match) private matchRepo: Repository<Match>,
-    private readonly gameService: GameService,
-    private readonly playerService: PlayerService,
-    private readonly queueService: PlayerQueueService,
-  ) {}
+    constructor(@InjectRepository(Match) private matchRepo: Repository<Match>,
+                private readonly gameService: GameService,
+                private readonly playerService: PlayerService,
+				private readonly queueService: PlayerQueueService
+                ) {}
 
-  async waitInPlayerQueue(player: Player, client: Socket, mode: GameMode): Promise<void> {
-    if (!(await this.hasExistingMatch(player.id, client))) {
-      if (!this.queueService.isInQueue(player.id, mode)) {
-        this.queueService.enqueue(player.id, client, mode);
-      }
+	async waitInPlayerQueue(player: Player, client: Socket, mode: GameMode): Promise<void> {
+		if (!(await this.hasExistingMatch(player.id, client))) {
+			if (!this.queueService.isInQueue(player.id, mode)) {
+				this.queueService.enqueue(player.id, client, mode)
+			}
+		}
+		
+		if (this.queueService.isQueueReady(mode)) {
+			const pair: Array<Map<string, Socket>> =  this.queueService.dequeue(mode)
+			const players: string[] = []
+			pair.forEach( pp => {
+				for (const key of pp.keys()) { 
+					players.push(key)
+				}
+			})
+			const newMatch = await this.makeAmatch(players)
+			pair.forEach( pp => {
+				for (const value of pp.values()) {
+					value.leave(QUEUE)
+					value.emit(START_MATCH,newMatch)
+					value.join(newMatch.id)
+				}
+			})
+		}
     }
 
-    if (this.queueService.isQueueReady(mode)) {
-      const pair: Array<Map<string, Socket>> = this.queueService.dequeue(mode);
-      const players: string[] = [];
-      pair.forEach(pp => {
-        for (const key of pp.keys()) {
-          players.push(key);
+	async removePlayersFromLobby(player: Player, ownerId: string, client: Socket, mode: GameMode) {
+		if (!(await this.hasExistingMatch(player.id, client))) {
+		  if (this.queueService.isInLobby(player.id, ownerId, client, mode)) {
+			this.queueService.removeRejectionFromLobby(player.id, ownerId, mode);
+
+		  }
+		}
+	  }
+
+	async waitInPlayerLobby(player: Player, guestId: string, client: Socket, mode: GameMode) {
+		if (!(await this.hasExistingMatch(player.id, client))) {
+			if (!this.queueService.isInLobby(player.id, guestId, client, mode)) {
+				this.queueService.enterLobby(player.id, guestId, client, mode)
+			}
+		}
+	}
+
+	debug() {
+		this.queueService.getAllLobbyData()
+	}
+
+	async checkPlayerLobby(player: Player, ownerId: string, client: Socket, mode: GameMode) {
+		console.log("HERE")
+		if (!(await this.hasExistingMatch(player.id, client))) {
+			if (this.queueService.isInLobby(player.id, ownerId, client, mode)) {
+				const lobby = this.queueService.checkInLobby(player.id, ownerId, client, mode)
+				if (lobby) {
+					const newMatch = await this.makeAmatch([player.id, ownerId])
+					const owner  = lobby.ownerClient.get(ownerId)
+					const guest = lobby.guestClient.get(player.id)
+					
+					owner.leave(QUEUE)
+					guest.leave(QUEUE)
+					owner.emit(START_MATCH, newMatch)
+					guest.emit(START_MATCH, newMatch)
+					owner.join(newMatch.id)
+					guest.join(newMatch.id)
+					this.queueService.removeFromLobby(ownerId, player.id, mode)
+				} else {
+					console.log("GAME DOES NOT EXIST")
+					client.emit(START_MATCH, "Game does not exist")
+				}
+			}
+		} else {
+			console.log("GAME DOES NOT EXIST")
+			client.emit(START_MATCH, "Game does not exist")
+		}
+		
+	}
+
+
+
+	async hasExistingMatch(playerId: string, client: Socket) {
+		const matchId = this.queueService.isEnqueuedInMatch(playerId)
+		if (matchId) {
+			client.leave(QUEUE)
+			const match = await this.getMatchById(matchId)
+			client.emit(START_MATCH, match)
+			client.join(match.id)
+			return true
+		}
+		return false
+	}
+
+	leaveAllQueues(playerId: string) {
+		this.queueService.dequeuePlayer(playerId)
+		this.debug()
+		this.queueService.dequeueLobbies(playerId)
+		this.debug()
+	}
+
+
+    async joinMatch(matchId: string, mode: GameMode): Promise<Game> {
+       const match = await this.getMatchById(matchId)
+	   if (!match) throw new NotFoundException()
+	   if (match && match.status === GameState.END) throw new NotFoundException()
+	   
+		this.queueService.dequeueMatch(match.id)
+		const newGame = this.gameService.launchGame(match, mode)
+		this.matches.set(matchId, newGame)
+		return newGame
+	}
+
+	getServer(server: Server) {
+		this.server = server
+	}
+
+	@Interval(1000 / 60)
+	async play() {
+		for (const match of this.matches.values()) {
+			if (match.status === GameState.INPROGRESS) {
+				let updateGame = this.gameService.throwBall(match)
+				if (updateGame.status === GameState.END) {
+					await this.saveMatchHistory(updateGame)
+					this.server.to(match.match.id).emit(INGAME, updateGame)
+					this.server.socketsLeave(match.match.id)
+					this.matches.delete(match.match.id)
+				}
+				this.server.to(match.match.id).emit(INGAME, updateGame)
+				updateGame = await this.checkDisconnectedPlayers(updateGame)
+				if (updateGame.status === GameState.PAUSE) {
+					await this.saveMatchHistory(updateGame)
+					this.server.to(match.match.id).emit(INGAME, updateGame)
+					this.server.socketsLeave(match.match.id)
+					this.matches.delete(match.match.id)
+				}
+			}
+		}
+	}
+
+	updatePlayerPosition(player: Player, step: number) {
+		for (const match of this.matches.values()) {
+			if (match.status === GameState.INPROGRESS) {
+                const index = match.match.players.findIndex(matchPlayer => matchPlayer.id === player.id)
+                if (index != -1 ) {
+                    if (index === 0 ) {
+                        if(match.leftPaddle.position.y + step >= 0 && 
+                           match.leftPaddle.position.y + step <= DEFAULT_TABLE_HEIGHT - DEFAULT_PADDLE_LENGTH)
+                            match.leftPaddle.position.y += step;
+                    } else {
+                        if(match.rightPaddle.position.y + step >= 0 && 
+                            match.rightPaddle.position.y + step <= DEFAULT_TABLE_HEIGHT - DEFAULT_PADDLE_LENGTH)
+                            match.rightPaddle.position.y += step;
+                    }
+                    return
+                }
+            }
+       }
+    }   
+
+	async checkDisconnectedPlayers(match: Game) {
+        if (match.match.players.length === 2) {
+            const players = match.match.players
+            const playerOne = await this.playerService.getUserByPlayerId(players[0].id)
+            const playerTwo = await this.playerService.getUserByPlayerId(players[1].id)
+            if (playerOne.user.status !== Status.GAME) {
+                match.status = GameState.PAUSE
+                match.match.status = GameState.PAUSE
+                match.match.loser = playerOne
+                match.match.winner = playerTwo
+				match.scores[playerTwo.id] = 10
+            }
+            if (playerTwo.user.status !== Status.GAME) {
+                match.status = GameState.PAUSE
+                match.match.status = GameState.PAUSE
+                match.match.loser = playerTwo
+                match.match.winner = playerOne
+				match.scores[playerOne.id] = 10
+            }
         }
-      });
-      const newMatch = await this.makeAmatch(players);
-      pair.forEach(pp => {
-        for (const value of pp.values()) {
-          value.leave(QUEUE);
-          value.emit(START_MATCH, newMatch);
-          value.join(newMatch.id);
+		return match
+	}
+
+
+    getMatchById(id: string): Promise<Match> {
+        return this.matchRepo.findOne({
+            where: {id},
+            relations: ['players']
+        })
+    }
+
+    async makeAmatch(playersId: string[]): Promise<Match> {
+		const playerPromises = playersId.map(id => this.playerService.getPlayerById(id));
+  		const pair = await Promise.all(playerPromises);
+		const newMatch = await this.createMatch(pair)
+		this.queueService.enqueueMatch(newMatch.id, playersId)
+		return newMatch
+    }
+
+
+    async createMatch(players: Player[]): Promise<Match> {
+        const match = this.matchRepo.create({
+            id: v4(),
+            players: players,
+            status: GameState.READY
+        })
+        return this.saveValidMatch(match)
+    }
+
+    async saveMatchHistory(game: Game) {
+        const match = game.match
+        match.scores = game.scores
+		match.status = GameState.END
+        await this.playerService.updatePlayerScore(game.match.players, game.scores)
+        return this.saveValidMatch(match)
+    } 
+
+
+    async saveValidMatch(match: Match) {
+        const validate_error = await validate(match)
+        if (validate_error.length > 0) {
+          throw new BadRequestException()
         }
-      });
+        return this.matchRepo.save(match)
     }
-  }
 
-  async waitInPlayerLobby(player: Player, guestId: string, client: Socket, mode: GameMode) {
-    if (!(await this.hasExistingMatch(player.id, client))) {
-      if (!this.queueService.isInLobby(player.id, guestId, client, mode)) {
-        this.queueService.enterLobby(player.id, guestId, client, mode);
-      }
+    async getMatchesByPlayerId(id: string): Promise<Match[]> {
+        return this.matchRepo
+            .createQueryBuilder('match')
+            .innerJoinAndSelect('match.players', 'players')
+            .innerJoinAndSelect('match.winner', 'winner')
+            .innerJoinAndSelect('match.loser', 'loser')
+            .innerJoinAndSelect('winner.user', 'winnerUser')
+            .innerJoinAndSelect('loser.user', 'loserUser')
+            .where('players.id = :id', { id })
+            .addSelect(['winnerUser.username'])
+            .addSelect(['loserUser.username'])
+			.orderBy('match.updatedAt', 'DESC') 
+            .getMany()
     }
-  }
 
-  async checkPlayerLobby(player: Player, ownerId: string, client: Socket, mode: GameMode) {
-    console.log("!!!!!!!!!!!!!!!!!!!!!");
-    console.log("Check Lobby");
-    if (!(await this.hasExistingMatch(player.id, client))) {
-      console.log("!!!!!!!!!!!!!!!!!!!!!");
-      console.log("No exitsting match");
-      if (this.queueService.isInLobby(player.id, ownerId, client, mode)) {
-        console.log("FOUND LOBBY");
-        const lobby = this.queueService.checkInLobby(player.id, ownerId, client, mode);
-        if (lobby) {
-          console.log(JSON.stringify(lobby));
-          const newMatch = await this.makeAmatch([player.id, ownerId]);
 
-          const owner = lobby.ownerClient.get(ownerId);
-          const guest = lobby.guestClient.get(player.id);
-
-          console.log("EMITTING TO PLAYERS");
-          owner.leave(QUEUE);
-          guest.leave(QUEUE);
-          owner.emit(START_MATCH, newMatch);
-          guest.emit(START_MATCH, newMatch);
-          owner.join(newMatch.id);
-          guest.join(newMatch.id);
-          console.log(newMatch.id);
-        }
-      }
-    }
-  }
-
-  async removePlayersFromLobby(player: Player, ownerId: string, client: Socket, mode: GameMode) {
-    if (!(await this.hasExistingMatch(player.id, client))) {
-      if (this.queueService.isInLobby(player.id, ownerId, client, mode)) {
-        this.queueService.removeFromLobby(ownerId, mode);
-      }
-    }
-  }
-
-  async hasExistingMatch(playerId: string, client: Socket) {
-    const matchId = this.queueService.isEnqueuedInMatch(playerId);
-    if (matchId) {
-      client.leave(QUEUE);
-      const match = await this.getMatchById(matchId);
-      client.emit(START_MATCH, match);
-      client.join(match.id);
-      return true;
-    }
-    return false;
-  }
-
-  leaveAllQueues(playerId: string) {
-    this.queueService.dequeuePlayer(playerId);
-    this.queueService.dequeueLobbies(playerId);
-  }
-
-  async joinMatch(matchId: string, mode: GameMode): Promise<Game> {
-    const match = await this.getMatchById(matchId);
-    if (!match) throw new NotFoundException();
-    if (match && match.status === GameState.END) throw new NotFoundException();
-
-    this.queueService.dequeueMatch(match.id);
-    const newGame = this.gameService.launchGame(match, mode);
-    console.log("GAME");
-    console.log(JSON.stringify(newGame));
-
-    this.matches.set(matchId, newGame);
-    return newGame;
-  }
-
-  getServer(server: Server) {
-    this.server = server;
-  }
-
-  @Interval(1000 / 60)
-  async play() {
-    for (const match of this.matches.values()) {
-      if (match.status === GameState.INPROGRESS) {
-        let updateGame = this.gameService.throwBall(match);
-        if (updateGame.status === GameState.END) {
-          await this.saveMatchHistory(updateGame);
-          this.server.to(match.match.id).emit(INGAME, updateGame);
-          this.server.socketsLeave(match.match.id);
-          this.matches.delete(match.match.id);
-        }
-        this.server.to(match.match.id).emit(INGAME, updateGame);
-        updateGame = await this.checkDisconnectedPlayers(updateGame);
-        if (updateGame.status === GameState.PAUSE) {
-          await this.saveMatchHistory(updateGame);
-          this.server.to(match.match.id).emit(INGAME, updateGame);
-          this.server.socketsLeave(match.match.id);
-          this.matches.delete(match.match.id);
-        }
-      }
-    }
-  }
-
-  updatePlayerPosition(player: Player, step: number) {
-    for (const match of this.matches.values()) {
-      if (match.status === GameState.INPROGRESS) {
-        const index = match.match.players.findIndex(matchPlayer => matchPlayer.id === player.id);
-        if (index != -1) {
-          if (index === 0) {
-            if (match.leftPaddle.position.y + step >= 0 && match.leftPaddle.position.y + step <= DEFAULT_TABLE_HEIGHT - DEFAULT_PADDLE_LENGTH) match.leftPaddle.position.y += step;
-          } else {
-            if (match.rightPaddle.position.y + step >= 0 && match.rightPaddle.position.y + step <= DEFAULT_TABLE_HEIGHT - DEFAULT_PADDLE_LENGTH)
-              match.rightPaddle.position.y += step;
-          }
-          return;
-        }
-      }
-    }
-  }
-
-  async checkDisconnectedPlayers(match: Game) {
-    if (match.match.players.length === 2) {
-      const players = match.match.players;
-      const playerOne = await this.playerService.getUserByPlayerId(players[0].id);
-      const playerTwo = await this.playerService.getUserByPlayerId(players[1].id);
-      if (playerOne.user.status !== Status.GAME) {
-        match.status = GameState.PAUSE;
-        match.match.status = GameState.PAUSE;
-        match.match.loser = playerOne;
-        match.match.winner = playerTwo;
-        // match.match.scores[playerTwo.id]++;
-      }
-      if (playerTwo.user.status !== Status.GAME) {
-        match.status = GameState.PAUSE;
-        match.match.status = GameState.PAUSE;
-        match.match.loser = playerTwo;
-        match.match.winner = playerOne;
-        // match.match.scores[playerOne.id]++;
-      }
-    }
-    return match;
-  }
-
-  getMatchById(id: string): Promise<Match> {
-    return this.matchRepo.findOne({
-      where: { id },
-      relations: ["players"],
-    });
-  }
-
-  async makeAmatch(playersId: string[]): Promise<Match> {
-    const playerPromises = playersId.map(id => this.playerService.getPlayerById(id));
-    const pair = await Promise.all(playerPromises);
-    const newMatch = await this.createMatch(pair);
-    this.queueService.enqueueMatch(newMatch.id, playersId);
-    return newMatch;
-  }
-
-  async createMatch(players: Player[]): Promise<Match> {
-    const match = this.matchRepo.create({
-      id: v4(),
-      players: players,
-      status: GameState.READY,
-    });
-    return this.saveValidMatch(match);
-  }
-
-  async saveMatchHistory(game: Game) {
-    const match = game.match;
-    match.scores = game.scores;
-    match.status = GameState.END;
-    await this.playerService.updatePlayerScore(game.match.players, game.scores);
-    return this.saveValidMatch(match);
-  }
-
-  async saveValidMatch(match: Match) {
-    const validate_error = await validate(match);
-    if (validate_error.length > 0) {
-      throw new BadRequestException();
-    }
-    return this.matchRepo.save(match);
-  }
-
-  async getMatchesByPlayerId(id: string): Promise<Match[]> {
-    return this.matchRepo
-      .createQueryBuilder("match")
-      .innerJoinAndSelect("match.players", "players")
-      .innerJoinAndSelect("match.winner", "winner")
-      .innerJoinAndSelect("match.loser", "loser")
-      .innerJoinAndSelect("winner.user", "winnerUser")
-      .innerJoinAndSelect("loser.user", "loserUser")
-      .where("players.id = :id", { id })
-      .addSelect(["winnerUser.username"])
-      .addSelect(["loserUser.username"])
-      .orderBy("match.updatedAt", "DESC")
-      .getMany();
-  }
 }
+

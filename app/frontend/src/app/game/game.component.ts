@@ -287,9 +287,10 @@ export class GameComponent implements AfterViewInit, OnInit {
     this.endFunc();
   }
 
+
   endFunc(){
 	if(this.accepted || this.invited){
-		// this.router.navigate(['/chat']);
+		this.router.navigate(['/game']);
 	}
     this.settledSide = false;
     this.invited = false;

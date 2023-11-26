@@ -2,6 +2,6 @@ export const environment = {
     production: false,
 	baseUrl: 'http://localhost:4200',
 	envVar: {
-		HOST_IP: 'http://10.13.3.10:3000',
+		HOST_IP: 'http://127.0.0.1:3000',
 	}
 }

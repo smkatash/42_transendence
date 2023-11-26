@@ -5,6 +5,7 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { Socket } from 'ngx-socket-io';
 import { ACCEPT_MATCH, INVITE_TO_MATCH } from '../chat/subscriptions-events-constants';
 import { GameServiceUtils } from './utils';
+import { Router } from '@angular/router';
 
 async function waitOneSecond() {
   await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -16,8 +17,8 @@ async function waitOneSecond() {
   providedIn: 'root'
 })
 export class GameService {
-
-  constructor(public socket: GameSocket) { }
+	
+  constructor(public socket: GameSocket, private router: Router) { }
 
 // -------------------------------------------------------------------------------
 //                                    * vars      *
@@ -92,11 +93,18 @@ export class GameService {
       this.socket.on ('disconnect', () => {  this.handleDisconnection(); });
       this.socket.on ('connect', () => { console.log("CONNECTION " + this.socket.ioSocket.id); });
       this.socket.on ('user', (user: User) => { this.userInfo = user; })
+	  this.socket.on ('queue', () => { this.handleInviteRefuse(); })
     }
   }
 // -------------------------------------------------------------------------------
 //                                    * handlers *
 // -------------------------------------------------------------------------------
+  handleInviteRefuse(){
+	console.log("Game rejected");
+	alert("Your game invite was rejected");
+	this.router.navigate(['/chat']);
+  }
+
 
   handleDisconnection(){
 	this.socket.emit("route-change");
@@ -134,10 +142,10 @@ export class GameService {
 	this.emitStart(level)
 	}
 
-  // declineInvite(userID: string, mode: GameMode) {
-  //   console.log("decline Here");
-  //   this.socket.emit(REJECT_MATCH, { userId: userID, mode: mode })
-  // }
+  declineInvite(userID: string, mode: GameMode) {
+    console.log("decline Here!");
+    this.socket.emit("reject", { userId: userID, mode: mode })
+  }
 }
 
 
