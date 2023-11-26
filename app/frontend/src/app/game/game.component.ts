@@ -225,9 +225,11 @@ export class GameComponent implements AfterViewInit, OnInit {
     if( game && game.gameStatus !== GameState.END){
       if(this.settledSide === false){
         if(game.match?.players[0].id  ===  this.gameService.userInfo.id){
-          this.matchLeftSide = true;
-        } else {
+			this.matchLeftSide = true;
+			console.log( this.matchLeftSide + " " + game.match?.players[0].id + " "  +  this.gameService.userInfo.id)
+		} else {
           this.matchLeftSide = false;
+		  console.log( this.matchLeftSide + " " + game.match?.players[0].id + " "  +  this.gameService.userInfo.id);
         }
         this.settledSide = true;
       }
@@ -292,12 +294,12 @@ export class GameComponent implements AfterViewInit, OnInit {
 	if(this.accepted || this.invited){
 		this.router.navigate(['/game']);
 	}
+	this.winnerPrompt();
     this.settledSide = false;
     this.invited = false;
     this.accepted = false;
     this.gameQueue = false;
     this.isGameOn = false;
-    this.winnerPrompt();
   }
 
   winnerPrompt(){
@@ -352,7 +354,7 @@ export class GameComponent implements AfterViewInit, OnInit {
   }
 
   /* --------------   params for game logic    ------------*/
-  settledSide : boolean;
+  settledSide : boolean = false;
   isGameOn: boolean = false;
   gameQueue: boolean = false;
   invited: boolean = false;

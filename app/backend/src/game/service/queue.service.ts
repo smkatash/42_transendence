@@ -163,7 +163,7 @@ export class PlayerQueueService {
 		console.log("CLEAN UP")
 		if (lobbies) {
 		  console.log(lobbies)
-		  const filteredLobbies = lobbies.filter(lobby => lobby.id !== playerId && lobby.guestId !== playerId)
+		  const filteredLobbies = lobbies.filter(lobby => lobby.id !== playerId)
 		  console.log(filteredLobbies)
 		  this.lobby.set(mode,filteredLobbies);
 		  console.log("AFTER") 
@@ -202,7 +202,7 @@ export class PlayerQueueService {
     const lobbies = this.lobby.get(mode);
     if (lobbies) {
 		const idx = lobbies.findIndex(group => {
-			return group.id === ownerId && group.guestId == guestId;
+			return group.id === ownerId;
 		});
 		if (idx !== -1) {
 				lobbies.splice(idx, 1);
@@ -273,5 +273,12 @@ export class PlayerQueueService {
 		console.log("************")
 	}) 
 	console.log("------------------------")
+
+
+	console.log("-----Match Queue--------")
+	console.log(this.playersMatchQueue)
+	for (const [id, players] of Object.entries(this.playersMatchQueue)) {
+		console.log(`Mode: ${id}, Players: ${players.join(', ')}`);
+	}
   }
 }

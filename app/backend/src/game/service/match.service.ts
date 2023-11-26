@@ -28,16 +28,24 @@ export class MatchService {
                 ) {}
 
 	async waitInPlayerQueue(player: Player, client: Socket, mode: GameMode): Promise<void> {
+		this.debug()
+		console.log("WAITING")
 		if (!(await this.hasExistingMatch(player.id, client))) {
+			console.log("NO EXISTING MATCH")
 			if (!this.queueService.isInQueue(player.id, mode)) {
 				this.queueService.enqueue(player.id, client, mode)
+				console.log("IN THE QUEUE")
 			}
+		} else {
+			console.log("EXISTING MATCH")
+
 		}
-		
+		this.debug()
 		if (this.queueService.isQueueReady(mode)) {
+			console.log("QUEUE READY")
 			const pair: Array<Map<string, Socket>> =  this.queueService.dequeue(mode)
 			const players: string[] = []
-			pair.forEach( pp => {
+			pair.forEach(pp => {
 				for (const key of pp.keys()) { 
 					players.push(key)
 				}
@@ -51,6 +59,7 @@ export class MatchService {
 				}
 			})
 		}
+		this.debug()
     }
 
 	async removePlayersFromLobby(player: Player, ownerId: string, client: Socket, mode: GameMode) {
@@ -75,7 +84,6 @@ export class MatchService {
 	}
 
 	async checkPlayerLobby(player: Player, ownerId: string, client: Socket, mode: GameMode) {
-		console.log("HERE")
 		if (!(await this.hasExistingMatch(player.id, client))) {
 			if (this.queueService.isInLobby(player.id, ownerId, client, mode)) {
 				const lobby = this.queueService.checkInLobby(player.id, ownerId, client, mode)
@@ -91,16 +99,12 @@ export class MatchService {
 					owner.join(newMatch.id)
 					guest.join(newMatch.id)
 					this.queueService.removeFromLobby(ownerId, player.id, mode)
-				} else {
-					console.log("GAME DOES NOT EXIST")
-					client.emit(START_MATCH, "Game does not exist")
+					return
 				}
 			}
-		} else {
-			console.log("GAME DOES NOT EXIST")
-			client.emit(START_MATCH, "Game does not exist")
 		}
-		
+		console.log("GAME DOES NOT EXIST")
+		client.emit(START_MATCH, "Game does not exist")
 	}
 
 
@@ -110,9 +114,13 @@ export class MatchService {
 		if (matchId) {
 			client.leave(QUEUE)
 			const match = await this.getMatchById(matchId)
-			client.emit(START_MATCH, match)
-			client.join(match.id)
-			return true
+			if (match.status !== GameState.END && match.status !== GameState.PAUSE) {
+				client.emit(START_MATCH, match)
+				client.join(match.id)
+				return true
+			} else {
+				this.queueService.dequeueMatch(match.id)
+			}
 		}
 		return false
 	}
@@ -147,6 +155,8 @@ export class MatchService {
 				let updateGame = this.gameService.throwBall(match)
 				if (updateGame.status === GameState.END) {
 					await this.saveMatchHistory(updateGame)
+					console.log("GAME END")
+					console.log(updateGame)
 					this.server.to(match.match.id).emit(INGAME, updateGame)
 					this.server.socketsLeave(match.match.id)
 					this.matches.delete(match.match.id)

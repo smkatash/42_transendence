@@ -50,6 +50,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       if (!client.data?.user?.id) throw new UnauthorizedException();
       this.logger.log(`Cliend id:${client.id} disconnected`);
       this.matchService.leaveAllQueues(client.data.user.id);
+	  client.leave(QUEUE)
       return client.disconnect();
     } catch (error) {
       this.emitError(client, error);
@@ -65,6 +66,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		if (currentPlayer) {
 			this.logger.debug("ROUTE-CHANGE")
 			this.matchService.leaveAllQueues(currentPlayer.id)
+			client.leave(QUEUE)
 		}
 	} catch (error) {
 		this.emitError(client, error)
@@ -76,6 +78,9 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   @SubscribeMessage(START_MATCH)
   async handleStartMatch(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() gameMode: GameModeDto) {
 	try {
+		this.logger.debug("START")
+		this.logger.debug(client.id)
+		this.logger.debug("*********************************")
 		const currentPlayer: Player = await this.playerService.getPlayerById(user.id)
 		if (currentPlayer) {
 			this.emitUserEvent(client, currentPlayer)
@@ -182,6 +187,7 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   emitQueueEvent() {
+	this.logger.debug("EXTERNAL EMIT")
     this.server.to(QUEUE).emit(START_MATCH, WAITING_MESSAGE);
   }
 }

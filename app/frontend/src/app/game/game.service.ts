@@ -86,7 +86,7 @@ export class GameService {
   listenersInit(){
     if(this.listenersOn === false) {
       this.listenersOn = true;
-      this.socket.on ('error',(msg:any) => { alert('Internal Server Error') })
+      this.socket.on ('error',(msg:any) => { alert('I am a teapot') })
       this.socket.on ('join', (msg: Game) => { console.log(JSON.stringify(msg))})
       this.socket.on ('game', (msg: any) => { this.handlerGameInfo( msg ) })
       this.socket.on ('start', (msg: any)  => { this.handlerGameStart(msg) })
@@ -122,11 +122,14 @@ export class GameService {
   }
 
   handlerGameStart( msg :any )  {
+	console.log("Listening to 'start'" + msg );
     if (msg === 'Waiting players to join') {
       console.log("Step 2) Emitting status Queue true;")
       this.obsGameQueue.next(true);
 	} else if(msg === 'Game does not exist'){
-		alert("sucaminchirecatti");
+		alert(msg);
+		this.router.navigate(['/chat']);
+
     } else {
       this.setGameQueueObservable(false);
       this.emitJoinMatch(msg);

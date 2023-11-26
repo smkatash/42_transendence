@@ -7,7 +7,6 @@ import { Ball, Game, GameMode, GameOptions, GameState, Paddle, Paddletype, Posit
 export class GameService {
   private options: Readonly<GameOptions>;
   private increment: number;
-  private hookeyMode = false;
   private tmpIncrement = 0;
 
   public launchGame(match: Match, mode: GameMode): Game {
@@ -142,7 +141,6 @@ export class GameService {
       game.ball.position.y = 0.6 + BALL_RADIUS;
       return game;
     }
-    if (this.hookeyMode === false) {
       if (game.ball.position.x - BALL_RADIUS <= this.options.paddleDistance + 2 && game.ball.position.x - BALL_RADIUS >= this.options.paddleDistance - 2) {
         if (game.ball.position.y - BALL_RADIUS < game.leftPaddle.position.y + game.leftPaddle.length && game.ball.position.y + BALL_RADIUS > game.leftPaddle.position.y) {
           this.tmpIncrement = this.increment - 2;
@@ -164,12 +162,11 @@ export class GameService {
           return game;
         }
       }
-      if (game.ball.position.x <= BALL_RADIUS || game.ball.position.x >= DEFAULT_TABLE_HEIGHT * DEFAULT_TABLE_PROPORTION - BALL_RADIUS) {
-        if (game.ball.position.x <= DEFAULT_TABLE_PROPORTION) {
+    if (game.ball.position.x <= BALL_RADIUS || game.ball.position.x >= DEFAULT_TABLE_HEIGHT * DEFAULT_TABLE_PROPORTION - BALL_RADIUS) {
+    	if (game.ball.position.x <= DEFAULT_TABLE_HEIGHT) {
           return this.resetGame(game, Paddletype.RIGHT);
         }
         return this.resetGame(game, Paddletype.LEFT);
-      }
     }
     return game;
   }
