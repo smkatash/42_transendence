@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, InternalServerErrorException, Post, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Inject, InternalServerErrorException, Post, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { Cron } from "@nestjs/schedule";
 import { Response } from "express";
 import { UserService } from "src/user/service/user.service";
@@ -72,7 +72,7 @@ export class AuthController {
           await this.mailService.send(currentUser.email, token.value);
           await this.userService.enableMfaVerification(currentUser.id);
         } else {
-          throw new InternalServerErrorException("Failed to send token");
+          throw new BadRequestException("Failed to send token");
         }
       }
     } catch (error) {
@@ -143,7 +143,6 @@ export class AuthController {
     try {
       await this.authService.deleteExpiredTokens();
     } catch (error) {
-      console.error(error);
     }
   }
 }

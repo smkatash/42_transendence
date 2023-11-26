@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException} from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException} from "@nestjs/common";
 import { User } from "src/user/entities/user.entity";
 import { AuthUserDto } from "src/auth/utils/auth.user.dto";
 import { v4 } from "uuid";
@@ -18,10 +18,9 @@ export class AuthService {
 
     try {
       currentUser = await this.userService.getUserById(authUserDto.id);
-      // TODO enable later
-      // if (currentUser.status === Status.ONLINE) {
-      // 	throw new BadRequestException("User is logged in.")
-      // }
+    //   if (currentUser.status !== Status.ONLINE) {
+    //   	throw new BadRequestException("User is logged in.")
+    //   }
     } catch (error) {
       if (error instanceof NotFoundException) {
         authUserDto.avatar = await this.userService.getIntraProfile(authUserDto.avatar);
@@ -47,7 +46,7 @@ export class AuthService {
   }
 
   async isValidTokenData(userId: string, value: string) {
-    const expiresIn = 1000 * 60 * 5;
+    const expiresIn = 1000 * 60 * 2;
     const token: AuthToken = await this.tokenRepo.findOneBy({ value });
 
     if (token) {

@@ -41,7 +41,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       this.logger.log(`Client id: ${client.id} connected successfully`);
     } catch (error) {
       this.emitError(client, error);
-	  this.logger.error(error)
     }
   }
 
@@ -64,7 +63,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 	try {
 		const currentPlayer: Player = await this.playerService.getPlayerById(user.id)
 		if (currentPlayer) {
-			this.logger.debug("ROUTE-CHANGE")
 			this.matchService.leaveAllQueues(currentPlayer.id)
 			client.leave(QUEUE)
 		}
@@ -78,9 +76,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   @SubscribeMessage(START_MATCH)
   async handleStartMatch(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() gameMode: GameModeDto) {
 	try {
-		this.logger.debug("START")
-		this.logger.debug(client.id)
-		this.logger.debug("*********************************")
 		const currentPlayer: Player = await this.playerService.getPlayerById(user.id)
 		if (currentPlayer) {
 			this.emitUserEvent(client, currentPlayer)
@@ -89,7 +84,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 		}
 		this.emitQueueEvent()
 	} catch(error) {
-		console.log(error)
 		this.emitError(client, error)
 	}
 }
@@ -145,7 +139,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   @UseGuards(WsAuthGuard)
 	@SubscribeMessage(ACCEPT_MATCH)
 	async handleAccept(@ConnectedSocket() client: Socket, @GetWsUser() user: Player, @MessageBody() acceptDto: AcceptDto) {
-		this.logger.debug("ACCEPT")
 		try {
 			const currentPlayer: Player = await this.playerService.getPlayerById(user.id)
 			if (currentPlayer) {
@@ -177,7 +170,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   emitError(client: Socket, error: any) {
-		this.logger.debug(error);
 		client.emit(ERROR, error);
 		client.disconnect();
   }
@@ -187,7 +179,6 @@ export class GameGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   }
 
   emitQueueEvent() {
-	this.logger.debug("EXTERNAL EMIT")
     this.server.to(QUEUE).emit(START_MATCH, WAITING_MESSAGE);
   }
 }

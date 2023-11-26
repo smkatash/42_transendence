@@ -28,21 +28,13 @@ export class MatchService {
                 ) {}
 
 	async waitInPlayerQueue(player: Player, client: Socket, mode: GameMode): Promise<void> {
-		this.debug()
-		console.log("WAITING")
 		if (!(await this.hasExistingMatch(player.id, client))) {
-			console.log("NO EXISTING MATCH")
 			if (!this.queueService.isInQueue(player.id, mode)) {
 				this.queueService.enqueue(player.id, client, mode)
-				console.log("IN THE QUEUE")
 			}
-		} else {
-			console.log("EXISTING MATCH")
+		} 
 
-		}
-		this.debug()
 		if (this.queueService.isQueueReady(mode)) {
-			console.log("QUEUE READY")
 			const pair: Array<Map<string, Socket>> =  this.queueService.dequeue(mode)
 			const players: string[] = []
 			pair.forEach(pp => {
@@ -59,7 +51,6 @@ export class MatchService {
 				}
 			})
 		}
-		this.debug()
     }
 
 	async removePlayersFromLobby(player: Player, ownerId: string, client: Socket, mode: GameMode) {
@@ -103,7 +94,6 @@ export class MatchService {
 				}
 			}
 		}
-		console.log("GAME DOES NOT EXIST")
 		client.emit(START_MATCH, "Game does not exist")
 	}
 
@@ -127,9 +117,7 @@ export class MatchService {
 
 	leaveAllQueues(playerId: string) {
 		this.queueService.dequeuePlayer(playerId)
-		this.debug()
 		this.queueService.dequeueLobbies(playerId)
-		this.debug()
 	}
 
 
@@ -155,8 +143,6 @@ export class MatchService {
 				let updateGame = this.gameService.throwBall(match)
 				if (updateGame.status === GameState.END) {
 					await this.saveMatchHistory(updateGame)
-					console.log("GAME END")
-					console.log(updateGame)
 					this.server.to(match.match.id).emit(INGAME, updateGame)
 					this.server.socketsLeave(match.match.id)
 					this.matches.delete(match.match.id)

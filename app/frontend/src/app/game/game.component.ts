@@ -85,10 +85,10 @@ export class GameComponent implements AfterViewInit, OnInit {
   @HostListener('window:keydown', ['$event'])
   onKeyDown(e: any) {
     if (e.code === 'KeyW') {
-      this.gameService.emitPaddlePosition("-10")
+      this.gameService.emitPaddlePosition("-15")
     }
     if (e.code === 'KeyS') {
-      this.gameService.emitPaddlePosition("+10")
+      this.gameService.emitPaddlePosition("+15")
     }
   }
 
