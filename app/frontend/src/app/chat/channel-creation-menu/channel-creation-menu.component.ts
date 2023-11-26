@@ -48,10 +48,7 @@ export class ChannelCreationMenuComponent {
       switchMap(
         (username: string) => this.chatService.findUser(username)
         .pipe(
-          tap((users: User[]) => {
-            this.searchedUsers = users
-            console.log(users)
-          })
+          tap((users: User[]) => {this.searchedUsers = users})
         )
       )
     ).subscribe()

@@ -34,7 +34,6 @@ export class ChatComponent implements OnInit {
     this.chatService.onError()
       .subscribe(error => {
         this.displayError(error.message)
-        console.error(error)
       })
     this.chatService.getUsersChannels()
       .subscribe(channels => {

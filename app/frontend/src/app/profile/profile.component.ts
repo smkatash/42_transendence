@@ -63,7 +63,6 @@ export class ProfileComponent implements OnInit {
     this.chatService.onError()
       .subscribe(error => {
         this.displayError(error.message)
-        console.error(error)
       })
     this.route.paramMap.subscribe(params => {
       this.id = params.get('id')

@@ -50,18 +50,13 @@ export class ChannelUserComponent {
     this.chatService.getBlockedUsers()
       .subscribe(blocked => this.currentUserBlockedList = blocked)
 
-      this.profileService.statusListener()
-      .subscribe(status => {
-        console.log(status)
-        this.userStatus = status
-      })
-    }
+    this.profileService.statusListener()
+    .subscribe(status => {
+      this.userStatus = status
+    })
 
-    ngOnChanges(changes: SimpleChanges): void {
-      if (changes['user']) {
-        if (!this.user) return
-        this.profileService.requestStatus(this.user?.id)
-
+    if (this.user) {
+      this.profileService.requestStatus(this.user?.id)
     }
   }
 
@@ -100,15 +95,6 @@ export class ChannelUserComponent {
     return this.currentUserBlockedList.some(blockedUser => blockedUser.id === this.user?.id) || false
   }
 
-  sendDM() {
-    // Create a channel between two people
-    if (!this.user) return
-    // I was gonna ask if you can give me a way to test if there's already a chat
-    // between two people and I was gonna make a form like you said before to compose
-    // a message but I got really sleepy.
-    this.chatService.sendDM(this.user.id, "Hey")
-  }
-
   /* EASY: 1, MEDIUM: 2, HARD: 3 */
   toggleGameMode(event: Event) {
     event.stopPropagation()
@@ -121,7 +107,8 @@ export class ChannelUserComponent {
 
   sendGameInvite() {
     if (!this.user) return
-    if (this.userStatus !== 1) {
+    console.log(this.userStatus)
+    if (this.userStatus === 2 || this.userStatus === 0) {
       this.chatService.generateAchtung("User is either in a game or not online.")
       return
     }

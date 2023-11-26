@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, SimpleChanges, AfterContentInit } from '@angular/core';
 import { HOST_IP } from 'src/app/Constants';
 import { Channel, User } from 'src/app/entities.interface';
 import { ProfileService } from 'src/app/profile/profile.service';
@@ -14,17 +14,4 @@ export class SidebarChannelComponent {
 
   @Input() channel?: Channel
   @Input() isSelected = false
-
-  userStatus?: number
-
-  constructor(private profileService: ProfileService){}
-
-  // ngOnInit(): void {
-  //   if (this.channel?.type === 'direct') {
-  //     this.profileService.requestStatus(this.channel.users.)
-  //     this.profileService.statusListener()
-  //       .subscribe(status => this.userStatus = status)
-  //   }
-  // }
-
 }

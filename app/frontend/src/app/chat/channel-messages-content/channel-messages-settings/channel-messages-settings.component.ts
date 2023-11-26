@@ -78,7 +78,6 @@ export class ChannelMessagesSettingsComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['channel'] && this.channel) {
-      console.log('channel change')
       this.chatService.requestChannelUsers(this.channel.id)
     }
   }
