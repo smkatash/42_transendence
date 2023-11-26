@@ -7,11 +7,9 @@ import { Ball, Game, GameMode, GameOptions, GameState, Paddle, Paddletype, Posit
 export class GameService {
   private options: Readonly<GameOptions>;
   private increment: number;
-  private tmpIncrement = 0;
 
   public launchGame(match: Match, mode: GameMode): Game {
     this.initMode(mode);
-    this.tmpIncrement = 0;
     this.options = Object.freeze(new GameOptions(DEFAULT_TABLE_HEIGHT, DEFAULT_PADDLE_GAP, mode));
     const ball: Ball = this.launchBall();
     const leftPaddle: Paddle = this.launchPaddle(Paddletype.LEFT);
@@ -67,8 +65,22 @@ export class GameService {
 
   private calculateVector(): Position {
     const randomAngle = this.getRandomAngle();
+	console.log("HERE")
+	console.log(randomAngle)
     const radian = this.degreesToRadian(randomAngle);
-    return { x: Math.cos(radian) + this.increment + this.tmpIncrement, y: Math.sin(radian) + this.increment + this.tmpIncrement };
+	let retValueX = Math.cos(radian);
+	let retValueY = Math.sin(radian);
+	if(retValueX > 0){
+		retValueX = retValueX + this.increment;
+	} else {
+		retValueX = retValueX = retValueX - this.increment;
+	}
+	if(retValueY > 0){
+		retValueY = retValueY + this.increment;
+	} else {
+		retValueY = retValueY = retValueY - this.increment;
+	}
+    return { x: retValueX, y: retValueY};
   }
 
   private getRandomAngle(): number {
@@ -96,6 +108,8 @@ export class GameService {
 
   private launchBall(): Ball {
     const dir: Position = this.calculateVector();
+	console.log("HERE 2")
+	console.log(dir)
     const ball: Ball = {
       position: {
         x: this.options.table.width / DEFAULT_TABLE_PROPORTION,
@@ -141,15 +155,12 @@ export class GameService {
       game.ball.position.y = 0.6 + BALL_RADIUS;
       return game;
     }
-      if ((game.ball.position.x - BALL_RADIUS <= this.options.paddleDistance + 3) && 
+      if ((game.ball.position.x - BALL_RADIUS <= this.options.paddleDistance + 3 + 1) && 
           (game.ball.position.x - BALL_RADIUS) >= this.options.paddleDistance - 3) {
         if (game.ball.position.y + BALL_RADIUS >= game.leftPaddle.position.y && 
            ((game.ball.position.y - BALL_RADIUS) <= game.leftPaddle.position.y + game.leftPaddle.length)) {
           game.ball.velocity.x *= -1;
           game.ball.position.x = this.options.paddleDistance + 6 + BALL_RADIUS;
-          // const offset = (game.ball.position.y + BALL_RADIUS * 2 - game.leftPaddle.position.y + DEFAULT_PADDLE_LENGTH / 2) / (DEFAULT_PADDLE_LENGTH + BALL_RADIUS * 2);
-          // const tetha = 0.25 * Math.PI * (2 * offset - 1);
-          // game.ball.velocity.y = game.ball.velocity.y * Math.sin(tetha);
           return game;
         }
       } else if (

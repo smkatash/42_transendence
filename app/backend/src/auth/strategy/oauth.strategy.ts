@@ -31,7 +31,7 @@ export class OauthStrategy extends PassportStrategy(Strategy, "42") {
   async validate(accessToken: string, refreshToken: string, profile: Profile): Promise<User> {
     let title = "Pong Master";
     if (profile.titles && profile.titles[0]) {
-      title = profile.titles[0].name.replace("%login, ", "");
+      title = profile.titles[0].name.replace("%login", "");
     }
 
     const authUserDto: AuthUserDto = {
