@@ -38,20 +38,18 @@ export class ChannelMessagesContentComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['channel']) {
-      this.incomingMessages = []
+      let prevVal = changes['channel'].previousValue
+      if (prevVal.id !== this.channel?.id) {
+        this.incomingMessages = []
+      }
     }
   }
 
   sendMessage(): void {
-
     if (this.messageToSend === undefined || this.channel === undefined) return
-
     this.messageToSend = this.messageToSend.trim();
-
     if (!this.messageToSend) return;
-
     this.chatService.sendMessage(this.channel?.id, this.messageToSend)
-
     this.messageToSend = ''
   }
 

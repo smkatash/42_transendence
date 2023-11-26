@@ -50,6 +50,18 @@
   flex-direction: row;
 }
 
+.msg-counter {
+  height: 1.3dvw;
+  width: 1.3dvw;
+  background-color: #2f424a;
+  color: #E8DAB2;
+  border-radius: 50%;
+  margin-left: 0.3dvw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .selected-channel {
   background-color: #2f424a;
   padding: 1.1dvw;

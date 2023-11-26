@@ -15,7 +15,7 @@
              id="channel-password"
              #channelpassword="ngModel"
              [class.is-invalid]="channelpassword.invalid"
-             required pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
+             required pattern="(?=^.{8,}$)(?=.*\d)(?=.*\W+)(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
              [(ngModel)]="channelPassword">
 
              <label class="verify-pass" for="channel-password-verify" *ngIf="canManagePassword() && wantsToChangePass">Input old password:</label>
@@ -25,7 +25,7 @@
              id="channel-password-verify"
              #channelpasswordverify="ngModel"
              [class.is-invalid]="channelpasswordverify.invalid"
-             required pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
+             required pattern="(?=^.{8,}$)(?=.*\d)(?=.*\W+)(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
              [(ngModel)]="channelPasswordVerify">
 
       <div class="password-buttons">
@@ -52,7 +52,7 @@
 
       <label for="user-search" *ngIf="channel?.type === 'private'">Search for user to invite:</label>
       <div class="invite-to-channel" *ngIf="channel?.type === 'private'">
-        <input type="text" id="user-search" [formControl]="privateUserSearch" required pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$">
+        <input type="text" id="user-search" [formControl]="privateUserSearch" required pattern="(?=^.{8,}$)(?=.*\d)(?=.*\W+)(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$">
         <div class=name *ngFor="let user of searchedUsers">
           <span class="user-dropdown" (click)="sendInviteToChannel(user.id)">
             {{ user.username }}

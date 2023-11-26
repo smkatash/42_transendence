@@ -15,7 +15,7 @@
       <label for="channel-name">Choose a channel name:</label>
       <input type="text" id="channel-name"  #channelname="ngModel" [class.is-invalid]="channelname.invalid" [(ngModel)]="channelName" required minlength="2" maxlength="20" pattern="[^\s]*">
       <label for="channel-password">Choose a password for your channel:</label>
-      <input type="password" id="channel-password" #channelpassword="ngModel" [class.is-invalid]="channelpassword.invalid" required pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" [(ngModel)]="channelPassword">
+      <input type="password" id="channel-password" #channelpassword="ngModel" [class.is-invalid]="channelpassword.invalid" required pattern="(?=^.{8,}$)(?=.*\d)(?=.*\W+)(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" [(ngModel)]="channelPassword">
       <button class="close" (click)="toggle()">Close</button>
       <button class="change-btn" [disabled]="channelname.invalid && channelpassword.invalid" (click)="createChannel()" [class.btn-invalid]="channelname.invalid || channelpassword.invalid">Create</button>
     </div>

@@ -66,8 +66,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     await this.chatUserService.deleteAll();
     await this.muteService.purge();
     await this.joinedChannelService.purge();
-    // await this.messageService.purge();
-    // await this.channelService.purge();
+    await this.messageService.purge();
+    await this.channelService.purge();
   }
 
   async handleConnection(@ConnectedSocket() socket: Socket) {
@@ -464,11 +464,11 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       const channel = await this.channelService.getChannel(cId.cId, [
         "owner",
         "users",
-        "messages.user",
+        // "messages.user",
         "admins",
         "joinedUsers",
         "messages",
-        "messages.user.messages",
+        // "messages.user.messages",
         "banned",
         "invitedUsers",
       ]);
@@ -481,17 +481,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         }
       }
       //clean messages
-      for (const message of channel.messages) {
+/*      for (const message of channel.messages) {
         if (message?.user?.messages) {
           message.user.messages = message.user.messages.filter(msg => msg.id !== message.id);
         }
       }
       await Promise.all(channel.messages.map(async (message) => {
         await this.userService.saveUser(message.user)
-      }))
+      }))*/
       for (const user of channel.users) {
         const u = await this.userService.getUserWith(user.id, [
-          'channels', 'adminAt', 'joinedChannels', 'joinedChannels.channel', 'ownedChannels'
+          'channels', 'adminAt', 'joinedChannels', 'joinedChannels.channel', 'ownedChannels', 'messages', "messages.channel"
         ]);
         if (u.channels) {
           u.channels = u.channels.filter(c => c.id !== channel.id);
@@ -504,6 +504,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         }
         if (u.ownedChannels) {
           u.ownedChannels = u.ownedChannels.filter(ownedC => ownedC.id !== channel.id);
+        }
+        if (u.messages) {
+          u.messages = u.messages.filter((msg) => msg.channel.id !== channel.id)
         }
         await this.userService.saveUser(u);
       }

@@ -55,10 +55,10 @@ export class ChatComponent implements OnInit {
         this.channelToJoin = this.selectedChannel
         this.selectedChannel = undefined
       } else {
-        this.chatService.joinChannel({
+        this.chatService.joinChannel({ // joining public channel
           id: this.selectedChannel.id,
-          password: this.passwordToJoinChannel
         })
+        this.selectedChannel = undefined
       }
     } else {
       this.chatService.requestChannelMessages(channel.id)

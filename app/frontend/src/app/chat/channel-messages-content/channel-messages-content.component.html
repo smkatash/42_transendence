@@ -18,8 +18,7 @@
   </div>
   <div *ngFor="let message of incomingMessages; let i = index">
     <app-message [msg]="message"
-                 [sameSender]="true ? i > 0 && incomingMessages[i - 1].user === message.user : false"
-                 (clearIncomingArr)="incomingMessages = []">
+                 [sameSender]="true ? i > 0 && incomingMessages[i - 1].user === message.user : false">
     </app-message>
   </div>
 </div>
