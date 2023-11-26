@@ -5,8 +5,6 @@ import { BaseExceptionFilter } from '@nestjs/core';
 export class GlobalExceptionFilter extends BaseExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
     const response = host.switchToHttp().getResponse();
-    
-    console.log(exception)
 
     if (exception instanceof HttpException && exception.getStatus() === HttpStatus.INTERNAL_SERVER_ERROR) {
 		response.status(418).json({

@@ -23,7 +23,6 @@ export class SessionGuard implements CanActivate {
       }
       return true;
     } catch (error) {
-      console.error("Session Guard: " + error);
       return false;
     }
   }

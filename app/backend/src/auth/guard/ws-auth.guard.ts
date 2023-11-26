@@ -23,7 +23,6 @@ export class WsAuthGuard implements CanActivate {
       }
       return true;
     } catch (error) {
-      console.error("WsSession Guard: " + error);
       return false;
     }
   }

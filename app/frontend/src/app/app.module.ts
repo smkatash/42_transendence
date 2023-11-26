@@ -29,12 +29,10 @@ export class GameSocket extends Socket {
     super({ url: `${HOST_IP}/api/game`, options: { withCredentials: true } });
 
     this.ioSocket.on('connect', () => {
-      console.log(" INJECTABLE GOT CONNECTION")
       this.connectionSubject.next(true);
     });
 
     this.ioSocket.on('disconnect', () => {
-      console.log(" INJECTABLE GOT DISCONNECTION")
       this.connectionSubject.next(false);
     });
   }

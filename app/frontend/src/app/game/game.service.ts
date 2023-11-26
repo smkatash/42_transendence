@@ -1,16 +1,9 @@
-import { EventEmitter, Injectable } from '@angular/core';
-import { User , Game, GamePlayer, SocketResponse, GameMode, GameState, JoinMatchDto, PositionDto, GameModeDto } from '../entities.interface';
+import { Injectable } from '@angular/core';
+import { User , Game,  SocketResponse, GameMode, GameState } from '../entities.interface';
 import { GameSocket } from '../app.module';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { Socket } from 'ngx-socket-io';
-import { ACCEPT_MATCH, INVITE_TO_MATCH } from '../chat/subscriptions-events-constants';
 import { GameServiceUtils } from './utils';
 import { Router } from '@angular/router';
-
-async function waitOneSecond() {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  // console.log("...");
-}
 
 
 @Injectable({
@@ -79,7 +72,7 @@ export class GameService {
     if(this.listenersOn === false) {
       this.listenersOn = true;
       this.socket.on ('error',(msg:any) => { alert('I am a teapot') })
-      this.socket.on ('join', (msg: Game) => { console.log(JSON.stringify(msg))})
+      this.socket.on ('join', (msg: Game) => { })
       this.socket.on ('game', (msg: any) => { this.handlerGameInfo( msg ) })
       this.socket.on ('start', (msg: any)  => { this.handlerGameStart(msg) })
       this.socket.on ('disconnect', () => {  this.handleDisconnection(); });

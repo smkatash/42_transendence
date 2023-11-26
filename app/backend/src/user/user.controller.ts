@@ -56,7 +56,6 @@ export class UserController {
     try {
       return await this.userService.getUserById(currentUser.id);
     } catch (error) {
-      this.logger.error(error);
       throw error;
     }
   }
@@ -74,7 +73,6 @@ export class UserController {
       if (error.code === POSTGRES_UNIQUE_VIOLATION) {
         throw new ConflictException(`${updateUsernameDto.username} username already exists`);
       } else {
-        this.logger.error(error);
         throw error;
       }
     }
@@ -90,7 +88,6 @@ export class UserController {
     try {
       return await this.userService.updateTitle(currentUser.id, updateTitleDto.title);
     } catch (error) {
-      this.logger.error(error);
       throw error;
     }
   }
@@ -105,7 +102,6 @@ export class UserController {
     try {
       return await this.userService.enableMfaEmail(currentUser.id, updateEmailDto.email);
     } catch (error) {
-      this.logger.error(error);
       throw error;
     }
   }
@@ -119,7 +115,6 @@ export class UserController {
     try {
       return await this.userService.disableMfaVerification(currentUser.id);
     } catch (error) {
-      this.logger.error(error);
       throw error;
     }
   }
@@ -135,7 +130,6 @@ export class UserController {
     try {
       return await this.userService.updateUserAvatar(currentUser.id, file.filename);
     } catch (error) {
-      this.logger.error(error);
       throw error;
     }
   }
@@ -150,7 +144,6 @@ export class UserController {
     try {
       return res.sendFile(path.join(process.cwd(), IMAGE_UPLOADS_PATH + paramAvatarDto.avatar));
     } catch (error) {
-      this.logger.error(error);
       throw error;
     }
   }

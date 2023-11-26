@@ -65,8 +65,6 @@ export class GameService {
 
   private calculateVector(): Position {
     const randomAngle = this.getRandomAngle();
-	console.log("HERE")
-	console.log(randomAngle)
     const radian = this.degreesToRadian(randomAngle);
 	let retValueX = Math.cos(radian);
 	let retValueY = Math.sin(radian);
@@ -108,8 +106,6 @@ export class GameService {
 
   private launchBall(): Ball {
     const dir: Position = this.calculateVector();
-	console.log("HERE 2")
-	console.log(dir)
     const ball: Ball = {
       position: {
         x: this.options.table.width / DEFAULT_TABLE_PROPORTION,

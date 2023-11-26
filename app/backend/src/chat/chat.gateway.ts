@@ -76,7 +76,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
     let user = socket.request["user"];
     if (!user) {
-      Logger.error("Anonymous connection");
       return this.noAccess(socket);
     }  else  {
       socket.data.user = user;

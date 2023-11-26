@@ -44,7 +44,6 @@ export class MessageComponent {
       this.chatService.declineChannelInvite(String(this.msg.inviteId), this.msg.id)
     } else if (this.msg?.inviteType === GAME_INVITE) {
       this.chatService.invalidateMessage(this.msg.id)
-      console.log("Message Decline Invite");
       this.gameService.declineInvite(this.msg.user.id, Number(this.msg.inviteId)) // Naming problem, inviteId is game mode as well
     }
     this.msg = undefined

@@ -140,11 +140,6 @@ export class ChatService {
     return this.socket.fromEvent<any>(ERROR)
   }
 
-  // onSuccess() {
-  //   this.socket.on(SUCCESS, (msg: any) => {
-  //     console.log(msg)
-  //   })
-  // }
 
   onSuccess() {
     return this.socket.fromEvent<any>(SUCCESS)
