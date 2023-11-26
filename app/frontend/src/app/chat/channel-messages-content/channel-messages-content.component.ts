@@ -39,7 +39,7 @@ export class ChannelMessagesContentComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['channel']) {
       let prevVal = changes['channel'].previousValue
-      if (prevVal.id !== this.channel?.id) {
+      if (prevVal && prevVal.id !== this.channel?.id) {
         this.incomingMessages = []
       }
     }

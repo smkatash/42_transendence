@@ -29,12 +29,16 @@ export class ChatComponent implements OnInit {
   errorMessage?: any
 
   ngOnInit(): void {
-    this.chatService.requestUserChannels()
-    this.chatService.requestChannels()
+
+    this.chatService.onSuccess()
+      .subscribe(msg => console.log(msg))
+
     this.chatService.onError()
       .subscribe(error => {
         this.displayError(error.message)
       })
+    this.chatService.requestUserChannels()
+    this.chatService.requestChannels()
     this.chatService.getUsersChannels()
       .subscribe(channels => {
         this.myChannels = channels

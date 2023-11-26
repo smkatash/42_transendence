@@ -20,16 +20,16 @@ export class TwofactorauthComponent {
   sendEmail(): void {
     this.profileService.enable2FA(this.email)
       .subscribe(_=> this.profileService.enableSend2FA().subscribe())
-	this.verificationStep = 'sendCode'
+    this.verificationStep = 'sendCode'
     this.cd.detectChanges();
   }
 
   verifyEmail(): void {
     this.profileService.verificationEnable2FA(this.code)
       .subscribe({
-		next: () => this.verificationStep = 'verified',
-		error: () => this.verificationStep = 'unverified'
-	  })
+        next: () => this.verificationStep = 'verified',
+        error: () => this.verificationStep = 'unverified'
+      })
   }
 
   closeDialog(): void {

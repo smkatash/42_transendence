@@ -110,24 +110,24 @@ export class GameService {
   }
 
   private launchPaddle(type: Paddletype): Paddle {
-    let x: number;
-
+    let x: number
+    let y: number
     if (type === Paddletype.LEFT) {
-      x = this.options.paddleDistance;
+        x = this.options.paddleDistance;
+        y = DEFAULT_PADDLE_LENGTH
     } else {
-      x = this.options.table.width - this.options.paddleDistance;
+        x = this.options.table.width - this.options.paddleDistance
+        y = this.options.table.height - 2 * DEFAULT_PADDLE_LENGTH
     }
-
     const paddle: Paddle = {
-      position: {
-        x: x,
-        y: this.options.table.height / DEFAULT_TABLE_PROPORTION,
-      },
-      length: DEFAULT_PADDLE_LENGTH,
-    };
-
-    return paddle;
-  }
+        position: {
+            x: x,
+            y: y,
+        },
+        length: DEFAULT_PADDLE_LENGTH,
+    }
+    return paddle
+}
 
   throwBall(game: Game): Game {
     game.ball.position.x += game.ball.velocity.x;

@@ -70,9 +70,9 @@ export class MatchService {
 		}
 	}
 
-	debug() {
-		this.queueService.getAllLobbyData()
-	}
+	// debug() {
+	// 	this.queueService.getAllLobbyData()
+	// }
 
 	async checkPlayerLobby(player: Player, ownerId: string, client: Socket, mode: GameMode) {
 		if (!(await this.hasExistingMatch(player.id, client))) {

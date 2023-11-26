@@ -12,15 +12,14 @@ import { HOST_IP } from '../Constants';
 export class ChatService {
   constructor(
     private http: HttpClient,
-    private socket: ChatSocket,
-  ) { }
+    private socket: ChatSocket
+  ) {}
 
   domain: string = HOST_IP
 
   findUser(username: string): Observable<User[]> {
     return this.http.get<User[]>(`${this.domain}/api/user/find-by-username?username=${username}`, { withCredentials: true })
   }
-
 
   /* <---------- Socket emits ----------> */
 
@@ -140,10 +139,15 @@ export class ChatService {
   onError() {
     return this.socket.fromEvent<any>(ERROR)
   }
+
+  // onSuccess() {
+  //   this.socket.on(SUCCESS, (msg: any) => {
+  //     console.log(msg)
+  //   })
+  // }
+
   onSuccess() {
-    this.socket.on(SUCCESS, (msg: any) => {
-      console.log(msg)
-    })
+    return this.socket.fromEvent<any>(SUCCESS)
   }
 
   getUsersChannels(): Observable<Channel[]> {

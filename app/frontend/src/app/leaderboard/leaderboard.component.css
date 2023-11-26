@@ -17,7 +17,7 @@ body {
     font-size: 1.5rem;
     font-weight: bold;
     color:  #E8DAB2;
-    padding: 0.5rem; 
+    padding: 0.5rem;
 }
 
 .board-interface {
@@ -28,6 +28,7 @@ body {
   padding-right: 5%;
   border: .7dvw solid #E8DAB2;
   box-sizing: border-box;
+  overflow: auto;
 }
 
 .players-container {
