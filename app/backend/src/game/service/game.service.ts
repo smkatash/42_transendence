@@ -141,28 +141,29 @@ export class GameService {
       game.ball.position.y = 0.6 + BALL_RADIUS;
       return game;
     }
-      if (game.ball.position.x - BALL_RADIUS <= this.options.paddleDistance + 2 && game.ball.position.x - BALL_RADIUS >= this.options.paddleDistance - 2) {
-        if (game.ball.position.y - BALL_RADIUS < game.leftPaddle.position.y + game.leftPaddle.length && game.ball.position.y + BALL_RADIUS > game.leftPaddle.position.y) {
-          this.tmpIncrement = this.increment - 2;
+      if ((game.ball.position.x - BALL_RADIUS <= this.options.paddleDistance + 3) && 
+          (game.ball.position.x - BALL_RADIUS) >= this.options.paddleDistance - 3) {
+        if (game.ball.position.y + BALL_RADIUS >= game.leftPaddle.position.y && 
+           ((game.ball.position.y - BALL_RADIUS) <= game.leftPaddle.position.y + game.leftPaddle.length)) {
           game.ball.velocity.x *= -1;
-          game.ball.position.x = this.options.paddleDistance + 2 + BALL_RADIUS;
-          const offset = (game.ball.position.y + BALL_RADIUS * 2 - game.leftPaddle.position.y + DEFAULT_PADDLE_LENGTH / 2) / (DEFAULT_PADDLE_LENGTH + BALL_RADIUS * 2);
-          const tetha = 0.25 * Math.PI * (2 * offset - 1);
-          game.ball.velocity.y = game.ball.velocity.y * Math.sin(tetha);
+          game.ball.position.x = this.options.paddleDistance + 6 + BALL_RADIUS;
+          // const offset = (game.ball.position.y + BALL_RADIUS * 2 - game.leftPaddle.position.y + DEFAULT_PADDLE_LENGTH / 2) / (DEFAULT_PADDLE_LENGTH + BALL_RADIUS * 2);
+          // const tetha = 0.25 * Math.PI * (2 * offset - 1);
+          // game.ball.velocity.y = game.ball.velocity.y * Math.sin(tetha);
           return game;
         }
       } else if (
-        game.ball.position.x + BALL_RADIUS >= this.options.table.width - this.options.paddleDistance - 2 &&
-        game.ball.position.x + BALL_RADIUS <= this.options.table.width - this.options.paddleDistance + 2
+        game.ball.position.x + BALL_RADIUS >= this.options.table.width - this.options.paddleDistance - 3 &&
+        game.ball.position.x + BALL_RADIUS <= this.options.table.width - this.options.paddleDistance + 3
       ) {
-        if (game.ball.position.y < game.rightPaddle.position.y + game.rightPaddle.length && game.ball.position.y > game.rightPaddle.position.y) {
-          this.tmpIncrement = this.increment - 2;
+        if (game.ball.position.y - BALL_RADIUS < game.rightPaddle.position.y + game.rightPaddle.length &&
+            game.ball.position.y + BALL_RADIUS > game.rightPaddle.position.y) {
           game.ball.velocity.x *= -1;
-          game.ball.position.x = this.options.table.width - this.options.paddleDistance - 2 - BALL_RADIUS;
+          game.ball.position.x = this.options.table.width - this.options.paddleDistance - 6 - BALL_RADIUS;
           return game;
         }
       }
-    if (game.ball.position.x <= BALL_RADIUS || game.ball.position.x >= DEFAULT_TABLE_HEIGHT * DEFAULT_TABLE_PROPORTION - BALL_RADIUS) {
+    if (game.ball.position.x <= 0 || game.ball.position.x >= DEFAULT_TABLE_HEIGHT * DEFAULT_TABLE_PROPORTION) {
     	if (game.ball.position.x <= DEFAULT_TABLE_HEIGHT) {
           return this.resetGame(game, Paddletype.RIGHT);
         }
@@ -171,65 +172,3 @@ export class GameService {
     return game;
   }
 }
-
-// 1. random value -1 and 1 , to identify the start direction
-// 2. random value between 0 and 90, cos and sin
-/* 
-    Degree
-    if (v > 45) {
-        v -=45
-    } else {
-        v = 320 + v
-    }
-
-    convert to radian
-    dx = cos(radian)
-    dy = sin (radian)
-
-
-    position = position.x + x, position.y + y
-    
-    width="1024px" height="768px -> inital
-
-*/
-/* while loop, 
-     x += dx
-     y += dy
-
-    if (x,y >== height) {
-        dy *= -1
-        x = x
-        y = height - 0.5
-    } else if (x,y <== 0) {
-        dy *= -1
-        x = x
-        y = 0 + 0.5
-    }
-
-    if ( x <= 10 ) {
-        if (y > leftPaddle.y - 10 && y < leftPaddle.y + 10) {
-            dx *= - 1
-            x = 10 + 0.5
-            y = y
-        } else {
-            Score! Reset the position/game
-        }
-    } else if (x > width - 10) {
-         if (y > rightPaddle.y - 10 && y < rightPaddle.y + 10) {
-            dx *= - 1
-            x = width - 10 - 0.5
-            y = y
-        } else {
-            Score! Reset the position/game
-        }
-    }
-
-    if (score => MAXSCORE) {
-        STOP
-    }
-
-
-    leftPaddle = y = height / 2, x = 10
-    rightPaddle = y height / 2, x = width - 10
-
-*/
