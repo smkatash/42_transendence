@@ -28,6 +28,16 @@ export class GameComponent implements AfterViewInit, OnInit {
 // -------------------------------------------------------------------------------
 //                                    * variable *
 // -------------------------------------------------------------------------------
+
+  ballCanMove         : boolean = true;
+  paddleCanMove       : boolean = true;
+  ballWidth           : number= 3;
+  ballHeight          : number = 3;
+  paddleWidth         : number = 1;
+  paddleMargin        : number= 3;
+  ballRadius          : number = 1.5;
+  paddleLeftIncrement : number = 0;
+  paddleRightIncrement: number = 0;
   yourScore           : number = 0;
   opponentScore       : number = 0;
   maxViewHeight       : number = 546;
@@ -53,7 +63,7 @@ export class GameComponent implements AfterViewInit, OnInit {
   invitedUser         : string | null;
   difficultyLevel     : string | null;
   matchLeftSide       : boolean = true;
-    
+
   private boardElement: HTMLElement;
 
   ngAfterViewInit(): void {

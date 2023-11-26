@@ -225,7 +225,7 @@ export class ProfileComponent implements OnInit {
       this.userProfile.user.username = this.nameToChange
       this.nameToChange = ''
     } else {
-      this.displayError('Name not valid bitch')
+      this.displayError('Name not valid')
     }
   }
 
@@ -236,7 +236,7 @@ export class ProfileComponent implements OnInit {
       this.userProfile.user.title = this.titleToChange
       this.titleToChange = ''
     } else {
-      this.displayError('Title not valid bitch')
+      this.displayError('Title not valid')
     }
   }
 

@@ -479,15 +479,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
           return this.emitError(socket, new BadRequestException("No rights"));
         }
       }
-      //clean messages
-/*      for (const message of channel.messages) {
-        if (message?.user?.messages) {
-          message.user.messages = message.user.messages.filter(msg => msg.id !== message.id);
-        }
-      }
-      await Promise.all(channel.messages.map(async (message) => {
-        await this.userService.saveUser(message.user)
-      }))*/
       for (const user of channel.users) {
         const u = await this.userService.getUserWith(user.id, [
           'channels', 'adminAt', 'joinedChannels', 'joinedChannels.channel', 'ownedChannels', 'messages', "messages.channel"
