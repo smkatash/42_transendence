@@ -33,11 +33,10 @@ export class OauthStrategy extends PassportStrategy(Strategy, "42") {
     if (profile.titles && profile.titles[0]) {
       title = profile.titles[0].name.replace(/%login\s*(,|$)/g, "");
     }
-    
 
     const authUserDto: AuthUserDto = {
       id: profile.id,
-      username: `${profile.login}-${this.authService.randomUsernamePrefixGenerator}`,
+      username: profile.login,
       title: title,
       avatar: profile.image_url,
       status: Status.ONLINE,

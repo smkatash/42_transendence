@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException} from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException} from "@nestjs/common";
 import { User } from "src/user/entities/user.entity";
 import { AuthUserDto } from "src/auth/utils/auth.user.dto";
 import { v4 } from "uuid";
@@ -8,7 +8,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { AuthToken } from "../entities/auth-token.entity";
 import { Repository } from "typeorm";
 import { createHash } from "crypto";
-import { uniqueNamesGenerator, adjectives, colors, animals } from 'unique-names-generator';
 
 @Injectable()
 export class AuthService {
@@ -19,9 +18,9 @@ export class AuthService {
 
     try {
       currentUser = await this.userService.getUserById(authUserDto.id);
-    //   if (currentUser.status !== Status.ONLINE) {
-    //   	throw new BadRequestException("User is logged in.")
-    //   }
+      if (currentUser.status !== Status.OFFLINE) {
+      	throw new BadRequestException("User is logged in.")
+      }
     } catch (error) {
       if (error instanceof NotFoundException) {
         authUserDto.avatar = await this.userService.getIntraProfile(authUserDto.avatar);
@@ -31,15 +30,7 @@ export class AuthService {
     }
     return currentUser;
   }
-  
-  randomUsernamePrefixGenerator() {
-    const dictionaries = [adjectives, colors, animals];
-    const selectedDictionary = dictionaries[Math.floor(Math.random() * dictionaries.length)];
 
-    return uniqueNamesGenerator({
-      dictionaries: [selectedDictionary]
-    });
-  }
 
   async findUser(id: string): Promise<User> {
     return this.userService.getUserById(id);

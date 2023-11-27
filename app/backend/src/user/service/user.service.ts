@@ -5,10 +5,11 @@ import * as fs from "fs";
 import * as https from "https";
 import { AuthUserDto } from "src/auth/utils/auth.user.dto";
 import { MfaStatus } from "src/auth/utils/mfa-status";
-import { IMAGE_UPLOADS_PATH } from "src/utils/Constants";
+import { IMAGE_UPLOADS_PATH, POSTGRES_UNIQUE_VIOLATION } from "src/utils/Constants";
 import { Like, Repository } from "typeorm";
 import { User } from "../entities/user.entity";
 import { Status } from "../utils/status.enum";
+import { uniqueNamesGenerator, adjectives, colors, animals } from 'unique-names-generator';
 
 @Injectable()
 export class UserService {
@@ -44,9 +45,32 @@ export class UserService {
     return this.userRepo.save(user);
   }
 
-  async createUser(newUser: AuthUserDto): Promise<User> {
-    const user = this.userRepo.create(newUser);
-    return this.userRepo.save(user);
+  private randomUsernameGenerator() {
+    const dictionaries = [adjectives, colors, animals];
+    const selectedDictionary = dictionaries[Math.floor(Math.random() * dictionaries.length), Math.floor(Math.random() * dictionaries.length)];
+
+    const uniqueName = uniqueNamesGenerator({
+      dictionaries: [selectedDictionary],
+      length: 2
+    });
+
+    return uniqueName.slice(0, 8);
+  }
+
+  async createUser(userDto: AuthUserDto): Promise<User> {
+    try {
+      const user = this.userRepo.create(userDto);
+      const newUser = await this.userRepo.save(user);
+      return newUser
+    } catch (error) {
+      if (error.code === POSTGRES_UNIQUE_VIOLATION)   {
+        userDto.username = this.randomUsernameGenerator()
+        const user = this.userRepo.create(userDto);
+        return this.userRepo.save(user);
+      } else {
+        throw error;
+      }
+    }
   }
 
   async updateUserStatus(id: string, status: Status) {
