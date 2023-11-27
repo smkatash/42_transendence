@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { environment } from \"src/environments/environment\";\nexport const HOST_IP = environment.envVar.HOST_IP;","map":null,"metadata":{},"sourceType":"module","externalDependencies":[]}

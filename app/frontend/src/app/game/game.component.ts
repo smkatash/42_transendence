@@ -38,6 +38,7 @@ export class GameComponent implements AfterViewInit, OnInit {
   ballRadius          : number = 1.5;
   paddleLeftIncrement : number = 0;
   paddleRightIncrement: number = 0;
+  scoreSum            : number = 0;
   yourScore           : number = 0;
   opponentScore       : number = 0;
   maxViewHeight       : number = 546;
@@ -63,6 +64,8 @@ export class GameComponent implements AfterViewInit, OnInit {
   invitedUser         : string | null;
   difficultyLevel     : string | null;
   matchLeftSide       : boolean = true;
+  velocitySettledUp   : boolean = false;
+  previousBallInfo    : Ball;
 
   private boardElement: HTMLElement;
 
@@ -114,8 +117,36 @@ export class GameComponent implements AfterViewInit, OnInit {
     }
   }
 
+  emitSound(text: string){
+    if (text == "sdonk"){
+      console.log(text);
+    }
+    if ( text == "applause"){
+      console.log(text);
+    }
+  }
+
+  velocityCheck(game: Game){
+    if (this.velocitySettledUp == false && game.ball){
+      this.previousBallInfo = game.ball;
+      this.velocitySettledUp = true;
+      return;
+    }
+    if( this.previousBallInfo.velocity.x != 0){
+      if( game.ball && this.previousBallInfo.velocity.x * game.ball?.velocity.x < 0){
+        this.emitSound("sdonk");
+      }
+    } 
+    else if( this.previousBallInfo.velocity.y != 0){
+      if( game.ball && this.previousBallInfo.velocity.y * game.ball?.velocity.y < 0){
+        this.emitSound("sdonk");
+      }
+    }
+  }
+
   valueConversion(game: Game) {
     this.checkBoardSize();
+    this.velocityCheck(game);
     if( game.ball){
       if(this.matchLeftSide === true){
         game.ball.position.x = (this.maxViewWidth / this.maxWidth) * game.ball.position.x;
@@ -161,6 +192,17 @@ export class GameComponent implements AfterViewInit, OnInit {
     }
   }
 
+  checkScoreSum(scores: Record <string, number>){
+    let sum: number = 0;
+    for (const value of Object.values(scores)) {
+      sum += value;
+    }
+    if( sum !== this.scoreSum){
+      this.scoreSum = sum;
+      this.emitSound("applause");
+    }
+  }
+
   startPlaying(){
     if(this.gameInfo){
       if( this.gameInfo.ball ) {
@@ -177,6 +219,7 @@ export class GameComponent implements AfterViewInit, OnInit {
       }
       if( this.gameInfo.scores) {
         const scores = this.gameInfo.scores;
+        this.checkScoreSum(scores)
         window.requestAnimationFrame(() => this.updateScore(scores))
       }
     }
