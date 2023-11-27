@@ -254,7 +254,7 @@ export class UserService {
 
       return await this.userRepo.save(currentUser);
     } catch (err) {
-      throw new InternalServerErrorException();
+      throw new BadRequestException();
     }
   }
 

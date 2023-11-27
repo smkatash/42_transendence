@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Inject, InternalServerErrorException, Post, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Get, Inject, Post, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { Cron } from "@nestjs/schedule";
 import { Response } from "express";
 import { UserService } from "src/user/service/user.service";

@@ -5,7 +5,6 @@ import {
   Delete,
   Get,
   Inject,
-  InternalServerErrorException,
   Logger,
   Param,
   Patch,

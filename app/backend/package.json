@@ -47,6 +47,7 @@
     "rxjs": "^7.8.1",
     "socket.io": "^4.7.2",
     "typeorm": "^0.3.17",
+    "unique-names-generator": "^4.7.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

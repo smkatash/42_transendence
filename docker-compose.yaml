@@ -9,10 +9,11 @@ services:
     env_file:
       - ./docker/dev.env
     volumes:
-      - /Users/jmaalouf/Documents/42/Core_Curriculum/42_transendence/app:/app
+      # - /Users/jmaalouf/Documents/42/Core_Curriculum/42_transendence/app:/app
       # - /Users/francesco/pong/app:/app
       # - /home/jmaalouf/Documents/42/core-curriculum/42_transendence/app:/app
       # - /Users/ktashbae/Desktop/42_transendence/app:/app
+      - C:\Users\ktashbae\Desktop\42_transendence\app:/app
     ports:
       - 3000:3000
     depends_on:
@@ -28,8 +29,6 @@ services:
       - db-volume:/var/lib/postgresql/data
     env_file:
       - ./docker/dev.env
-    ports:
-      - 5432:5432
 
   redis:
     container_name: redis
@@ -39,8 +38,6 @@ services:
       - ./docker/dev.env
     volumes: 
       - redis-volume:/data
-    ports:
-      - 6379:6379
 
 volumes:
   db-volume:

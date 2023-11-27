@@ -66,8 +66,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     await this.chatUserService.deleteAll();
     await this.muteService.purge();
     await this.joinedChannelService.purge();
-    // await this.messageService.purge();
-    // await this.channelService.purge();
   }
 
   async handleConnection(@ConnectedSocket() socket: Socket) {
@@ -125,7 +123,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!user) {
       return this.noAccess(socket);
     }
-    Logger.debug(`at CREATE  ${channelInfo.name}`);
     try {
       if (!CHANNEL_NAME_REGEX.test(channelInfo.name)) {
         throw new BadRequestException("Bad channel name format");
@@ -206,7 +203,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!user) {
       return this.noAccess(socket);
     }
-    Logger.debug("at JOIN");
     try {
       const channel: Channel = await this.channelService.join(user, joinInfo);
       if (channel.private) {
@@ -235,7 +231,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!user) {
       return this.noAccess(socket);
     }
-    Logger.debug("at LEAVE");
     try {
       const channel = await this.channelService.getChannel(channelInfo.cId, ["owner", "users", "admins"]);
       if (!channel) {
@@ -279,7 +274,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!user) {
       return this.noAccess(socket);
     }
-    Logger.debug("at CHANNEL_MESSAGES");
     try {
       const channel = await this.channelService.getChannel(channelInfo.cId, ["users"]);
       if (!channel) {
@@ -316,7 +310,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!user) {
       return this.noAccess(socket);
     }
-    Logger.debug("at MESSAGE");
     try {
       const channel = await this.channelService.getChannel(message.cId, ["users"]);
       if (!channel) {
@@ -375,7 +368,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!user) {
       return this.noAccess(socket);
     }
-    Logger.debug("at CHANNELS");
     try {
       const channels = await this.channelService.getAllChannels();
       user = await this.userService.getUserWith(user.id, ["bannedAt"]);
@@ -402,7 +394,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!user) {
       return this.noAccess(socket);
     }
-    Logger.debug("at USER_CHANNELS");
     try {
       const channels = await this.channelService.getUsersChannels(user.id)
       user = await this.userService.getUserWith(user.id, [
@@ -421,7 +412,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     const cToFe: ChannelToFeDto[] = channels
           .filter((c) => {
             if (c.type === 'direct')  {
-              for (let u of c.users)  {
+              for (const u of c.users)  {
                 if (u.id !== user.id) {
                   if (!(user.blockedUsers.some((blocked) => blocked.id === u.id))){
                     return c;
@@ -458,16 +449,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!user) {
       return this.noAccess(socket);
     }
-    Logger.debug(`at DELETE ${cId.cId}`);
     try {
       const channel = await this.channelService.getChannel(cId.cId, [
         "owner",
         "users",
-        // "messages.user",
         "admins",
         "joinedUsers",
         "messages",
-        // "messages.user.messages",
         "banned",
         "invitedUsers",
       ]);
@@ -548,7 +536,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!user) {
       return this.noAccess(socket);
     }
-    Logger.debug(`on KICK  ${info.uId} from ${info.cId}`);
     try {
       const channel = await this.channelService.getChannel(info.cId, ["owner", "admins", "users", "joinedUsers"]);
       let u = await this.userService.getUserWith(info.uId, ["channels", "joinedChannels"]);
@@ -588,7 +575,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage(BAN)
   async onBan(@ConnectedSocket() socket: Socket, @MessageBody() info: UpdateChannelDto) {
     const user = socket.data.user;
-    Logger.debug("at BAN");
     if (!user) {
       return this.noAccess(socket);
     }
@@ -635,7 +621,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!user) {
       return this.noAccess(socket);
     }
-    Logger.debug("at UNBAN");
     try {
       const channel = await this.channelService.getChannel(info.cId, ["owner", "admins", "banned"]);
       const u = await this.userService.getUserWith(info.uId, ["bannedAt"]);
@@ -662,7 +647,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage(MUTE)
   async onMute(@ConnectedSocket() socket: Socket, @MessageBody() info: UpdateChannelDto) {
     const user = socket.data.user;
-    Logger.debug("at MUTE");
     if (!user) {
       return this.noAccess(socket);
     }
@@ -691,7 +675,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage(ADD_ADMIN)
   async onAddAdmin(@ConnectedSocket() socket: Socket, @MessageBody() info: UpdateChannelDto) {
     const user = socket.data.user;
-    Logger.debug("at ADD_ADMIN");
     if (!user) {
       return this.noAccess(socket);
     }
@@ -729,7 +712,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!user) {
       return this.noAccess(socket);
     }
-    Logger.debug("at REM_ADMIN");
     try {
       const channel = await this.channelService.getChannel(info.cId, ["owner", "admins", "users"]);
       const u = await this.userService.getUserWith(info.uId, ["adminAt"]);
@@ -766,7 +748,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!user) {
       return this.noAccess(socket);
     }
-    Logger.debug("at INVITE_TO_PRIVATE");
     try {
       const u = await this.userService.getUserWith(info.uId, []);
       const channel = await this.channelService.getChannel(info.cId, ["users", "invitedUsers"]);
@@ -796,7 +777,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!user) {
       return this.noAccess(socket);
     }
-    Logger.debug("at ACCEPT_PRIVATE_INVITE");
     try {
       await this.onJoin(socket, { id: info.cId });
       const msg = await this.invalidateMsgContent(info.msgId);
@@ -827,7 +807,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!user) {
       return this.noAccess(socket);
     }
-    Logger.debug("DECLINE_PRIVATE_INVITE");
     try {
       const u = await this.userService.getUserWith(user.id, ["invitedTo"]);
       const channel = await this.channelService.getChannel(info.cId, ["invitedUsers"]);
@@ -857,7 +836,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!user) {
       return this.noAccess(socket);
     }
-    Logger.debug("at PASSWORD");
     try {
       const channel = await this.channelService.getChannel(passInfo.cId, [
         'owner', 'users'
@@ -880,7 +858,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage(DIRECT)
   async onPriv(@ConnectedSocket() socket: Socket, @MessageBody() info: PrivMsgDto) {
     let user = socket.data.user;
-    Logger.debug("at DIRECT");
     if (!user) {
       return this.noAccess(socket);
     }
@@ -975,7 +952,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!user) {
       return this.noAccess(socket);
     }
-    Logger.debug("at BLOCK");
     try {
       if (user.id === userInfo.uId) {
         throw new BadRequestException("Can't block self");
@@ -992,7 +968,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
   @SubscribeMessage(UNBLOCK)
   async onUnBlock(@ConnectedSocket() socket: Socket, @MessageBody() userInfo: uIdDto) {
     const user = socket.data.user;
-    Logger.debug("at UNBLOCK");
     if (!user) {
       return this.noAccess(socket);
     }
@@ -1063,7 +1038,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
     if (!user) {
       return this.noAccess(socket);
     }
-    Logger.debug("at CHANNEL");
     try {
       const channel = await this.channelService.getChannel(channelInfo.cId, ["users", "admins", "banned"]);
       this.server.to(socket.id).emit(CHANNEL, this.channelToFe(channel));
@@ -1080,7 +1054,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
       return this.noAccess(socket);
     }
     try {
-      Logger.debug("INVALIDATE_MESSAGE_CONTENT");
       const msg = await this.invalidateMsgContent(msgInfo.cId);
       if (msg) {
         this.onGetChannelMessages(socket, { cId: msg.channel.id });
@@ -1111,7 +1084,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   @SubscribeMessage(ACHTUNG)
   onAchtung(@ConnectedSocket() socket: Socket, @MessageBody() msg: uIdDto)  {
-    let user = socket.data.user;
+    const user = socket.data.user;
     if (!user) {
       return this.noAccess(socket);
     }
