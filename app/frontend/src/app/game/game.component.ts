@@ -5,6 +5,7 @@ import { Ball, Game, Paddle, GameState, GameMode } from '../entities.interface';
 import { ActivatedRoute, Route, Router } from '@angular/router';
 import { Socket } from 'ngx-socket-io';
 import { Subscription } from 'rxjs';
+import { AudioService } from '../audio.service';
 
 @Component({
   selector: 'app-game',
@@ -19,8 +20,8 @@ export class GameComponent implements AfterViewInit, OnInit {
               private elementReference: ElementRef,
               private gameService: GameService,
               private route: ActivatedRoute,
-			  private router: Router
-			  )
+              private router: Router,
+              private audioService: AudioService)
   {
     this.renderer = rendererFactory.createRenderer(null, null);
   }
@@ -119,10 +120,10 @@ export class GameComponent implements AfterViewInit, OnInit {
 
   emitSound(text: string){
     if (text == "sdonk"){
-      console.log(text);
+      this.audioService.playBallHit()
     }
     if ( text == "applause"){
-      console.log(text);
+      this.audioService.playApplaud()
     }
   }
 
@@ -136,7 +137,7 @@ export class GameComponent implements AfterViewInit, OnInit {
       if( game.ball && this.previousBallInfo.velocity.x * game.ball?.velocity.x < 0){
         this.emitSound("sdonk");
       }
-    } 
+    }
     else if( this.previousBallInfo.velocity.y != 0){
       if( game.ball && this.previousBallInfo.velocity.y * game.ball?.velocity.y < 0){
         this.emitSound("sdonk");
