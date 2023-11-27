@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { AudioService } from 'src/app/audio.service';
 
 @Component({
   selector: 'app-error-message',
@@ -6,5 +7,11 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./error-message.component.css']
 })
 export class ErrorMessageComponent {
- @Input() message?: any
+  @Input() message?: any
+
+  constructor(private audioService: AudioService){}
+
+  ngOnInit(): void {
+    this.audioService.playError()
+  }
 }

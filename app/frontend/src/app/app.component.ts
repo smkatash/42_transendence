@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { GameSocket, UserSocket } from './app.module';
+import { UserSocket } from './app.module';
 import { NavigationEnd, Router } from '@angular/router';
-import { filter, pipe } from 'rxjs';
+import { AudioService } from './audio.service';
 
 @Component({
   selector: 'app-root',
@@ -10,7 +10,11 @@ import { filter, pipe } from 'rxjs';
 })
 export class AppComponent {
   title = 'Le Pong';
-  constructor(private router: Router, private socket: UserSocket) {}
+
+  constructor(private router: Router,
+              private socket: UserSocket,
+              private audioService: AudioService) {}
+
   ngOnInit(): void {
     this.router.events
       .subscribe((e) => {
@@ -26,5 +30,6 @@ export class AppComponent {
           }
         }
       })
+    this.audioService.playBackgroundMusic()
   }
 }

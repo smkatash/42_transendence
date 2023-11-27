@@ -1,6 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { ChatService } from '../chat.service';
 import { Channel, Message } from 'src/app/entities.interface';
+import { AudioService } from 'src/app/audio.service';
 
 @Component({
   selector: 'app-channel-messages-content',
@@ -9,7 +10,8 @@ import { Channel, Message } from 'src/app/entities.interface';
 })
 export class ChannelMessagesContentComponent implements OnInit {
 
-  constructor(private chatService: ChatService){}
+  constructor(private chatService: ChatService,
+              private audioService: AudioService){}
 
 
   @ViewChild('messageContainer') messageContainer!: ElementRef;
@@ -51,6 +53,7 @@ export class ChannelMessagesContentComponent implements OnInit {
     if (!this.messageToSend) return;
     this.chatService.sendMessage(this.channel?.id, this.messageToSend)
     this.messageToSend = ''
+    this.audioService.playMessage()
   }
 
   scrollToBottom() {
