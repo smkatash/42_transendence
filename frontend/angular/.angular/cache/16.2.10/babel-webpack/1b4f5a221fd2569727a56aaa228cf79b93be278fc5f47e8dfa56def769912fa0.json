@@ -1,0 +1,1 @@
+{"ast":null,"code":"export const environment = {\n  production: false,\n  baseUrl: 'http://localhost:4200',\n  envVar: {\n    HOST_IP: 'http://127.0.0.1:3000'\n  }\n};","map":null,"metadata":{},"sourceType":"module","externalDependencies":[]}
