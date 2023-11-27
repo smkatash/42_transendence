@@ -35,9 +35,9 @@ async function bootstrap() {
     cookie: {
       secure: false,
       httpOnly: true,
-      maxAge: 3600000,
+      maxAge: 2 * 60 * 60 * 1000,
       sameSite: "lax",
-      expires: new Date(Date.now() + 3600000),
+      expires: new Date(Date.now() + 2 * 60 * 60 * 1000),
     },
   });
   app.use(sessionMiddleware);
