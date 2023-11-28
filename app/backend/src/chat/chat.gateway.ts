@@ -3,7 +3,7 @@ import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect,
 import { Server, Socket } from "socket.io";
 import { User } from "src/user/entities/user.entity";
 import { UserService } from "src/user/service/user.service";
-import { CHANNEL_NAME_REGEX, SAFE_PASSWORD_REGEX } from "src/utils/Constants";
+import { CHANNEL_NAME_REGEX, POSTGRES_UNIQUE_VIOLATION, SAFE_PASSWORD_REGEX } from "src/utils/Constants";
 import { ChannelPasswordDto, ChannelToFeDto, CreateChannelDto, CreateMessageDto, JoinChannelDto, PrivMsgDto, PrivateInviteDto, UpdateChannelDto, cIdDto, uIdDto } from "./dto/channel.dto";
 import { Channel } from "./entities/channel.entity";
 import { JoinedChannel } from "./entities/joinedChannel.entity";
@@ -98,6 +98,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         /**to announce readynessness */
         this.success(socket, HttpStatus.OK);
       } catch (error) {
+		if (error.code === POSTGRES_UNIQUE_VIOLATION) {
+			error = new BadRequestException("Already logged in. Game and Chat are not available. Please use one window.")
+		}
         this.emitError(socket, error);
         return this.noAccess(socket)
       }
