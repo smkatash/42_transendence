@@ -11,7 +11,7 @@
 </div>
 
 <div class="message" *ngIf="sameSender == false && msg?.sessionUser == false">
-  <div class="message-sender">{{ msg?.user?.username }}</div>
+  <div class="message-sender" [routerLink]="['/profile', msg?.user?.id]">{{ msg?.user?.username }}</div>
   <div class="message-content" *ngIf="msg" [innerHTML]="msg.content | italicizeText"></div>
   <span *ngIf="msg?.inviteId">
     <button (click)="acceptInvite()">Accept</button>

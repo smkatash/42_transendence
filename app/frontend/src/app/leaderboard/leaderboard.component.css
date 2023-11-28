@@ -1,23 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@1,6..96,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quattrocento:wght@700&display=swap');
 
 body {
-    background-color: #4F6D7A;
-    position: relative;
+  background-color: #4F6D7A;
+  position: relative;
 }
 
-.header-row {
-    display: flex;
-    margin: 1dvw 2dvw 2dvw 2dvw;
-    overflow: auto;
-}
-
-.column-header {
-	text-align: center;
-    flex: 1;
-    font-family: 'Your Font', sans-serif;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color:  #E8DAB2;
-    padding: 0.5rem;
+blockquote {
+  margin-top: 1.5dvw;
+  margin-left: 4dvw;
+  margin-right: 4dvw;
+  font-family: 'Bodoni Moda', serif;
+  font-size: 2dvw;
+  color: #E8DAB2;
+  background-color: #2f424a;
 }
 
 .board-interface {
@@ -27,30 +23,34 @@ body {
   padding-left: 5%;
   padding-right: 5%;
   border: .7dvw solid #E8DAB2;
+  background-color: #4F6D7A;
   box-sizing: border-box;
   overflow: auto;
 }
 
 .players-container {
-	margin: 1dvw 2dvw 2dvw 2dvw;
-	overflow: auto;
-  }
+  margin: 2dvw;
+  margin-left: 4dvw;
+  margin-right: 4dvw;
+  padding: 1dvw;
+  overflow: auto;
+}
 
 .no-players {
-	position: absolute;
-	left: 50%;
-	top: 40%;
-	transform: translate(-50%);
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%);
 }
 
 .no-players h1 {
-	font-family: 'Bodoni Moda', serif;
-	font-size: 3dvw;
-	color: #2f424a;
+  font-family: 'Bodoni Moda', serif;
+  font-size: 3dvw;
+  color: #46636f;
 }
 
 .no-players h2 {
-	font-family: 'Quattrocento', serif;
-	font-size: 1.2dvw;
-	color: #2f424a;
+  font-family: 'Quattrocento', serif;
+  font-size: 1.2dvw;
+  color: #46636f;
 }

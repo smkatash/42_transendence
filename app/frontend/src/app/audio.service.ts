@@ -25,7 +25,7 @@ export class AudioService {
     this.backgroundMusic = new Howl({
       src: ['assets/birkworks-candy-imafooltowantyou-phil-harper.mp3'],
       loop: true,
-      volume: 0.3
+      volume: 0.05
     })
 
     this.clickSound = new Howl({

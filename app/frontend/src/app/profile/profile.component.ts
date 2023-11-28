@@ -216,14 +216,19 @@ export class ProfileComponent implements OnInit {
     // Check if the string is alphanumeric and has length <= 12 and >= 2
     const alphanumericRegex = /^[a-zA-Z0-9]+$/;
     return alphanumericRegex.test(input) && input.length >= 2 && input.length <= 12;
-}
+  }
 
   changeName(): void {
     this.isEditingName = false
     if (this.isValidString(this.nameToChange)) {
       this.profileService.setName(this.nameToChange)
-      this.userProfile.user.username = this.nameToChange
-      this.nameToChange = ''
+        .subscribe({
+          next: () => {
+            this.userProfile.user.username = this.nameToChange
+            this.nameToChange = ''
+          },
+          error: err => this.displayError(err.message)
+        })
     } else {
       this.displayError('Name not valid')
     }
@@ -233,8 +238,13 @@ export class ProfileComponent implements OnInit {
     this.isEditingTitle = false
     if (this.isValidString(this.titleToChange)) {
       this.profileService.setTitle(this.titleToChange)
-      this.userProfile.user.title = this.titleToChange
-      this.titleToChange = ''
+        .subscribe({
+          next: () => {
+            this.userProfile.user.title = this.titleToChange
+            this.titleToChange = ''
+          },
+          error: err => this.displayError(err.message)
+        })
     } else {
       this.displayError('Title not valid')
     }

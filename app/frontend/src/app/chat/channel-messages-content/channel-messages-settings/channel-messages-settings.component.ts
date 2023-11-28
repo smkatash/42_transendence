@@ -99,6 +99,8 @@ export class ChannelMessagesSettingsComponent implements OnChanges {
 
   toggle(): void {
     this.isOpen = !this.isOpen;
+    this.wantsToChangePass = false
+    this.wantsToRemovePass = false
     this.isOpenChange.emit(this.isOpen);
   }
 

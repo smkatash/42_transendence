@@ -53,14 +53,14 @@ export class ProfileService {
     return this.http.post<User>(url, formData, { withCredentials: true })
   }
 
-  setName(username: string): void {
+  setName(username: string): Observable<any> {
     const url =`${this.domain}/api/user/username`
-    this.http.patch(url, {username: username}, { withCredentials: true }).subscribe()
+    return this.http.patch<any>(url, {username: username}, { withCredentials: true })
   }
 
-  setTitle(title: string): void {
+  setTitle(title: string): Observable<any> {
     const url =`${this.domain}/api/user/title`
-    this.http.patch(url, {title: title}, { withCredentials: true }).subscribe()
+    return this.http.patch<any>(url, {title: title}, { withCredentials: true })
   }
 
   sendRequest(friendID: string): Observable<any> {

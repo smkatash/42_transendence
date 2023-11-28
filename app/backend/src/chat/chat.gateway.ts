@@ -70,7 +70,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   async handleConnection(@ConnectedSocket() socket: Socket) {
     Logger.log(`New CHAT connection: ${socket.id}`);
-    // console.log(socket.handshake.headers)
 
     let user = socket.request["user"];
     if (!user) {
