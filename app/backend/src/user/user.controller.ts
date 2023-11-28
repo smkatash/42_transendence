@@ -27,8 +27,9 @@ import { User } from "./entities/user.entity";
 import { UserService } from "./service/user.service";
 import { BlockUserDto, FriendIdDto, ParamAvatarDto, ParamUserIdDto, UnblockUserDto, UpdateEmailDto, UpdateTitleDto, UpdateUsernameDto } from "./utils/entity.dto";
 import { SessionUserDto } from "./utils/user.dto";
+import { MulterOptions } from "@nestjs/platform-express/multer/interfaces/multer-options.interface";
 
-export const localStorage = {
+export const localStorage: MulterOptions = {
   storage: diskStorage({
     destination: IMAGE_UPLOADS_PATH,
     filename: (req, file, cb) => {
@@ -37,6 +38,9 @@ export const localStorage = {
       cb(null, `${filename}${extention}`);
     },
   }),
+  limits: {
+	fileSize: 10 * 1024 * 1024
+  }
 };
 
 @Controller("user")

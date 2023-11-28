@@ -28,11 +28,9 @@ export class CreateChannelButtonComponent {
 
     // Check if there is enough space below the button, if not, display above
     if (buttonRect.bottom + dropdownContent.offsetHeight > windowHeight) {
-      console.log('not much space')
       dropdownContent.style.bottom = `${dropdownContainer.clientHeight}px`;
       dropdownContent.style.top = 'auto';
     } else {
-      console.log('there is space')
       dropdownContent.style.top = `2.7dvw`;
       dropdownContent.style.bottom = 'auto';
     }

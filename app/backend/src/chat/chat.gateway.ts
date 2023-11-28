@@ -98,11 +98,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
         /**to announce readynessness */
         this.success(socket, HttpStatus.OK);
       } catch (error) {
+		console.log(error)
 		if (error.code === POSTGRES_UNIQUE_VIOLATION) {
-			error = new BadRequestException("Already logged in. Game and Chat are not available. Please use one window.")
+			this.emitError(socket, new BadRequestException("Already logged in. Game and Chat are not available. Please use one window."));
+			return socket.disconnect();
+		}	else	{
+			return this.noAccess(socket);
 		}
-        this.emitError(socket, error);
-        return this.noAccess(socket)
       }
     }
   }
@@ -115,7 +117,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
   /**bye bye */
   private noAccess(socket: Socket) {
-    socket.emit("error", new UnauthorizedException());
+    socket.emit(ERROR, new UnauthorizedException());
     socket.disconnect();
   }
 
