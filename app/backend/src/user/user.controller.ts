@@ -320,4 +320,18 @@ export class UserController {
     }
     throw new UnauthorizedException("Access denied");
   }
+
+  @Get(":id/blocked")
+  @UseGuards(SessionGuard)
+  async getUserBlocklistInfo(@Param() paramUserIdDto: ParamUserIdDto, @GetUser() currentUser: SessionUserDto) {
+    if (!currentUser) {
+      throw new UnauthorizedException("Access denied");
+    }
+	
+    try {
+      return await this.userService.getBlockedUsersById(paramUserIdDto.id);
+    } catch (error) {
+    	throw error;
+    }
+  }
 }

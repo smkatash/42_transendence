@@ -40,6 +40,7 @@ export class ChannelUserComponent {
   userStatus?: number;
 
   currentUserBlockedList: User[] = []
+  usersBlockedByUser: User[] = []
 
   isDropdownSelected: boolean = false;
 
@@ -95,6 +96,19 @@ export class ChannelUserComponent {
     return this.currentUserBlockedList.some(blockedUser => blockedUser.id === this.user?.id) || false
   }
 
+  async isCurrentBlockedByUser(): Promise<boolean> {
+    if (!this.user?.id) return false
+    let blockedUsers
+    try {
+      blockedUsers = await this.profileService.getUserBlockedList(this.user?.id).toPromise()
+      if (!blockedUsers) return false
+      return blockedUsers.some(blockedUser => blockedUser.id === this.currentUser?.id) || false
+    } catch {
+      return false
+    }
+  }
+
+
   /* EASY: 1, MEDIUM: 2, HARD: 3 */
   toggleGameMode(event: Event) {
     event.stopPropagation()
@@ -105,12 +119,14 @@ export class ChannelUserComponent {
     }
   }
 
-  sendGameInvite() {
+  async sendGameInvite() {
     if (!this.user) return
     console.log(this.userStatus)
     if (this.userStatus === 2 || this.userStatus === 0) {
-      this.chatService.generateAchtung("User is either in a game or not online.")
-      return
+      return this.chatService.generateAchtung("User is either in a game or not online.")
+    }
+    if (await this.isCurrentBlockedByUser() || this.userIsBlocked()) {
+      return this.chatService.generateAchtung("Can't invite to game since you're blocked")
     }
     this.chatService.sendDM(this.user.id, "Hey, I'd like to play a game with you", GAME_INVITE, this.inviteGameMode)
     this.router.navigate(['/game'], {

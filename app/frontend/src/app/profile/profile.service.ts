@@ -141,4 +141,9 @@ export class ProfileService {
     this.userSocket.emit(USER_STATUS, { id: userID })
   }
 
+  getUserBlockedList(userID: string): Observable<User[]> {
+    const url = `${this.domain}/api/user/${userID}/blocked`
+    return this.http.get<User[]>(url, { withCredentials: true })
+  }
+
 }

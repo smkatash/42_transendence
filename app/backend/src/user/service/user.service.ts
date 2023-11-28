@@ -23,6 +23,18 @@ export class UserService {
     return user;
   }
 
+  async getBlockedUsersById(id: string): Promise<User[]> {
+    const user = await this.userRepo.findOne({
+      where: {id},
+      relations: ["blockedUsers"]
+    });
+
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+    return user.blockedUsers;
+  }
+
   async logoutUser(id: string) {
     const user = await this.getUserById(id);
     user.status = Status.OFFLINE;
