@@ -25,14 +25,18 @@
 }
 
 .dd-menu {
+  visibility: hidden;
   position: absolute;
-  top: 2.7dvw;
   border: 0.1dvw solid #E8DAB2;
   border-bottom: none;
   padding: 0;
   background-color: #2f424a;
   list-style-type: none;
   filter: drop-shadow(0 .1dvw .2dvw rgba(0, 0, 0, 0.8));
+}
+
+.visible {
+  visibility: visible;
 }
 
 .dd-button-clicked {
