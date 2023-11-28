@@ -18,9 +18,9 @@ export class AuthService {
 
     try {
       currentUser = await this.userService.getUserById(authUserDto.id);
-      if (currentUser.status !== Status.OFFLINE) {
-      	throw new BadRequestException("User is logged in.")
-      }
+    //   if (currentUser.status !== Status.OFFLINE) {
+    //   	throw new BadRequestException("User is logged in.")
+    //   }
     } catch (error) {
       if (error instanceof NotFoundException) {
         authUserDto.avatar = await this.userService.getIntraProfile(authUserDto.avatar);

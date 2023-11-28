@@ -28,7 +28,7 @@ import { APP_FILTER } from "@nestjs/core";
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: "dev.env",
+      envFilePath: ".env",
       isGlobal: true,
     }),
     ServeStaticModule.forRoot({
