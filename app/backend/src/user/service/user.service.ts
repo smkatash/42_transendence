@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, Injectable, InternalServerErrorException, NotFoundException, UnprocessableEntityException } from "@nestjs/common";
+import { BadRequestException, HttpException, Injectable, NotFoundException, UnprocessableEntityException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { validate } from "class-validator";
 import * as fs from "fs";
@@ -46,11 +46,8 @@ export class UserService {
   }
 
   private randomUsernameGenerator() {
-    const dictionaries = [adjectives, colors, animals];
-    const selectedDictionary = dictionaries[Math.floor(Math.random() * dictionaries.length), Math.floor(Math.random() * dictionaries.length)];
-
     const uniqueName = uniqueNamesGenerator({
-      dictionaries: [selectedDictionary],
+      dictionaries:[adjectives, colors, animals],
       length: 2
     });
 

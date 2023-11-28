@@ -11,7 +11,7 @@ services:
     volumes:
       # - /Users/jmaalouf/Documents/42/Core_Curriculum/42_transendence/app:/app
       # - /Users/francesco/pong/app:/app
-      - /home/jmaalouf/Documents/42/core-curriculum/42_transendence/app:/app
+      #- /home/jmaalouf/Documents/42/core-curriculum/42_transendence/app:/app
       # - /Users/ktashbae/Desktop/42_transendence/app:/app
       - /Users/francesco/pong/app:/app
     ports:

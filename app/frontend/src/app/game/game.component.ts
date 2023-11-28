@@ -128,20 +128,22 @@ export class GameComponent implements AfterViewInit, OnInit {
   }
 
   velocityCheck(game: Game){
+    if (!game.ball){
+      return;
+    }
     if (this.velocitySettledUp == false && game.ball){
       this.previousBallInfo = game.ball;
       this.velocitySettledUp = true;
       return;
     }
-    if( this.previousBallInfo.velocity.x != 0){
-      if( game.ball && this.previousBallInfo.velocity.x * game.ball?.velocity.x < 0){
+    if( this.previousBallInfo && this.previousBallInfo.velocity.x != 0 && game.ball && (this.previousBallInfo.velocity.x * game.ball?.velocity.x < 0)){
         this.emitSound("sdonk");
-      }
     }
-    else if( this.previousBallInfo.velocity.y != 0){
-      if( game.ball && this.previousBallInfo.velocity.y * game.ball?.velocity.y < 0){
+    else if( this.previousBallInfo && this.previousBallInfo.velocity.y != 0 && game.ball && (this.previousBallInfo.velocity.y * game.ball?.velocity.y < 0)){
         this.emitSound("sdonk");
-      }
+    }
+    if ( game.ball) { 
+      this.previousBallInfo = game.ball; 
     }
   }
 
@@ -201,6 +203,7 @@ export class GameComponent implements AfterViewInit, OnInit {
     if( sum !== this.scoreSum){
       this.scoreSum = sum;
       this.emitSound("applause");
+      this.velocitySettledUp = false;
     }
   }
 
@@ -300,6 +303,7 @@ export class GameComponent implements AfterViewInit, OnInit {
 		this.router.navigate(['/game']);
 	}
 	this.winnerPrompt();
+  this.velocitySettledUp = true;
     this.settledSide = false;
     this.invited = false;
     this.accepted = false;

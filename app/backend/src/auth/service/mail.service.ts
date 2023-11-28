@@ -18,7 +18,7 @@ export class MailService {
       const transporter = nodemailer.createTransport(this.settings);
       transporter.verify((err) => {
         if (err) {
-          new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
+          new HttpException(err, HttpStatus.BAD_REQUEST);
         }
       });
 
@@ -27,7 +27,7 @@ export class MailService {
       try {
         await transporter.sendMail(this.options);
       } catch (error) {
-        new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+        new HttpException(error, HttpStatus.BAD_REQUEST);
       }
     }
   }
