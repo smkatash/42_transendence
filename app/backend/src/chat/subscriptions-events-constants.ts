@@ -1,4 +1,4 @@
-export const CREATE = 'create'
+export const CREATE = "create";
 /**
  * expects: CreateChannelDto
  * Creates a channel
@@ -6,7 +6,7 @@ export const CREATE = 'create'
  *  CHANNELS, USER_CHANNELS
  */
 
-export const DELETE = 'delete'
+export const DELETE = "delete";
 /**
  * expects: cIdDto
  * Deletes a channel and everything related to it, only owner should be able to do it
@@ -14,7 +14,7 @@ export const DELETE = 'delete'
  *  CHANNELS, USER_CHANNELS
  */
 
-export const JOIN = 'join'
+export const JOIN = "join";
 /**
  * expects: JoinChannelDto
  * Session user joins a channel. If protected, I need to give a password as well
@@ -23,27 +23,27 @@ export const JOIN = 'join'
  * //TODO maybe also CHANNEL_USERS to channel users, if thesre's time
  */
 
-export const USER_CHANNELS = 'userChannels'
+export const USER_CHANNELS = "userChannels";
 /**
  * Gets the channels and DMs that the session user is in
  * on success emits:
  *      USER_CHANNELS, ChannelToFeDto[]
  */
-export const CHANNEL_USERS = 'channelUsers'
+export const CHANNEL_USERS = "channelUsers";
 /**
  * expects: cidDto
  * on success emits:
  *      CHANNEL_USERS, USER[]
  */
 
-export const CHANNELS = 'channels'
+export const CHANNELS = "channels";
 /**
- *  Gets all existing channels, except private ones 
+ *  Gets all existing channels, except private ones
  *  on success emits:
  *      CHANNELS, ChannelToFeDto[]
  */
 
-export const CHANNEL_MESSAGES = 'messages'
+export const CHANNEL_MESSAGES = "messages";
 /**
  *  expects: cIdDto
  *  Gets all the messages inside channel
@@ -51,7 +51,7 @@ export const CHANNEL_MESSAGES = 'messages'
  *      CHANNEL_MESSAGES, Message[]
  */
 
-export const LEAVE = 'leave'
+export const LEAVE = "leave";
 /**
  *  expects: cIdDto
  *  Session user leaves channel
@@ -60,23 +60,23 @@ export const LEAVE = 'leave'
  * //TODO maybe users to all channel users
  */
 
-export const ADD_ADMIN = 'admin+'
+export const ADD_ADMIN = "admin+";
 // Session user makes another user admin
-export const REM_ADMIN = 'admin-'
+export const REM_ADMIN = "admin-";
 // Session user removes user from admins array
 /**
  * expects: UpdateChannelDto
  * on success emits:
  *  ?SUCCESS?
- * 
- * 
-*/
+ *
+ *
+ */
 
-export const BAN = 'ban'
-export const UNBAN = 'unban'
-export const KICK = 'kick'
-export const MUTE = 'mute'
-export const UNMUTE = 'unmute' //there's no unmute
+export const BAN = "ban";
+export const UNBAN = "unban";
+export const KICK = "kick";
+export const MUTE = "mute";
+export const UNMUTE = "unmute"; //there's no unmute
 /**
  *  Session user KICKs (UN)BANs (UN)MUTEs user from (talking while muted in) channel,
  */
@@ -84,20 +84,20 @@ export const UNMUTE = 'unmute' //there's no unmute
  * expects: UpdateChannelDto
  * on success emits:
  *  - ?SUCCESS? CHANNEL?
- *  - KICK BAN: CHANNEL_USERS,  //TODO maybe users to all channel users 
- * 
-*/
+ *  - KICK BAN: CHANNEL_USERS,  //TODO maybe users to all channel users
+ *
+ */
 
-export const DIRECT = 'privMsg'
+export const DIRECT = "privMsg";
 /**
  * Send direct message to user. Creates a channel between the two users
  * expects: PrivMsgDto
- * on success emits: 
+ * on success emits:
  *  - broadcasts the message: MESSAGE, Message
- * 
+ *
  */
 
-export const CHANNEL = 'channel'
+export const CHANNEL = "channel";
 // Doesn't do shit for me
 // 'getChannel', { cIdDto }
 /**
@@ -106,47 +106,46 @@ export const CHANNEL = 'channel'
  *  CHANNEL, Channel
  */
 
-export const MESSAGE = 'newMsg'
+export const MESSAGE = "newMsg";
 /**
  * Sending a message to a channel
- *  expects: CreateMessageDto 
- * 
+ *  expects: CreateMessageDto
+ *
  */
 
-export const PASSWORD = 'password'
+export const PASSWORD = "password";
 /**
  * Use when you want to change, add or remove a password.
  * Usage: If there is no password already, I fill in newPass to make channel protected.
  * If there is a password already, I fill in newPass to change the password.
- * Or I can send the oldPass only to remove password protection 
- * 
+ * Or I can send the oldPass only to remove password protection
+ *
  * expects: ChannelPasswordDto
  */
 
-
-export const INVITE_TO_PRIVATE = 'inviteToPriv'
+export const INVITE_TO_PRIVATE = "inviteToPriv";
 /**
  * Session user invites user to channel
  * //TODO the flow stil in dev
  * expects: UpdateChannelDto
  */
 
-export const ACCEPT_PRIVATE_INVITE = 'AcceptToPriv'
+export const ACCEPT_PRIVATE_INVITE = "AcceptToPriv";
 /**
  * Session user accepts invitation to private channel
  * //TODO the flow stil in dev
  * expects: PrivateInviteDto
  */
 
-export const DECLINE_PRIVATE_INVITE = 'declineToPriv'
+export const DECLINE_PRIVATE_INVITE = "declineToPriv";
 /**
  * Session user declines invitation to private channel
  * //TODO the flow stil in dev
  * expects: PrivateInviteDto
  */
 
-export const BLOCK = 'block'
-export const UNBLOCK = 'unblock'
+export const BLOCK = "block";
+export const UNBLOCK = "unblock";
 /**
  * expects: uIdDto
  * disables(enables back) communication between 2 users
@@ -154,34 +153,39 @@ export const UNBLOCK = 'unblock'
  *  not defined yet, || SUCCESS, msg: string
  */
 
-export const INVALIDATE_MESSAGE_CONTENT = 'invalidateMessageContent'
+export const INVALIDATE_MESSAGE_CONTENT = "invalidateMessageContent";
 /**
  * expects cIdDto => cId: msgId
  *  msg.content -> *Content no longer available*
- *  pukes ~~DIRECT~~ channel's messages to sessionUser 
+ *  pukes ~~DIRECT~~ channel's messages to sessionUser
  */
 
 /*
-    **  events:
-*/
+ **  events:
+ */
 
-export const ERROR = 'error'
+export const ERROR = "error";
 /**
  * emitted on error, or no rights
- * 
+ *
  * emits:
  *  ERROR, error: any
  */
 
-export const SUCCESS = 'success'
+export const SUCCESS = "success";
 /**
  * Backend emits success
  * emits:
  *  'success', (to be determined)
  */
- 
 
-export const BLOCKED_USERS = 'blockedUsers'
+export const BLOCKED_USERS = "blockedUsers";
+
+export const ACHTUNG = "achtung"
+/**
+ * expects: uIdDto
+ */
+
 /*
 
 // Backend emits all channels the session user is in

@@ -53,16 +53,39 @@ label {
   color: #E8DAB2;
 }
 
+div .verify-pass {
+  margin-top: 4%;
+  margin-bottom: 2%;
+  margin-left: 0;
+}
+
 .password-field-container, .invite-to-channel {
   margin-left: 10%;
   margin-right: 10%;
   margin-top: 3%;
   margin-bottom: 3%;
   display: flex;
+  flex-direction: column;
 }
 
-.invite-to-channel {
-  flex-direction: column;
+.password-buttons {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.pass-moderation-option {
+  margin-left: 10%;
+  margin-right: 10%;
+  margin-top: 3%;
+  margin-bottom: 3%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.pass-moderation-option button {
+  width: 7.5dvw;
+  font-size: 0.8dvw;
 }
 
 .user-dropdown {
@@ -92,7 +115,7 @@ label {
 
 input {
   padding: 2%;
-  width: 67.3%;
+  width: 96%;
   font-size: 0.9dvw;
   font-family: 'Quattrocento', serif;
   font-weight: bolder;
@@ -104,12 +127,16 @@ input {
   outline: none;
 }
 
+.is-invalid {
+  border-bottom: .1dvw solid #b04343;
+}
+
 .invite-to-channel input {
-  width: 96%;
+  /* width: 96%; */
   height: 1.5dvw;
 }
 
-.change-btn {
+.pass-mod {
   font-size: 1dvw;
   height: 2.4dvw;
   width: 5dvw;
@@ -136,6 +163,16 @@ button {
 
 button:hover {
   background-color: #e9d5a1;
+}
+
+.btn-invalid {
+  color: #2b3a41;
+  background-color: #988e6f;
+}
+
+.btn-invalid:hover {
+  color: #2b3a41;
+  background-color: #988e6f;
 }
 
 .footer {

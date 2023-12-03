@@ -1,9 +1,11 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, OnInit, Output, Renderer2, RendererFactory2 } from '@angular/core';
 import { GameService } from './game.service';
-import { Ball, Game, Paddle, GameState } from '../entities.interface';
-import { GameSocket } from 'src/app/app.module';
-import { NONE_TYPE } from '@angular/compiler';
-import { ActivatedRoute, Route } from '@angular/router';
+import { Ball, Game, Paddle, GameState, GameMode } from '../entities.interface';
+// import { NONE_TYPE } from '@angular/compiler';
+import { ActivatedRoute, Route, Router } from '@angular/router';
+import { Socket } from 'ngx-socket-io';
+import { Subscription } from 'rxjs';
+import { AudioService } from '../audio.service';
 
 @Component({
   selector: 'app-game',
@@ -17,85 +19,72 @@ export class GameComponent implements AfterViewInit, OnInit {
               private rendererFactory: RendererFactory2,
               private elementReference: ElementRef,
               private gameService: GameService,
-              private route: ActivatedRoute)
+              private route: ActivatedRoute,
+              private router: Router,
+              private audioService: AudioService)
   {
-    this.gameService.getUser();
     this.renderer = rendererFactory.createRenderer(null, null);
   }
 
-  matchLeftSide = true;
+// -------------------------------------------------------------------------------
+//                                    * variable *
+// -------------------------------------------------------------------------------
 
-  yourScore = 0;
-  opponentScore = 0;
-
-  maxViewHeight = 546;
-  maxViewWidth = 1092;
-
-  // TODO THIS VALUE SHOULD GO INTO THE ENV
-  maxHeight = 500;
-  maxWidth = 1000;
-
-  ballCanMove = true;
-  paddleCanMove = true;
-
-  ballWidth = 3;
-  ballHeight = 3;
-
-  paddleWidth = 1;
-  paddleHeight = 20;
-  paddleMargin = 3;
-  paddleSpeed = 1;
-  paddleRightX = this.maxViewWidth - 40;
-  paddleRightY = 40;
-  paddleLeftY = 40;
-  paddleLeftX = 40;
-
-  ballX = 500;
-  ballY = 250;
-
-  ballRadius = 1.5;
-
-  paddleLeftIncrement = 0;
-  paddleRightIncrement = 0;
-
-  status: number;
-  statusStr = "";
-
-  gameInfo?:Game = {};
+  ballCanMove         : boolean = true;
+  paddleCanMove       : boolean = true;
+  ballWidth           : number= 3;
+  ballHeight          : number = 3;
+  paddleWidth         : number = 1;
+  paddleMargin        : number= 3;
+  ballRadius          : number = 1.5;
+  paddleLeftIncrement : number = 0;
+  paddleRightIncrement: number = 0;
+  scoreSum            : number = 0;
+  yourScore           : number = 0;
+  opponentScore       : number = 0;
+  maxViewHeight       : number = 546;
+  maxViewWidth        : number = 1092;
+  maxHeight           : number = 500;
+  maxWidth            : number = 1000;
+  paddleHeight        : number = 20;
+  paddleSpeed         : number = 15;
+  paddleRightX        : number = this.maxViewWidth - 40;
+  paddleRightY        : number = 40;
+  paddleLeftY         : number =40;
+  paddleLeftX         : number = 40;
+  ballX               : number = 500;
+  ballY               : number = 250;
+  status              : number;
+  statusStr           : string = "";
+  gameInfo?           : Game = {};
+  settledSide         : boolean = false;
+  isGameOn            : boolean = false;
+  gameQueue           : boolean = false;
+  invited             : boolean = false;
+  accepted            : boolean = false;
+  invitedUser         : string | null;
+  difficultyLevel     : string | null;
+  matchLeftSide       : boolean = true;
+  velocitySettledUp   : boolean = false;
+  previousBallInfo    : Ball;
 
   private boardElement: HTMLElement;
-
-  checkBoardSize() {
-    if (this.isGameOn) {
-      this.boardElement = this.elementReference.nativeElement.querySelector('.table');
-      this.maxViewWidth = this.boardElement.clientWidth;
-      this.maxViewHeight = this.boardElement.clientHeight;
-
-      // console.log('Board width in pixels: ' + this.maxViewWidth);
-      // console.log('Board height in pixels: ' + this.maxViewHeight);
-    }
-    // let board = document.querySelector('.game_board');
-    // let widthValue = board!.clientWidth;
-    // let heightValue = widthValue / 2;
-    // this.renderer.setStyle(board, "height", heightValue + "px");
-    // this.renderer.setStyle(board, "background-color", "black");
-    // this.gameService.updateSize(widthValue, heightValue);
-  }
 
   ngAfterViewInit(): void {
     this.checkBoardSize();
   }
-
 
   @Output() paddlePositionChange = new EventEmitter<string>();
 
   @HostListener('window:keydown', ['$event'])
   onKeyDown(e: any) {
     if (e.code === 'KeyW') {
-      this.gameService.padlePositionEmitter("-10")
+      this.gameService.emitPaddlePosition("-" + this.paddleSpeed);
+      const smooth = ( this.maxViewWidth / this.maxWidth ) * this.paddleSpeed;
     }
     if (e.code === 'KeyS') {
-      this.gameService.padlePositionEmitter("+10")
+      this.gameService.emitPaddlePosition("+" + this.paddleSpeed);
+      const smooth = ( this.maxViewWidth / this.maxWidth ) * this.paddleSpeed;
     }
   }
 
@@ -111,11 +100,6 @@ export class GameComponent implements AfterViewInit, OnInit {
     this.checkBoardSize();
   }
 
-  /*
-    Update score,
-    should I change the value of the color of
-    the ball depending on the game choice?
-  */
   updateScore(scores: Record <string, number>) {
     let id = this.gameService.userInfo.id;
     this.yourScore = scores[id];
@@ -126,15 +110,48 @@ export class GameComponent implements AfterViewInit, OnInit {
     }
   }
 
-  /*
-    the backend send position related to a window 2:1
-    in frontend we use % so we need to translate the values
-    that's how we do that:
-  */
+  checkBoardSize() {
+    if (this.isGameOn) {
+      this.boardElement = this.elementReference.nativeElement.querySelector('.table');
+      this.maxViewWidth = this.boardElement.clientWidth;
+      this.maxViewHeight = this.boardElement.clientHeight;
+    }
+  }
+
+  emitSound(text: string){
+    if (text == "sdonk"){
+      this.audioService.playBallHit()
+    }
+    if ( text == "applause"){
+      this.audioService.playApplaud()
+    }
+  }
+
+  velocityCheck(game: Game){
+    if (!game.ball){
+      return;
+    }
+    if (this.velocitySettledUp == false && game.ball){
+      this.previousBallInfo = game.ball;
+      this.velocitySettledUp = true;
+      return;
+    }
+    if( this.previousBallInfo && this.previousBallInfo.velocity.x != 0 && game.ball && (this.previousBallInfo.velocity.x * game.ball?.velocity.x < 0)){
+        this.emitSound("sdonk");
+    }
+    else if( this.previousBallInfo && this.previousBallInfo.velocity.y != 0 && game.ball && (this.previousBallInfo.velocity.y * game.ball?.velocity.y < 0)){
+        this.emitSound("sdonk");
+    }
+    if ( game.ball) { 
+      this.previousBallInfo = game.ball; 
+    }
+  }
+
   valueConversion(game: Game) {
     this.checkBoardSize();
+    this.velocityCheck(game);
     if( game.ball){
-      if(this.matchLeftSide == true){
+      if(this.matchLeftSide === true){
         game.ball.position.x = (this.maxViewWidth / this.maxWidth) * game.ball.position.x;
         game.ball.position.y = (this.maxViewHeight /this.maxHeight) * game.ball.position.y;
       } else {
@@ -153,36 +170,21 @@ export class GameComponent implements AfterViewInit, OnInit {
     return game;
   }
 
-  resetAll(): void {
-    ;
-  }
-
   async moveBall(ball: Ball): Promise<void> {
       this.ballX = ball.position.x;
       this.ballY = ball.position.y;
   }
 
-  /*
-    since the values comes from backend this function move the
-    rightPaddle or the leftPaddle depending if the game is Leftside or not
-    if yes: then this move the Right Paddle;
-    if not: it moves the left;
-  */
   moveRightPaddle(rightPaddle: Paddle){
     if(this.matchLeftSide === true){
-      console.log("FRONT END ON THE LEFT")
       this.paddleRightY = rightPaddle!.position.y;
       this.paddleRightX = rightPaddle!.position.x
     } else {
-      console.log("FRONTEND ON THE RIGHT")
       this.paddleLeftY = rightPaddle!.position.y;
       this.paddleRightX = rightPaddle!. position.x;
     }
   }
 
-  /*
-    same as the one upstairs
-  */
   moveLeftPaddle(leftPaddle: Paddle){
     if(this.matchLeftSide === true) {
       this.paddleLeftY = leftPaddle!.position.y;
@@ -193,6 +195,18 @@ export class GameComponent implements AfterViewInit, OnInit {
     }
   }
 
+  checkScoreSum(scores: Record <string, number>){
+    let sum: number = 0;
+    for (const value of Object.values(scores)) {
+      sum += value;
+    }
+    if( sum !== this.scoreSum){
+      this.scoreSum = sum;
+      this.emitSound("applause");
+      this.velocitySettledUp = false;
+    }
+  }
+
   startPlaying(){
     if(this.gameInfo){
       if( this.gameInfo.ball ) {
@@ -200,11 +214,6 @@ export class GameComponent implements AfterViewInit, OnInit {
         window.requestAnimationFrame(() => this.moveBall(ball));
       }
       if(this.gameInfo.leftPaddle && this.gameInfo.rightPaddle){
-        console.log( "USER ID Player [0]: " + this.gameInfo.match?.players[0].id +
-                     "\nUSER ID Player [1]: " + this.gameInfo.match?.players[1].id +
-                     "\nMY ID: " + this.gameService.userInfo.id +
-                     "\nPADDLE LEFT IN BACKENDINFO: " + this.gameInfo.leftPaddle.position.x +
-                     "\nPADDLE RIGHT IN BACKENDINFO: " +this.gameInfo.rightPaddle.position.x)
         const paddle = this.gameInfo.leftPaddle
         window.requestAnimationFrame(() => this.moveLeftPaddle(paddle));
       }
@@ -214,12 +223,11 @@ export class GameComponent implements AfterViewInit, OnInit {
       }
       if( this.gameInfo.scores) {
         const scores = this.gameInfo.scores;
+        this.checkScoreSum(scores)
         window.requestAnimationFrame(() => this.updateScore(scores))
       }
     }
   }
-
-  // ------------------------------------------------------------------------------------------------ INIT VALUE
 
   initViewValue(){
     let element = document.getElementById("board") as unknown as SVGRectElement;
@@ -229,153 +237,141 @@ export class GameComponent implements AfterViewInit, OnInit {
     }
   }
 
-  isWaitingInQueue(){
-    this.gameService.getStatusQueue().subscribe((status: boolean) => {
-      if(status == true){
-        ;
-      } else {
-        this.isInQueue = false;
-        this.invited = false;
-        this.isGameOn = true;
-      }
-    })
+  handlerQueueInfo( status: boolean) {
+    if(status === true){
+      this.gameQueue = true;
+    } else {
+      this.gameQueue = false;
+      this.isGameOn = true;
+      this.initViewValue()
+    }
   }
 
-  settledSide : boolean;
-
-  gameObservableInit(){
-    this.gameService.getGameObservable().subscribe((game: Game) => {
-      if(game){
-        if(this.settledSide == false){
-          if(game.match?.players[0].id  ===  this.gameService.userInfo.id){
-            this.matchLeftSide = true;
-          } else {
-            this.matchLeftSide = false;
-          }
-          this.settledSide = true;
-        }
-        this.gameInfo = this.valueConversion(game);
-        if(this.gameInfo.leftPaddle?.length){
-          this.paddleHeight = ( 100/ this.maxHeight) * this.gameInfo.leftPaddle?.length;
-        }
+  handlerGameInfo (game: any) {
+    if( game && game.gameStatus !== GameState.END){
+      if(this.settledSide === false){
+        if(game.match?.players[0].id  ===  this.gameService.userInfo.id){
+			  this.matchLeftSide = true;
+		  } else {
+        this.matchLeftSide = false;
       }
-      this.startPlaying();
-    })
+        this.settledSide = true;
+      }
+      this.gameInfo = this.valueConversion(game);
+      if(this.gameInfo.leftPaddle?.length){
+        this.paddleHeight = ( 100/ this.maxHeight) * this.gameInfo.leftPaddle?.length;
+      }
+    }
+    this.startPlaying();
   }
 
-  isInQueue: boolean = false;
-  isGameOn: boolean = false;
-
-  /* Router params for game invite */
-  invited: boolean = false
-  accepted: boolean = false
-
-  ngOnInit() {
-    this.initViewValue()
-    this.gameService.socket.connect()
-
-    this.invited = ('true' === this.route.snapshot.paramMap.get('invite'))
-    this.accepted = ('true' === this.route.snapshot.paramMap.get('accept'))
-
-    if( this.invited === true){
-      this.isInQueue = true;
-      this.isWaitingInQueue();
-      this.settledSide = false;
-      if(this.gameService.listenersOn === false){
-        this.gameService.listenersInit();
-      }
-    }
-    if(this.accepted === true){
-      this.isInQueue = false;
-      this.settledSide = false;
-      this.isGameOn=true;
-      if(this.gameService.listenersOn === false){
-        this.gameService.listenersInit();
-      }
-    }
-    this.gameService.getGameStatus().subscribe(data => {
-      this.status = data;
-      if (this.status == GameState.READY)
-        this.readyFunc();
-      else if (this.status == GameState.START)
-        this.startFunc();
-      else if (this.status == GameState.INPROGRESS)
-        this.progressFunc();
-      else if (this.status == GameState.PAUSE){
+  handlerStatusInfo(data:any){
+    this.status = data;
+      if (this.status === GameState.PAUSE)
         this.pauseFunc();
-      }
-      else if (this.status == GameState.END)
+      else if (this.status === GameState.END)
         this.endFunc();
-    })
-  };
+  }
 
-  readyFunc() {
-    console.log("READY")
-    this.gameObservableInit();
+  private sub: Subscription | undefined;
+  private subOne: Subscription | undefined;
+  private subTwo: Subscription | undefined;
+
+  public gameObservableOn = false;
+
+  gameObservableInit() {
+    if (!this.gameObservableOn) {
+      this.gameObservableOn = true;
+      this.sub = this.gameService.getGameInfoObservable().subscribe((game: Game) => {
+        this.handlerGameInfo(game);
+      });
+      this.subOne = this.gameService.getGameStatusObservable().subscribe(data => {
+        this.handlerStatusInfo(data);
+      });
+      this.subTwo = this.gameService.getGameQueueObservable().subscribe((status: boolean) => {
+        this.handlerQueueInfo(status);
+      });
+    }
   }
-  startFunc(){
-    console.log("START")
-  }
-  progressFunc(){
-    console.log("PROGRESS")
-  }
+
   pauseFunc(){
-    console.log("PAUSE")
-    this.settledSide = false;
-      if(this.gameInfo?.match?.winner.id === this.gameService.userInfo.id){
-        this.statusStr = "WIN";
-        this.isGameOn = false;
-        this.accepted = false;
-        this.invited = false;
-        console.log("WINNER " + this.gameInfo.match.winner.id + " " + this.gameService.userInfo.id);
-        return;
-      } else {
-        this.statusStr = "LOS";
-        this.isGameOn = false;
-        this.accepted = false;
-        this.invited = false;
-        console.log("LOSER " + this.gameInfo?.match?.loser.id + " " + this.gameService.userInfo.id);
-        return;
-      }
+    this.endFunc();
   }
+
   endFunc(){
-    console.log("END")
+	if(this.accepted || this.invited){
+		this.router.navigate(['/game']);
+	}
+	this.winnerPrompt();
+  this.velocitySettledUp = true;
     this.settledSide = false;
-      if(this.gameInfo?.match?.winner.id === this.gameService.userInfo.id){
-        this.statusStr = "WIN";
-        this.isGameOn = false;
-        this.accepted = false;
-        this.invited = false;
-        console.log("WINNER " + this.gameInfo.match.winner.id + " " + this.gameService.userInfo.id);
-        return;
-      } else {
-        this.statusStr = "LOS";
-        this.isGameOn = false;
-        this.accepted = false;
-        this.invited = false;
-        console.log("LOSER " + this.gameInfo?.match?.loser.id + " " + this.gameService.userInfo.id);
-        return;
-      }
-      this.gameService.setGameStatus(GameState.READY);
-      // if (game.status === GameState.PAUSE && game.match) {
-      //   console.log("PAUSE")
-      //   this.status = "WIN";
-      //   this.isGameOn = false;
-      //   return
-      // }
-  }
-  ngOnDestroy() {
-    this.gameService.socket.disconnect();
     this.invited = false;
     this.accepted = false;
-    this.gameService.listenersOn = false;
+    this.gameQueue = false;
+    this.isGameOn = false;
   }
 
+  winnerPrompt(){
+    if(this.gameInfo?.match?.winner.id === this.gameService.userInfo.id){
+      this.statusStr = "WIN";
+    } else {
+      this.statusStr = "LOS";
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.sub) {
+      this.sub.unsubscribe()
+      this.subOne?.unsubscribe()
+      this.subTwo?.unsubscribe()
+    }
+    this.gameService.handleDisconnection();
+  }
+
+  handlerInvite(){
+    this.gameQueue = true;
+    this.invitedUser = this.route.snapshot.queryParamMap.get('userId');
+    this.difficultyLevel = this.route.snapshot.queryParamMap.get('level');
+    if( this.invitedUser && this.difficultyLevel){
+      if( this.difficultyLevel == "1"){
+        this.gameService.emitInvite(this.invitedUser, GameMode.EASY);
+      } else if ( this.difficultyLevel == "2"){
+        this.gameService.emitInvite(this.invitedUser, GameMode.MEDIUM);
+      } else {
+        this.gameService.emitInvite(this.invitedUser, GameMode.HARD);
+      }
+    }
+  }
+
+  handlerAccept() {
+    this.invitedUser = this.route.snapshot.queryParamMap.get('userId');
+    this.difficultyLevel = this.route.snapshot.queryParamMap.get('level');
+    if( this.invitedUser && this.difficultyLevel) {
+      if( this.difficultyLevel == "1"){
+        this.gameService.emitAcceptInvite(this.invitedUser, GameMode.EASY);
+      } else if ( this.difficultyLevel == "2"){
+        this.gameService.emitAcceptInvite(this.invitedUser, GameMode.MEDIUM);
+      } else {
+        this.gameService.emitAcceptInvite(this.invitedUser, GameMode.HARD);
+      }
+    }
+    this.isGameOn = true;
+  }
+
+  ngOnInit() {
+    this.gameService.handleConnection();
+    this.gameObservableInit();
+    this.invited = ('true' === this.route.snapshot.queryParamMap.get('invite'))
+    this.accepted = ('true' === this.route.snapshot.queryParamMap.get('accept'))
+    if( this.invited === true && this.accepted === false) {
+      this.handlerInvite() }
+    else if( this.accepted === true) {
+      this.handlerAccept() }
+  }
 
   setGame(event: number) {
     this.settledSide = false;
-    this.isInQueue = true;
     this.gameService.startGameService(event);
-    this.isWaitingInQueue();
+    this.gameQueue = true;
   }
 }

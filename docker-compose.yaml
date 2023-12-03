@@ -7,11 +7,13 @@ services:
       context: ./docker
       dockerfile: Dockerfile
     env_file:
-      - ./docker/dev.env
+      - ./docker/.env
     volumes:
-      # - /home/jmaalouf/Documents/42/core-curriculum/42_transendence/app:/app
-      #- /Users/jmaalouf/Documents/42/Core_Curriculum/42_transendence/app:/app
-       - /Users/ktashbae/Desktop/42_transendence/app:/app
+      - /Users/jmaalouf/Documents/42/Core_Curriculum/42_transendence/app:/app
+      # - /Users/francesco/pong/app:/app
+      #- /home/jmaalouf/Documents/42/core-curriculum/42_transendence/app:/app
+      # - /Users/ktashbae/Desktop/42_transendence/app:/app
+      # - /Users/francesco/pong/app:/app
     ports:
       - 3000:3000
     depends_on:
@@ -26,20 +28,16 @@ services:
     volumes:
       - db-volume:/var/lib/postgresql/data
     env_file:
-      - ./docker/dev.env
-    ports:
-      - 5432:5432
+      - ./docker/.env
 
   redis:
     container_name: redis
     image: redis:7.2.1-alpine3.18
     restart: unless-stopped
     env_file:
-      - ./docker/dev.env
+      - ./docker/.env
     volumes: 
       - redis-volume:/data
-    ports:
-      - 6379:6379
 
 volumes:
   db-volume:

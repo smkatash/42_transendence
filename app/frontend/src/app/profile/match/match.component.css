@@ -69,4 +69,6 @@ img {
   background-size: cover;
   height: 2dvw;
   width: 2dvw;
+  object-fit: cover;
+  object-position: center;
 }

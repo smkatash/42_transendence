@@ -1,159 +1,134 @@
-import { EventEmitter, Injectable } from '@angular/core';
-import { User , Game, GamePlayer, SocketResponse, GameMode, GameState, JoinMatchDto, PositionDto, GameModeDto } from '../entities.interface';
+import { Injectable } from '@angular/core';
+import { User , Game,  SocketResponse, GameMode, GameState } from '../entities.interface';
 import { GameSocket } from '../app.module';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { ACCEPT_MATCH, INVITE_TO_MATCH } from '../chat/subscriptions-events-constants';
+import { GameServiceUtils } from './utils';
+import { Router } from '@angular/router';
 
-async function waitOneSecond() {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  // console.log("...");
-}
-
-var matchID : string = "";
-var gameInfo! : Game;
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameService {
+	
+  constructor(public socket: GameSocket, private router: Router) { }
 
-  height = 1000;
-  width = 500;
+// -------------------------------------------------------------------------------
+//                                    * vars      *
+// -------------------------------------------------------------------------------
 
-  constructor(public socket: GameSocket) {}
+  private obsGameInfo : Subject <Game> = new Subject<Game>();
+  private obsGameStatus : BehaviorSubject<GameState> = new BehaviorSubject<GameState>(0);
+  private obsGameQueue : Subject<boolean> = new Subject<boolean>();
 
-  public test : number[] = [0,0];
-
-  // GAME INFO: Ball position, paddle, id, bla bla
-  private gameInfoSubject: Subject <Game> = new Subject<Game>();
-  private gameStatus = new BehaviorSubject<GameState>(0);
-  // QUEUE, player waiting in that.
-  private inTheQueue : Subject<boolean> = new Subject<boolean>();
-  public keyPress: EventEmitter<string> = new EventEmitter();
-  public started = false;
-  public userInfo : User;
   private difficulty = 0;
-  private matchInfo : SocketResponse;
+  public  userInfo : User;
+  public  gameInfo! : Game;
 
-  // private testSubject = new Subject<number[]>();
-  paddlePosition: string = '0';
+// -------------------------------------------------------------------------------
+//                                    * observable *
+// -------------------------------------------------------------------------------
+  getGameInfoObservable() { return this.obsGameInfo.asObservable(); }
+  getGameQueueObservable() { return this.obsGameQueue.asObservable(); }
+  getGameStatusObservable() { return this.obsGameStatus.asObservable(); }
 
-  updateSize(w: number, h: number) {
-    this.width = w;
-    this.height = h;
-  }
+  setGameStatusObservable(stat: number) { this.obsGameStatus.next(stat); }
+  setGameInfoObservable( gameInfo: Game){ this.obsGameInfo.next( gameInfo); }
+  setGameQueueObservable( status: boolean){ this.obsGameQueue.next( status ); }
 
-  returnValue(){
-    // return gameInfo;
-    return this.test
-  }
-
-  // observable-----------------------------------------
-  getGameObservable() {
-    return this.gameInfoSubject.asObservable();
-  }
-  getStatusQueue(){
-    return this.inTheQueue.asObservable();
-  }
-
-  getGameStatus() {
-    return this.gameStatus;
-  }
-
-  setGameStatus(stat: number) {
-    this.gameStatus.next(stat);
-  }
-  // utils----------------------------------------------
-
-  createMatchInfo(ID:string, level:number){
-    const matchInfo : JoinMatchDto = {
-      matchId: ID,
-      mode: level
-    }
-    return matchInfo;
-  }
-  // emit paddle
-  createPaddleDto(value: string){
-    const retValue: PositionDto = {
-      step: value
-    }
-    return retValue;
-  }
-  // play
-  createGameDto(level: number){
-    const gameMode: GameModeDto = {
-      mode: level
-    };
-    return gameMode
-  }
-
-  padlePositionEmitter(movementValue: string) {
-    const toEmit = this.createPaddleDto(movementValue)
+// -------------------------------------------------------------------------------
+//                                    * emitters *
+// -------------------------------------------------------------------------------
+  emitPaddlePosition(movementValue: string) {
+    const toEmit = GameServiceUtils.createPaddleDto(movementValue)
     this.socket.emit('key', toEmit);
   }
 
-  listenersOn = false;
-  listenersInit(){
-    this.listenersOn = true;
-    this.socket.on ('join', (msg: Game) => {
-    })
-    this.socket.on ('game', (msg: any) => {
-      gameInfo = msg;
-	  if(!this.userInfo){
-		gameInfo.status = GameState.PAUSE
-	  }
-      if(gameInfo.status === GameState.PAUSE){
-        gameInfo.status = GameState.END;
-      }
-      this.gameInfoSubject.next(gameInfo);
-      this.gameStatus.next(gameInfo.status!);
-    })
-	this.socket.on('error',(msg:any)=>{
-		alert('Internal Server Error');
-	})
-    this.socket.on ('start', (msg: any)  => {
-      if (msg === 'Waiting players to join')
-      { this.inTheQueue.next(true);
-        console.log("i am waiting for the opponent to join.");
-        console.log(this.socket.ioSocket.id)
-      } else {
-        console.log("you are not emitting in the start when the invited join")
-        console.log(this.socket.ioSocket.id)
-        this.inTheQueue.next(false);
-        this.matchInfo = msg;
-        console.log(this.matchInfo)
-		    if (this.matchInfo.id) {
-			    const matchID = this.createMatchInfo(this.matchInfo.id, this.difficulty)
-			    this.socket.emit('join', matchID)}
-      }
-		})
-	}
+  emitJoinMatch( matchInfo : SocketResponse ) {
+    const matchID = GameServiceUtils.createMatchInfoDto(matchInfo.id, this.difficulty)
+    this.socket.emit('join', matchID)
+  }
 
-	queueEmit(){
-		const gameMode = this.createGameDto(this.difficulty);
+  emitStart(difficulty: number){
+		const gameMode = GameServiceUtils.createGameDto(difficulty);
 		this.socket.emit('start', gameMode);
 	}
+
+  emitInvite(invitedUser: string,  mode: GameMode) {
+	this.difficulty = mode;
+    this.socket.emit("invite", { userId: invitedUser, mode: mode })
+  }
+
+  emitAcceptInvite(userID: string , mode: GameMode) {
+	this.difficulty = mode;
+    this.socket.emit("accept", { userId: userID, mode: mode })
+  }
+// -------------------------------------------------------------------------------
+//                                    * listeners *
+// -------------------------------------------------------------------------------
+
+  public listenersOn : boolean  = false;
+  listenersInit(){
+    if(this.listenersOn === false) {
+      this.listenersOn = true;
+      this.socket.on ('error',(msg:any) => { alert('I am a teapot') })
+      this.socket.on ('join', (msg: Game) => { })
+      this.socket.on ('game', (msg: any) => { this.handlerGameInfo( msg ) })
+      this.socket.on ('start', (msg: any)  => { this.handlerGameStart(msg) })
+      this.socket.on ('disconnect', () => {  this.handleDisconnection(); });
+      this.socket.on ('connect', () => { });
+      this.socket.on ('user', (user: User) => { this.userInfo = user; })
+	    this.socket.on ('queue', () => { this.handleInviteRefuse(); })
+    }
+  }
+// -------------------------------------------------------------------------------
+//                                    * handlers *
+// -------------------------------------------------------------------------------
+  handleInviteRefuse(){
+	alert("Your game invite was rejected");
+	this.router.navigate(['/chat']);
+  }
+
+
+  handleDisconnection(){
+	this.socket.emit("route-change");
+  }
+
+  handleConnection() {
+    this.listenersInit();
+  }
+
+  handlerGameInfo(msg: any) {
+    this.gameInfo = msg;
+    this.setGameInfoObservable(this.gameInfo);
+    this.setGameStatusObservable(this.gameInfo.status!);
+  }
+
+  handlerGameStart( msg :any )  {
+    if (msg === 'Waiting players to join') {
+      this.obsGameQueue.next(true);
+	} else if(msg === 'Game does not exist'){
+		alert(msg);
+		this.router.navigate(['/chat']);
+
+    } else {
+      this.setGameQueueObservable(false);
+      this.emitJoinMatch(msg);
+    }
+  }
+
+// -------------------------------------------------------------------------------
+//                                    * start *
+// -------------------------------------------------------------------------------
 
 	startGameService(level: number): void {
-		this.difficulty = level;
-    if(this.listenersOn === false){
-      this.listenersInit();
-    }
-		const gameMode = this.createGameDto(this.difficulty);
-		this.socket.emit('start', gameMode);
+	  this.difficulty = level;
+	  this.emitStart(level)
 	}
 
-	getUser(): void {
-	this.socket.on('user', (user: User) => {
-		this.userInfo = user;
-	})
-	}
-
-  inviteToMatch(invitedUser: string, selectedMode: number) {
-    this.socket.emit(INVITE_TO_MATCH, { userId: invitedUser, mode: selectedMode })
-  }
-
-  acceptInvite(userID: string, mode: GameMode) {
-    this.socket.emit(ACCEPT_MATCH, { userId: userID, mode: mode })
+  declineInvite(userID: string, mode: GameMode) {
+    this.socket.emit("reject", { userId: userID, mode: mode })
   }
 }
+
+

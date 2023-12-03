@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty } from "class-validator";
 
 export class UpdateUsernameDto {
   @IsString()
@@ -6,49 +6,44 @@ export class UpdateUsernameDto {
   username: string;
 }
 
-
 export class UpdateTitleDto {
-	@IsString()
-	@IsNotEmpty()
-	title: string;
+  @IsString()
+  @IsNotEmpty()
+  title: string;
 }
 
-
 export class UpdateEmailDto {
-	@IsString()
-	@IsNotEmpty()
-	email: string;
+  @IsString()
+  @IsNotEmpty()
+  email: string;
 }
 
 export class ParamAvatarDto {
-	@IsString()
-	@IsNotEmpty()
-	avatar: string;
+  @IsString()
+  @IsNotEmpty()
+  avatar: string;
 }
 
 export class ParamUserIdDto {
-	@IsString()
-	@IsNotEmpty()
-	id: string;
+  @IsString()
+  @IsNotEmpty()
+  id: string;
 }
 
 export class FriendIdDto {
-	@IsString()
-	@IsNotEmpty()
-	friendId: string;
+  @IsString()
+  @IsNotEmpty()
+  friendId: string;
 }
 
 export class BlockUserDto {
-	@IsString()
-	@IsNotEmpty()
-	blockId: string;
+  @IsString()
+  @IsNotEmpty()
+  blockId: string;
 }
 
 export class UnblockUserDto {
-	@IsString()
-	@IsNotEmpty()
-	unblockId: string;
+  @IsString()
+  @IsNotEmpty()
+  unblockId: string;
 }
-
-
-

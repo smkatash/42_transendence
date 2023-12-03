@@ -1,11 +1,11 @@
-<div class="match" *ngIf="match" [routerLink]="['/profile', match.opponentUser.id]">
+<div class="match" *ngIf="match">
   <div class="wrapper">
     <div class="result-win" *ngIf="match.matchResult === 'VICTORY'">Won</div>
     <div class="result-loss" *ngIf="match.matchResult === 'DEFEAT'">Lost</div>
     <div class="score">{{ match.currentUserScore }} : {{ match.opponentUserScore }}</div>
     <div class="versus">vs</div>
     <div class="opponent">
-      <div class="name">{{ match.opponentUser.username }}</div>
+      <div class="name" [routerLink]="['/profile', match.opponentUser.id]">{{ match.opponentUser.username }}</div>
       <div class="pic"><img src="{{ domain }}/api/user/image/{{ match.opponentUser.avatar }}"></div>
     </div>
   </div>

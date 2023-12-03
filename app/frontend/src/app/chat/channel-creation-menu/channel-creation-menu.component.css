@@ -77,23 +77,39 @@ input {
   outline: none;
 }
 
-.user-search {
-  margin-bottom: 20% !important;
+.dm-sender {
+  margin-left:11%;
+  margin-right: 11%;
+  margin-top: 3%;
+  margin-bottom: 3%;
+  display: flex;
+  flex-direction: column;
+}
+
+.dm-sender input {
+  margin: 0%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .search-result {
-  margin-left: 10%;
-  margin-right: 10%;
-  margin-top: 0%  ;
+  padding-left: 0dvw;
+  font-family: 'Quattrocento', serif;
+  font-size: 1dvw;
+  font-weight: bold;
+  color: #4F6D7A;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .user {
-  margin-top: 0%;
+  display: flex;
   background-color: #E8DAB2;
   box-sizing: border-box;
   border: .1dvw solid #2f424a;
   font-size: 0.8dvw;
   font-family: 'Quattrocento', serif;
+  color: #4F6D7A;
   width: 100%;
   padding: 0.5dvw;
 }
@@ -107,6 +123,8 @@ input {
   box-sizing: border-box;
   height: 10dvh;
   margin: 2dvh;
+  margin-left: 10%;
+  margin-right: 10%;
 }
 
 .message-box textarea {
@@ -116,7 +134,7 @@ input {
   width: 100%;
   height: 100%;
   background-color: #E8DAB2;
-  border-radius: 2dvw;
+  border-radius: 1dvw;
   border: .3dvw solid #E8DAB2;
   white-space: pre-wrap;
   word-wrap: break-word;
@@ -128,8 +146,6 @@ input {
   font-family: 'Quattrocento', serif;
   font-size: 1.3dvw;
   font-weight: bold;
-  color: #423B0B;
-  caret-color: #423B0B;
   scrollbar-width: none;
 }
 

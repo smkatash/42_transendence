@@ -24,6 +24,8 @@
   background-size: cover;
   height: 2dvw;
   width: 2dvw;
+  object-fit: cover;
+  object-position: center;
 }
 
 .name {
@@ -65,6 +67,9 @@ button:hover {
   background-color: #e9d5a1;
 }
 
+.accept-request {
+  margin-right: .5dvw;
+}
 
 .friend:hover, .request:hover {
   background-color: #223036;

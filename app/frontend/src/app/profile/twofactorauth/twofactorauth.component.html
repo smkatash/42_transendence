@@ -3,7 +3,7 @@
 
     <div *ngSwitchCase="'sendEmail'">
       <label for="email">Please enter the email address where you'd like to enable two-factor authentication:</label>
-      <input class="email" type="email" id="emailInput" #emailInput="ngModel" [class.is-invalid]="emailInput.invalid" [(ngModel)]="email" required>
+      <input class="email" type="email" pattern="^(?!\.)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?<!\.)$" id="emailInput" #emailInput="ngModel" [class.is-invalid]="emailInput.invalid" [(ngModel)]="email" required>
       <div class="buttons">
         <button (click)="closeDialog()">Close</button>
         <button class=rightbtn (click)="sendEmail()" [disabled]="emailInput.invalid" [class.btn-invalid]="emailInput.invalid">Use email</button>

@@ -42,6 +42,11 @@ export class ChannelMessagesSettingsComponent implements OnChanges {
   users: User[] = []
   currentUser?: User
 
+  wantsToChangePass: boolean = false
+  wantsToRemovePass: boolean = false
+  channelPassword?: string // password being inputted in case of adding/changing/removing
+  channelPasswordVerify?: string
+
   privateUserSearch = new FormControl()
   searchedUsers: User[]
 
@@ -53,8 +58,9 @@ export class ChannelMessagesSettingsComponent implements OnChanges {
       this.chatService.requestChannelUsers(this.channel.id)
       this.chatService.getChannelUsers()
         .subscribe(channelUsers => {
-          if (channelUsers.cId === this.channel?.id)
+          if (channelUsers.cId === this.channel?.id) {
             this.users = channelUsers.users
+          }
         })
     }
 
@@ -93,6 +99,26 @@ export class ChannelMessagesSettingsComponent implements OnChanges {
 
   toggle(): void {
     this.isOpen = !this.isOpen;
+    this.wantsToChangePass = false
+    this.wantsToRemovePass = false
     this.isOpenChange.emit(this.isOpen);
+  }
+
+  canManagePassword(): boolean {
+    return this.channel?.type === 'protected' && this.channel?.owner?.id === this.currentUser?.id
+  }
+
+  canAddPassword(): boolean {
+    return (this.channel?.type === 'public' || this.channel?.type === 'private') && this.channel?.owner?.id === this.currentUser?.id
+  }
+
+  passModeration(action: string) {
+    if (!this.channel || !this.channelPassword) return
+    this.chatService.passwordModeration(action, this.channel.id, this.channelPassword, this.channelPasswordVerify)
+    this.channelPassword = undefined
+    this.channelPasswordVerify = undefined
+    this.wantsToChangePass = false
+    this.wantsToRemovePass = false
+    this.toggle()
   }
 }

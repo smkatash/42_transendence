@@ -1,13 +1,8 @@
 .vscode
 .DS_Store
 node_modules
-# .env
-# data storage
 backend/db
 .env
-
-#env
-# backend/.env
 
 # compiled output
 backend/nest/app/dist
@@ -44,5 +39,3 @@ backend/nest/app/.vscode/*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-
-docker-compose.yaml

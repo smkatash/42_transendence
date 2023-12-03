@@ -1,55 +1,55 @@
-import { IsNotEmpty, IsString, IsEmail, IsBoolean, IsEnum } from 'class-validator';
-import { MfaStatus } from 'src/auth/utils/mfa-status';
-import { Status } from './status.enum';
+import { IsNotEmpty, IsString, IsEmail, IsBoolean, IsEnum } from "class-validator";
+import { MfaStatus } from "src/auth/utils/mfa-status";
+import { Status } from "./status.enum";
 
 export class UserIdDto {
-	@IsString()
-	@IsNotEmpty()
-    id: string
+  @IsString()
+  @IsNotEmpty()
+  id: string;
 }
 
 export class UserDto {
-	@IsString()
-	@IsNotEmpty()
-    id: string
+  @IsString()
+  @IsNotEmpty()
+  id: string;
 
-	@IsString()
-	@IsNotEmpty()
-    username: string
-	
-	@IsString()
-    email: string
+  @IsString()
+  @IsNotEmpty()
+  username: string;
 
-	@IsString()
-    avatar: string
+  @IsString()
+  email: string;
+
+  @IsString()
+  avatar: string;
 }
 
 export class SessionUserDto {
-	@IsString()
-	@IsNotEmpty()
-	id: string
+  @IsString()
+  @IsNotEmpty()
+  id: string;
 
-	@IsString()
-	@IsNotEmpty()
-	username: string;
+  @IsString()
+  @IsNotEmpty()
+  username: string;
 
-	@IsString()
-	@IsNotEmpty()
-	title: string;
+  @IsString()
+  @IsNotEmpty()
+  title: string;
 
-	@IsString()
-	@IsNotEmpty()
-	avatar: string;
+  @IsString()
+  @IsNotEmpty()
+  avatar: string;
 
-	@IsEmail()
-	email: string;
+  @IsEmail()
+  email: string;
 
-	@IsBoolean()
-	mfaEnabled: boolean;
+  @IsBoolean()
+  mfaEnabled: boolean;
 
-	@IsEnum(MfaStatus)
-	mfaStatus: MfaStatus;
+  @IsEnum(MfaStatus)
+  mfaStatus: MfaStatus;
 
-	@IsEnum(Status)
-	status: Status;
+  @IsEnum(Status)
+  status: Status;
 }

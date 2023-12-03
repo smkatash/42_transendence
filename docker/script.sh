@@ -32,9 +32,13 @@ if [ -d "$backend_dir/public" ]; then
   rm -rf "$backend_dir/public" || handle_error "Failed to delete the 'public' directory"
 fi
 
+file="/app/frontend/src/environments/environment.ts"
+
+awk -v key="HOST_IP" -v value="$HOST_IP" '{gsub(key":.*", key": \047" value "\047,", $0); print}' "$file" > temp_file && mv temp_file "$file"
+
 # Step 1: Build the frontend
 echo -e "${GREEN}Step 1: Building the frontend...${NC}"
-(cd "$frontend_dir" && npm install --legacy-peer-deps && npm run build:development) || handle_error "Frontend build failed"
+(cd "$frontend_dir" && npm install --legacy-peer-deps && npm run build:production) || handle_error "Frontend build failed"
 
 echo "                  "
 echo "                  "

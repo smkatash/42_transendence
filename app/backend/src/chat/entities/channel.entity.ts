@@ -4,61 +4,59 @@ import { Message } from "./message.entity";
 import { JoinedChannel } from "./joinedChannel.entity";
 
 @Entity()
-export class Channel    {
-    @PrimaryGeneratedColumn()
-    id: number;
+export class Channel {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @CreateDateColumn()
-    createdAt: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @UpdateDateColumn()
-    updatedAt: Date;
+  @UpdateDateColumn()
+  updatedAt: Date;
 
-    @Column({unique: true, nullable: true})
-    name: string;
+  @Column({ unique: true, nullable: true })
+  name: string;
 
-    @Column({default: true})
-    private: boolean;
+  @Column({ default: true })
+  private: boolean;
 
-    @ManyToOne(()=> User, (owner)=> owner.channels, {nullable: true})
-    @JoinColumn()
-    owner: User;
+  @ManyToOne(() => User, owner => owner.channels, { nullable: true })
+  @JoinColumn()
+  owner: User;
 
-    @Column({nullable: true})
-    hash: string;
+  @Column({ nullable: true })
+  hash: string;
 
-    @Column({nullable: true})
-    topic: string;
+  @Column({ nullable: true })
+  topic: string;
 
-    @ManyToMany(() => User, (user) => user.channels)
-    @JoinTable()
-    users: User[];
+  @ManyToMany(() => User, user => user.channels)
+  @JoinTable()
+  users: User[];
 
-    @ManyToMany(() => User, (user) => user.adminAt, {nullable: true})
-    @JoinTable()
-    admins: User[];
+  @ManyToMany(() => User, user => user.adminAt, { nullable: true })
+  @JoinTable()
+  admins: User[];
 
-    @OneToMany(
-        () => Message, (message) => message.channel, {
-            cascade: ['remove']
-        }
-    )
-    messages: Message[];
+  @OneToMany(() => Message, message => message.channel, {
+    cascade: ["remove"],
+  })
+  messages: Message[];
 
-    @Column({default: false, nullable: true})
-    protected: boolean;
+  @Column({ default: false, nullable: true })
+  protected: boolean;
 
-    @OneToMany(() => JoinedChannel, (joinedChannel) => joinedChannel.channel)
-    joinedUsers: JoinedChannel[]
-    
-    @ManyToMany(()=> User, (user) => user.invitedTo)
-    @JoinTable()
-    invitedUsers: User[]
+  @OneToMany(() => JoinedChannel, joinedChannel => joinedChannel.channel)
+  joinedUsers: JoinedChannel[];
 
-    @ManyToMany(() => User, (user)=> user.bannedAt, { nullable: true })
-    @JoinTable()
-    banned: User[]
+  @ManyToMany(() => User, user => user.invitedTo)
+  @JoinTable()
+  invitedUsers: User[];
 
-    @Column({ default: 'public', nullable: true })
-    type: 'private' | 'protected' | 'public' | 'direct';
+  @ManyToMany(() => User, user => user.bannedAt, { nullable: true })
+  @JoinTable()
+  banned: User[];
+
+  @Column({ default: "public", nullable: true })
+  type: "private" | "protected" | "public" | "direct";
 }

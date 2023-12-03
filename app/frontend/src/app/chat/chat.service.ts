@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Channel, ChannelUsers, CreateChannelInfo, JoinChannelInfo, Message, User } from '../entities.interface';
 import { ChatSocket } from '../app.module';
-import { ACCEPT_PRIVATE_INVITE, ADD_ADMIN, BAN, BLOCK, BLOCKED_USERS, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DIRECT, ERROR, JOIN, KICK, LEAVE, MESSAGE, MUTE, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, UNMUTE, USER_CHANNELS } from './subscriptions-events-constants'
+import { ACCEPT_PRIVATE_INVITE, ACHTUNG, ADD_ADMIN, BAN, BLOCK, BLOCKED_USERS, CHANNELS, CHANNEL_MESSAGES, CHANNEL_USERS, CREATE, DECLINE_PRIVATE_INVITE, DIRECT, ERROR, INVALIDATE_MESSAGE_CONTENT, JOIN, KICK, LEAVE, MESSAGE, MUTE, PASSWORD, REM_ADMIN, SUCCESS, UNBAN, UNBLOCK, UNMUTE, USER_CHANNELS } from './subscriptions-events-constants'
 import { HOST_IP } from '../Constants';
 
 @Injectable({
@@ -12,15 +12,14 @@ import { HOST_IP } from '../Constants';
 export class ChatService {
   constructor(
     private http: HttpClient,
-    private socket: ChatSocket,
-  ) { }
+    private socket: ChatSocket
+  ) {}
 
   domain: string = HOST_IP
 
-  findUser(username: string): Observable<User[]>  {
+  findUser(username: string): Observable<User[]> {
     return this.http.get<User[]>(`${this.domain}/api/user/find-by-username?username=${username}`, { withCredentials: true })
   }
-
 
   /* <---------- Socket emits ----------> */
 
@@ -44,12 +43,26 @@ export class ChatService {
     this.socket.emit(JOIN, joinInfo)
   }
 
+  passwordModeration(action: string, channelID: number, password: string, oldPassword?: string) {
+    if (action === 'add') {
+      this.socket.emit(PASSWORD, { cId: channelID, newPass: password })
+    } else if (action === 'remove'){
+      this.socket.emit(PASSWORD, { cId: channelID, oldPass: password })
+    } else { // change
+      this.socket.emit(PASSWORD, { cId: channelID, oldPass: oldPassword, newPass: password })
+    }
+  }
+
   acceptPrivateInvite(channelID: string, msgID: number) {
     this.socket.emit(ACCEPT_PRIVATE_INVITE, { cId: Number(channelID), msgId: msgID })
   }
 
   declineChannelInvite(channelID: string, msgID: number) {
     this.socket.emit(DECLINE_PRIVATE_INVITE, { cId: Number(channelID), msgId: msgID })
+  }
+
+  invalidateMessage(messageID: number) {
+    this.socket.emit(INVALIDATE_MESSAGE_CONTENT, { cId: messageID })
   }
 
   leaveChannel(joinInfo: JoinChannelInfo)  {
@@ -77,7 +90,7 @@ export class ChatService {
     this.socket.emit(BLOCKED_USERS)
   }
 
-  manageUserModeration(action: string, userID: string, channelID: number) {
+  manageUserModeration(action: string, userID: string, channelID?: number) {
     switch(action) {
       case BLOCK:
         this.socket.emit(BLOCK, {uId: userID})
@@ -116,15 +129,20 @@ export class ChatService {
     }
   }
 
+  /* This is a state of the art technique to generate errors */
+  generateAchtung(msg: string) {
+    this.socket.emit(ACHTUNG, { uId: msg })
+  }
+
   /* <---------- Events to listen to ----------> */
 
   onError() {
     return this.socket.fromEvent<any>(ERROR)
   }
+
+
   onSuccess() {
-    this.socket.on(SUCCESS, (msg: any) => {
-      console.log(msg)
-    })
+    return this.socket.fromEvent<any>(SUCCESS)
   }
 
   getUsersChannels(): Observable<Channel[]> {

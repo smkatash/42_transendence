@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ChatService } from './chat.service';
 import { Channel } from '../entities.interface';
 import { Observable } from 'rxjs';
+import { HttpStatusCode } from '@angular/common/http';
 
 @Component({
   selector: 'app-chat',
@@ -15,39 +16,60 @@ export class ChatComponent implements OnInit {
 
   selectedTab: string = 'my-chats'
 
-  myChannels$: Observable<Channel[]> = this.chatService.getUsersChannels()
+  myChannels: Channel[] = []
   allChannels$: Observable<Channel[]> = this.chatService.getChannels()
   selectedChannel?: Channel
   channelToCreate?: string // type of channel to create
 
   passwordToJoinChannel?: string
+  channelToJoin?: Channel
 
   channelCreationPopup: boolean = false
   passwordInputPopup: boolean = false
 
   errorMessage?: any
 
+  canEmitToBackend: boolean = false
+
   ngOnInit(): void {
-    this.chatService.requestUserChannels()
-    this.chatService.requestChannels()
+
+    this.chatService.onSuccess()
+      .subscribe(msg => {
+        if (msg === HttpStatusCode.Ok) {
+          this.canEmitToBackend = true
+        }
+      })
+
     this.chatService.onError()
       .subscribe(error => {
         this.displayError(error.message)
-        console.error(error)
+      })
+    this.chatService.requestUserChannels()
+    this.chatService.requestChannels()
+    this.chatService.getUsersChannels()
+      .subscribe(channels => {
+        this.myChannels = channels
+        if (this.selectedChannel) {
+          this.selectedChannel = this.myChannels.find(channel => channel.id === this.selectedChannel?.id)
+        }
       })
   }
 
   onChannelSelect(channel: Channel) {
+    if (channel.id === this.selectedChannel?.id) return
+
     this.selectedChannel = channel
     if (this.selectedTab === 'available-chats') {
       if (this.selectedChannel.protected) {
         this.passwordInputPopup = true
         this.channelCreationPopup = false
+        this.channelToJoin = this.selectedChannel
+        this.selectedChannel = undefined
       } else {
-        this.chatService.joinChannel({
+        this.chatService.joinChannel({ // joining public channel
           id: this.selectedChannel.id,
-          password: this.passwordToJoinChannel
         })
+        this.selectedChannel = undefined
       }
     } else {
       this.chatService.requestChannelMessages(channel.id)
@@ -56,18 +78,17 @@ export class ChatComponent implements OnInit {
 
   createNewChannel(channelType: string) {
     this.channelToCreate = channelType
-    // this.selectTab('my-chats')
     this.channelCreationPopup = true
     this.passwordInputPopup = false
   }
 
   selectTab(tab: string) {
     if (tab === 'my-chats') {
-      this.selectedTab= 'my-chats'
+      this.selectedTab = 'my-chats'
       this.selectedChannel = undefined
       this.chatService.requestUserChannels()
     } else {
-      this.selectedTab= 'available-chats'
+      this.selectedTab = 'available-chats'
       this.selectedChannel = undefined
       this.chatService.requestChannels()
     }

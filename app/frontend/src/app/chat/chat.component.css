@@ -1,6 +1,7 @@
 body {
   background-color: #4F6D7A;
   position: relative;
+  overflow: auto;
 }
 
 .chat-interface {
@@ -34,7 +35,7 @@ body {
 
 .channel-container {
   margin: .7dvw;
-  max-height: 80%;
+  max-height: 74%;
   overflow: auto;
 }
 

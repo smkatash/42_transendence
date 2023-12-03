@@ -17,12 +17,12 @@
 
       <h1 class="username" (click)="toggleNameEdit()">{{ userProfile.user.username }}</h1>
       <div class="name-input-container" *ngIf="id === null && isEditingName">
-        <input class="name-input" type="text" id="username" #username="ngModel" [class.is-invalid]="username.invalid" [(ngModel)]="userProfile.user.username" required minlength="2" maxlength="10" pattern="[^\s]*">
+        <input class="name-input" type="text" id="username" #username="ngModel" [class.is-invalid]="username.invalid" [(ngModel)]="nameToChange" required minlength="2" maxlength="12" pattern="[^\s]*">
         <button class="change-btn" (click)="changeName()" [disabled]="username.invalid" [class.btn-invalid]="username.invalid">Change</button>
       </div>
       <h2 class="title" (click)="toggleTitleEdit()">{{ userProfile.user.title }}</h2>
       <div class="title-input-container" *ngIf="id === null && isEditingTitle">
-        <input class="title-input" type="text" id="usertitle" #usertitle="ngModel" [class.is-invalid]="usertitle.invalid" [(ngModel)]="userProfile.user.title" required minlength="2" maxlength="25">
+        <input class="title-input" type="text" id="usertitle" #usertitle="ngModel" [class.is-invalid]="usertitle.invalid" [(ngModel)]="titleToChange" required minlength="2" maxlength="12">
         <button class="change-btn" (click)="changeTitle()" [disabled]="usertitle.invalid" [class.btn-invalid]="usertitle.invalid">Change</button>
       </div>
 
@@ -40,6 +40,9 @@
       <button *ngIf="canSendRequest()" (click)="sendRequest()">Add friend</button>
       <button class="removeFriend" *ngIf="isFriendsWithCurrentUser()" (click)="removeFriend()">Remove friend</button>
       <button *ngIf="isRequestSent()" (click)="getSentRequests()">Request Pending</button>
+
+      <button *ngIf="id !== null && id !== this.currentUserProfile.user.id && !isUserBlocked()" (click)="blockUser()">Block</button>
+      <button *ngIf="id !== null && id !== this.currentUserProfile.user.id && isUserBlocked()" (click)="unblockUser()">Unblock</button>
 
       <button *ngIf="id === null && userProfile.user.mfaEnabled == false" (click)="enable2FA()">Enable 2FA</button>
       <button *ngIf="id === null && userProfile.user.mfaEnabled == true" (click)="disable2FA()">Disable 2FA</button>
@@ -124,4 +127,5 @@
     </div>
 
   </div>
+  <app-error-message class="error-message" *ngIf="errorMessage" [message]="errorMessage"></app-error-message>
 </body>

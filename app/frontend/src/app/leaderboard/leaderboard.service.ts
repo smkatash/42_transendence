@@ -5,16 +5,16 @@ import { Player } from '../entities.interface';
 import { HOST_IP } from '../Constants';
 
 @Injectable({
-	providedIn: 'root'
+  providedIn: 'root'
   })
   export class LeaderboardService {
 
-	constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) { }
 
-	domain: string = HOST_IP
+  domain: string = HOST_IP
 
-	getAllPlayersStats(): Observable<Player[]> {
-	  const url = `${this.domain}/api/ranking/board`
-	  return this.http.get<Player[]>(url, { withCredentials: true })
-	}
+  getAllPlayersStats(): Observable<Player[]> {
+    const url = `${this.domain}/api/ranking/board`
+    return this.http.get<Player[]>(url, { withCredentials: true })
+  }
 }

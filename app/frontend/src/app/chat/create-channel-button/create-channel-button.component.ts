@@ -19,6 +19,21 @@ export class CreateChannelButtonComponent {
 
   toggleDropdown(): void {
     this.isDropdownSelected = !this.isDropdownSelected;
+    const dropdownContainer = document.getElementById('dropdownContainer') as HTMLElement
+    const dropdownContent = document.getElementById('dropdownMenu') as HTMLElement
+
+    // Get the position of the button relative to the viewport
+    const buttonRect = dropdownContainer.getBoundingClientRect();
+    const windowHeight = window.innerHeight;
+
+    // Check if there is enough space below the button, if not, display above
+    if (buttonRect.bottom + dropdownContent.offsetHeight > windowHeight) {
+      dropdownContent.style.bottom = `${dropdownContainer.clientHeight}px`;
+      dropdownContent.style.top = 'auto';
+    } else {
+      dropdownContent.style.top = `2.7dvw`;
+      dropdownContent.style.bottom = 'auto';
+    }
   }
 
   @HostListener('document:click', ['$event'])

@@ -13,7 +13,7 @@ import { Interval } from '@nestjs/schedule';
 import { Server, Socket } from 'socket.io';
 import { INGAME, QUEUE, START_MATCH } from '../utls/rooms';
 import { Status } from 'src/user/utils/status.enum';
-import { DEFAULT_PADDLE_LENGTH, DEFAULT_TABLE_HEIGHT } from 'src/Constants';
+import { DEFAULT_PADDLE_LENGTH, DEFAULT_TABLE_HEIGHT } from 'src/utils/Constants';
 
 
 @Injectable()
@@ -32,19 +32,19 @@ export class MatchService {
 			if (!this.queueService.isInQueue(player.id, mode)) {
 				this.queueService.enqueue(player.id, client, mode)
 			}
-		}
-		
+		} 
+
 		if (this.queueService.isQueueReady(mode)) {
 			const pair: Array<Map<string, Socket>> =  this.queueService.dequeue(mode)
 			const players: string[] = []
-			pair.forEach( pp => {
-				for (let [key, value] of pp) {
+			pair.forEach(pp => {
+				for (const key of pp.keys()) { 
 					players.push(key)
 				}
 			})
 			const newMatch = await this.makeAmatch(players)
 			pair.forEach( pp => {
-				for (let [key, value] of pp) {
+				for (const value of pp.values()) {
 					value.leave(QUEUE)
 					value.emit(START_MATCH,newMatch)
 					value.join(newMatch.id)
@@ -53,18 +53,30 @@ export class MatchService {
 		}
     }
 
-	// TODO tocheck if  he has accepted from another player
+	async removePlayersFromLobby(player: Player, ownerId: string, client: Socket, mode: GameMode) {
+		if (!(await this.hasExistingMatch(player.id, client))) {
+		  if (this.queueService.isInLobby(player.id, ownerId, client, mode)) {
+			this.queueService.removeRejectionFromLobby(player.id, ownerId, mode);
+
+		  }
+		}
+	  }
+
 	async waitInPlayerLobby(player: Player, guestId: string, client: Socket, mode: GameMode) {
-		if (!this.hasExistingMatch(player.id, client)) {
-			if (!this.queueService.isInLobby(player.id, guestId, mode)) {
+		if (!(await this.hasExistingMatch(player.id, client))) {
+			if (!this.queueService.isInLobby(player.id, guestId, client, mode)) {
 				this.queueService.enterLobby(player.id, guestId, client, mode)
 			}
 		}
 	}
 
+	// debug() {
+	// 	this.queueService.getAllLobbyData()
+	// }
+
 	async checkPlayerLobby(player: Player, ownerId: string, client: Socket, mode: GameMode) {
-		if (!this.hasExistingMatch(player.id, client)) {
-			if (this.queueService.isInLobby(player.id, ownerId, mode)) {
+		if (!(await this.hasExistingMatch(player.id, client))) {
+			if (this.queueService.isInLobby(player.id, ownerId, client, mode)) {
 				const lobby = this.queueService.checkInLobby(player.id, ownerId, client, mode)
 				if (lobby) {
 					const newMatch = await this.makeAmatch([player.id, ownerId])
@@ -77,27 +89,35 @@ export class MatchService {
 					guest.emit(START_MATCH, newMatch)
 					owner.join(newMatch.id)
 					guest.join(newMatch.id)
+					this.queueService.removeFromLobby(ownerId, player.id, mode)
+					return
 				}
-				
 			}
 		}
-		
+		client.emit(START_MATCH, "Game does not exist")
 	}
+
+
 
 	async hasExistingMatch(playerId: string, client: Socket) {
 		const matchId = this.queueService.isEnqueuedInMatch(playerId)
 		if (matchId) {
 			client.leave(QUEUE)
 			const match = await this.getMatchById(matchId)
-			client.emit(START_MATCH, match)
-			client.join(match.id)
-			return true
+			if (match.status !== GameState.END && match.status !== GameState.PAUSE) {
+				client.emit(START_MATCH, match)
+				client.join(match.id)
+				return true
+			} else {
+				this.queueService.dequeueMatch(match.id)
+			}
 		}
 		return false
 	}
 
 	leaveAllQueues(playerId: string) {
 		this.queueService.dequeuePlayer(playerId)
+		this.queueService.dequeueLobbies(playerId)
 	}
 
 
@@ -129,7 +149,7 @@ export class MatchService {
 				}
 				this.server.to(match.match.id).emit(INGAME, updateGame)
 				updateGame = await this.checkDisconnectedPlayers(updateGame)
-				if (updateGame.match.status === GameState.PAUSE) {
+				if (updateGame.status === GameState.PAUSE) {
 					await this.saveMatchHistory(updateGame)
 					this.server.to(match.match.id).emit(INGAME, updateGame)
 					this.server.socketsLeave(match.match.id)
@@ -169,12 +189,14 @@ export class MatchService {
                 match.match.status = GameState.PAUSE
                 match.match.loser = playerOne
                 match.match.winner = playerTwo
+				match.scores[playerTwo.id] = 10
             }
             if (playerTwo.user.status !== Status.GAME) {
                 match.status = GameState.PAUSE
                 match.match.status = GameState.PAUSE
                 match.match.loser = playerTwo
                 match.match.winner = playerOne
+				match.scores[playerOne.id] = 10
             }
         }
 		return match
@@ -237,6 +259,7 @@ export class MatchService {
 			.orderBy('match.updatedAt', 'DESC') 
             .getMany()
     }
-}
 
+
+}
 

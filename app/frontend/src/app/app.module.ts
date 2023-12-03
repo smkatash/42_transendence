@@ -10,6 +10,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MfaComponent } from './auth/mfa/mfa.component';
 import { FormsModule } from '@angular/forms';
 import { HOST_IP } from './Constants';
+import { Subject } from 'rxjs';
 
 
 @Injectable()
@@ -21,8 +22,28 @@ export class UserSocket extends Socket {
 
 @Injectable()
 export class GameSocket extends Socket {
+  private connectionSubject: Subject<boolean> = new Subject<boolean>();
+  public connection$ = this.connectionSubject.asObservable();
+
   constructor() {
-    super({ url: `${HOST_IP}/api/game`, options: { withCredentials: true } })
+    super({ url: `${HOST_IP}/api/game`, options: { withCredentials: true } });
+
+    this.ioSocket.on('connect', () => {
+      this.connectionSubject.next(true);
+    });
+
+    this.ioSocket.on('disconnect', () => {
+      this.connectionSubject.next(false);
+    });
+  }
+  connection(): void {
+    this.ioSocket.connect();
+    this.connectionSubject.next(true);
+  }
+
+  disconnection(): void {
+    this.ioSocket.disconnect();
+    this.connectionSubject.next(false);
   }
 }
 

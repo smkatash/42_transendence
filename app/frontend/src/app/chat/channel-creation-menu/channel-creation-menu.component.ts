@@ -38,7 +38,6 @@ export class ChannelCreationMenuComponent {
 
   userSearch = new FormControl()
   searchedUsers?: User[]
-  isDropdownOpen?: boolean = false
   selectedUser?: User
   messageToSend?: string
 
@@ -49,11 +48,7 @@ export class ChannelCreationMenuComponent {
       switchMap(
         (username: string) => this.chatService.findUser(username)
         .pipe(
-          tap((users: User[]) => {
-            this.searchedUsers = users
-            this.isDropdownOpen = true
-            console.log(users)
-          })
+          tap((users: User[]) => {this.searchedUsers = users})
         )
       )
     ).subscribe()
@@ -61,7 +56,7 @@ export class ChannelCreationMenuComponent {
 
   selectUser(selected: User) {
     this.selectedUser = selected
-    this.isDropdownOpen = false
+    this.userSearch.reset()
   }
 
   sendMessage(): void {
@@ -89,7 +84,8 @@ export class ChannelCreationMenuComponent {
        password: this.channelPassword
     })
     this.channelName = ''
-    this.channelPassword = ''
+    this.channelPassword = undefined
+    this.userSearch.reset()
     this.toggle()
   }
 }

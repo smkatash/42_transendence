@@ -42,6 +42,7 @@ export interface User {
   status: number
   mfaEnabled: boolean
   mfaStatus: number
+  adminAt?: Channel[]
 }
 
 export interface ChannelUsers {

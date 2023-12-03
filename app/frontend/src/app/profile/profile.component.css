@@ -384,3 +384,12 @@ input {
   font-family: 'Bodoni Moda', serif;
   font-size: 2dvw;
 }
+
+.error-message {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}

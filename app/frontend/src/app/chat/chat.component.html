@@ -8,8 +8,8 @@
       </div>
       <div class="channel-container">
         <div class="channel-list" *ngIf="selectedTab === 'my-chats'">
-          <p>These are all the chats/channels you have joined</p>
-          <div *ngFor="let channel of myChannels$ | async">
+          <p>These are all the chats you have joined/created</p>
+          <div *ngFor="let channel of myChannels">
             <app-sidebar-channel [isSelected]="channel.id === selectedChannel?.id"
                                  [channel]="channel"
                                  (click)="onChannelSelect(channel)">
@@ -18,7 +18,7 @@
         </div>
 
         <div class="channel-list" *ngIf="selectedTab === 'available-chats'">
-          <p>After joining a chat/channel, you will be able to see it in 'My Chats'</p>
+          <p>After joining/creating a chat, you will be able to see it in 'My Chats'</p>
           <div *ngFor="let channel of allChannels$ | async">
             <app-sidebar-channel [isSelected]="channel.id === selectedChannel?.id"
                                  [channel]="channel"
@@ -37,7 +37,7 @@
                                  [(isOpen)]="channelCreationPopup">
       </app-channel-creation-menu>
 
-      <app-channel-join-popup [channel]="selectedChannel"
+      <app-channel-join-popup [channel]="channelToJoin"
                               [(isOpen)]="passwordInputPopup">
       </app-channel-join-popup>
 

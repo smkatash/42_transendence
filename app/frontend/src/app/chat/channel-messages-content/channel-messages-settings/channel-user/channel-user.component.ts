@@ -1,10 +1,11 @@
-import { Component, ElementRef, HostListener, Input } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { HOST_IP } from 'src/app/Constants';
 import { ChatService } from 'src/app/chat/chat.service';
 import { ADD_ADMIN, BAN, BLOCK, GAME_INVITE, KICK, MUTE, REM_ADMIN, UNBAN, UNBLOCK } from 'src/app/chat/subscriptions-events-constants';
 import { Channel, User } from 'src/app/entities.interface';
 import { GameService } from 'src/app/game/game.service';
+import { ProfileService } from 'src/app/profile/profile.service';
 
 @Component({
   selector: 'app-channel-user',
@@ -27,6 +28,7 @@ export class ChannelUserComponent {
   constructor(
     private chatService: ChatService,
     private gameService: GameService,
+    private profileService: ProfileService,
     private router: Router,
     private el: ElementRef
   ) {}
@@ -35,7 +37,10 @@ export class ChannelUserComponent {
   @Input() currentUser?: User
   @Input() channel?: Channel
 
+  userStatus?: number;
+
   currentUserBlockedList: User[] = []
+  usersBlockedByUser: User[] = []
 
   isDropdownSelected: boolean = false;
 
@@ -45,6 +50,15 @@ export class ChannelUserComponent {
     this.chatService.requestBlockedUsers()
     this.chatService.getBlockedUsers()
       .subscribe(blocked => this.currentUserBlockedList = blocked)
+
+    this.profileService.statusListener()
+    .subscribe(status => {
+      this.userStatus = status
+    })
+
+    if (this.user) {
+      this.profileService.requestStatus(this.user?.id)
+    }
   }
 
   toggleDropdown(): void {
@@ -66,8 +80,12 @@ export class ChannelUserComponent {
     return this.channel?.owner?.id === this.currentUser?.id
   }
 
+  // userIsAdmin(): boolean {
+  //   return this.channel?.admins?.some(admin => admin.id === this.user?.id) || false
+  // }
+
   userIsAdmin(): boolean {
-    return this.channel?.admins?.some(admin => admin.id === this.user?.id) || false
+    return this.user?.adminAt?.some(chaine => chaine.id === this.channel?.id) || false
   }
 
   currentIsAdmin(): boolean {
@@ -78,14 +96,18 @@ export class ChannelUserComponent {
     return this.currentUserBlockedList.some(blockedUser => blockedUser.id === this.user?.id) || false
   }
 
-  sendDM() {
-    // Create a channel between two people
-    if (!this.user) return
-    // I was gonna ask if you can give me a way to test if there's already a chat
-    // between two people and I was gonna make a form like you said before to compose
-    // a message but I got really sleepy.
-    this.chatService.sendDM(this.user.id, "Hey")
+  async isCurrentBlockedByUser(): Promise<boolean> {
+    if (!this.user?.id) return false
+    let blockedUsers
+    try {
+      blockedUsers = await this.profileService.getUserBlockedList(this.user?.id).toPromise()
+      if (!blockedUsers) return false
+      return blockedUsers.some(blockedUser => blockedUser.id === this.currentUser?.id) || false
+    } catch {
+      return false
+    }
   }
+
 
   /* EASY: 1, MEDIUM: 2, HARD: 3 */
   toggleGameMode(event: Event) {
@@ -97,11 +119,24 @@ export class ChannelUserComponent {
     }
   }
 
-  sendGameInvite() {
+  async sendGameInvite() {
     if (!this.user) return
+    console.log(this.userStatus)
+    if (this.userStatus === 2 || this.userStatus === 0) {
+      return this.chatService.generateAchtung("User is either in a game or not online.")
+    }
+    if (await this.isCurrentBlockedByUser() || this.userIsBlocked()) {
+      return this.chatService.generateAchtung("Can't invite to game since you're blocked")
+    }
     this.chatService.sendDM(this.user.id, "Hey, I'd like to play a game with you", GAME_INVITE, this.inviteGameMode)
-    this.gameService.inviteToMatch(this.user.id, this.inviteGameMode)
-    this.router.navigate(['/game', { invite: true, accept: false }])
+    this.router.navigate(['/game'], {
+      queryParams: {
+        invite: true,
+        accept: false,
+        userId: this.user.id,
+        level: this.inviteGameMode
+      }
+    });
   }
 
   manageUserModeration(action: string) {
